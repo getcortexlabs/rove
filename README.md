@@ -44,6 +44,12 @@ Early. Nothing to run yet. Work is tracked in the
 Competing with BEAGLE's CUDA backend on large nucleotide alignments. Use the
 GPU for that.
 
+## Fixtures
+
+`fixtures/synthetic/control_20x50.nex` is a positive control: 20 taxa, 50 binary
+characters, no homoplasy, no missing data, known tree. `tools/synth_matrix.py`
+regenerates it and produces degraded variants. See `fixtures/synthetic/README.md`.
+
 ## Roadmap
 
 1. Core kernel: Felsenstein pruning, gamma rate categories, rescaling.
