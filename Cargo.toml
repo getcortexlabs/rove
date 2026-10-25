@@ -1,0 +1,19 @@
+[package]
+name = "happypath"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Phylogenetic likelihood kernel. ARM-first, model-aware, drop-in for BEAST 2 and BEAGLE."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/rafaelaugustos/happypath"
+keywords = ["phylogenetics", "likelihood", "simd", "bioinformatics"]
+categories = ["science"]
+
+[dependencies]
+
+[dev-dependencies]
+proptest = "1"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
