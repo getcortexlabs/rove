@@ -18,7 +18,7 @@ Rove stores partials the other way round. For each rate category and each state 
 
 Mk has a closed form. The transition matrix for a branch is `P(t) = e·I + (1 − e)·π`, where `e` depends only on the branch length and `π` holds the state frequencies. Multiplying that into a vector costs O(k) per pattern instead of O(k²).
 
-Today `model::Mk` produces the full matrix and the kernel multiplies it generically. The closed form is tested against Lewis' formula; using it inside the kernel is the next item on the roadmap. The Mkv ascertainment correction comes after.
+Today `model::Mk` produces the full matrix and the kernel multiplies it generically. The closed form is tested against Lewis' formula. Baseline measurements and the Mkv ascertainment correction precede the direct Mk path on the [roadmap](./roadmap).
 
 ## A scalar reference, always
 

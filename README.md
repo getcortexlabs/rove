@@ -19,8 +19,9 @@ integration remains a possible compatibility path.
 
 ## Status
 
-Early. The likelihood core and numerical tests are implemented; standalone
-inference and integrations are not. Work is tracked in the
+Early. The likelihood core, morphological NEXUS reader, pattern compression
+and numerical tests are implemented; standalone inference and integrations are
+not. Work is tracked in the
 [issues](https://github.com/getcortexlabs/rove/issues).
 
 ## Why
@@ -66,13 +67,23 @@ other when reproducing a result.
 
 ## Roadmap
 
-1. Core kernel: Felsenstein pruning, gamma rate categories, rescaling.
-2. Reference implementation and numerical equality tests.
-3. Mk closed-form fast path.
-4. NEON vectorisation.
-5. Benchmarks on a 90 x 250 morphological matrix and on BEAGLE's `synthetictest`.
-6. Standalone inference engine.
-7. Optional BEAST 2 package (`LikelihoodCore` over JNI) and BEAGLE C ABI.
+1. Establish the scalar core, tests, CI and BEAST reference. Done.
+2. Read morphological NEXUS and compress observed patterns. Done.
+3. Measure the Rust baseline, then implement and validate Mkv correction.
+4. Add direct Mk pruning and NEON, measuring each change.
+5. Build standalone MCMC, then the relaxed-clock reference model.
+6. Validate complete inference and evaluate subtree repeats.
+7. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
+
+## Reading a matrix
+
+```sh
+cargo run --release --example read_nexus -- fixtures/reference/20x50/matrix.nex
+```
+
+The reference matrix produces 23 observed patterns with a total weight of 50.
+The [NEXUS guide](docs/guide/nexus.md) defines the supported syntax, gap policy,
+uncertainty and polymorphism handling, and partition-aware compression.
 
 ## Website
 

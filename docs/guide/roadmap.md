@@ -1,45 +1,43 @@
 ---
-description: "Where Rove stands: the likelihood core and its tests exist. The Mk fast path, NEON, benchmarks and standalone inference come next, in that order."
+description: "Rove's implementation order: establish correctness and measured baselines, then optimize the kernel and build standalone inference."
 ---
 
 # Roadmap
 
-Rove is early. There are no releases, no published crate and no dates. The order below is the order of the work, not a schedule.
+Rove is early. There are no releases, no published crate and no dates. This is the implementation order, not a schedule.
 
 | Step | State |
 | --- | --- |
-| Core kernel: Felsenstein pruning, rate categories, rescaling | Done |
-| Reference implementation and numerical equality tests | Done |
-| Mk closed-form fast path | Next |
-| NEON vectorisation | Planned |
-| Benchmarks on a 90 × 250 morphological matrix and on BEAGLE's `synthetictest` | Planned |
-| Standalone inference engine | Planned |
-| Optional BEAST 2 package (`LikelihoodCore` over JNI) and BEAGLE C ABI | Possible |
+| Scalar likelihood core and numerical reference tests | Done |
+| CI on ARM64, x86_64 and the minimum Rust version | Done |
+| Reproducible BEAST 2.7.8 reference analysis | Done |
+| Morphological NEXUS and observed-pattern compression | Done |
+| Rust benchmark baseline | Next, #8 |
+| Mkv ascertainment correction | Planned, #14 |
+| Direct Mk pruning | Planned, #4 |
+| NEON vectorisation | Planned, #5 |
+| Minimal standalone MCMC | Planned, #15 |
+| Relaxed-clock reference model | Planned, #16 |
+| Complete inference validation | Planned, #12 |
+| Evaluation of repeats within subtrees | Planned, #17 |
+| Optional BEAST 2 JNI and BEAGLE C ABI adapters | Possible, #6 and #7 |
 
-## Done: the core and its reference
+## Establish the baseline
 
-`LikelihoodCore` computes tree likelihoods over a pattern-major layout, with rate categories, rescaling and double-buffered node state. `reference::Problem` is the plain implementation it is tested against. The [likelihood core](./kernel) page describes what it can do today.
+The [core](./kernel) is checked against an independent scalar implementation. The [NEXUS reader](./nexus) supplies weighted observations without BEAST. The [reference experiment](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) records exact inputs, model settings, two completed BEAST runs and fixed numerical states.
 
-## Next: the Mk fast path
+The next step is to measure the current Rust implementation before changing its numerical paths. Benchmarks must distinguish setup from repeated likelihood calculations and record inputs, versions, hardware, build settings and commands. No cross-engine speedup has been measured.
 
-`model::Mk` already produces the closed-form transition matrix. The kernel still multiplies it as a generic `k × k` matrix. The next step is a path that uses the closed form directly, followed by the Mkv ascertainment correction for matrices that contain only variable characters.
+## Correctness before optimization
 
-## Then: NEON, and numbers
+Mkv conditions the likelihood on the observation process for variable-only matrices. It needs its own tests against the fixed reference states; artificial ascertainment patterns must remain separate from observed pattern weights.
 
-The layout was chosen so the inner loop can be vectorised. NEON on Apple silicon comes first, AVX2 second, with the scalar code kept as the reference.
-
-Benchmarks follow the vectorisation, not the other way round. Results will record the data, program versions, model settings, hardware, build settings and commands used, and will name the BEAST implementation they ran against. No speedup is claimed before it is measured.
+Then the direct Mk path can replace generic matrix multiplication, followed by NEON on Apple silicon. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
 
 ## Standalone inference
 
-The goal is an engine that runs an analysis on its own: tree proposals, MCMC, priors and clock models. Validation starts with likelihoods compared at fixed states against BEAST 2, then complete runs on the [synthetic control](./fixtures) and on real matrices. Sampling quality counts as much as runtime.
+A minimal sampler comes before the full relaxed-clock and birth–death configuration. Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
 
-The intended product around that engine is a native macOS application. No application work has started.
+The intended product is a native macOS application. Application UI work has not started. BEAST and BEAGLE adapters are optional compatibility paths, not dependencies of the Rust engine.
 
-## Possible: adapters
-
-A BEAST 2 package exposing Rove as a `LikelihoodCore` over JNI, and a BEAGLE C ABI, are possible compatibility paths. They are not dependencies of the Rust engine and are not in progress.
-
-## Follow along
-
-Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues) of the repository.
+Follow the [repository issues](https://github.com/getcortexlabs/rove/issues) for acceptance criteria and results.

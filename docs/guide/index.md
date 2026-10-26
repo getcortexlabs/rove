@@ -9,17 +9,16 @@ Rove is a phylogenetic inference project written in Rust. It starts with a likel
 The name comes from exploring, wandering and discovering paths.
 
 ::: info Project status
-Early. The likelihood core and its numerical tests are implemented. Standalone inference, SIMD code paths, benchmarks and integrations are not. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
+Early. The likelihood core, NEXUS reader, pattern compression and numerical tests are implemented. A BEAST 2.7.8 reference experiment is recorded. Standalone inference, SIMD code paths and cross-engine performance comparisons remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Why another kernel
 
-Morphological analyses are a poor fit for the kernels that exist today.
+Small state spaces and short morphological alignments are worth measuring as their own workload.
 
-- BEAST 2 never uses BEAGLE for the Mk model. `LewisMK` returns a null eigen decomposition, the BEAGLE path throws, and the Java core takes over. Every morphological analysis in BEAST 2 runs in pure Java.
-- BEAGLE's ARM support is SSE translated through `sse2neon`. The BEAGLE 4.1 preprint reports about 1.3x over scalar code, dropping to 1.1x at 8 threads.
-- BEAGLE's CPU kernels vectorise across states and are specialised for four states. Binary and ternary characters, the bulk of morphological matrices, take the generic path with padding.
-- Mk has a closed form, `P(t) = e·I + (1 − e)·π`, so `P·L` costs O(k) per pattern instead of O(k²). A kernel that knows the model can use it; a generic eigen-decomposition kernel cannot.
+- Mk has a closed form, `P(t) = e·I + (1 − e)·π`, which permits an O(k) child update per pattern instead of a full O(k²) matrix multiplication. The current crate builds these matrices; the direct pruning path is planned.
+- ARM-specific vectorisation and reuse of repeated calculations are candidate optimisations. Their value needs matched benchmarks, including setup and partial-update costs.
+- The recorded BEAST 2.7.8 reference used its Java likelihood core. That observation does not establish the backend used by every BEAST version, installation or model.
 
 Rove starts from the data instead: a layout that vectorises across site patterns, and fast paths for the models morphologists use. The [design](./design) page goes through the decisions.
 
@@ -30,6 +29,7 @@ The repository is one Rust crate with no runtime dependencies.
 - `LikelihoodCore`: Felsenstein pruning over a pattern-major layout, with rate categories, optional per-node rescaling and store/restore of node state for a sampler.
 - `model::Mk`: the Mk model with its closed-form transition matrix, for uniform or custom state frequencies.
 - `reference::Problem`: a plain recursive implementation kept as the reference in tests.
+- `nexus::parse` and `data::Matrix::compress`: morphological input, preserved observations, explicit partitions and weighted site patterns. See [Reading NEXUS](./nexus).
 - Property tests that compare the core against the reference on random trees with 2 to 10 tips, 2 to 6 states and 1 to 4 rate categories.
 - A synthetic positive-control matrix of 20 taxa and 50 binary characters, with the script that generates it and degraded variants.
 
@@ -40,8 +40,8 @@ The [likelihood core](./kernel) page shows how to call it. The [synthetic matric
 - Standalone inference: tree proposals, MCMC, priors and clock models.
 - The Mk closed-form fast path inside the kernel, and the Mkv ascertainment correction.
 - NEON or AVX2 code paths. The current kernel is scalar Rust; the layout is prepared for vectorisation.
-- Benchmarks or measured comparisons with BEAST or BEAGLE.
-- NEXUS parsing, a user interface, and the optional BEAST 2 or BEAGLE adapters.
+- Cross-engine performance comparisons with BEAST or BEAGLE.
+- A user interface and the optional BEAST 2 or BEAGLE adapters.
 
 Nothing on this list is documented as available anywhere on this site. The [roadmap](./roadmap) gives the order.
 

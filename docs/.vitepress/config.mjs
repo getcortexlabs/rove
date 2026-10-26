@@ -106,6 +106,7 @@ export default defineConfig({
           text: 'The code',
           items: [
             { text: 'The likelihood core', link: '/guide/kernel' },
+            { text: 'Reading NEXUS', link: '/guide/nexus' },
             { text: 'Synthetic matrices', link: '/guide/fixtures' }
           ]
         }
