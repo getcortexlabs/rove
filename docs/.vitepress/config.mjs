@@ -4,7 +4,7 @@ const site = 'https://rove.getcortexlabs.com'
 const repo = 'https://github.com/getcortexlabs/rove'
 const description = 'ARM-first phylogenetic inference in Rust. Starting with a likelihood kernel for morphological data, checked against a scalar reference.'
 const socialImage = `${site}/images/rove-social.jpg`
-const socialImageAlt = 'Rove. Explore evolutionary paths. Phylogenetic inference in Rust, ARM-first.'
+const socialImageAlt = 'Rove. Explore evolutionary paths. Phylogenetic inference in Rust, built ARM-first, with the Rove emblem over a glowing phylogenetic tree.'
 
 export default defineConfig({
   title: 'Rove',
