@@ -1,8 +1,8 @@
+use proptest::collection::vec;
+use proptest::prelude::*;
 use rove::model::Mk;
 use rove::reference::Problem;
 use rove::{LikelihoodCore, Scaling};
-use proptest::collection::vec;
-use proptest::prelude::*;
 
 #[derive(Clone, Debug)]
 struct Case {

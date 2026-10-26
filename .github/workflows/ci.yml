@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+jobs:
+  rust:
+    name: Rust stable (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            machine: arm64
+            host: aarch64-apple-darwin
+          - os: ubuntu-24.04
+            machine: x86_64
+            host: x86_64-unknown-linux-gnu
+    env:
+      RUSTUP_TOOLCHAIN: stable
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install Rust
+        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+      - name: Verify native toolchain
+        env:
+          EXPECTED_MACHINE: ${{ matrix.machine }}
+          EXPECTED_HOST: ${{ matrix.host }}
+        run: |
+          uname -a
+          rustc --version --verbose
+          cargo --version
+          test "$(uname -m)" = "$EXPECTED_MACHINE"
+          test "$(rustc --version --verbose | sed -n 's/^host: //p')" = "$EXPECTED_HOST"
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          key: ${{ matrix.os }}
+      - name: Check formatting
+        run: cargo fmt --check
+      - name: Run Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Run tests
+        run: cargo test --locked
+
+  msrv:
+    name: Rust 1.85 (minimum supported)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      # Keep aligned with package.rust-version in Cargo.toml.
+      RUSTUP_TOOLCHAIN: 1.85.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install minimum Rust version
+        run: rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+      - name: Report toolchain
+        run: |
+          rustc --version --verbose
+          cargo --version
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          key: ubuntu-24.04
+      - name: Run tests
+        run: cargo test --locked
+
+  docs:
+    name: Documentation build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build documentation
+        run: npm run docs:build
