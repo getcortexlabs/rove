@@ -1,18 +1,25 @@
-# happypath
+<p align="center">
+  <img src="docs/public/rove-logo.png" alt="Rove logo" width="180" height="180" />
+</p>
 
-happypath is a phylogenetic likelihood kernel written in Rust. It computes tree
-likelihoods for Bayesian and maximum-likelihood inference, the loop that eats
-85% of a BEAST run.
+<h1 align="center">Rove</h1>
 
-It is built for the cases BEAGLE serves worst: ARM CPUs, small state spaces
-such as morphological data, and small alignments. It ships as a BEAST 2 package
-and as a drop-in implementation of the BEAGLE C API, so existing analyses run
-unchanged.
+<p align="center">Explore evolutionary paths.</p>
+
+Rove is an ARM-first phylogenetic inference project written in Rust, starting
+with a likelihood kernel for morphological data. The name comes from exploring,
+wandering, and discovering paths.
+
+The goal is standalone inference. The current crate computes tree likelihoods
+without depending on BEAST. A complete inference engine is still future work;
+BEAST is a reference for validation and benchmarking. Optional BEAST 2 and BEAGLE
+integration remains a possible compatibility path.
 
 ## Status
 
-Early. Nothing to run yet. Work is tracked in the
-[issues](https://github.com/rafaelaugustos/happypath/issues).
+Early. The likelihood core and numerical tests are implemented; standalone
+inference and integrations are not. Work is tracked in the
+[issues](https://github.com/rafaelaugustos/rove/issues).
 
 ## Why
 
@@ -36,8 +43,8 @@ Early. Nothing to run yet. Work is tracked in the
 - Model-aware fast paths, starting with Mk and Mkv (ascertainment correction).
 - NEON first, AVX2 second. Scalar fallback always available and used as the
   reference in tests.
-- One crate. The BEAGLE ABI is a feature flag that builds a `cdylib`. The BEAST
-  2 package lives in `beast/` and calls the same crate over JNI.
+- One crate today. Optional BEAGLE C ABI and BEAST 2 JNI adapters are planned;
+  neither is required by the Rust core.
 
 ## Non-goals
 
@@ -57,8 +64,8 @@ regenerates it and produces degraded variants. See `fixtures/synthetic/README.md
 3. Mk closed-form fast path.
 4. NEON vectorisation.
 5. Benchmarks on a 90 x 250 morphological matrix and on BEAGLE's `synthetictest`.
-6. BEAST 2 package (`LikelihoodCore` over JNI).
-7. BEAGLE C ABI drop-in.
+6. Standalone inference engine.
+7. Optional BEAST 2 package (`LikelihoodCore` over JNI) and BEAGLE C ABI.
 
 ## License
 

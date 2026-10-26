@@ -81,7 +81,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "happypath"
+name = "rove"
 version = "0.1.0"
 dependencies = [
  "proptest",

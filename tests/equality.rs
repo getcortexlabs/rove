@@ -1,6 +1,6 @@
-use happypath::model::Mk;
-use happypath::reference::Problem;
-use happypath::{LikelihoodCore, Scaling};
+use rove::model::Mk;
+use rove::reference::Problem;
+use rove::{LikelihoodCore, Scaling};
 use proptest::collection::vec;
 use proptest::prelude::*;
 
