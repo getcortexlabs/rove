@@ -2,7 +2,7 @@ import csv
 import io
 import unittest
 
-from run import METRICS, read_results, summarize
+from run import METRICS, read_results, redact_power_identifier, summarize
 
 
 def output(samples=3):
@@ -17,6 +17,10 @@ def output(samples=3):
 
 
 class ResultsTest(unittest.TestCase):
+    def test_power_report_keeps_status_without_device_identifier(self):
+        self.assertEqual(redact_power_identifier("AC Power\n -InternalBattery-0 (id=12345)\t60%; discharging"),
+                         "AC Power\n -InternalBattery-0\t60%; discharging")
+
     def test_reports_medians_of_batch_means_without_counting_iterations_as_samples(self):
         first = read_results(output(), 3)
         second = read_results(output().replace("\t100\n", "\t200\n").replace("\t110\n", "\t220\n").replace("\t120\n", "\t240\n"), 3)

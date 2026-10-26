@@ -1,0 +1,4160 @@
+{
+  "reference_20x50": {
+    "configuration": {
+      "taxa": 20,
+      "characters": 50,
+      "patterns": 23,
+      "stride": 24,
+      "states": 2,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "reference",
+      "baseline_log_likelihood": -433.28114529381804
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 28258.6669921875,
+        "process_medians_ns": [
+          26328.451171875,
+          39686.03515625,
+          28258.6669921875
+        ],
+        "min_process_median_ns": 26328.451171875,
+        "max_process_median_ns": 39686.03515625,
+        "batch_p10_ns": 26160.351953125,
+        "batch_p90_ns": 40691.84609375,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 180,
+            "reallocation_calls": 163,
+            "requested_bytes": 136080,
+            "deallocation_calls": 180
+          },
+          {
+            "allocation_calls": 180,
+            "reallocation_calls": 163,
+            "requested_bytes": 136080,
+            "deallocation_calls": 180
+          },
+          {
+            "allocation_calls": 180,
+            "reallocation_calls": 163,
+            "requested_bytes": 136080,
+            "deallocation_calls": 180
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 15912.04833984375,
+        "process_medians_ns": [
+          15912.04833984375,
+          21740.193359375,
+          15513.16357421875
+        ],
+        "min_process_median_ns": 15513.16357421875,
+        "max_process_median_ns": 21740.193359375,
+        "batch_p10_ns": 15500.02041015625,
+        "batch_p90_ns": 21914.803515625,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 80,
+            "reallocation_calls": 90,
+            "requested_bytes": 32404,
+            "deallocation_calls": 80
+          },
+          {
+            "allocation_calls": 80,
+            "reallocation_calls": 90,
+            "requested_bytes": 32404,
+            "deallocation_calls": 80
+          },
+          {
+            "allocation_calls": 80,
+            "reallocation_calls": 90,
+            "requested_bytes": 32404,
+            "deallocation_calls": 80
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 10389.129638671875,
+        "process_medians_ns": [
+          9902.05908203125,
+          12645.060546875,
+          10389.129638671875
+        ],
+        "min_process_median_ns": 9902.05908203125,
+        "max_process_median_ns": 12645.060546875,
+        "batch_p10_ns": 9851.690625,
+        "batch_p90_ns": 12733.5447265625,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 247,
+            "reallocation_calls": 0,
+            "requested_bytes": 151716,
+            "deallocation_calls": 247
+          },
+          {
+            "allocation_calls": 247,
+            "reallocation_calls": 0,
+            "requested_bytes": 151716,
+            "deallocation_calls": 247
+          },
+          {
+            "allocation_calls": 247,
+            "reallocation_calls": 0,
+            "requested_bytes": 151716,
+            "deallocation_calls": 247
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 7836.32421875,
+        "process_medians_ns": [
+          6114.68505859375,
+          7836.32421875,
+          8303.659912109375
+        ],
+        "min_process_median_ns": 6114.68505859375,
+        "max_process_median_ns": 8303.659912109375,
+        "batch_p10_ns": 6092.169189453125,
+        "batch_p90_ns": 8339.34736328125,
+        "dirty_nodes": 19,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 8216.6240234375,
+        "process_medians_ns": [
+          7254.82177734375,
+          8216.6240234375,
+          8587.1787109375
+        ],
+        "min_process_median_ns": 7254.82177734375,
+        "max_process_median_ns": 8587.1787109375,
+        "batch_p10_ns": 7226.780126953125,
+        "batch_p90_ns": 8680.979443359374,
+        "dirty_nodes": 19,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 2457.1507568359375,
+        "process_medians_ns": [
+          2124.9720458984375,
+          2457.1507568359375,
+          2697.97265625
+        ],
+        "min_process_median_ns": 2124.9720458984375,
+        "max_process_median_ns": 2697.97265625,
+        "batch_p10_ns": 2120.963525390625,
+        "batch_p90_ns": 2725.3357177734374,
+        "dirty_nodes": 6,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 772.4329223632812,
+        "process_medians_ns": [
+          605.0186157226562,
+          772.4329223632812,
+          916.56494140625
+        ],
+        "min_process_median_ns": 605.0186157226562,
+        "max_process_median_ns": 916.56494140625,
+        "batch_p10_ns": 601.8480895996094,
+        "batch_p90_ns": 923.2378784179688,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 2734.80224609375,
+        "process_medians_ns": [
+          2155.2022705078125,
+          2734.80224609375,
+          2986.811279296875
+        ],
+        "min_process_median_ns": 2155.2022705078125,
+        "max_process_median_ns": 2986.811279296875,
+        "batch_p10_ns": 2152.281213378906,
+        "batch_p90_ns": 3241.5232666015627,
+        "dirty_nodes": 6,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 2575.9989013671875,
+        "process_medians_ns": [
+          2169.5810546875,
+          2959.3760986328125,
+          2575.9989013671875
+        ],
+        "min_process_median_ns": 2169.5810546875,
+        "max_process_median_ns": 2959.3760986328125,
+        "batch_p10_ns": 2163.9623046875,
+        "batch_p90_ns": 3012.0767822265625,
+        "dirty_nodes": 6,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 10.551353454589844,
+        "process_medians_ns": [
+          9.784698486328125,
+          12.233892917633057,
+          10.551353454589844
+        ],
+        "min_process_median_ns": 9.784698486328125,
+        "max_process_median_ns": 12.233892917633057,
+        "batch_p10_ns": 9.733782243728637,
+        "batch_p90_ns": 12.352784442901612,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 9.503384113311768,
+        "process_medians_ns": [
+          9.095062971115112,
+          11.594235897064209,
+          9.503384113311768
+        ],
+        "min_process_median_ns": 9.095062971115112,
+        "max_process_median_ns": 11.594235897064209,
+        "batch_p10_ns": 9.04226303100586,
+        "batch_p90_ns": 11.713782787322998,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "morphology_90x250": {
+    "configuration": {
+      "taxa": 90,
+      "characters": 250,
+      "patterns": 250,
+      "stride": 256,
+      "states": 2,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "balanced",
+      "baseline_log_likelihood": -11529.313888659732
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 418856.765625,
+        "process_medians_ns": [
+          406858.71875,
+          519303.375,
+          418856.765625
+        ],
+        "min_process_median_ns": 406858.71875,
+        "max_process_median_ns": 519303.375,
+        "batch_p10_ns": 403995.696875,
+        "batch_p90_ns": 525884.1125,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 597,
+            "reallocation_calls": 1023,
+            "requested_bytes": 2318105,
+            "deallocation_calls": 597
+          },
+          {
+            "allocation_calls": 597,
+            "reallocation_calls": 1023,
+            "requested_bytes": 2318105,
+            "deallocation_calls": 597
+          },
+          {
+            "allocation_calls": 597,
+            "reallocation_calls": 1023,
+            "requested_bytes": 2318105,
+            "deallocation_calls": 597
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 517115.234375,
+        "process_medians_ns": [
+          497222.0,
+          625875.0,
+          517115.234375
+        ],
+        "min_process_median_ns": 497222.0,
+        "max_process_median_ns": 625875.0,
+        "batch_p10_ns": 496418.884375,
+        "batch_p90_ns": 636511.98125,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 267412.109375,
+        "process_medians_ns": [
+          267412.109375,
+          337572.265625,
+          264669.59375
+        ],
+        "min_process_median_ns": 264669.59375,
+        "max_process_median_ns": 337572.265625,
+        "batch_p10_ns": 256564.7765625,
+        "batch_p90_ns": 344401.95,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 258326.171875,
+        "process_medians_ns": [
+          236198.2421875,
+          299990.8828125,
+          258326.171875
+        ],
+        "min_process_median_ns": 236198.2421875,
+        "max_process_median_ns": 299990.8828125,
+        "batch_p10_ns": 235321.6828125,
+        "batch_p90_ns": 302565.43125,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 271465.8203125,
+        "process_medians_ns": [
+          239960.28125,
+          271465.8203125,
+          272255.859375
+        ],
+        "min_process_median_ns": 239960.28125,
+        "max_process_median_ns": 272255.859375,
+        "batch_p10_ns": 238961.328125,
+        "batch_p90_ns": 276023.571875,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 26983.11328125,
+        "process_medians_ns": [
+          24882.853515625,
+          34656.697265625,
+          26983.11328125
+        ],
+        "min_process_median_ns": 24882.853515625,
+        "max_process_median_ns": 34656.697265625,
+        "batch_p10_ns": 24821.5576171875,
+        "batch_p90_ns": 37453.6294921875,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 10336.71044921875,
+        "process_medians_ns": [
+          10336.71044921875,
+          23396.97265625,
+          10267.00830078125
+        ],
+        "min_process_median_ns": 10267.00830078125,
+        "max_process_median_ns": 23396.97265625,
+        "batch_p10_ns": 10201.44052734375,
+        "batch_p90_ns": 26583.076855468753,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 25211.0595703125,
+        "process_medians_ns": [
+          25211.0595703125,
+          41700.8056640625,
+          25124.0634765625
+        ],
+        "min_process_median_ns": 25124.0634765625,
+        "max_process_median_ns": 41700.8056640625,
+        "batch_p10_ns": 24777.88125,
+        "batch_p90_ns": 44395.87421875,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 25558.146484375,
+        "process_medians_ns": [
+          24841.9599609375,
+          42789.875,
+          25558.146484375
+        ],
+        "min_process_median_ns": 24841.9599609375,
+        "max_process_median_ns": 42789.875,
+        "batch_p10_ns": 24696.34609375,
+        "batch_p90_ns": 47513.73828125,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 7.686813831329346,
+        "process_medians_ns": [
+          7.673283338546753,
+          11.935154438018799,
+          7.686813831329346
+        ],
+        "min_process_median_ns": 7.673283338546753,
+        "max_process_median_ns": 11.935154438018799,
+        "batch_p10_ns": 7.611823034286499,
+        "batch_p90_ns": 12.388749885559083,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 13.497968673706055,
+        "process_medians_ns": [
+          13.424694538116455,
+          23.66372013092041,
+          13.497968673706055
+        ],
+        "min_process_median_ns": 13.424694538116455,
+        "max_process_median_ns": 23.66372013092041,
+        "batch_p10_ns": 13.38473138809204,
+        "batch_p90_ns": 27.31473445892334,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "binary_one_rate": {
+    "configuration": {
+      "taxa": 90,
+      "characters": 250,
+      "patterns": 250,
+      "stride": 256,
+      "states": 2,
+      "categories": 1,
+      "missing_cells": 0,
+      "shape": "balanced",
+      "baseline_log_likelihood": -19460.39740355441
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 416757.8125,
+        "process_medians_ns": [
+          416757.8125,
+          572649.71875,
+          414256.515625
+        ],
+        "min_process_median_ns": 414256.515625,
+        "max_process_median_ns": 572649.71875,
+        "batch_p10_ns": 408101.16875,
+        "batch_p90_ns": 621148.95625,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 536652.34375,
+        "process_medians_ns": [
+          496988.28125,
+          686127.59375,
+          536652.34375
+        ],
+        "min_process_median_ns": 496988.28125,
+        "max_process_median_ns": 686127.59375,
+        "batch_p10_ns": 496216.796875,
+        "batch_p90_ns": 698034.90625,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 108321.94140625,
+        "process_medians_ns": [
+          95749.671875,
+          119330.89453125,
+          108321.94140625
+        ],
+        "min_process_median_ns": 95749.671875,
+        "max_process_median_ns": 119330.89453125,
+        "batch_p10_ns": 94019.4,
+        "batch_p90_ns": 119745.8015625,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 2249772,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 2249772,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 2249772,
+            "deallocation_calls": 1087
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 121320.3125,
+        "process_medians_ns": [
+          114030.76171875,
+          125414.87890625,
+          121320.3125
+        ],
+        "min_process_median_ns": 114030.76171875,
+        "max_process_median_ns": 125414.87890625,
+        "batch_p10_ns": 112792.67578125,
+        "batch_p90_ns": 127226.1390625,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 117499.18359375,
+        "process_medians_ns": [
+          115006.8359375,
+          266561.8515625,
+          117499.18359375
+        ],
+        "min_process_median_ns": 115006.8359375,
+        "max_process_median_ns": 266561.8515625,
+        "batch_p10_ns": 114557.55,
+        "batch_p90_ns": 305915.6265625,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 15600.52490234375,
+        "process_medians_ns": [
+          15413.6142578125,
+          25803.875,
+          15600.52490234375
+        ],
+        "min_process_median_ns": 15413.6142578125,
+        "max_process_median_ns": 25803.875,
+        "batch_p10_ns": 15037.91884765625,
+        "batch_p90_ns": 29400.765234375,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 9862.019775390625,
+        "process_medians_ns": [
+          8708.200927734375,
+          18188.55810546875,
+          9862.019775390625
+        ],
+        "min_process_median_ns": 8708.200927734375,
+        "max_process_median_ns": 18188.55810546875,
+        "batch_p10_ns": 8671.394921875,
+        "batch_p90_ns": 18641.76826171875,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 17657.77587890625,
+        "process_medians_ns": [
+          15034.4443359375,
+          69620.4375,
+          17657.77587890625
+        ],
+        "min_process_median_ns": 15034.4443359375,
+        "max_process_median_ns": 69620.4375,
+        "batch_p10_ns": 14931.67724609375,
+        "batch_p90_ns": 98231.646875,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 19238.7294921875,
+        "process_medians_ns": [
+          19238.7294921875,
+          45051.67578125,
+          16042.48046875
+        ],
+        "min_process_median_ns": 16042.48046875,
+        "max_process_median_ns": 45051.67578125,
+        "batch_p10_ns": 15478.35283203125,
+        "batch_p90_ns": 49317.05664062501,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 7.875651121139526,
+        "process_medians_ns": [
+          7.875651121139526,
+          13.18359375,
+          7.87163782119751
+        ],
+        "min_process_median_ns": 7.87163782119751,
+        "max_process_median_ns": 13.18359375,
+        "batch_p10_ns": 7.7959576606750485,
+        "batch_p90_ns": 13.621972656250001,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 18.339017868041992,
+        "process_medians_ns": [
+          13.97569990158081,
+          21.05712890625,
+          18.339017868041992
+        ],
+        "min_process_median_ns": 13.97569990158081,
+        "max_process_median_ns": 21.05712890625,
+        "batch_p10_ns": 13.782819080352784,
+        "batch_p90_ns": 22.67889404296875,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "binary_four_rates": {
+    "configuration": {
+      "taxa": 90,
+      "characters": 250,
+      "patterns": 250,
+      "stride": 256,
+      "states": 2,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "balanced",
+      "baseline_log_likelihood": -17661.045029291778
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 691209.640625,
+        "process_medians_ns": [
+          423617.828125,
+          835281.25,
+          691209.640625
+        ],
+        "min_process_median_ns": 423617.828125,
+        "max_process_median_ns": 835281.25,
+        "batch_p10_ns": 417045.575,
+        "batch_p90_ns": 1200196.875,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 630165.375,
+        "process_medians_ns": [
+          513505.859375,
+          1297473.9375,
+          630165.375
+        ],
+        "min_process_median_ns": 513505.859375,
+        "max_process_median_ns": 1297473.9375,
+        "batch_p10_ns": 500985.68125,
+        "batch_p90_ns": 1440976.5750000002,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 403858.078125,
+        "process_medians_ns": [
+          304185.2265625,
+          508759.765625,
+          403858.078125
+        ],
+        "min_process_median_ns": 304185.2265625,
+        "max_process_median_ns": 508759.765625,
+        "batch_p10_ns": 300197.59375,
+        "batch_p90_ns": 559198.4343750001,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 327785.796875,
+        "process_medians_ns": [
+          247106.7734375,
+          578436.21875,
+          327785.796875
+        ],
+        "min_process_median_ns": 247106.7734375,
+        "max_process_median_ns": 578436.21875,
+        "batch_p10_ns": 245701.171875,
+        "batch_p90_ns": 745219.8000000003,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 292631.8359375,
+        "process_medians_ns": [
+          253300.78125,
+          573248.6875,
+          292631.8359375
+        ],
+        "min_process_median_ns": 253300.78125,
+        "max_process_median_ns": 573248.6875,
+        "batch_p10_ns": 251653.646875,
+        "batch_p90_ns": 658375.0,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 34213.09375,
+        "process_medians_ns": [
+          25424.1533203125,
+          71083.33203125,
+          34213.09375
+        ],
+        "min_process_median_ns": 25424.1533203125,
+        "max_process_median_ns": 71083.33203125,
+        "batch_p10_ns": 25350.8380859375,
+        "batch_p90_ns": 99334.39140625004,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 15497.66015625,
+        "process_medians_ns": [
+          10487.87451171875,
+          41888.40771484375,
+          15497.66015625
+        ],
+        "min_process_median_ns": 10487.87451171875,
+        "max_process_median_ns": 41888.40771484375,
+        "batch_p10_ns": 10350.22783203125,
+        "batch_p90_ns": 61859.86308593751,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 31725.2607421875,
+        "process_medians_ns": [
+          24927.1240234375,
+          48926.67578125,
+          31725.2607421875
+        ],
+        "min_process_median_ns": 24927.1240234375,
+        "max_process_median_ns": 48926.67578125,
+        "batch_p10_ns": 24910.7419921875,
+        "batch_p90_ns": 62957.064062500016,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 28134.3583984375,
+        "process_medians_ns": [
+          28134.3583984375,
+          57580.158203125,
+          27038.9404296875
+        ],
+        "min_process_median_ns": 27038.9404296875,
+        "max_process_median_ns": 57580.158203125,
+        "batch_p10_ns": 26854.3048828125,
+        "batch_p90_ns": 66481.88437500001,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 9.099294900894165,
+        "process_medians_ns": [
+          8.368472337722778,
+          12.873212337493896,
+          9.099294900894165
+        ],
+        "min_process_median_ns": 8.368472337722778,
+        "max_process_median_ns": 12.873212337493896,
+        "batch_p10_ns": 8.277608919143677,
+        "batch_p90_ns": 14.505799674987795,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 14.30743932723999,
+        "process_medians_ns": [
+          14.059841632843018,
+          27.31915283203125,
+          14.30743932723999
+        ],
+        "min_process_median_ns": 14.059841632843018,
+        "max_process_median_ns": 27.31915283203125,
+        "batch_p10_ns": 13.662771320343017,
+        "batch_p90_ns": 31.14091529846192,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "ternary_four_rates": {
+    "configuration": {
+      "taxa": 90,
+      "characters": 250,
+      "patterns": 250,
+      "stride": 256,
+      "states": 3,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "balanced",
+      "baseline_log_likelihood": -29280.73261827902
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 472931.0,
+        "process_medians_ns": [
+          472931.0,
+          834526.03125,
+          423451.171875
+        ],
+        "min_process_median_ns": 423451.171875,
+        "max_process_median_ns": 834526.03125,
+        "batch_p10_ns": 419970.434375,
+        "batch_p90_ns": 920765.375,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317949,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317949,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317949,
+            "deallocation_calls": 593
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 558473.953125,
+        "process_medians_ns": [
+          558473.953125,
+          1052550.78125,
+          554371.09375
+        ],
+        "min_process_median_ns": 554371.09375,
+        "max_process_median_ns": 1052550.78125,
+        "batch_p10_ns": 551928.0,
+        "batch_p90_ns": 1204403.64375,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 738,
+            "requested_bytes": 1699880,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 738,
+            "requested_bytes": 1699880,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 738,
+            "requested_bytes": 1699880,
+            "deallocation_calls": 354
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 423296.234375,
+        "process_medians_ns": [
+          380679.03125,
+          683355.46875,
+          423296.234375
+        ],
+        "min_process_median_ns": 380679.03125,
+        "max_process_median_ns": 683355.46875,
+        "batch_p10_ns": 373417.578125,
+        "batch_p90_ns": 727738.28125,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 9675348,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 9675348,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 9675348,
+            "deallocation_calls": 1087
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 439492.1875,
+        "process_medians_ns": [
+          439492.1875,
+          705130.1875,
+          411051.421875
+        ],
+        "min_process_median_ns": 411051.421875,
+        "max_process_median_ns": 705130.1875,
+        "batch_p10_ns": 407301.165625,
+        "batch_p90_ns": 775242.18125,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 442046.875,
+        "process_medians_ns": [
+          442046.875,
+          753135.40625,
+          398881.5
+        ],
+        "min_process_median_ns": 398881.5,
+        "max_process_median_ns": 753135.40625,
+        "batch_p10_ns": 397653.90625,
+        "batch_p90_ns": 879687.4875,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 40251.05859375,
+        "process_medians_ns": [
+          40251.05859375,
+          60457.275390625,
+          38624.5927734375
+        ],
+        "min_process_median_ns": 38624.5927734375,
+        "max_process_median_ns": 60457.275390625,
+        "batch_p10_ns": 37993.0904296875,
+        "batch_p90_ns": 61824.365234375,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 14311.7265625,
+        "process_medians_ns": [
+          14311.7265625,
+          17236.61279296875,
+          13478.90185546875
+        ],
+        "min_process_median_ns": 13478.90185546875,
+        "max_process_median_ns": 17236.61279296875,
+        "batch_p10_ns": 13464.3634765625,
+        "batch_p90_ns": 18283.12607421875,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 51849.771484375,
+        "process_medians_ns": [
+          40374.185546875,
+          54575.11328125,
+          51849.771484375
+        ],
+        "min_process_median_ns": 40374.185546875,
+        "max_process_median_ns": 54575.11328125,
+        "batch_p10_ns": 40322.15234375,
+        "batch_p90_ns": 67497.11875000001,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 51809.162109375,
+        "process_medians_ns": [
+          40216.146484375,
+          51809.162109375,
+          57899.90234375
+        ],
+        "min_process_median_ns": 40216.146484375,
+        "max_process_median_ns": 57899.90234375,
+        "batch_p10_ns": 40081.723046875,
+        "batch_p90_ns": 59975.259765625,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 10.533888816833496,
+        "process_medians_ns": [
+          8.339335441589355,
+          10.533888816833496,
+          11.600136756896973
+        ],
+        "min_process_median_ns": 8.339335441589355,
+        "max_process_median_ns": 11.600136756896973,
+        "batch_p10_ns": 8.304502534866334,
+        "batch_p90_ns": 11.981380081176757,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 18.64771032333374,
+        "process_medians_ns": [
+          15.981773376464844,
+          18.64771032333374,
+          20.560105323791504
+        ],
+        "min_process_median_ns": 15.981773376464844,
+        "max_process_median_ns": 20.560105323791504,
+        "batch_p10_ns": 15.25927381515503,
+        "batch_p90_ns": 22.458855438232423,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "eight_states": {
+    "configuration": {
+      "taxa": 90,
+      "characters": 250,
+      "patterns": 250,
+      "stride": 256,
+      "states": 8,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "balanced",
+      "baseline_log_likelihood": -57413.89757152283
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 702798.1875,
+        "process_medians_ns": [
+          496514.96875,
+          702798.1875,
+          755600.25
+        ],
+        "min_process_median_ns": 496514.96875,
+        "max_process_median_ns": 755600.25,
+        "batch_p10_ns": 491191.91875,
+        "batch_p90_ns": 773723.4375,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1023,
+            "requested_bytes": 2318001,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1023,
+            "requested_bytes": 2318001,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1023,
+            "requested_bytes": 2318001,
+            "deallocation_calls": 593
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 831134.09375,
+        "process_medians_ns": [
+          572124.34375,
+          1096020.84375,
+          831134.09375
+        ],
+        "min_process_median_ns": 572124.34375,
+        "max_process_median_ns": 1096020.84375,
+        "batch_p10_ns": 557881.909375,
+        "batch_p90_ns": 1430464.6,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 738,
+            "requested_bytes": 3171580,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 738,
+            "requested_bytes": 3171580,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 738,
+            "requested_bytes": 3171580,
+            "deallocation_calls": 354
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 1235033.84375,
+        "process_medians_ns": [
+          957942.71875,
+          18593417.0,
+          1235033.84375
+        ],
+        "min_process_median_ns": 957942.71875,
+        "max_process_median_ns": 18593417.0,
+        "batch_p10_ns": 926042.96875,
+        "batch_p90_ns": 28088716.800000004,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 24979788,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 24979788,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 24979788,
+            "deallocation_calls": 1087
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 2162523.4375,
+        "process_medians_ns": [
+          1725348.9375,
+          2280570.3125,
+          2162523.4375
+        ],
+        "min_process_median_ns": 1725348.9375,
+        "max_process_median_ns": 2280570.3125,
+        "batch_p10_ns": 1717311.9625,
+        "batch_p90_ns": 2507538.5375,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 2059575.5,
+        "process_medians_ns": [
+          1833916.6875,
+          2059575.5,
+          2403851.5625
+        ],
+        "min_process_median_ns": 1833916.6875,
+        "max_process_median_ns": 2403851.5625,
+        "batch_p10_ns": 1822816.6875,
+        "batch_p90_ns": 2412727.5875,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 179829.1015625,
+        "process_medians_ns": [
+          141370.1171875,
+          186906.25,
+          179829.1015625
+        ],
+        "min_process_median_ns": 141370.1171875,
+        "max_process_median_ns": 186906.25,
+        "batch_p10_ns": 140959.93046875,
+        "batch_p90_ns": 194744.0078125,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 32743.611328125,
+        "process_medians_ns": [
+          26648.884765625,
+          32743.611328125,
+          36345.98828125
+        ],
+        "min_process_median_ns": 26648.884765625,
+        "max_process_median_ns": 36345.98828125,
+        "batch_p10_ns": 26534.3994140625,
+        "batch_p90_ns": 36989.193164062504,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 141152.1796875,
+        "process_medians_ns": [
+          141110.83984375,
+          141152.1796875,
+          233978.515625
+        ],
+        "min_process_median_ns": 141110.83984375,
+        "max_process_median_ns": 233978.515625,
+        "batch_p10_ns": 140852.6046875,
+        "batch_p90_ns": 263100.39687500003,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 195798.66796875,
+        "process_medians_ns": [
+          141673.17578125,
+          195798.66796875,
+          199057.6171875
+        ],
+        "min_process_median_ns": 141673.17578125,
+        "max_process_median_ns": 199057.6171875,
+        "batch_p10_ns": 141331.67578125,
+        "batch_p90_ns": 221733.6578125,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 9.879251480102539,
+        "process_medians_ns": [
+          7.692098617553711,
+          9.879251480102539,
+          12.971261978149414
+        ],
+        "min_process_median_ns": 7.692098617553711,
+        "max_process_median_ns": 12.971261978149414,
+        "batch_p10_ns": 7.659852457046509,
+        "batch_p90_ns": 14.581449794769288,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 18.947998523712158,
+        "process_medians_ns": [
+          13.460695743560791,
+          18.947998523712158,
+          24.85207748413086
+        ],
+        "min_process_median_ns": 13.460695743560791,
+        "max_process_median_ns": 24.85207748413086,
+        "batch_p10_ns": 13.402632999420167,
+        "batch_p90_ns": 25.583179473876953,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "missing_20_percent": {
+    "configuration": {
+      "taxa": 90,
+      "characters": 250,
+      "patterns": 250,
+      "stride": 256,
+      "states": 2,
+      "categories": 4,
+      "missing_cells": 4462,
+      "shape": "balanced",
+      "baseline_log_likelihood": -14031.31626539957
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 541593.75,
+        "process_medians_ns": [
+          402927.09375,
+          541593.75,
+          622605.46875
+        ],
+        "min_process_median_ns": 402927.09375,
+        "max_process_median_ns": 622605.46875,
+        "batch_p10_ns": 400759.759375,
+        "batch_p90_ns": 637213.80625,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 757347.65625,
+        "process_medians_ns": [
+          504062.5,
+          757347.65625,
+          996359.375
+        ],
+        "min_process_median_ns": 504062.5,
+        "max_process_median_ns": 996359.375,
+        "batch_p10_ns": 501574.7375,
+        "batch_p90_ns": 1641016.1500000001,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 424628.25,
+        "process_medians_ns": [
+          277312.8203125,
+          484873.703125,
+          424628.25
+        ],
+        "min_process_median_ns": 277312.8203125,
+        "max_process_median_ns": 484873.703125,
+        "batch_p10_ns": 270694.6609375,
+        "batch_p90_ns": 595697.9187500001,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 326222.0,
+        "process_medians_ns": [
+          284642.8984375,
+          368697.265625,
+          326222.0
+        ],
+        "min_process_median_ns": 284642.8984375,
+        "max_process_median_ns": 368697.265625,
+        "batch_p10_ns": 282990.496875,
+        "batch_p90_ns": 376318.49375,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 343740.890625,
+        "process_medians_ns": [
+          266721.03125,
+          369713.546875,
+          343740.890625
+        ],
+        "min_process_median_ns": 266721.03125,
+        "max_process_median_ns": 369713.546875,
+        "batch_p10_ns": 264322.06875,
+        "batch_p90_ns": 371189.7125,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 38820.962890625,
+        "process_medians_ns": [
+          28155.1513671875,
+          38820.962890625,
+          43213.6640625
+        ],
+        "min_process_median_ns": 28155.1513671875,
+        "max_process_median_ns": 43213.6640625,
+        "batch_p10_ns": 27706.054296875,
+        "batch_p90_ns": 58438.459765625004,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 14139.404296875,
+        "process_medians_ns": [
+          12753.37744140625,
+          16132.60888671875,
+          14139.404296875
+        ],
+        "min_process_median_ns": 12753.37744140625,
+        "max_process_median_ns": 16132.60888671875,
+        "batch_p10_ns": 12223.6330078125,
+        "batch_p90_ns": 17942.679882812503,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 33965.494140625,
+        "process_medians_ns": [
+          33965.494140625,
+          37691.0400390625,
+          32207.966796875
+        ],
+        "min_process_median_ns": 32207.966796875,
+        "max_process_median_ns": 37691.0400390625,
+        "batch_p10_ns": 30517.578125,
+        "batch_p90_ns": 39342.7162109375,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 44623.9013671875,
+        "process_medians_ns": [
+          34085.04296875,
+          45724.1611328125,
+          44623.9013671875
+        ],
+        "min_process_median_ns": 34085.04296875,
+        "max_process_median_ns": 45724.1611328125,
+        "batch_p10_ns": 33912.662109375,
+        "batch_p90_ns": 53151.1068359375,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 10.622958660125732,
+        "process_medians_ns": [
+          10.61465311050415,
+          12.593505859375,
+          10.622958660125732
+        ],
+        "min_process_median_ns": 10.61465311050415,
+        "max_process_median_ns": 12.593505859375,
+        "batch_p10_ns": 10.461826992034911,
+        "batch_p90_ns": 12.650537109375,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 16.069491386413574,
+        "process_medians_ns": [
+          16.044100284576416,
+          25.71066188812256,
+          16.069491386413574
+        ],
+        "min_process_median_ns": 16.044100284576416,
+        "max_process_median_ns": 25.71066188812256,
+        "batch_p10_ns": 15.978487491607666,
+        "batch_p90_ns": 26.89762077331543,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "repeated_columns": {
+    "configuration": {
+      "taxa": 90,
+      "characters": 250,
+      "patterns": 25,
+      "stride": 32,
+      "states": 2,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "balanced",
+      "baseline_log_likelihood": -17529.448006777206
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 474098.3125,
+        "process_medians_ns": [
+          474098.3125,
+          617888.03125,
+          419481.765625
+        ],
+        "min_process_median_ns": 419481.765625,
+        "max_process_median_ns": 617888.03125,
+        "batch_p10_ns": 416758.471875,
+        "batch_p90_ns": 636300.5375,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 330663.4140625,
+        "process_medians_ns": [
+          330663.4140625,
+          405496.09375,
+          248466.46875
+        ],
+        "min_process_median_ns": 248466.46875,
+        "max_process_median_ns": 405496.09375,
+        "batch_p10_ns": 246719.9203125,
+        "batch_p90_ns": 429206.121875,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 350,
+            "reallocation_calls": 372,
+            "requested_bytes": 278596,
+            "deallocation_calls": 350
+          },
+          {
+            "allocation_calls": 350,
+            "reallocation_calls": 372,
+            "requested_bytes": 278596,
+            "deallocation_calls": 350
+          },
+          {
+            "allocation_calls": 350,
+            "reallocation_calls": 372,
+            "requested_bytes": 278596,
+            "deallocation_calls": 350
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 67334.9609375,
+        "process_medians_ns": [
+          67334.9609375,
+          85187.82421875,
+          53817.87109375
+        ],
+        "min_process_median_ns": 53817.87109375,
+        "max_process_median_ns": 85187.82421875,
+        "batch_p10_ns": 51065.51171875,
+        "batch_p90_ns": 92003.75937500001,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 898660,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 898660,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 898660,
+            "deallocation_calls": 1087
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 42896.0361328125,
+        "process_medians_ns": [
+          40714.193359375,
+          55090.494140625,
+          42896.0361328125
+        ],
+        "min_process_median_ns": 40714.193359375,
+        "max_process_median_ns": 55090.494140625,
+        "batch_p10_ns": 39213.101953125,
+        "batch_p90_ns": 56590.283203125,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 49019.775390625,
+        "process_medians_ns": [
+          46294.595703125,
+          60329.345703125,
+          49019.775390625
+        ],
+        "min_process_median_ns": 46294.595703125,
+        "max_process_median_ns": 60329.345703125,
+        "batch_p10_ns": 46264.175390625,
+        "batch_p90_ns": 62167.301171875,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 4365.1885986328125,
+        "process_medians_ns": [
+          4382.659912109375,
+          4365.1885986328125,
+          4071.6654052734375
+        ],
+        "min_process_median_ns": 4071.6654052734375,
+        "max_process_median_ns": 4382.659912109375,
+        "batch_p10_ns": 3998.9359375,
+        "batch_p90_ns": 4510.476708984375,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 1585.0626831054688,
+        "process_medians_ns": [
+          1585.0626831054688,
+          1659.4518432617188,
+          1391.2989501953125
+        ],
+        "min_process_median_ns": 1391.2989501953125,
+        "max_process_median_ns": 1659.4518432617188,
+        "batch_p10_ns": 1385.865283203125,
+        "batch_p90_ns": 1746.7447875976563,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 4381.9833984375,
+        "process_medians_ns": [
+          4381.9833984375,
+          4688.4765625,
+          3894.037841796875
+        ],
+        "min_process_median_ns": 3894.037841796875,
+        "max_process_median_ns": 4688.4765625,
+        "batch_p10_ns": 3875.8717529296873,
+        "batch_p90_ns": 4950.928735351563,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 4104.9449462890625,
+        "process_medians_ns": [
+          4104.9449462890625,
+          4973.663330078125,
+          3947.967529296875
+        ],
+        "min_process_median_ns": 3947.967529296875,
+        "max_process_median_ns": 4973.663330078125,
+        "batch_p10_ns": 3939.6312255859375,
+        "batch_p90_ns": 5075.990771484375,
+        "dirty_nodes": 7,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 8.671283721923828,
+        "process_medians_ns": [
+          8.356362581253052,
+          9.74277639389038,
+          8.671283721923828
+        ],
+        "min_process_median_ns": 8.356362581253052,
+        "max_process_median_ns": 9.74277639389038,
+        "batch_p10_ns": 8.294490957260132,
+        "batch_p90_ns": 9.926867294311524,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 15.259166717529297,
+        "process_medians_ns": [
+          13.519684314727783,
+          15.259166717529297,
+          17.652670860290527
+        ],
+        "min_process_median_ns": 13.519684314727783,
+        "max_process_median_ns": 17.652670860290527,
+        "batch_p10_ns": 13.482141590118408,
+        "batch_p90_ns": 18.420536994934082,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "ladder": {
+    "configuration": {
+      "taxa": 90,
+      "characters": 250,
+      "patterns": 250,
+      "stride": 256,
+      "states": 2,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "ladder",
+      "baseline_log_likelihood": -17363.688055689996
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 447401.6875,
+        "process_medians_ns": [
+          413882.8125,
+          447401.6875,
+          626972.015625
+        ],
+        "min_process_median_ns": 413882.8125,
+        "max_process_median_ns": 626972.015625,
+        "batch_p10_ns": 412723.821875,
+        "batch_p90_ns": 629723.309375,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          },
+          {
+            "allocation_calls": 593,
+            "reallocation_calls": 1022,
+            "requested_bytes": 2317945,
+            "deallocation_calls": 593
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 535259.109375,
+        "process_medians_ns": [
+          534930.984375,
+          535259.109375,
+          676473.96875
+        ],
+        "min_process_median_ns": 534930.984375,
+        "max_process_median_ns": 676473.96875,
+        "batch_p10_ns": 520280.340625,
+        "batch_p90_ns": 680092.7125,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          },
+          {
+            "allocation_calls": 354,
+            "reallocation_calls": 648,
+            "requested_bytes": 962596,
+            "deallocation_calls": 354
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 269383.7890625,
+        "process_medians_ns": [
+          269383.7890625,
+          265251.3046875,
+          326738.921875
+        ],
+        "min_process_median_ns": 265251.3046875,
+        "max_process_median_ns": 326738.921875,
+        "batch_p10_ns": 261613.7359375,
+        "batch_p90_ns": 334975.390625,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          },
+          {
+            "allocation_calls": 1087,
+            "reallocation_calls": 0,
+            "requested_bytes": 6683244,
+            "deallocation_calls": 1087
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 239112.9609375,
+        "process_medians_ns": [
+          234075.1953125,
+          239112.9609375,
+          300729.8203125
+        ],
+        "min_process_median_ns": 234075.1953125,
+        "max_process_median_ns": 300729.8203125,
+        "batch_p10_ns": 231240.1703125,
+        "batch_p90_ns": 305243.875,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 323167.3125,
+        "process_medians_ns": [
+          251383.7890625,
+          323167.3125,
+          328410.15625
+        ],
+        "min_process_median_ns": 251383.7890625,
+        "max_process_median_ns": 328410.15625,
+        "batch_p10_ns": 249042.125,
+        "batch_p90_ns": 338821.096875,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 301666.34375,
+        "process_medians_ns": [
+          232268.5546875,
+          354679.6875,
+          301666.34375
+        ],
+        "min_process_median_ns": 232268.5546875,
+        "max_process_median_ns": 354679.6875,
+        "batch_p10_ns": 230728.90625,
+        "batch_p90_ns": 357247.7875,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 13296.16259765625,
+        "process_medians_ns": [
+          10280.09033203125,
+          13998.2099609375,
+          13296.16259765625
+        ],
+        "min_process_median_ns": 10280.09033203125,
+        "max_process_median_ns": 13998.2099609375,
+        "batch_p10_ns": 10226.33857421875,
+        "batch_p90_ns": 14425.5287109375,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 281697.265625,
+        "process_medians_ns": [
+          266440.4296875,
+          281697.265625,
+          326897.796875
+        ],
+        "min_process_median_ns": 266440.4296875,
+        "max_process_median_ns": 326897.796875,
+        "batch_p10_ns": 261095.509375,
+        "batch_p90_ns": 341031.128125,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 276071.9453125,
+        "process_medians_ns": [
+          276071.9453125,
+          253978.1875,
+          278567.3828125
+        ],
+        "min_process_median_ns": 253978.1875,
+        "max_process_median_ns": 278567.3828125,
+        "batch_p10_ns": 252406.5796875,
+        "batch_p90_ns": 294046.09375,
+        "dirty_nodes": 89,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 9.160676956176758,
+        "process_medians_ns": [
+          7.662266492843628,
+          10.076085567474365,
+          9.160676956176758
+        ],
+        "min_process_median_ns": 7.662266492843628,
+        "max_process_median_ns": 10.076085567474365,
+        "batch_p10_ns": 7.627594470977783,
+        "batch_p90_ns": 10.517060661315918,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 14.733175277709961,
+        "process_medians_ns": [
+          13.379573822021484,
+          22.468924522399902,
+          14.733175277709961
+        ],
+        "min_process_median_ns": 13.379573822021484,
+        "max_process_median_ns": 22.468924522399902,
+        "batch_p10_ns": 13.363273811340331,
+        "batch_p90_ns": 22.868847846984863,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "small_unpadded": {
+    "configuration": {
+      "taxa": 5,
+      "characters": 16,
+      "patterns": 16,
+      "stride": 16,
+      "states": 2,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "balanced",
+      "baseline_log_likelihood": -68.64556079527617
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 4079.071044921875,
+        "process_medians_ns": [
+          3994.3084716796875,
+          6845.17431640625,
+          4079.071044921875
+        ],
+        "min_process_median_ns": 3994.3084716796875,
+        "max_process_median_ns": 6845.17431640625,
+        "batch_p10_ns": 3963.8671630859376,
+        "batch_p90_ns": 7410.90908203125,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 64,
+            "reallocation_calls": 26,
+            "requested_bytes": 12667,
+            "deallocation_calls": 64
+          },
+          {
+            "allocation_calls": 64,
+            "reallocation_calls": 26,
+            "requested_bytes": 12667,
+            "deallocation_calls": 64
+          },
+          {
+            "allocation_calls": 64,
+            "reallocation_calls": 26,
+            "requested_bytes": 12667,
+            "deallocation_calls": 64
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 2690.8111572265625,
+        "process_medians_ns": [
+          2644.673583984375,
+          3689.239501953125,
+          2690.8111572265625
+        ],
+        "min_process_median_ns": 2644.673583984375,
+        "max_process_median_ns": 3689.239501953125,
+        "batch_p10_ns": 2638.2069580078123,
+        "batch_p90_ns": 3727.7984130859377,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 31,
+            "reallocation_calls": 21,
+            "requested_bytes": 5964,
+            "deallocation_calls": 31
+          },
+          {
+            "allocation_calls": 31,
+            "reallocation_calls": 21,
+            "requested_bytes": 5964,
+            "deallocation_calls": 31
+          },
+          {
+            "allocation_calls": 31,
+            "reallocation_calls": 21,
+            "requested_bytes": 5964,
+            "deallocation_calls": 31
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 1795.2194213867188,
+        "process_medians_ns": [
+          1755.5974731445312,
+          2134.1349487304688,
+          1795.2194213867188
+        ],
+        "min_process_median_ns": 1755.5974731445312,
+        "max_process_median_ns": 2134.1349487304688,
+        "batch_p10_ns": 1746.9843383789062,
+        "batch_p90_ns": 2146.494030761719,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 67,
+            "reallocation_calls": 0,
+            "requested_bytes": 25172,
+            "deallocation_calls": 67
+          },
+          {
+            "allocation_calls": 67,
+            "reallocation_calls": 0,
+            "requested_bytes": 25172,
+            "deallocation_calls": 67
+          },
+          {
+            "allocation_calls": 67,
+            "reallocation_calls": 0,
+            "requested_bytes": 25172,
+            "deallocation_calls": 67
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 1086.700439453125,
+        "process_medians_ns": [
+          1073.1010437011719,
+          1292.3126220703125,
+          1086.700439453125
+        ],
+        "min_process_median_ns": 1073.1010437011719,
+        "max_process_median_ns": 1292.3126220703125,
+        "batch_p10_ns": 1063.8257385253905,
+        "batch_p90_ns": 1303.6585327148437,
+        "dirty_nodes": 4,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 1348.187744140625,
+        "process_medians_ns": [
+          1309.710205078125,
+          1675.3514404296875,
+          1348.187744140625
+        ],
+        "min_process_median_ns": 1309.710205078125,
+        "max_process_median_ns": 1675.3514404296875,
+        "batch_p10_ns": 1298.4619262695312,
+        "batch_p90_ns": 1681.6456787109375,
+        "dirty_nodes": 4,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 989.3557434082031,
+        "process_medians_ns": [
+          837.4811706542969,
+          989.3557434082031,
+          1242.9186401367188
+        ],
+        "min_process_median_ns": 837.4811706542969,
+        "max_process_median_ns": 1242.9186401367188,
+        "batch_p10_ns": 833.9037658691407,
+        "batch_p90_ns": 1430.963134765625,
+        "dirty_nodes": 3,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 499.3877410888672,
+        "process_medians_ns": [
+          369.4648742675781,
+          499.3877410888672,
+          619.2722320556641
+        ],
+        "min_process_median_ns": 369.4648742675781,
+        "max_process_median_ns": 619.2722320556641,
+        "batch_p10_ns": 368.01401977539064,
+        "batch_p90_ns": 676.1062622070312,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 1290.1636962890625,
+        "process_medians_ns": [
+          856.580078125,
+          1454.5059204101562,
+          1290.1636962890625
+        ],
+        "min_process_median_ns": 856.580078125,
+        "max_process_median_ns": 1454.5059204101562,
+        "batch_p10_ns": 855.0325988769531,
+        "batch_p90_ns": 1511.4822509765627,
+        "dirty_nodes": 3,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 1190.86328125,
+        "process_medians_ns": [
+          847.503662109375,
+          1428.5328979492188,
+          1190.86328125
+        ],
+        "min_process_median_ns": 847.503662109375,
+        "max_process_median_ns": 1428.5328979492188,
+        "batch_p10_ns": 838.7591064453125,
+        "batch_p90_ns": 1490.126043701172,
+        "dirty_nodes": 3,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 6.144632816314697,
+        "process_medians_ns": [
+          4.822154879570007,
+          6.192326545715332,
+          6.144632816314697
+        ],
+        "min_process_median_ns": 4.822154879570007,
+        "max_process_median_ns": 6.192326545715332,
+        "batch_p10_ns": 4.793928098678589,
+        "batch_p90_ns": 6.592748403549194,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 6.2194764614105225,
+        "process_medians_ns": [
+          7.6334874629974365,
+          6.2194764614105225,
+          5.981634140014648
+        ],
+        "min_process_median_ns": 5.981634140014648,
+        "max_process_median_ns": 7.6334874629974365,
+        "batch_p10_ns": 5.732083320617676,
+        "batch_p90_ns": 8.57758526802063,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  },
+  "small_padded": {
+    "configuration": {
+      "taxa": 5,
+      "characters": 17,
+      "patterns": 17,
+      "stride": 24,
+      "states": 2,
+      "categories": 4,
+      "missing_cells": 0,
+      "shape": "balanced",
+      "baseline_log_likelihood": -72.40028967717792
+    },
+    "metrics": {
+      "parse": {
+        "median_ns": 5529.195068359375,
+        "process_medians_ns": [
+          5595.296142578125,
+          5529.195068359375,
+          4967.6361083984375
+        ],
+        "min_process_median_ns": 4967.6361083984375,
+        "max_process_median_ns": 5595.296142578125,
+        "batch_p10_ns": 4711.710620117187,
+        "batch_p90_ns": 8093.210742187503,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 64,
+            "reallocation_calls": 36,
+            "requested_bytes": 18155,
+            "deallocation_calls": 64
+          },
+          {
+            "allocation_calls": 64,
+            "reallocation_calls": 36,
+            "requested_bytes": 18155,
+            "deallocation_calls": 64
+          },
+          {
+            "allocation_calls": 64,
+            "reallocation_calls": 36,
+            "requested_bytes": 18155,
+            "deallocation_calls": 64
+          }
+        ]
+      },
+      "compress": {
+        "median_ns": 4199.951171875,
+        "process_medians_ns": [
+          4861.38916015625,
+          4199.951171875,
+          3559.7432861328125
+        ],
+        "min_process_median_ns": 3559.7432861328125,
+        "max_process_median_ns": 4861.38916015625,
+        "batch_p10_ns": 3408.5540283203127,
+        "batch_p90_ns": 5640.5364990234375,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 32,
+            "reallocation_calls": 29,
+            "requested_bytes": 9332,
+            "deallocation_calls": 32
+          },
+          {
+            "allocation_calls": 32,
+            "reallocation_calls": 29,
+            "requested_bytes": 9332,
+            "deallocation_calls": 32
+          },
+          {
+            "allocation_calls": 32,
+            "reallocation_calls": 29,
+            "requested_bytes": 9332,
+            "deallocation_calls": 32
+          }
+        ]
+      },
+      "core_setup": {
+        "median_ns": 2674.4384765625,
+        "process_medians_ns": [
+          3198.8551025390625,
+          2674.4384765625,
+          2359.4259033203125
+        ],
+        "min_process_median_ns": 2359.4259033203125,
+        "max_process_median_ns": 3198.8551025390625,
+        "batch_p10_ns": 2340.73994140625,
+        "batch_p90_ns": 3511.2426879882814,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 67,
+            "reallocation_calls": 0,
+            "requested_bytes": 35868,
+            "deallocation_calls": 67
+          },
+          {
+            "allocation_calls": 67,
+            "reallocation_calls": 0,
+            "requested_bytes": 35868,
+            "deallocation_calls": 67
+          },
+          {
+            "allocation_calls": 67,
+            "reallocation_calls": 0,
+            "requested_bytes": 35868,
+            "deallocation_calls": 67
+          }
+        ]
+      },
+      "full_cached": {
+        "median_ns": 1580.1925659179688,
+        "process_medians_ns": [
+          1890.6224975585938,
+          1580.1925659179688,
+          1513.2852783203125
+        ],
+        "min_process_median_ns": 1513.2852783203125,
+        "max_process_median_ns": 1890.6224975585938,
+        "batch_p10_ns": 1503.8843627929687,
+        "batch_p90_ns": 2143.4498901367188,
+        "dirty_nodes": 4,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "full_with_matrices": {
+        "median_ns": 1982.396484375,
+        "process_medians_ns": [
+          2210.0728759765625,
+          1982.396484375,
+          1841.38232421875
+        ],
+        "min_process_median_ns": 1841.38232421875,
+        "max_process_median_ns": 2210.0728759765625,
+        "batch_p10_ns": 1826.0177368164063,
+        "batch_p90_ns": 2392.944287109375,
+        "dirty_nodes": 4,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "tip_update": {
+        "median_ns": 1411.73046875,
+        "process_medians_ns": [
+          1411.73046875,
+          1752.6016235351562,
+          1226.5828247070312
+        ],
+        "min_process_median_ns": 1226.5828247070312,
+        "max_process_median_ns": 1752.6016235351562,
+        "batch_p10_ns": 1223.8672729492187,
+        "batch_p90_ns": 1840.5182006835937,
+        "dirty_nodes": 3,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "internal_update": {
+        "median_ns": 585.1020812988281,
+        "process_medians_ns": [
+          546.7147827148438,
+          586.2490539550781,
+          585.1020812988281
+        ],
+        "min_process_median_ns": 546.7147827148438,
+        "max_process_median_ns": 586.2490539550781,
+        "batch_p10_ns": 543.5190826416016,
+        "batch_p90_ns": 632.6906860351563,
+        "dirty_nodes": 1,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "accept_proposal": {
+        "median_ns": 1413.0833740234375,
+        "process_medians_ns": [
+          1550.3768920898438,
+          1185.5875854492188,
+          1413.0833740234375
+        ],
+        "min_process_median_ns": 1185.5875854492188,
+        "max_process_median_ns": 1550.3768920898438,
+        "batch_p10_ns": 1168.5424926757812,
+        "batch_p90_ns": 1763.628387451172,
+        "dirty_nodes": 3,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "reject_proposal": {
+        "median_ns": 1314.5421752929688,
+        "process_medians_ns": [
+          1612.2945556640625,
+          1119.07958984375,
+          1314.5421752929688
+        ],
+        "min_process_median_ns": 1119.07958984375,
+        "max_process_median_ns": 1612.2945556640625,
+        "batch_p10_ns": 1118.0007934570312,
+        "batch_p90_ns": 1950.3794433593755,
+        "dirty_nodes": 3,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store": {
+        "median_ns": 6.330291509628296,
+        "process_medians_ns": [
+          6.488581418991089,
+          4.91363799571991,
+          6.330291509628296
+        ],
+        "min_process_median_ns": 4.91363799571991,
+        "max_process_median_ns": 6.488581418991089,
+        "batch_p10_ns": 4.757148027420044,
+        "batch_p90_ns": 7.2183251857757575,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      },
+      "store_restore": {
+        "median_ns": 6.682554721832275,
+        "process_medians_ns": [
+          7.996996164321899,
+          5.702406167984009,
+          6.682554721832275
+        ],
+        "min_process_median_ns": 5.702406167984009,
+        "max_process_median_ns": 7.996996164321899,
+        "batch_p10_ns": 5.70024847984314,
+        "batch_p90_ns": 8.38173222541809,
+        "dirty_nodes": 0,
+        "allocations_by_process": [
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          },
+          {
+            "allocation_calls": 0,
+            "reallocation_calls": 0,
+            "requested_bytes": 0,
+            "deallocation_calls": 0
+          }
+        ]
+      }
+    }
+  }
+}

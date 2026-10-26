@@ -12,8 +12,9 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | CI en ARM64, x86_64 y la versión mínima de Rust | Hecho |
 | Análisis de referencia reproducible con BEAST 2.7.8 | Hecho |
 | NEXUS morfológico y compresión de patrones observados | Hecho |
-| Línea base de benchmarks en Rust | Siguiente, #8 |
-| Corrección de ascertainment de Mkv | Planificado, #14 |
+| Línea base del núcleo Rust | Hecho, #8 |
+| Benchmarks de inferencia completa y entre motores | Pendiente, #8 |
+| Corrección de ascertainment de Mkv | Siguiente, #14 |
 | Poda directa de Mk | Planificado, #4 |
 | Vectorización NEON | Planificado, #5 |
 | MCMC independiente mínimo | Planificado, #15 |
@@ -26,7 +27,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 
 El [núcleo](./kernel) se comprueba contra una implementación escalar independiente. El [lector de NEXUS](./nexus) suministra observaciones ponderadas sin BEAST. El [experimento de referencia](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) registra las entradas exactas, la configuración del modelo, dos ejecuciones completas de BEAST y estados numéricos fijos.
 
-El siguiente paso es medir la implementación actual en Rust antes de cambiar sus rutas numéricas. Los benchmarks deben distinguir la preparación de los cálculos repetidos de verosimilitud y registrar entradas, versiones, hardware, opciones de compilación y comandos. No se ha medido ninguna aceleración entre motores.
+La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 casos en Rust, separando preparación, evaluaciones completas, actualizaciones parciales y gestión del estado de las propuestas. Incluye muestras originales, observaciones de asignación de memoria y variación entre tres procesos. La corrección Mkv es el siguiente paso. Las comparaciones de inferencia completa y entre motores siguen pendientes; no se ha medido ninguna aceleración entre motores.
 
 ## Corrección antes que optimización
 

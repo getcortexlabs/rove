@@ -9,6 +9,7 @@ import json
 import math
 import os
 import platform
+import re
 import statistics
 import subprocess
 import sys
@@ -116,16 +117,28 @@ def hardware():
                     "hw.perflevel0.physicalcpu", "hw.perflevel1.physicalcpu"]:
             output = command(["sysctl", "-n", key], check=False)
             result[key] = output.stdout.strip() if output.returncode == 0 else None
+        # Sandboxed macOS environments may deny sysctl while allowing this report.
+        output = command(["system_profiler", "SPHardwareDataType", "-json"], check=False)
+        if output.returncode == 0:
+            report = json.loads(output.stdout)["SPHardwareDataType"][0]
+            result["system_profiler"] = {
+                key: report.get(key) for key in ["machine_name", "machine_model", "chip_type",
+                                               "number_processors", "physical_memory"]
+            }
     elif sys.platform.startswith("linux"):
         result["kernel"] = platform.release()
         result["cpu"] = command(["lscpu", "--json"], check=False).stdout.strip()
     return result
 
 
+def redact_power_identifier(text):
+    return re.sub(r"\s*\(id=\d+\)", "", text)
+
+
 def power_state():
     if sys.platform != "darwin":
         return None
-    return {option: command(["pmset", "-g", option], check=False).stdout.strip()
+    return {option: redact_power_identifier(command(["pmset", "-g", option], check=False).stdout.strip())
             for option in ["batt", "therm"]}
 
 
@@ -182,6 +195,8 @@ def main():
         "hardware": hardware(), "rustc": rustc,
         "cargo": command(["cargo", "-V"], env=env).stdout.strip(),
         "python": platform.python_version(), "build_command": build, "build_environment": overrides,
+        "native_cpu": next((line.strip() for line in command(["rustc", "--print", "target-cpus"]).stdout.splitlines()
+                            if line.strip().startswith("native ")), None),
         "executable_sha256": sha256(executable), "benchmark_arguments": arguments,
         "repetitions": args.repetitions, "samples_per_metric_per_process": args.samples,
         "source_sha256": {path: sha256(ROOT / path) for path in sources},

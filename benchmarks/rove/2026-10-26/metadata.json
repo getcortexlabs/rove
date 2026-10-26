@@ -1,0 +1,133 @@
+{
+  "source_commit": "d5dcb278aca857544f42fa46e2ca0514d381cd8d",
+  "started_utc": "2026-10-26T03:55:07.225169+00:00",
+  "hardware": {
+    "architecture": "arm64",
+    "system": "Darwin",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+    "machdep.cpu.brand_string": null,
+    "hw.memsize": null,
+    "hw.physicalcpu": null,
+    "hw.logicalcpu": null,
+    "hw.perflevel0.physicalcpu": null,
+    "hw.perflevel1.physicalcpu": null
+  },
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "python": "3.9.6",
+  "build_command": [
+    "cargo",
+    "bench",
+    "--locked",
+    "--bench",
+    "likelihood",
+    "--no-run",
+    "--target",
+    "aarch64-apple-darwin",
+    "--message-format=json"
+  ],
+  "build_environment": {
+    "RUSTFLAGS": "-C target-cpu=native",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_BENCH_OPT_LEVEL": "3",
+    "CARGO_PROFILE_BENCH_LTO": "fat",
+    "CARGO_PROFILE_BENCH_CODEGEN_UNITS": "1",
+    "CARGO_PROFILE_BENCH_DEBUG": "false",
+    "CARGO_PROFILE_BENCH_DEBUG_ASSERTIONS": "false",
+    "CARGO_PROFILE_BENCH_OVERFLOW_CHECKS": "false"
+  },
+  "executable_sha256": "f6dac90f842f7d6d81d0800a37702186ae20230088ac0073506d8a7be0b6ff9a",
+  "benchmark_arguments": [
+    "--samples",
+    "15",
+    "--sample-ms",
+    "20",
+    "--warmup-ms",
+    "100"
+  ],
+  "repetitions": 3,
+  "samples_per_metric_per_process": 15,
+  "source_sha256": {
+    "Cargo.lock": "a6305c68c383286d9a3db29344c1f17c8313632e44f8920f37f384040c078e15",
+    "Cargo.toml": "31fddc341243ba197b3eb88c92216cae3aeddc61cbbd49dc161f378353866910",
+    "benches/likelihood.rs": "cd7f6060f21fd223f740484dbbd5bc32ebd0442f04023695c02b43257330dcde",
+    "benches/support/allocations.rs": "3d31f77929bc9256543737089018bb8f68ebdc8edd0953c3ac8c805869110df6",
+    "benches/support/reference_state.rs": "5e723dc4d844cc828e0ef87dfcd9bcd09ce785392504e39e3ac42a2b75302783",
+    "benches/support/timing.rs": "b3b97ccceee347c40f5a29fb8f21e384efc5f97d3e8003b2b95895a5b9d4029f",
+    "benches/support/workload.rs": "87d1f773c46437a0d5608b426713b64e86c3a8e8e0a2fe98bec71786b76bef0e",
+    "benchmarks/beast-2.7.8/2026-10-25/snapshot-20261025.json": "8aa417dc25552de1e4ffd5c1a69812efbc2b9eeb7a1130264afaa95d427c9976",
+    "fixtures/benchmarks/README.md": "a61fdcb68971dcf88e02e22f7cb5e3c2438b3aa7d3d39f653adfe2466b7c59c0",
+    "fixtures/benchmarks/morphology_90x250.nex": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+    "fixtures/reference/20x50/matrix.nex": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+    "src/data.rs": "4f0615769ffd08551670af515014b09832263dbae0d6c69907fa49e6d16c0c71",
+    "src/kernel.rs": "41965b45356add1d1247d29a9e0082b573470fd97daf359d635c33eba261d9ae",
+    "src/layout.rs": "009082f02bfa33458086bb29f70d47422019ddcd9cc8b475dfddb2051c91b48b",
+    "src/lib.rs": "d12249abb0b59d7aeb275c49afb2242787f443db79f79bf28797f6c44d5f0947",
+    "src/model.rs": "9745dfcfe282684112d82fdc4e2ca1fafe52e7c7b250f03d3fb956a05e90ef9e",
+    "src/nexus/lexer.rs": "78bb00518e17f637312438d5822a18c4d3844d781b2df93a7e9c1b1d2be25d1a",
+    "src/nexus/matrix.rs": "73795ca85e3b02ea7ad9e489ba6a8cf953dbf1c60e686ff7c770acc21d3076a9",
+    "src/nexus/mod.rs": "acc9974bd2ae85439b16685ffa2dd9a523b8048c4afff348f03e695510174549",
+    "src/reference.rs": "0d0cd4ed25e5237874ff5e8da332661a8e2685fd9dd4488deb7b68301c31271c",
+    "tools/benchmarks/prepare.py": "a8843bc123cbf1cca4cacff9c5b437612841094d4d4396ae80293887338cc15a",
+    "tools/benchmarks/run.py": "5ae9653a80c1084434ca84b5b844a5078edd79ec23a7854da79067fdbf3963de",
+    "tools/benchmarks/test_results.py": "2c7e0a8ff551da8ab87b1645d3fd1c35398cc4cd5defeaba1959ed2d5f49f6c6"
+  },
+  "threads": 1,
+  "processes_run_in_parallel": 1,
+  "cpu_affinity": null,
+  "background_load_controlled": false,
+  "scaling": "Always",
+  "model": "observed Mk; no ascertainment correction or priors",
+  "power_before": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t65%; discharging; 0:59 remaining present: true",
+    "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+  },
+  "runs": [
+    {
+      "file": "run-1.tsv",
+      "sha256": "c913b59a42ce4a64ff18637225d181edbae52951b549805436ba5d2d4563ccba",
+      "wall_seconds": 76.25422625
+    },
+    {
+      "file": "run-2.tsv",
+      "sha256": "10164fd4c71daf8ae8b9b2fd2859a0a6f88fe2581346ba10c10e732654a6e42a",
+      "wall_seconds": 75.91071791700001
+    },
+    {
+      "file": "run-3.tsv",
+      "sha256": "5420c1310f36fe17713f1acbf17400952c7411e8d310c261671a59bade38d14c",
+      "wall_seconds": 75.61733137499999
+    }
+  ],
+  "power_after": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t60%; discharging; 0:50 remaining present: true",
+    "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+  },
+  "finished_utc": "2026-10-26T03:58:55.146096+00:00",
+  "hardware_supplement": {
+    "recorded_utc": "2026-10-26T04:01:53.348454+00:00",
+    "reason": "The initial sysctl queries were denied. Hardware and compiler native-CPU identity were verified after timing; numerical benchmark code and raw samples are unchanged.",
+    "hardware": {
+      "architecture": "arm64",
+      "system": "Darwin",
+      "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+      "machdep.cpu.brand_string": null,
+      "hw.memsize": null,
+      "hw.physicalcpu": null,
+      "hw.logicalcpu": null,
+      "hw.perflevel0.physicalcpu": null,
+      "hw.perflevel1.physicalcpu": null,
+      "system_profiler": {
+        "machine_name": "MacBook Pro",
+        "machine_model": "Mac16,6",
+        "chip_type": "Apple M4 Max",
+        "number_processors": "proc 16:12:4:0",
+        "physical_memory": "64 GB"
+      }
+    },
+    "native_cpu": "native          - Select the CPU of the current host (currently apple-m4)."
+  },
+  "publication_notes": [
+    "Battery device identifiers removed from power reports. Original unsanitized metadata and build log remain local."
+  ]
+}

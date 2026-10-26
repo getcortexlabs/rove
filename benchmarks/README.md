@@ -4,6 +4,9 @@ The Rust harness measures the current generic Mk pruning implementation. It
 does not run MCMC, compute priors or apply Mkv ascertainment correction. BEAST
 is not needed to execute it. No cross-engine performance comparison is implied.
 
+The first [Apple M4 Max baseline](rove/2026-10-26/README.md) includes all raw
+samples, timing variability, allocation observations and reproduction commands.
+
 ## Run
 
 Use a clean checkout with Rust, Cargo and Python 3.9 or newer. The driver builds
@@ -38,6 +41,8 @@ the recorded configuration, rather than mixing results from different flags.
 All numerical operations use `Scaling::Always`, one thread and precompressed
 observations. No file I/O, result formatting or logging occurs inside a timed
 operation. Loading the input text is outside the parse timing.
+Setup is repeated with warmed allocator/cache state; it does not measure cold
+process startup or disk-read latency.
 
 | Metric | Work per operation |
 | --- | --- |

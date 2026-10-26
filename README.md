@@ -39,6 +39,10 @@ records the exact model, runtime, sampling diagnostics, and fixed numerical
 states for a selected 20 x 50 dataset. It used BEAST's Java likelihood core.
 No cross-engine speedup has been measured.
 
+The [Rust baseline on Apple M4 Max](benchmarks/rove/2026-10-26/README.md)
+measures 11 workloads, separating setup, full evaluations, partial updates and
+proposal bookkeeping. It includes raw samples and the variation between runs.
+
 ## Design
 
 - Pattern-major layout: one contiguous array per state per rate category, so
@@ -69,7 +73,7 @@ other when reproducing a result.
 
 1. Establish the scalar core, tests, CI and BEAST reference. Done.
 2. Read morphological NEXUS and compress observed patterns. Done.
-3. Measure the Rust baseline, then implement and validate Mkv correction.
+3. Rust kernel baseline recorded; implement and validate Mkv correction next.
 4. Add direct Mk pruning and NEON, measuring each change.
 5. Build standalone MCMC, then the relaxed-clock reference model.
 6. Validate complete inference and evaluate subtree repeats.

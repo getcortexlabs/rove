@@ -12,8 +12,9 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | CI em ARM64, x86_64 e na versão mínima do Rust | Concluído |
 | Análise de referência reprodutível com o BEAST 2.7.8 | Concluído |
 | NEXUS morfológico e compressão de padrões observados | Concluído |
-| Baseline de benchmark em Rust | Próximo, #8 |
-| Correção de ascertainment Mkv | Planejado, #14 |
+| Baseline do núcleo Rust | Concluído, #8 |
+| Benchmarks de inferência completa e entre motores | Pendente, #8 |
+| Correção de ascertainment Mkv | Próximo, #14 |
 | Poda direta do Mk | Planejado, #4 |
 | Vetorização NEON | Planejado, #5 |
 | MCMC independente mínimo | Planejado, #15 |
@@ -26,7 +27,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 
 O [núcleo](./kernel) é verificado contra uma implementação escalar independente. O [leitor de NEXUS](./nexus) fornece observações ponderadas sem o BEAST. O [experimento de referência](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) registra entradas exatas, configurações de modelo, duas execuções completas do BEAST e estados numéricos fixos.
 
-O próximo passo é medir a implementação atual em Rust antes de alterar seus caminhos numéricos. Os benchmarks precisam distinguir a preparação dos cálculos repetidos de verossimilhança e registrar entradas, versões, hardware, configurações de build e comandos. Nenhum ganho de velocidade em relação a outras engines foi medido.
+O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 cenários em Rust, separando preparação, avaliações completas, atualizações parciais e manutenção do estado das propostas. Inclui amostras brutas, observações de alocação e variação entre três processos. A correção Mkv vem a seguir. As comparações de inferência completa e entre motores continuam pendentes; nenhum ganho de velocidade entre motores foi medido.
 
 ## Corretude antes da otimização
 
