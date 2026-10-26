@@ -1,0 +1,23 @@
+{
+  "method": "rank-normalized split R-hat, including folded ranks",
+  "reference": "https://doi.org/10.1214/20-BA1221",
+  "burnin_percent": 10,
+  "rhat": {
+    "posterior": 1.0012332429870714,
+    "likelihood": 1.0001817083662459,
+    "prior": 1.0011570245798556,
+    "TreeHeight": 1.0015673888982584,
+    "mutationRate": null,
+    "morphTreeLikelihood.matriz_20x502": 1.0001817083662459,
+    "gammaShape": 1.0023055397628402,
+    "ORCsigma": 1.0001023949507686,
+    "ORCRatesStat.mean": 0.9999586287652255,
+    "ORCRatesStat.variance": 1.0002514749133113,
+    "ORCRatesStat.coefficientOfVariation": 1.0001816395043974,
+    "BirthDeath": 1.0015849430472832,
+    "BDBirthRate": 1.001115108816976,
+    "BDDeathRate": 1.0032295955142503,
+    "mrca.age(root)": 1.0015490895131431
+  },
+  "maximum_clade_frequency_difference": 0.00011109876680370778
+}

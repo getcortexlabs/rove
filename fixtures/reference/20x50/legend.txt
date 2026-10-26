@@ -1,0 +1,50 @@
+car 1: Ingroup T1-T19
+car 2: Ingroup T1-T19
+car 3: Ingroup T1-T19
+car 4: X T1-T8
+car 5: X T1-T8
+car 6: X T1-T8
+car 7: Y T9-T19
+car 8: Y T9-T19
+car 9: Y T9-T19
+car 10: X1 T1-T4
+car 11: X1 T1-T4
+car 12: X1 T1-T4
+car 13: X2 T5-T8
+car 14: X2 T5-T8
+car 15: X2 T5-T8
+car 16: Y1 T9-T12
+car 17: Y1 T9-T12
+car 18: Y1 T9-T12
+car 19: Y2 T13-T19
+car 20: Y2 T13-T19
+car 21: Y2 T13-T19
+car 22: Y2a T13-T16
+car 23: Y2a T13-T16
+car 24: Y2a T13-T16
+car 25: Y2b T17-T19
+car 26: Y2b T17-T19
+car 27: Y2b T17-T19
+car 28: T1-T2
+car 29: T1-T2
+car 30: T3-T4
+car 31: T3-T4
+car 32: T5-T6
+car 33: T5-T6
+car 34: T7-T8
+car 35: T7-T8
+car 36: T9-T10
+car 37: T9-T10
+car 38: T11-T12
+car 39: T11-T12
+car 40: T13-T14
+car 41: T13-T14
+car 42: T15-T16
+car 43: T15-T16
+car 44: T17-T18
+car 45: T17-T18
+car 46: autapomorfia T3
+car 47: autapomorfia T7
+car 48: autapomorfia T10
+car 49: autapomorfia T14
+car 50: autapomorfia T19

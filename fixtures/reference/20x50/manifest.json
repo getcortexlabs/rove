@@ -1,0 +1,17 @@
+{
+  "matrix.nex": {
+    "source_name": "matriz_20x50 (1).nex",
+    "sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+    "bytes": 1428
+  },
+  "legend.txt": {
+    "source_name": "matriz_20x50_legenda (1).txt",
+    "sha256": "e227e3dd0f846d16fc2dbff9b62b58dc95fa52e04dc6d2ebe98d6cf533bb5993",
+    "bytes": 885
+  },
+  "analysis.xml": {
+    "source_name": "matriz_teste.xml",
+    "sha256": "cc8d64d6eba916232271136dca56bd74fec2a0aaded7c1d0f52fff34d5902e79",
+    "bytes": 19537
+  }
+}

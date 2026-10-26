@@ -4,8 +4,13 @@
 homoplasy, no missing data, known tree. T20 is the outgroup, all zeros. The
 ingroup tree is balanced and every one of its 18 clades gets exclusive
 synapomorphies (3 for the 9 largest clades, 2 for the rest); the last 5
-characters are autapomorphies. A Bayesian run under Mk should put posterior
-probability near 1.0 on all 18 nodes.
+characters are autapomorphies. The known topology describes how the matrix was
+constructed. Posterior support depends on the model, rooting assumptions,
+priors, and sampling; the construction alone does not guarantee a threshold.
+
+This generated control is distinct from the supplied
+[reference dataset](../reference/20x50/README.md). The measured BEAST 2 results
+use that dataset and its XML, not this fixture or the example settings below.
 
 `control_20x50.tre` is the true tree in Newick, also repeated as a comment at
 the end of the NEXUS. `control_20x50.legend.txt` maps each character to the

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.base.evolution.alignment:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="BEAST.base v2.7.8:MM v1.2.1:ORC v1.2.1:BEASTLabs v2.0.3" version="2.7">
+
+    <data
+id="matriz_20x50"
+spec="Alignment"
+dataType="standard">
+        <sequence id="seq_T1" spec="Sequence" taxon="T1" totalcount="2" value="1111110001110000000000000001100000000000000000000001"/>
+        <sequence id="seq_T2" spec="Sequence" taxon="T2" totalcount="2" value="1111110001110000000000000001100000000000000000000001"/>
+        <sequence id="seq_T3" spec="Sequence" taxon="T3" totalcount="2" value="1111110001110000000000000000011000000000000001000001"/>
+        <sequence id="seq_T4" spec="Sequence" taxon="T4" totalcount="2" value="1111110001110000000000000000011000000000000000000001"/>
+        <sequence id="seq_T5" spec="Sequence" taxon="T5" totalcount="2" value="1111110000001110000000000000000110000000000000000001"/>
+        <sequence id="seq_T6" spec="Sequence" taxon="T6" totalcount="2" value="1111110000001110000000000000000110000000000000000001"/>
+        <sequence id="seq_T7" spec="Sequence" taxon="T7" totalcount="2" value="1111110000001110000000000000000001100000000000100001"/>
+        <sequence id="seq_T8" spec="Sequence" taxon="T8" totalcount="2" value="1111110000001110000000000000000001100000000000000001"/>
+        <sequence id="seq_T9" spec="Sequence" taxon="T9" totalcount="2" value="1110001110000001110000000000000000011000000000000001"/>
+        <sequence id="seq_T10" spec="Sequence" taxon="T10" totalcount="2" value="1110001110000001110000000000000000011000000000010001"/>
+        <sequence id="seq_T11" spec="Sequence" taxon="T11" totalcount="2" value="1110001110000001110000000000000000000110000000000001"/>
+        <sequence id="seq_T12" spec="Sequence" taxon="T12" totalcount="2" value="1110001110000001110000000000000000000110000000000001"/>
+        <sequence id="seq_T13" spec="Sequence" taxon="T13" totalcount="2" value="1110001110000000001111110000000000000001100000000001"/>
+        <sequence id="seq_T14" spec="Sequence" taxon="T14" totalcount="2" value="1110001110000000001111110000000000000001100000001001"/>
+        <sequence id="seq_T15" spec="Sequence" taxon="T15" totalcount="2" value="1110001110000000001111110000000000000000011000000001"/>
+        <sequence id="seq_T16" spec="Sequence" taxon="T16" totalcount="2" value="1110001110000000001111110000000000000000011000000001"/>
+        <sequence id="seq_T17" spec="Sequence" taxon="T17" totalcount="2" value="1110001110000000001110001110000000000000000110000001"/>
+        <sequence id="seq_T18" spec="Sequence" taxon="T18" totalcount="2" value="1110001110000000001110001110000000000000000110000001"/>
+        <sequence id="seq_T19" spec="Sequence" taxon="T19" totalcount="2" value="1110001110000000001110001110000000000000000000000101"/>
+        <sequence id="seq_T20" spec="Sequence" taxon="T20" totalcount="2" value="0000000000000000000000000000000000000000000000000001"/>
+        <userDataType id="StandardData.0" spec="beast.base.evolution.datatype.StandardData" ambiguities="" nrOfStates="2"/>
+    </data>
+
+    <map name="Uniform" >beast.base.inference.distribution.Uniform</map>
+
+    <map name="Exponential" >beast.base.inference.distribution.Exponential</map>
+
+    <map name="LogNormal" >beast.base.inference.distribution.LogNormalDistributionModel</map>
+
+    <map name="Normal" >beast.base.inference.distribution.Normal</map>
+
+    <map name="Beta" >beast.base.inference.distribution.Beta</map>
+
+    <map name="Gamma" >beast.base.inference.distribution.Gamma</map>
+
+    <map name="LaplaceDistribution" >beast.base.inference.distribution.LaplaceDistribution</map>
+
+    <map name="prior" >beast.base.inference.distribution.Prior</map>
+
+    <map name="InverseGamma" >beast.base.inference.distribution.InverseGamma</map>
+
+    <map name="OneOnX" >beast.base.inference.distribution.OneOnX</map>
+
+    <run id="mcmc" spec="MCMC" chainLength="10000000">
+        <state id="state" spec="State" storeEvery="5000">
+            <tree id="Tree.t:matriz_20x50" spec="beast.base.evolution.tree.Tree" name="stateNode">
+                <taxonset id="TaxonSet.matriz_20x502" spec="TaxonSet">
+                    <alignment id="matriz_20x502" spec="FilteredAlignment" ascertained="true" excludefrom="50" excludeto="52" filter="1-50,51-52">
+                        <data idref="matriz_20x50"/>
+                        <userDataType id="morphDataType.matriz_20x502" spec="beast.base.evolution.datatype.StandardData" ambiguities="" nrOfStates="2"/>
+                    </alignment>
+                </taxonset>
+            </tree>
+            <parameter id="mutationRate.s:matriz_20x502" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+            <parameter id="gammaShape.s:matriz_20x502" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+            <parameter id="ORCsigma.c:matriz_20x50" spec="parameter.RealParameter" lower="0.0" name="stateNode">0.2</parameter>
+            <parameter id="ORCRates.c:matriz_20x50" spec="parameter.RealParameter" dimension="38" lower="1.0E-100" name="stateNode">0.5</parameter>
+            <parameter id="BDBirthRate.t:matriz_20x50" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="10000.0">1.0</parameter>
+            <parameter id="BDDeathRate.t:matriz_20x50" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
+        </state>
+        <init id="RandomTree.t:matriz_20x50" spec="RandomTree" estimate="false" initial="@Tree.t:matriz_20x50" taxa="@matriz_20x502">
+            <populationModel id="ConstantPopulation0.t:matriz_20x50" spec="ConstantPopulation">
+                <parameter id="randomPopSize.t:matriz_20x50" spec="parameter.RealParameter" name="popSize">1.0</parameter>
+            </populationModel>
+        </init>
+        <distribution id="posterior" spec="CompoundDistribution">
+            <distribution id="prior" spec="CompoundDistribution">
+                <distribution id="BirthDeath.t:matriz_20x50" spec="beast.base.evolution.speciation.BirthDeathGernhard08Model" birthDiffRate="@BDBirthRate.t:matriz_20x50" relativeDeathRate="@BDDeathRate.t:matriz_20x50" tree="@Tree.t:matriz_20x50"/>
+                <prior id="BirthRatePrior.t:matriz_20x50" name="distribution" x="@BDBirthRate.t:matriz_20x50">
+                    <Uniform id="Uniform.2" name="distr" upper="1000.0"/>
+                </prior>
+                <prior id="DeathRatePrior.t:matriz_20x50" name="distribution" x="@BDDeathRate.t:matriz_20x50">
+                    <Uniform id="Uniform.3" name="distr"/>
+                </prior>
+                <prior id="ORCRatePriorDistribution.c:matriz_20x50" name="distribution" x="@ORCRates.c:matriz_20x50">
+                    <LogNormal id="LogNormalDistributionModel.0" S="@ORCsigma.c:matriz_20x50" meanInRealSpace="true" name="distr">
+                        <parameter id="RealParameter.1" spec="parameter.RealParameter" estimate="false" name="M">1.0</parameter>
+                    </LogNormal>
+                </prior>
+                <prior id="ORCsigmaPrior.c:matriz_20x50" name="distribution" x="@ORCsigma.c:matriz_20x50">
+                    <Gamma id="Gamma.0" name="distr">
+                        <parameter id="RealParameter.2" spec="parameter.RealParameter" estimate="false" name="alpha">5.0</parameter>
+                        <parameter id="RealParameter.3" spec="parameter.RealParameter" estimate="false" name="beta">0.2</parameter>
+                    </Gamma>
+                </prior>
+                <prior id="GammaShapePrior.s:matriz_20x502" name="distribution" x="@gammaShape.s:matriz_20x502">
+                    <Exponential id="Exponential.0" name="distr">
+                        <mean id="Function$Constant.0" spec="Function$Constant" value="1.0"/>
+                    </Exponential>
+                </prior>
+                <distribution id="root.prior" spec="beast.base.evolution.tree.MRCAPrior" monophyletic="true" tree="@Tree.t:matriz_20x50">
+                    <taxonset id="root" spec="TaxonSet">
+                        <taxon id="T1" spec="Taxon"/>
+                        <taxon id="T10" spec="Taxon"/>
+                        <taxon id="T11" spec="Taxon"/>
+                        <taxon id="T12" spec="Taxon"/>
+                        <taxon id="T13" spec="Taxon"/>
+                        <taxon id="T14" spec="Taxon"/>
+                        <taxon id="T15" spec="Taxon"/>
+                        <taxon id="T16" spec="Taxon"/>
+                        <taxon id="T17" spec="Taxon"/>
+                        <taxon id="T18" spec="Taxon"/>
+                        <taxon id="T19" spec="Taxon"/>
+                        <taxon id="T2" spec="Taxon"/>
+                        <taxon id="T3" spec="Taxon"/>
+                        <taxon id="T4" spec="Taxon"/>
+                        <taxon id="T5" spec="Taxon"/>
+                        <taxon id="T6" spec="Taxon"/>
+                        <taxon id="T7" spec="Taxon"/>
+                        <taxon id="T8" spec="Taxon"/>
+                        <taxon id="T9" spec="Taxon"/>
+                    </taxonset>
+                </distribution>
+            </distribution>
+            <distribution id="likelihood" spec="CompoundDistribution" useThreads="true">
+                <distribution id="morphTreeLikelihood.matriz_20x502" spec="TreeLikelihood" data="@matriz_20x502" tree="@Tree.t:matriz_20x50">
+                    <siteModel id="SiteModel.s:matriz_20x502" spec="SiteModel" gammaCategoryCount="4" mutationRate="@mutationRate.s:matriz_20x502" shape="@gammaShape.s:matriz_20x502">
+                        <substModel id="LewisMK.s:matriz_20x502" spec="morphmodels.evolution.substitutionmodel.LewisMK" datatype="@morphDataType.matriz_20x502"/>
+                    </siteModel>
+                    <branchRateModel id="OptimisedRelaxedClock.c:matriz_20x50" spec="beast.base.evolution.branchratemodel.UCRelaxedClockModel" rates="@ORCRates.c:matriz_20x50" tree="@Tree.t:matriz_20x50">
+                        <LogNormal id="ORCLogNormalDistributionModel.c:matriz_20x50" S="@ORCsigma.c:matriz_20x50" meanInRealSpace="true" name="distr">
+                            <parameter id="RealParameter.0" spec="parameter.RealParameter" estimate="false" name="M">1.0</parameter>
+                        </LogNormal>
+                        <parameter id="ORCucldMean.c:matriz_20x50" spec="parameter.RealParameter" estimate="false" name="clock.rate">1.0</parameter>
+                    </branchRateModel>
+                </distribution>
+            </distribution>
+        </distribution>
+        <operator id="FixMeanMutationRatesOperator" spec="operator.kernel.BactrianDeltaExchangeOperator" delta="0.75" weight="2.0">
+            <parameter idref="mutationRate.s:matriz_20x502"/>
+            <weightvector id="weightparameter" spec="parameter.IntegerParameter" estimate="false" lower="0" upper="0">50</weightvector>
+        </operator>
+        <operator id="gammaShapeScaler.s:matriz_20x502" spec="ScaleOperator" parameter="@gammaShape.s:matriz_20x502" scaleFactor="0.5" weight="0.1"/>
+        <operator id="ORCAdaptableOperatorSampler_sigma.c:matriz_20x50" spec="AdaptableOperatorSampler" weight="3.0">
+            <parameter idref="ORCsigma.c:matriz_20x50"/>
+            <operator id="ORCucldStdevScaler.c:matriz_20x50" spec="orc.consoperators.UcldScalerOperator" distr="@ORCLogNormalDistributionModel.c:matriz_20x50" rates="@ORCRates.c:matriz_20x50" scaleFactor="0.5" stdev="@ORCsigma.c:matriz_20x50" weight="1.0">
+                <kernel id="KernelDistribution$Bactrian.2" spec="operator.kernel.KernelDistribution$Bactrian"/>
+            </operator>
+            <operator id="ORCUcldStdevRandomWalk.c:matriz_20x50" spec="operator.kernel.BactrianRandomWalkOperator" parameter="@ORCsigma.c:matriz_20x50" scaleFactor="0.1" weight="1.0">
+                <kernelDistribution id="KernelDistribution$Bactrian.3" spec="operator.kernel.KernelDistribution$Bactrian"/>
+            </operator>
+            <operator id="ORCUcldStdevScale.c:matriz_20x50" spec="kernel.BactrianScaleOperator" parameter="@ORCsigma.c:matriz_20x50" scaleFactor="0.5" upper="10.0" weight="1.0">
+                <kernelDistribution id="KernelDistribution$Bactrian.4" spec="operator.kernel.KernelDistribution$Bactrian"/>
+            </operator>
+            <operator id="ORCSampleFromPriorOperator_sigma.c:matriz_20x50" spec="orc.operators.SampleFromPriorOperator" parameter="@ORCsigma.c:matriz_20x50" prior2="@ORCsigmaPrior.c:matriz_20x50" weight="1.0"/>
+        </operator>
+        <operator id="ORCAdaptableOperatorSampler_rates_root.c:matriz_20x50" spec="AdaptableOperatorSampler" weight="1.0">
+            <parameter idref="ORCRates.c:matriz_20x50"/>
+            <tree idref="Tree.t:matriz_20x50"/>
+            <operator id="ORCRootOperator1.c:matriz_20x50" spec="orc.consoperators.SimpleDistance" clockModel="@OptimisedRelaxedClock.c:matriz_20x50" rates="@ORCRates.c:matriz_20x50" tree="@Tree.t:matriz_20x50" twindowSize="0.005" weight="1.0">
+                <kernel id="KernelDistribution$Bactrian.5" spec="operator.kernel.KernelDistribution$Bactrian"/>
+            </operator>
+            <operator id="ORCRootOperator2.c:matriz_20x50" spec="orc.consoperators.SmallPulley" clockModel="@OptimisedRelaxedClock.c:matriz_20x50" dwindowSize="0.005" rates="@ORCRates.c:matriz_20x50" tree="@Tree.t:matriz_20x50" weight="1.0">
+                <kernel id="KernelDistribution$Bactrian.6" spec="operator.kernel.KernelDistribution$Bactrian"/>
+            </operator>
+        </operator>
+        <operator id="ORCAdaptableOperatorSampler_rates_internal.c:matriz_20x50" spec="AdaptableOperatorSampler" weight="20.0">
+            <parameter idref="ORCRates.c:matriz_20x50"/>
+            <tree idref="Tree.t:matriz_20x50"/>
+            <operator id="ORCInternalnodesOperator.c:matriz_20x50" spec="orc.consoperators.InConstantDistanceOperator" clockModel="@OptimisedRelaxedClock.c:matriz_20x50" rates="@ORCRates.c:matriz_20x50" tree="@Tree.t:matriz_20x50" twindowSize="0.005" weight="1.0">
+                <kernel id="KernelDistribution$Bactrian.7" spec="operator.kernel.KernelDistribution$Bactrian"/>
+            </operator>
+            <operator id="ORCRatesRandomWalk.c:matriz_20x50" spec="operator.kernel.BactrianRandomWalkOperator" parameter="@ORCRates.c:matriz_20x50" scaleFactor="0.1" weight="1.0">
+                <kernelDistribution id="KernelDistribution$Bactrian.8" spec="operator.kernel.KernelDistribution$Bactrian"/>
+            </operator>
+            <operator id="ORCRatesScale.c:matriz_20x50" spec="kernel.BactrianScaleOperator" parameter="@ORCRates.c:matriz_20x50" scaleFactor="0.5" upper="10.0" weight="1.0">
+                <kernelDistribution id="KernelDistribution$Bactrian.9" spec="operator.kernel.KernelDistribution$Bactrian"/>
+            </operator>
+            <operator id="ORCSampleFromPriorOperator.rates.c:matriz_20x50" spec="orc.operators.SampleFromPriorOperator" parameter="@ORCRates.c:matriz_20x50" prior2="@ORCRatePriorDistribution.c:matriz_20x50" weight="1.0"/>
+        </operator>
+        <operator id="ORCAdaptableOperatorSampler_NER.c:matriz_20x50" spec="AdaptableOperatorSampler" weight="10.0">
+            <tree idref="Tree.t:matriz_20x50"/>
+            <operator id="ORCNER_null.c:matriz_20x50" spec="orc.operators.MetaNEROperator" rates="@ORCRates.c:matriz_20x50" tree="@Tree.t:matriz_20x50" weight="1.0"/>
+            <operator id="ORCNER_dAE_dBE_dCE.c:matriz_20x50" spec="orc.ner.NEROperator_dAE_dBE_dCE" rates="@ORCRates.c:matriz_20x50" tree="@Tree.t:matriz_20x50" weight="1.0"/>
+            <metric id="RNNIMetric.0" spec="beastlabs.evolution.tree.RNNIMetric" taxonset="@TaxonSet.matriz_20x502"/>
+        </operator>
+        <operator id="BirthDeathBICEPSEpochTop.t:matriz_20x50" spec="EpochFlexOperator" scaleFactor="0.1" tree="@Tree.t:matriz_20x50" weight="2.0"/>
+        <operator id="BirthDeathBICEPSEpochAll.t:matriz_20x50" spec="EpochFlexOperator" fromOldestTipOnly="false" scaleFactor="0.1" tree="@Tree.t:matriz_20x50" weight="2.0"/>
+        <operator id="BirthDeathBICEPSTreeFlex.t:matriz_20x50" spec="TreeStretchOperator" scaleFactor="0.01" tree="@Tree.t:matriz_20x50" weight="2.0"/>
+        <operator id="BirthDeathTreeRootScaler.t:matriz_20x50" spec="kernel.BactrianScaleOperator" rootOnly="true" scaleFactor="0.1" tree="@Tree.t:matriz_20x50" upper="10.0" weight="3.0"/>
+        <operator id="BirthDeathUniformOperator.t:matriz_20x50" spec="kernel.BactrianNodeOperator" tree="@Tree.t:matriz_20x50" weight="30.0"/>
+        <operator id="BirthDeathSubtreeSlide.t:matriz_20x50" spec="kernel.BactrianSubtreeSlide" tree="@Tree.t:matriz_20x50" weight="15.0"/>
+        <operator id="BirthDeathNarrow.t:matriz_20x50" spec="Exchange" tree="@Tree.t:matriz_20x50" weight="15.0"/>
+        <operator id="BirthDeathWide.t:matriz_20x50" spec="Exchange" isNarrow="false" tree="@Tree.t:matriz_20x50" weight="3.0"/>
+        <operator id="BirthDeathWilsonBalding.t:matriz_20x50" spec="WilsonBalding" tree="@Tree.t:matriz_20x50" weight="3.0"/>
+        <operator id="BirthRateScaler.t:matriz_20x50" spec="kernel.BactrianScaleOperator" parameter="@BDBirthRate.t:matriz_20x50" upper="10.0" weight="3.0"/>
+        <operator id="DeathRateScaler.t:matriz_20x50" spec="kernel.BactrianScaleOperator" parameter="@BDDeathRate.t:matriz_20x50" upper="10.0" weight="3.0"/>
+        <logger id="tracelog" spec="Logger" fileName="$(filebase).log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+            <log id="TreeHeight.t:matriz_20x50" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@Tree.t:matriz_20x50"/>
+            <log idref="mutationRate.s:matriz_20x502"/>
+            <log idref="morphTreeLikelihood.matriz_20x502"/>
+            <log idref="gammaShape.s:matriz_20x502"/>
+            <log idref="ORCsigma.c:matriz_20x50"/>
+            <log id="ORCRatesStat.c:matriz_20x50" spec="beast.base.evolution.RateStatistic" branchratemodel="@OptimisedRelaxedClock.c:matriz_20x50" tree="@Tree.t:matriz_20x50"/>
+            <log idref="BirthDeath.t:matriz_20x50"/>
+            <log idref="BDBirthRate.t:matriz_20x50"/>
+            <log idref="BDDeathRate.t:matriz_20x50"/>
+            <log idref="root.prior"/>
+        </logger>
+        <logger id="screenlog" spec="Logger" logEvery="1000">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+        </logger>
+        <logger id="treelog.t:matriz_20x50" spec="Logger" fileName="$(tree).trees" logEvery="1000" mode="tree">
+            <log id="TreeWithMetaDataLogger.t:matriz_20x50" spec="beast.base.evolution.TreeWithMetaDataLogger" branchratemodel="@OptimisedRelaxedClock.c:matriz_20x50" tree="@Tree.t:matriz_20x50"/>
+        </logger>
+        <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>
+    </run>
+
+</beast>

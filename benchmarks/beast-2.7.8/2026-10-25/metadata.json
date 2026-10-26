@@ -1,0 +1,84 @@
+{
+  "date_local": "2026-10-25",
+  "timezone": "America/Sao_Paulo",
+  "hardware": {
+    "model": "MacBook Pro (Mac16,6)",
+    "chip": "Apple M4 Max",
+    "performance_cores": 12,
+    "efficiency_cores": 4,
+    "memory_gb": 64
+  },
+  "os": {
+    "name": "macOS",
+    "version": "26.6.2",
+    "build": "25G83"
+  },
+  "java": "Eclipse Temurin OpenJDK 17.0.15+6, aarch64",
+  "jvm_flags": [
+    "-Xms256m",
+    "-Xmx2g",
+    "-Xss8m",
+    "-Djava.awt.headless=true",
+    "-Duser.language=en"
+  ],
+  "entrypoint": "beastfx.app.beast.BeastMCMC",
+  "beast_debug": true,
+  "backend": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+  "beast_threads": 1,
+  "concurrent_chains": 1,
+  "chain_length": 10000000,
+  "log_every": 1000,
+  "store_every": 5000,
+  "burnin_percent": 10,
+  "packages": {
+    "BEAST.base": "2.7.8",
+    "BEAST.app": "2.7.8",
+    "MM": "1.2.1",
+    "ORC": "1.2.1",
+    "BEASTLabs": "2.0.3"
+  },
+  "jars": {
+    "launcher.jar": "7d51654fd80dd4c32f64e02b02ca90aa6387c2c9837761befe665ff730a5dc01",
+    "BEAST.app.jar": "45949db1372c6dc874256754489b374c03f205c07af1d3513026664b20db32d2",
+    "BEAST.base.jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+    "BEASTlabs.v2.0.3.jar": "feea1bccaee3fe88868d2c60ffe72410f680f5e1301300b918517603e51aa259",
+    "MM.addon.jar": "78f02140b79f8061cbfacfe73600d6ecc2660af00d852a125bda2c683c595a68",
+    "ORC.addon.jar": "2fa7390b9313e769388ba5863f58807cf7bcc7a54b0cd22e2d72f9a618bbdb3e"
+  },
+  "runs": [
+    {
+      "seed": 20261025,
+      "wall_seconds": 54.181003833,
+      "beast_calculation_seconds": 53.984,
+      "started_at": "2026-10-26T02:36:05.088025+00:00",
+      "snapshot_check": {
+        "log_likelihood": -198.6111556479228,
+        "max_pattern_error": 8.171241461241152e-14,
+        "total_error": 1.7621459846850485e-12
+      },
+      "output_sha256": {
+        "analysis.log": "986066172bd5e087559fc620a7f532c599e29b7dfbf2a2f70b55039ecdd2df69",
+        "matriz_20x50.trees": "f3a96ba66dab3fc010bc870f2233764f6cb34eaa53fb20611696a2548ec7d755",
+        "analysis.xml.state": "5c3377070bceb07388d38f8e45b060f4f33a2b2e283c3017ec463e36832a53d9",
+        "console.log": "799bcf310c2c3752c9e57efbaae64faacfd2c396d4e047338f9fda3a1bd7b147"
+      }
+    },
+    {
+      "seed": 20261026,
+      "wall_seconds": 57.803246208,
+      "beast_calculation_seconds": 57.271,
+      "started_at": "2026-10-26T02:36:59.275893+00:00",
+      "snapshot_check": {
+        "log_likelihood": -200.8930162257499,
+        "max_pattern_error": 1.3091749906379846e-12,
+        "total_error": 1.1084466677857563e-12
+      },
+      "output_sha256": {
+        "analysis.log": "4be77bd241cb127397a58b4f91dc36f5164d6ab0102a25f711a166525fa19a67",
+        "matriz_20x50.trees": "8fac3dbbdc3c26c3c3451cfe54f1dbc6b78c4852e88072d1699bb35b4586217c",
+        "analysis.xml.state": "65e9c644b2e682f34044d81e518bc4a7c02375bf257a7ca770cce8100d7e1da6",
+        "console.log": "44651cdfb47bef9db983698c929d97da332dabab2cb25060f64966d967d9a22d"
+      }
+    }
+  ]
+}

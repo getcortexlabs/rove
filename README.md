@@ -25,17 +25,18 @@ inference and integrations are not. Work is tracked in the
 
 ## Why
 
-- BEAST 2 never uses BEAGLE for the Mk model: `LewisMK` returns a null eigen
-  decomposition, the BEAGLE path throws, and the Java core takes over. Every
-  morphological analysis in BEAST 2 runs in pure Java today.
-- BEAGLE's ARM support is SSE translated through `sse2neon`. The BEAGLE 4.1
-  preprint reports about 1.3x over scalar code, dropping to 1.1x at 8 threads.
-- The CPU kernels vectorise across states and are specialised for 4 states.
-  Binary and ternary characters, the bulk of morphological matrices, take the
-  generic path with padding.
-- Mk has a closed form, `P(t) = e*I + (1-e)*pi`, so `P*L` costs O(k) per
-  pattern instead of O(k^2). A kernel that knows the model can use it; a
-  generic eigen-decomposition kernel cannot.
+- Small state spaces and short morphological alignments are worth measuring
+  as their own workload, including the cost of setup and partial updates.
+- Mk has a closed form, `P(t) = e*I + (1-e)*pi`, which permits an O(k) child
+  update per pattern instead of a full O(k^2) matrix multiplication. The
+  current crate builds these matrices; the direct pruning path is planned.
+- ARM-specific vectorisation and reuse of repeated calculations are candidate
+  optimisations. Their value needs to be established with matched benchmarks.
+
+The first [BEAST 2.7.8 reference experiment](benchmarks/beast-2.7.8/2026-10-25/README.md)
+records the exact model, runtime, sampling diagnostics, and fixed numerical
+states for a selected 20 x 50 dataset. It used BEAST's Java likelihood core.
+No cross-engine speedup has been measured.
 
 ## Design
 
@@ -58,6 +59,10 @@ GPU for that.
 `fixtures/synthetic/control_20x50.nex` is a positive control: 20 taxa, 50 binary
 characters, no homoplasy, no missing data, known tree. `tools/synth_matrix.py`
 regenerates it and produces degraded variants. See `fixtures/synthetic/README.md`.
+
+The separately supplied [reference dataset](fixtures/reference/20x50/README.md)
+includes its BEAST 2 XML and provenance. Do not substitute one fixture for the
+other when reproducing a result.
 
 ## Roadmap
 

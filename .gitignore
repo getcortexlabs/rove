@@ -10,3 +10,4 @@ beast/*.jar
 /node_modules/
 /docs/.vitepress/cache/
 /docs/.vitepress/dist/
+__pycache__/
