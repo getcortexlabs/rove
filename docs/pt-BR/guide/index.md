@@ -1,0 +1,50 @@
+---
+description: "O Rove é um projeto de inferência filogenética em Rust, pensado primeiro para ARM. Saiba por que ele começa com um kernel de verossimilhança para dados morfológicos, o que existe hoje e o que não existe."
+---
+
+# O que é o Rove?
+
+O Rove é um projeto de inferência filogenética escrito em Rust. Ele começa com um kernel de verossimilhança para dados morfológicos, projetado primeiro para CPUs ARM. O objetivo é a inferência independente: executar uma análise desde a matriz de caracteres até uma amostra de árvores sem depender do BEAST.
+
+O nome vem de explorar, vagar e descobrir caminhos.
+
+::: info Status do projeto
+Estágio inicial. O núcleo de verossimilhança, o leitor de NEXUS, a compressão de padrões e os testes numéricos estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. Inferência independente, caminhos de código SIMD e comparações de desempenho entre engines continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
+:::
+
+## Por que outro kernel
+
+Espaços de estados pequenos e alinhamentos morfológicos curtos merecem ser medidos como uma carga de trabalho própria.
+
+- O Mk tem forma fechada, `P(t) = e·I + (1 − e)·π`, o que permite uma atualização de filho em O(k) por padrão em vez de uma multiplicação completa de matriz em O(k²). A crate atual constrói essas matrizes; o caminho de poda direta está planejado.
+- Vetorização específica para ARM e reaproveitamento de cálculos repetidos são otimizações candidatas. Seu valor precisa de benchmarks pareados, incluindo os custos de preparação e de atualização parcial.
+- A referência registrada com o BEAST 2.7.8 usou o núcleo de verossimilhança em Java do próprio BEAST. Essa observação não estabelece qual backend é usado por toda versão, instalação ou modelo do BEAST.
+
+O Rove, em vez disso, parte dos dados: um layout que vetoriza ao longo dos padrões de sítio e caminhos rápidos para os modelos que os morfologistas usam. A página de [design](./design) percorre as decisões.
+
+## O que existe hoje
+
+O repositório é uma única crate Rust, sem dependências em tempo de execução.
+
+- `LikelihoodCore`: poda de Felsenstein sobre um layout pattern-major, com categorias de taxa, reescalonamento opcional por nó e store/restore do estado dos nós para um amostrador.
+- `model::Mk`: o modelo Mk com sua matriz de transição em forma fechada, para frequências de estados uniformes ou personalizadas.
+- `reference::Problem`: uma implementação recursiva simples, mantida como referência nos testes.
+- `nexus::parse` e `data::Matrix::compress`: entrada morfológica, observações preservadas, partições explícitas e padrões de sítio ponderados. Veja [Lendo NEXUS](./nexus).
+- Testes de propriedade que comparam o núcleo com a referência em árvores aleatórias com 2 a 10 terminais, 2 a 6 estados e 1 a 4 categorias de taxa.
+- Uma matriz sintética de controle positivo com 20 táxons e 50 caracteres binários, com o script que a gera e variantes degradadas.
+
+A página do [núcleo de verossimilhança](./kernel) mostra como chamá-lo. A página de [matrizes sintéticas](./fixtures) descreve o controle.
+
+## O que ainda não existe
+
+- Inferência independente: propostas de árvore, MCMC, priors e modelos de relógio.
+- O caminho rápido de forma fechada do Mk dentro do kernel, e a correção de ascertainment Mkv.
+- Caminhos de código NEON ou AVX2. O kernel atual é Rust escalar; o layout está preparado para vetorização.
+- Comparações de desempenho entre engines com o BEAST ou o BEAGLE.
+- Uma interface de usuário e os adaptadores opcionais para BEAST 2 ou BEAGLE.
+
+Nada desta lista está documentado como disponível em qualquer parte deste site. O [roadmap](./roadmap) dá a ordem.
+
+## BEAST, como referência
+
+O BEAST não é uma dependência. É a referência para validação e benchmarking: as verossimilhanças são comparadas primeiro em estados fixos, depois em execuções completas de inferência. BEAST 2 e BEAST X são bases de código diferentes, e resultados de um não estabelecem resultados do outro, por isso as comparações nomeiam a implementação e a versão contra as quais foram executadas.

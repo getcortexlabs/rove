@@ -1,0 +1,45 @@
+---
+description: "Cómo dispone Rove los datos de verosimilitud, por qué el kernel tiene en cuenta el modelo, para qué sirve la referencia escalar y cómo funcionan los búferes y el reescalado."
+---
+
+# Diseño
+
+Rove es un único crate de Rust. Calcula la verosimilitud de un árbol binario enraizado bajo el modelo Mk para una matriz de caracteres discretos. Las decisiones siguientes son las que ya se ven en el código. El trabajo de SIMD y rutas rápidas que preparan está en el [roadmap](./roadmap).
+
+## Disposición por patrones
+
+Un kernel de verosimilitud pasa su tiempo multiplicando matrices de transición por verosimilitudes parciales. Los kernels de CPU de BEAGLE vectorizan a lo largo de los estados y están especializados para cuatro estados, lo que conviene a los nucleótidos. Las matrices morfológicas son en su mayoría caracteres binarios y ternarios, así que esos kernels toman la ruta genérica con relleno.
+
+Rove almacena los parciales al revés. Para cada categoría de tasa y cada estado hay una secuencia contigua de valores, uno por patrón de sitio, rellenada hasta un múltiplo de ocho lanes. El bucle interno recorre los patrones, así que tiene la misma forma para dos estados que para sesenta y uno.
+
+`Layout` describe esa organización: el número de estados, categorías de tasa y patrones, y el stride con relleno. `offset(category, state)` da el inicio de una secuencia.
+
+## Rutas rápidas específicas del modelo
+
+Mk tiene una forma cerrada. La matriz de transición de una rama es `P(t) = e·I + (1 − e)·π`, donde `e` depende solo de la longitud de rama y `π` contiene las frecuencias de estados. Multiplicarla por un vector cuesta O(k) por patrón en lugar de O(k²).
+
+Hoy `model::Mk` produce la matriz completa y el kernel la multiplica de forma genérica. La forma cerrada se comprueba contra la fórmula de Lewis. Las mediciones de línea base y la corrección de ascertainment de Mkv preceden a la ruta directa de Mk en el [roadmap](./roadmap).
+
+## Una referencia escalar, siempre
+
+`reference::Problem` es una implementación recursiva simple del algoritmo de poda de Felsenstein. Es lenta y simple a propósito. Las pruebas de igualdad construyen árboles aleatorios y comparan `LikelihoodCore` con ella, con estados en los terminales y con parciales en los terminales, con y sin reescalado, a una tolerancia relativa de 1e-9.
+
+Cada ruta optimizada que se añada después tiene que pasar las mismas pruebas. La referencia se queda.
+
+## Búferes dobles y reescalado
+
+Cada nodo posee dos búferes para parciales y dos para matrices de transición. Antes de que una propuesta sobrescriba un nodo, `set_node_partials_for_update` o `set_node_matrix_for_update` cambia ese nodo a su otro búfer, de modo que los valores anteriores sobreviven. `store` registra qué búferes son los actuales. `restore` recupera ese conjunto intercambiando, `unstore` copiando. Aceptar un movimiento no cuesta nada. Esto es lo que un muestreador MCMC necesita para rechazar un movimiento a bajo costo.
+
+Con `Scaling::Always`, los parciales de cada nodo interno se dividen por su máximo por patrón después de calcularse, y el logaritmo de ese máximo se guarda por nodo. La log-verosimilitud vuelve a sumar los factores de escala. Sin escalado, en árboles profundos se produce underflow.
+
+## Primero NEON, después AVX2
+
+La disposición existe para que el bucle interno pueda vectorizarse. El plan es NEON en Apple silicon primero y AVX2 después, con el código escalar conservado como referencia y respaldo. Ninguno de los dos existe aún; el kernel actual es Rust escalar.
+
+## Un solo crate
+
+Rove no depende de BEAST ni de BEAGLE. BEAST es una referencia de validación y benchmarking. Una C ABI para BEAGLE y un adaptador de `LikelihoodCore` de BEAST 2 sobre JNI son posibles rutas de compatibilidad. El núcleo en Rust no requiere ninguno de los dos, y ninguno se está construyendo ahora.
+
+## Fuera de alcance
+
+Competir con el backend CUDA de BEAGLE en alineamientos grandes de nucleótidos. Para eso, usa la GPU.

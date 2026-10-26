@@ -31,7 +31,7 @@ features:
     link: /guide/design
     linkText: The design
   - title: Mk, in closed form
-    details: The Mk model ships with its closed-form transition matrix. A fast path that skips the generic k×k product is the next step on the roadmap.
+    details: The Mk model ships with its closed-form transition matrix. A fast path that skips the generic k×k product is on the roadmap.
     link: /guide/roadmap
     linkText: The roadmap
   - title: Checked against a reference

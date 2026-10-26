@@ -11,16 +11,20 @@ BEAST is a validation and benchmarking reference. Optional BEAST or BEAGLE
 adapters must not become dependencies of the standalone Rust engine.
 Distinguish BEAST 2 from BEAST X in issues, experiments, and results.
 
-VitePress is currently a placeholder. Keep public documentation proportional
-to implemented features; do not document planned behavior as available.
+The documentation site under `docs/` is published in English, Brazilian
+Portuguese, Spanish and Simplified Chinese. English is the source; the
+`pt-BR`, `es` and `zh-CN` trees are translations of it and change together
+with it. Keep public documentation proportional to implemented features; do
+not document planned behavior as available.
 
 ## Language and writing
 
 - Write code, identifiers, comments, public documentation, issues, PRs, commit
   messages, and release notes in English.
-- Use Portuguese in an artifact only when the user explicitly requests it.
-  The two private learning documents already have that exception. Reply to
-  the user in the language of the conversation.
+- Outside the documentation site's translated trees, use Portuguese in an
+  artifact only when the user explicitly requests it. The two private
+  learning documents already have that exception. Reply to the user in the
+  language of the conversation.
 - Write directly and specifically. Describe the actual problem, change, and
   evidence. Avoid promotional claims, stock introductions, and filler.
 - Use short, imperative commit subjects. Add a body when context is needed.

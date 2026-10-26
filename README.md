@@ -87,7 +87,7 @@ uncertainty and polymorphism handling, and partition-aware compression.
 
 ## Website
 
-The documentation site at [rove.getcortexlabs.com](https://rove.getcortexlabs.com/) uses VitePress. It documents what the crate does today; planned work is on its roadmap page.
+The documentation site at [rove.getcortexlabs.com](https://rove.getcortexlabs.com/) uses VitePress, in English, Portuguese, Spanish and Chinese. It documents what the crate does today; planned work is on its roadmap page.
 
 ```sh
 npm ci

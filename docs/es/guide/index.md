@@ -1,0 +1,50 @@
+---
+description: "Rove es un proyecto de inferencia filogenética en Rust, pensado primero para ARM. Por qué empieza con un kernel de verosimilitud para datos morfológicos, qué existe hoy y qué no."
+---
+
+# ¿Qué es Rove?
+
+Rove es un proyecto de inferencia filogenética escrito en Rust. Empieza con un kernel de verosimilitud para datos morfológicos, diseñado primero para CPUs ARM. El objetivo es la inferencia independiente: ejecutar un análisis desde una matriz de caracteres hasta una muestra de árboles sin depender de BEAST.
+
+El nombre viene de explorar, recorrer y descubrir caminos.
+
+::: info Estado del proyecto
+Etapa inicial. El núcleo de verosimilitud, el lector de NEXUS, la compresión de patrones y las pruebas numéricas están implementados. Hay un experimento de referencia con BEAST 2.7.8 documentado. La inferencia independiente, las rutas de código SIMD y las comparaciones de rendimiento entre motores siguen siendo trabajo futuro. El trabajo se sigue en los [issues](https://github.com/getcortexlabs/rove/issues).
+:::
+
+## Por qué otro kernel
+
+Los espacios de estados pequeños y los alineamientos morfológicos cortos merecen medirse como una carga de trabajo propia.
+
+- Mk tiene una forma cerrada, `P(t) = e·I + (1 − e)·π`, que permite una actualización O(k) por hijo y por patrón en lugar de una multiplicación de matrices O(k²) completa. El crate actual construye estas matrices; la ruta de poda directa está planificada.
+- La vectorización específica para ARM y la reutilización de cálculos repetidos son optimizaciones candidatas. Su valor requiere benchmarks comparables, que incluyan los costos de preparación y de actualización parcial.
+- La referencia documentada con BEAST 2.7.8 usó su núcleo de verosimilitud en Java. Esa observación no establece el backend que usa cada versión, instalación o modelo de BEAST.
+
+Rove parte de los datos: una disposición que vectoriza a lo largo de los patrones de sitio, y rutas rápidas para los modelos que usan los morfólogos. La página de [diseño](./design) recorre las decisiones.
+
+## Lo que existe hoy
+
+El repositorio es un único crate de Rust sin dependencias en tiempo de ejecución.
+
+- `LikelihoodCore`: poda de Felsenstein sobre una disposición por patrones, con categorías de tasa, reescalado opcional por nodo y guardado/restauración del estado de los nodos para un muestreador.
+- `model::Mk`: el modelo Mk con su matriz de transición en forma cerrada, para frecuencias de estados uniformes o personalizadas.
+- `reference::Problem`: una implementación recursiva simple que se conserva como referencia en las pruebas.
+- `nexus::parse` y `data::Matrix::compress`: entrada morfológica, observaciones preservadas, particiones explícitas y patrones de sitio ponderados. Ver [Lectura de NEXUS](./nexus).
+- Pruebas de propiedades que comparan el núcleo con la referencia en árboles aleatorios de 2 a 10 terminales, 2 a 6 estados y 1 a 4 categorías de tasa.
+- Una matriz sintética de control positivo de 20 taxones y 50 caracteres binarios, con el script que la genera y variantes degradadas.
+
+La página del [núcleo de verosimilitud](./kernel) muestra cómo llamarlo. La página de [matrices sintéticas](./fixtures) describe el control.
+
+## Lo que aún no existe
+
+- Inferencia independiente: propuestas de árboles, MCMC, priors y modelos de reloj.
+- La ruta rápida de la forma cerrada de Mk dentro del kernel, y la corrección de ascertainment de Mkv.
+- Rutas de código NEON o AVX2. El kernel actual es Rust escalar; la disposición está preparada para la vectorización.
+- Comparaciones de rendimiento entre motores con BEAST o BEAGLE.
+- Una interfaz de usuario y los adaptadores opcionales para BEAST 2 o BEAGLE.
+
+Nada de esta lista se documenta como disponible en ningún lugar de este sitio. El [roadmap](./roadmap) indica el orden.
+
+## BEAST, como referencia
+
+BEAST no es una dependencia. Es la referencia para validación y benchmarking: primero se comparan verosimilitudes en estados fijos, después ejecuciones de inferencia completas. BEAST 2 y BEAST X son bases de código distintas, y los resultados de una no establecen los de la otra, así que las comparaciones nombran la implementación y la versión contra las que se ejecutaron.
