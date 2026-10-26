@@ -5,7 +5,7 @@ edition = "2024"
 rust-version = "1.85"
 description = "ARM-first phylogenetic likelihood kernel in Rust for morphological inference."
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/rafaelaugustos/rove"
+repository = "https://github.com/getcortexlabs/rove"
 keywords = ["phylogenetics", "likelihood", "simd", "bioinformatics"]
 categories = ["science"]
 

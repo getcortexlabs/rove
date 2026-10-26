@@ -6,6 +6,8 @@
 
 <p align="center">Explore evolutionary paths.</p>
 
+<p align="center"><a href="https://rove.getcortexlabs.com/">Website</a> · <a href="https://github.com/getcortexlabs/rove">GitHub</a></p>
+
 Rove is an ARM-first phylogenetic inference project written in Rust, starting
 with a likelihood kernel for morphological data. The name comes from exploring,
 wandering, and discovering paths.
@@ -19,7 +21,7 @@ integration remains a possible compatibility path.
 
 Early. The likelihood core and numerical tests are implemented; standalone
 inference and integrations are not. Work is tracked in the
-[issues](https://github.com/rafaelaugustos/rove/issues).
+[issues](https://github.com/getcortexlabs/rove/issues).
 
 ## Why
 
@@ -66,6 +68,17 @@ regenerates it and produces degraded variants. See `fixtures/synthetic/README.md
 5. Benchmarks on a 90 x 250 morphological matrix and on BEAGLE's `synthetictest`.
 6. Standalone inference engine.
 7. Optional BEAST 2 package (`LikelihoodCore` over JNI) and BEAGLE C ABI.
+
+## Website
+
+The documentation site at [rove.getcortexlabs.com](https://rove.getcortexlabs.com/) uses VitePress. It documents what the crate does today; planned work is on its roadmap page.
+
+```sh
+npm ci
+npm run docs:dev
+```
+
+Build with `npm run docs:build`; preview the build with `npm run docs:preview`.
 
 ## License
 

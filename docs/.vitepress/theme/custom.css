@@ -1,0 +1,79 @@
+:root {
+  --vp-c-brand-1: #2f5fe6;
+  --vp-c-brand-2: #4a78f0;
+  --vp-c-brand-3: #2f5fe6;
+  --vp-c-brand-soft: rgba(47, 95, 230, 0.12);
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #8b3ff5 0%, #2f6bff 55%, #1ec8ea 100%);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, #d2b8ff 10%, #9dbcff 50%, #a4f0ff 90%);
+  --vp-home-hero-image-filter: blur(68px);
+}
+
+.dark {
+  --vp-c-brand-1: #7faaff;
+  --vp-c-brand-2: #6c9cff;
+  --vp-c-brand-3: #2f5fe6;
+  --vp-c-brand-soft: rgba(127, 170, 255, 0.14);
+  --vp-home-hero-name-background: linear-gradient(120deg, #c084fc 0%, #60a5fa 55%, #22d3ee 100%);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, #3b1d7a 10%, #1b2f7a 50%, #0b4b63 90%);
+}
+
+.development-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  padding: 2px 7px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 5px;
+  color: var(--vp-c-text-2);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.VPHero .image-src {
+  width: auto;
+  height: 300px;
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(47, 95, 230, 0.18));
+}
+
+.VPHero .image-bg { opacity: 0.7; }
+.dark .VPHero .image-bg { opacity: 0.5; }
+
+.VPFeatures .VPFeature {
+  border-color: var(--vp-c-divider);
+  background: var(--vp-c-bg);
+}
+.VPFeatures a.VPFeature:hover {
+  border-color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+}
+
+.home-status {
+  margin-top: 32px;
+}
+.home-status .custom-block { margin-bottom: 0; }
+.home-status .custom-block p { font-size: 14px; }
+
+@media (min-width: 960px) {
+  .VPHero .image-container { height: 360px; transform: translate(0, -24px); }
+  .VPHero .image-src { height: 340px; max-height: 340px; }
+}
+@media (max-width: 959px) {
+  .VPHero .image { margin: -24px 0 32px; }
+  .VPHero .image-container { width: 100%; max-width: 392px; height: 260px; }
+  .VPHero .image-src { height: 240px; max-height: 240px; }
+}
+@media (max-width: 639px) {
+  .VPHero .image-container { height: 200px; }
+  .VPHero .image-src { height: 180px; max-height: 180px; }
+  .development-badge { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
