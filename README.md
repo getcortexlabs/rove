@@ -78,9 +78,11 @@ other when reproducing a result.
 1. Establish the scalar core, tests, CI and BEAST reference. Done.
 2. Read morphological NEXUS and compress observed patterns. Done.
 3. Record the Rust kernel baseline and add the Mkv correction. Done.
-4. Add direct Mk pruning and NEON, measuring each change.
-5. Build standalone MCMC, then the relaxed-clock reference model.
-6. Validate complete inference and evaluate subtree repeats.
+4. Add direct Mk pruning, measuring the change.
+5. Build a minimal standalone MCMC, then add NEON where its profiles show
+   kernel time.
+6. Add the relaxed-clock reference model, validate complete inference and
+   evaluate subtree repeats.
 7. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 
 ## Reading a matrix

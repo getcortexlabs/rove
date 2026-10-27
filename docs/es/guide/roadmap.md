@@ -16,8 +16,8 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Benchmarks de inferencia completa y entre motores | Pendiente, #8 |
 | Corrección de ascertainment de Mkv | Hecho |
 | Poda directa de Mk | Siguiente, #4 |
-| Vectorización NEON | Planificado, #5 |
 | MCMC independiente mínimo | Planificado, #15 |
+| Vectorización NEON | Planificado, #5 |
 | Modelo de referencia con reloj relajado | Planificado, #16 |
 | Validación de la inferencia completa | Planificado, #12 |
 | Evaluación de repeticiones dentro de subárboles | Planificado, #17 |
@@ -33,7 +33,7 @@ La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main
 
 Mkv condiciona la verosimilitud al proceso de observación para matrices con solo caracteres variables. Reproduce los dos estados archivados de BEAST, y sus patrones constantes se mantienen separados de los pesos de los patrones observados.
 
-A continuación, la ruta directa de Mk puede reemplazar la multiplicación genérica de matrices, seguida de NEON en Apple silicon. La implementación escalar sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
+A continuación, la ruta directa de Mk puede reemplazar la multiplicación genérica de matrices. NEON en Apple silicon llega después del muestreador mínimo, para que los perfiles de ejecuciones completas muestren dónde pesa el tiempo del kernel. La implementación escalar sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
 
 ## Inferencia independiente
 

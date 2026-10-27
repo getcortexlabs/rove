@@ -16,8 +16,8 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Full-inference and cross-engine benchmarks | Pending, #8 |
 | Mkv ascertainment correction | Done |
 | Direct Mk pruning | Next, #4 |
-| NEON vectorisation | Planned, #5 |
 | Minimal standalone MCMC | Planned, #15 |
+| NEON vectorisation | Planned, #5 |
 | Relaxed-clock reference model | Planned, #16 |
 | Complete inference validation | Planned, #12 |
 | Evaluation of repeats within subtrees | Planned, #17 |
@@ -33,7 +33,7 @@ The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benc
 
 Mkv conditions the likelihood on the observation process for variable-only matrices. It reproduces both archived BEAST states, and its constant patterns stay separate from the observed pattern weights.
 
-Next, the direct Mk path can replace generic matrix multiplication, followed by NEON on Apple silicon. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
+Next, the direct Mk path can replace generic matrix multiplication. NEON on Apple silicon follows the minimal sampler, so that profiles of complete runs can show where kernel time matters. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
 
 ## Standalone inference
 
