@@ -78,6 +78,6 @@ assert_eq!(patterns.weights().iter().sum::<usize>(), 50);
 
 Compression compares complete cell observations, including their kind. Missing and uncertain cells remain separate patterns even when their likelihood masks match. Identical columns across partitions also remain separate. This preserves the original observations through the matrix and mapping, at the cost of occasionally retaining redundant calculations.
 
-Only observed columns are compressed. Constant and missing-only columns remain present, and no artificial ascertainment patterns are added. The Mkv correction is separate work in [#14](https://github.com/getcortexlabs/rove/issues/14).
+Only observed columns are compressed. Constant and missing-only columns remain present, and no artificial ascertainment patterns are added. The [Mkv correction](./kernel#conditioning-on-variable-characters) appends its constant patterns separately and rejects characters that could be constant.
 
 Tests read both [20 × 50 fixtures](./fixtures), reconstruct their columns from the pattern mapping, and compare compressed and uncompressed likelihoods on generated matrices with uncertain and missing data.

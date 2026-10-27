@@ -18,11 +18,11 @@ Rove stores partials the other way round. For each rate category and each state 
 
 Mk has a closed form. The transition matrix for a branch is `P(t) = e·I + (1 − e)·π`, where `e` depends only on the branch length and `π` holds the state frequencies. Multiplying that into a vector costs O(k) per pattern instead of O(k²).
 
-Today `model::Mk` produces the full matrix and the kernel multiplies it generically. The closed form is tested against Lewis' formula. Baseline measurements and the Mkv ascertainment correction precede the direct Mk path on the [roadmap](./roadmap).
+Today `model::Mk` produces the full matrix and the kernel multiplies it generically. The closed form is tested against Lewis' formula. The direct Mk path is next on the [roadmap](./roadmap).
 
 ## A scalar reference, always
 
-`reference::Problem` is a plain recursive implementation of Felsenstein's pruning algorithm. It is slow and simple on purpose. The equality tests build random trees and compare `LikelihoodCore` against it, with tip states and with tip partials, with and without rescaling, to a relative tolerance of 1e-9.
+`reference::Problem` is a plain recursive implementation of Felsenstein's pruning algorithm. It is slow and simple on purpose. The equality tests build random trees and compare `LikelihoodCore` against it, with tip states and with tip partials, with and without rescaling, to a relative tolerance of 1e-9. `variable_log_likelihood` applies the Mkv correction in the same direct way.
 
 Every optimised path added later has to pass the same tests. The reference stays.
 
@@ -31,6 +31,10 @@ Every optimised path added later has to pass the same tests. The reference stays
 Each node owns two buffers for partials and two for transition matrices. Before a proposal overwrites a node, `set_node_partials_for_update` or `set_node_matrix_for_update` flips that node to its other buffer, so the previous values survive. `store` records which buffers are current. `restore` brings that set back by swapping, `unstore` by copying. Accepting a move costs nothing. This is what an MCMC sampler needs to reject a move cheaply.
 
 With `Scaling::Always`, each internal node's partials are divided by their per-pattern maximum after they are computed, and the logarithm of that maximum is kept per node. The log likelihood adds the scalers back. Without scaling, deep trees underflow.
+
+## Constant patterns in the same core
+
+The Mkv correction needs the probability of each constant pattern under the same tree, rates and scaling as the observations. Rove appends those patterns to the core's tip inputs instead of computing them separately, so partial updates, rescaling and store/restore cover them unchanged. For the 20 × 50 reference, the two extra patterns raise the padded stride from 24 to 32, so each node update covers a third more lanes.
 
 ## NEON first, AVX2 second
 

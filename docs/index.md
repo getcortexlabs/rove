@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Early
-The likelihood core, the Mk model and the equality tests are implemented. Standalone inference, SIMD paths and benchmarks are not. [See what exists today →](/guide/#what-exists-today)
+The likelihood core, the Mk model with the Mkv correction and the equality tests are implemented. Standalone inference, SIMD paths and cross-engine comparisons are not. [See what exists today →](/guide/#what-exists-today)
 :::
 
 </div>

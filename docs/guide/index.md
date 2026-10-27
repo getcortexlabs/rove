@@ -9,7 +9,7 @@ Rove is a phylogenetic inference project written in Rust. It starts with a likel
 The name comes from exploring, wandering and discovering paths.
 
 ::: info Project status
-Early. The likelihood core, NEXUS reader, pattern compression and numerical tests are implemented. A BEAST 2.7.8 reference experiment is recorded. Standalone inference, SIMD code paths and cross-engine performance comparisons remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
+Early. The likelihood core, the Mkv correction, the NEXUS reader, pattern compression and numerical tests are implemented. A BEAST 2.7.8 reference experiment is recorded. Standalone inference, SIMD code paths and cross-engine performance comparisons remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Why another kernel
@@ -28,6 +28,7 @@ The repository is one Rust crate with no runtime dependencies.
 
 - `LikelihoodCore`: Felsenstein pruning over a pattern-major layout, with rate categories, optional per-node rescaling and store/restore of node state for a sampler.
 - `model::Mk`: the Mk model with its closed-form transition matrix, for uniform or custom state frequencies.
+- `ascertainment::VariableCharacters`: the Mkv correction for matrices of variable characters, checked against two fixed BEAST 2.7.8 states.
 - `reference::Problem`: a plain recursive implementation kept as the reference in tests.
 - `nexus::parse` and `data::Matrix::compress`: morphological input, preserved observations, explicit partitions and weighted site patterns. See [Reading NEXUS](./nexus).
 - Property tests that compare the core against the reference on random trees with 2 to 10 tips, 2 to 6 states and 1 to 4 rate categories.
@@ -38,7 +39,7 @@ The [likelihood core](./kernel) page shows how to call it. The [synthetic matric
 ## What does not exist yet
 
 - Standalone inference: tree proposals, MCMC, priors and clock models.
-- The Mk closed-form fast path inside the kernel, and the Mkv ascertainment correction.
+- The Mk closed-form fast path inside the kernel.
 - NEON or AVX2 code paths. The current kernel is scalar Rust; the layout is prepared for vectorisation.
 - Cross-engine performance comparisons with BEAST or BEAGLE.
 - A user interface and the optional BEAST 2 or BEAGLE adapters.

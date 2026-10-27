@@ -19,9 +19,9 @@ integration remains a possible compatibility path.
 
 ## Status
 
-Early. The likelihood core, morphological NEXUS reader, pattern compression
-and numerical tests are implemented; standalone inference and integrations are
-not. Work is tracked in the
+Early. The likelihood core, the Mkv correction, the morphological NEXUS reader,
+pattern compression and numerical tests are implemented; standalone inference
+and integrations are not. Work is tracked in the
 [issues](https://github.com/getcortexlabs/rove/issues).
 
 ## Why
@@ -43,12 +43,16 @@ The [Rust baseline on Apple M4 Max](benchmarks/rove/2026-10-26/README.md)
 measures 11 workloads, separating setup, full evaluations, partial updates and
 proposal bookkeeping. It includes raw samples and the variation between runs.
 
+With the [Mkv correction](docs/guide/kernel.md#conditioning-on-variable-characters),
+Rove reproduces the likelihood of both archived BEAST states for the reference
+dataset, pattern by pattern.
+
 ## Design
 
 - Pattern-major layout: one contiguous array per state per rate category, so
   the inner loop vectorises across site patterns, not states. Works for k=2
   as well as k=61.
-- Model-aware fast paths, starting with Mk and Mkv (ascertainment correction).
+- Model-aware fast paths, starting with Mk.
 - NEON first, AVX2 second. Scalar fallback always available and used as the
   reference in tests.
 - One crate today. Optional BEAGLE C ABI and BEAST 2 JNI adapters are planned;
@@ -73,7 +77,7 @@ other when reproducing a result.
 
 1. Establish the scalar core, tests, CI and BEAST reference. Done.
 2. Read morphological NEXUS and compress observed patterns. Done.
-3. Rust kernel baseline recorded; implement and validate Mkv correction next.
+3. Record the Rust kernel baseline and add the Mkv correction. Done.
 4. Add direct Mk pruning and NEON, measuring each change.
 5. Build standalone MCMC, then the relaxed-clock reference model.
 6. Validate complete inference and evaluate subtree repeats.

@@ -78,6 +78,6 @@ assert_eq!(patterns.weights().iter().sum::<usize>(), 50);
 
 La compresión compara las observaciones completas de las celdas, incluido su tipo. Las celdas faltantes e inciertas siguen siendo patrones separados aunque sus máscaras de verosimilitud coincidan. Las columnas idénticas entre particiones también siguen separadas. Esto preserva las observaciones originales a través de la matriz y la correspondencia, al costo de conservar ocasionalmente cálculos redundantes.
 
-Solo se comprimen las columnas observadas. Las columnas constantes y las que solo tienen datos faltantes permanecen, y no se añaden patrones artificiales de ascertainment. La corrección de Mkv es trabajo separado en [#14](https://github.com/getcortexlabs/rove/issues/14).
+Solo se comprimen las columnas observadas. Las columnas constantes y las que solo tienen datos faltantes permanecen, y no se añaden patrones artificiales de ascertainment. La [corrección Mkv](./kernel#condicionar-a-caracteres-variables) añade sus patrones constantes por separado y rechaza los caracteres que podrían ser constantes.
 
 Las pruebas leen ambos [fixtures de 20 × 50](./fixtures), reconstruyen sus columnas a partir de la correspondencia de patrones y comparan verosimilitudes comprimidas y sin comprimir sobre matrices generadas con datos inciertos y faltantes.

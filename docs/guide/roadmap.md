@@ -14,8 +14,8 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Morphological NEXUS and observed-pattern compression | Done |
 | Rust kernel benchmark baseline | Done, #8 |
 | Full-inference and cross-engine benchmarks | Pending, #8 |
-| Mkv ascertainment correction | Next, #14 |
-| Direct Mk pruning | Planned, #4 |
+| Mkv ascertainment correction | Done |
+| Direct Mk pruning | Next, #4 |
 | NEON vectorisation | Planned, #5 |
 | Minimal standalone MCMC | Planned, #15 |
 | Relaxed-clock reference model | Planned, #16 |
@@ -27,13 +27,13 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 
 The [core](./kernel) is checked against an independent scalar implementation. The [NEXUS reader](./nexus) supplies weighted observations without BEAST. The [reference experiment](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) records exact inputs, model settings, two completed BEAST runs and fixed numerical states.
 
-The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) records 11 Rust workloads, separating setup, full evaluations, partial updates and proposal bookkeeping. Raw samples, allocation observations and variation across three processes are included. Mkv correctness comes next. Full-inference and cross-engine comparisons remain pending; no cross-engine speedup has been measured.
+The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) records 11 Rust workloads, separating setup, full evaluations, partial updates and proposal bookkeeping. Raw samples, allocation observations and variation across three processes are included. Full-inference and cross-engine comparisons remain pending; no cross-engine speedup has been measured.
 
 ## Correctness before optimization
 
-Mkv conditions the likelihood on the observation process for variable-only matrices. It needs its own tests against the fixed reference states; artificial ascertainment patterns must remain separate from observed pattern weights.
+Mkv conditions the likelihood on the observation process for variable-only matrices. It reproduces both archived BEAST states, and its constant patterns stay separate from the observed pattern weights.
 
-Then the direct Mk path can replace generic matrix multiplication, followed by NEON on Apple silicon. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
+Next, the direct Mk path can replace generic matrix multiplication, followed by NEON on Apple silicon. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
 
 ## Standalone inference
 

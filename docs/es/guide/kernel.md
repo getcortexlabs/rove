@@ -1,5 +1,5 @@
 ---
-description: "Qué calcula hoy el núcleo de verosimilitud de Rove y cómo llamarlo desde Rust: terminales, matrices de transición, parciales, reescalado y la log-verosimilitud."
+description: "Qué calcula hoy el núcleo de verosimilitud de Rove y cómo llamarlo desde Rust: terminales, matrices de transición, parciales, la corrección Mkv, reescalado y la log-verosimilitud."
 ---
 
 # El núcleo de verosimilitud
@@ -7,7 +7,7 @@ description: "Qué calcula hoy el núcleo de verosimilitud de Rove y cómo llama
 `LikelihoodCore` calcula la log-verosimilitud de un árbol binario enraizado para una matriz de patrones de sitio, dada una matriz de transición por rama y por categoría de tasa. Esta página describe la API tal como existe en el repositorio. Todavía no hay un crate en crates.io; para probarlo, usa el repositorio como dependencia de Git.
 
 ::: info Alcance
-El núcleo recibe matrices de transición y datos de los terminales y devuelve verosimilitudes. El [lector de NEXUS](./nexus), separado, prepara las observaciones y los pesos de los patrones. Las propuestas de árboles y el cálculo de tasas gamma siguen siendo trabajo futuro. Ver el [roadmap](./roadmap).
+El núcleo recibe matrices de transición y datos de los terminales y devuelve verosimilitudes. El [lector de NEXUS](./nexus), separado, prepara las observaciones y los pesos de los patrones, y la [corrección Mkv](#condicionar-a-caracteres-variables) condiciona la verosimilitud a caracteres variables. Las propuestas de árboles y el cálculo de tasas gamma siguen siendo trabajo futuro. Ver el [roadmap](./roadmap).
 :::
 
 ## Nodos y búferes
@@ -76,6 +76,67 @@ assert!((log_likelihood - -8.957188856221643).abs() < 1e-12);
 
 La implementación de referencia da el mismo valor para este árbol. Eso es lo que comprueban las pruebas de igualdad, con entradas aleatorias.
 
+## Condicionar a caracteres variables
+
+Las matrices morfológicas suelen conservar solo caracteres que varían entre los taxones. Su verosimilitud tiene que condicionarse a esa selección, como en el [modelo Mkv](https://doi.org/10.1080/106351501753462876) de Lewis. Si `Pₛ` es la probabilidad de que todos los taxones estén en el estado `s`, combinada sobre las categorías de tasa, cada patrón observado `i` con verosimilitud `Lᵢ` y peso `wᵢ` aporta
+
+```text
+wᵢ · (ln Lᵢ − ln(1 − Σₛ Pₛ))
+```
+
+`ascertainment::VariableCharacters` añade un patrón constante por estado declarado a las entradas de los terminales de una partición. El núcleo los evalúa junto con las observaciones, sobre el mismo árbol, con las mismas matrices de rama, pesos de categoría y factores de escala. No tienen peso de observación. Cuatro caracteres variables sobre el árbol del ejemplo anterior:
+
+```rust
+use rove::ascertainment::VariableCharacters;
+use rove::data::GapTreatment;
+use rove::model::Mk;
+use rove::{LikelihoodCore, Scaling, nexus};
+
+let input = "#NEXUS
+BEGIN DATA;
+  DIMENSIONS NTAX=3 NCHAR=4;
+  FORMAT SYMBOLS=\"01\" MISSING=?;
+  MATRIX
+    A 0011
+    B 0110
+    C 1?01
+  ;
+END;";
+let data = nexus::parse(input)?;
+let sites = 0..data.character_count();
+let patterns = data.compress(std::slice::from_ref(&sites), GapTreatment::Reject)?.remove(0);
+let variable = VariableCharacters::new(&patterns)?;
+
+// Nodos como antes. Cuatro patrones observados y después los dos constantes.
+let mut core = LikelihoodCore::new(2, variable.pattern_count(), 1, 5, Scaling::Always);
+for (tip, partials) in variable.tip_partials().iter().enumerate() {
+    core.set_tip_partials(tip, partials);
+}
+let model = Mk::uniform(2);
+let mut matrix = vec![0.0; 4];
+for (node, length) in [(0, 0.1), (1, 0.1), (2, 0.3), (3, 0.2)] {
+    model.transition_matrix(length, &mut matrix);
+    core.set_node_matrix(node, 0, &matrix);
+}
+core.calculate_partials(0, 1, 3);
+core.calculate_partials(3, 2, 4);
+
+core.integrate_partials(4, &[1.0]);
+let pattern_log_likelihoods = core.calculate_log_likelihoods(model.frequencies());
+let log_likelihood = variable.log_likelihood(pattern_log_likelihoods)?;
+assert!((log_likelihood - -6.353478344891801).abs() < 1e-12);
+```
+
+`log_variable_probability` devuelve solo la corrección, `ln(1 − Σₛ Pₛ)`.
+
+`VariableCharacters::new` rechaza un carácter que podría ser constante: aquel en el que todas las celdas, incluidas las faltantes y las inciertas, admiten el mismo estado. `0 ? 0` y `{01} 1 1` producen un error que identifica el carácter. `0 {12} 0` se acepta, porque varía sea cual sea el estado de la celda incierta. Toda forma de completar un carácter aceptado es variable, así que el resultado es la verosimilitud de las observaciones condicionada a que el carácter completo varíe. BEAST 2.7.8 trata de otra forma las columnas observadas idénticas a sus columnas constantes: emite un aviso y les asigna peso cero.
+
+Cada estado declarado tiene su propio patrón constante, incluidos los estados que ningún taxón presenta. Las particiones se condicionan por separado. El condicionamiento a caracteres informativos para parsimonia y las correcciones por carácter para datos faltantes no están implementados.
+
+Los patrones constantes pasan por la misma poda que las observaciones. Cuando concentran casi toda la probabilidad, como en árboles muy cortos, sus errores de redondeo se amplifican por `Σₛ Pₛ / (1 − Σₛ Pₛ)`, que supera 100 en los dos estados de referencia archivados. Con dos taxones a una distancia `d`, el error de cada log-probabilidad condicionada crece aproximadamente como `10⁻¹⁶ / d`. Si la probabilidad total de los patrones constantes queda a pocos errores de redondeo de uno, el resultado es `ascertainment::Error::UndefinedCorrection` en lugar de un número.
+
+En los dos estados archivados de BEAST 2.7.8 del [análisis de referencia](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md), Rove reproduce la log-verosimilitud de cada patrón, la corrección y la log-verosimilitud Mkv. La mayor diferencia, 4 × 10⁻¹², está en el valor Mkv.
+
 ## Reescalado
 
 Pasa `Scaling::Always` para dividir los parciales de cada nodo interno por su máximo por patrón a medida que se calculan. El logaritmo de cada máximo se guarda y se vuelve a sumar al final, de modo que el resultado coincide con el cálculo sin escalar, sin el underflow en árboles profundos. `Scaling::None` omite ese trabajo.
@@ -83,3 +144,5 @@ Pasa `Scaling::Always` para dividir los parciales de cada nodo interno por su m�
 ## Comprobarlo
 
 `cargo test` ejecuta las pruebas de propiedades de `tests/equality.rs`. Generan árboles aleatorios con 2 a 10 terminales, 2 a 6 estados, 1 a 4 categorías de tasa y hasta 40 patrones, y comparan el núcleo con `reference::Problem` en cuatro combinaciones: estados o parciales en los terminales, con o sin reescalado. Una prueba separada comprueba que `restore` recupera la verosimilitud calculada antes de una propuesta.
+
+`tests/ascertainment.rs` cubre la corrección Mkv: los estados archivados de BEAST, la enumeración completa de los patrones en árboles de dos a cuatro terminales, la forma cerrada para dos taxones a distancias de 10⁻⁸ a 1000, árboles aleatorios comparados con `reference::Problem::variable_log_likelihood`, caracteres que podrían ser constantes, la restauración tras una propuesta rechazada y la corrección indefinida en un árbol de longitud cero.

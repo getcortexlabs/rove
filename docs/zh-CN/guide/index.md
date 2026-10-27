@@ -9,7 +9,7 @@ Rove 是一个用 Rust 编写的系统发育推断项目。它从一个面向形
 这个名字来自探索、漫游与发现路径。
 
 ::: info 项目状态
-早期。似然核心、NEXUS 读取器、模式压缩和数值测试已经实现。已记录一次 BEAST 2.7.8 参考实验。独立推断、SIMD 代码路径和跨引擎性能比较仍是未来的工作。工作进展在 [issues](https://github.com/getcortexlabs/rove/issues) 中跟踪。
+早期。似然核心、Mkv 校正、NEXUS 读取器、模式压缩和数值测试已经实现。已记录一次 BEAST 2.7.8 参考实验。独立推断、SIMD 代码路径和跨引擎性能比较仍是未来的工作。工作进展在 [issues](https://github.com/getcortexlabs/rove/issues) 中跟踪。
 :::
 
 ## 为什么还要一个内核
@@ -28,6 +28,7 @@ Rove 则从数据出发：一种沿位点模式向量化的布局，以及针对
 
 - `LikelihoodCore`：在位点模式主序布局上的 Felsenstein 剪枝，支持速率类别、可选的逐节点重缩放，以及为采样器准备的节点状态存储/恢复。
 - `model::Mk`：带闭式解转移矩阵的 Mk 模型，支持均匀或自定义的状态频率。
+- `ascertainment::VariableCharacters`：针对可变性状矩阵的 Mkv 校正，已与两个固定的 BEAST 2.7.8 状态核对。
 - `reference::Problem`：一个朴素的递归实现，在测试中作为参考保留。
 - `nexus::parse` 与 `data::Matrix::compress`：形态学输入、保留的观测、显式分区和带权重的位点模式。见[读取 NEXUS](./nexus)。
 - 属性测试，在 2 到 10 个末端节点、2 到 6 个状态和 1 到 4 个速率类别的随机树上把核心与参考实现比较。
@@ -38,7 +39,7 @@ Rove 则从数据出发：一种沿位点模式向量化的布局，以及针对
 ## 还没有什么
 
 - 独立推断：树提议、MCMC、先验和时钟模型。
-- 内核中的 Mk 闭式解快速路径，以及 Mkv 确认偏差校正。
+- 内核中的 Mk 闭式解快速路径。
 - NEON 或 AVX2 代码路径。当前内核是标量 Rust；布局已为向量化做好准备。
 - 与 BEAST 或 BEAGLE 的跨引擎性能比较。
 - 用户界面，以及可选的 BEAST 2 或 BEAGLE 适配器。

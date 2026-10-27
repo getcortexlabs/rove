@@ -14,8 +14,8 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | NEXUS morfológico e compressão de padrões observados | Concluído |
 | Baseline do núcleo Rust | Concluído, #8 |
 | Benchmarks de inferência completa e entre motores | Pendente, #8 |
-| Correção de ascertainment Mkv | Próximo, #14 |
-| Poda direta do Mk | Planejado, #4 |
+| Correção de ascertainment Mkv | Concluído |
+| Poda direta do Mk | Próximo, #4 |
 | Vetorização NEON | Planejado, #5 |
 | MCMC independente mínimo | Planejado, #15 |
 | Modelo de referência com relógio relaxado | Planejado, #16 |
@@ -27,13 +27,13 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 
 O [núcleo](./kernel) é verificado contra uma implementação escalar independente. O [leitor de NEXUS](./nexus) fornece observações ponderadas sem o BEAST. O [experimento de referência](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) registra entradas exatas, configurações de modelo, duas execuções completas do BEAST e estados numéricos fixos.
 
-O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 cenários em Rust, separando preparação, avaliações completas, atualizações parciais e manutenção do estado das propostas. Inclui amostras brutas, observações de alocação e variação entre três processos. A correção Mkv vem a seguir. As comparações de inferência completa e entre motores continuam pendentes; nenhum ganho de velocidade entre motores foi medido.
+O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 cenários em Rust, separando preparação, avaliações completas, atualizações parciais e manutenção do estado das propostas. Inclui amostras brutas, observações de alocação e variação entre três processos. As comparações de inferência completa e entre motores continuam pendentes; nenhum ganho de velocidade entre motores foi medido.
 
 ## Corretude antes da otimização
 
-O Mkv condiciona a verossimilhança ao processo de observação em matrizes só com caracteres variáveis. Ele precisa de testes próprios contra os estados de referência fixos; padrões artificiais de ascertainment devem permanecer separados dos pesos dos padrões observados.
+O Mkv condiciona a verossimilhança ao processo de observação em matrizes só com caracteres variáveis. Ele reproduz os dois estados arquivados do BEAST, e seus padrões constantes ficam separados dos pesos dos padrões observados.
 
-Depois disso, o caminho direto do Mk pode substituir a multiplicação genérica de matrizes, seguido do NEON em Apple silicon. A implementação escalar continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
+A seguir, o caminho direto do Mk pode substituir a multiplicação genérica de matrizes, seguido do NEON em Apple silicon. A implementação escalar continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
 
 ## Inferência independente
 

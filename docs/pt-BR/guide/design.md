@@ -18,11 +18,11 @@ O Rove armazena as parciais no sentido inverso. Para cada categoria de taxa e ca
 
 O Mk tem forma fechada. A matriz de transição de um ramo é `P(t) = e·I + (1 − e)·π`, onde `e` depende apenas do comprimento de ramo e `π` contém as frequências de estados. Multiplicá-la por um vetor custa O(k) por padrão em vez de O(k²).
 
-Hoje `model::Mk` produz a matriz completa e o kernel a multiplica de forma genérica. A forma fechada é testada contra a fórmula de Lewis. Medições de baseline e a correção de ascertainment Mkv precedem o caminho direto do Mk no [roadmap](./roadmap).
+Hoje `model::Mk` produz a matriz completa e o kernel a multiplica de forma genérica. A forma fechada é testada contra a fórmula de Lewis. O caminho direto do Mk é o próximo passo no [roadmap](./roadmap).
 
 ## Uma referência escalar, sempre
 
-`reference::Problem` é uma implementação recursiva simples do algoritmo de poda de Felsenstein. É lenta e simples de propósito. Os testes de igualdade constroem árvores aleatórias e comparam `LikelihoodCore` com ela, com estados nos terminais e com parciais nos terminais, com e sem reescalonamento, a uma tolerância relativa de 1e-9.
+`reference::Problem` é uma implementação recursiva simples do algoritmo de poda de Felsenstein. É lenta e simples de propósito. Os testes de igualdade constroem árvores aleatórias e comparam `LikelihoodCore` com ela, com estados nos terminais e com parciais nos terminais, com e sem reescalonamento, a uma tolerância relativa de 1e-9. `variable_log_likelihood` aplica a correção Mkv da mesma forma direta.
 
 Todo caminho otimizado adicionado depois tem de passar nos mesmos testes. A referência permanece.
 
@@ -31,6 +31,10 @@ Todo caminho otimizado adicionado depois tem de passar nos mesmos testes. A refe
 Cada nó possui dois buffers para parciais e dois para matrizes de transição. Antes que uma proposta sobrescreva um nó, `set_node_partials_for_update` ou `set_node_matrix_for_update` alterna esse nó para o seu outro buffer, de modo que os valores anteriores sobrevivem. `store` registra quais buffers estão em uso. `restore` traz esse conjunto de volta trocando os buffers, `unstore` copiando. Aceitar um movimento não custa nada. É disso que um amostrador MCMC precisa para rejeitar um movimento a baixo custo.
 
 Com `Scaling::Always`, as parciais de cada nó interno são divididas pelo seu máximo por padrão depois de calculadas, e o logaritmo desse máximo é guardado por nó. A log-verossimilhança soma os fatores de escala de volta. Sem escalonamento, árvores profundas sofrem underflow.
+
+## Padrões constantes no mesmo núcleo
+
+A correção Mkv precisa da probabilidade de cada padrão constante sob a mesma árvore, as mesmas taxas e o mesmo escalonamento que as observações. O Rove acrescenta esses padrões às entradas dos terminais do núcleo em vez de calculá-los separadamente, de modo que atualizações parciais, reescalonamento e store/restore os cobrem sem mudanças. Na referência 20 × 50, os dois padrões extras aumentam o stride com padding de 24 para 32, e cada atualização de nó passa a cobrir um terço a mais de lanes.
 
 ## NEON primeiro, AVX2 depois
 

@@ -99,8 +99,9 @@ updates are also checked. CI runs those checks, verifies generated fixtures,
 and tests report aggregation; CI timings are not benchmark results.
 
 `tools/benchmarks/prepare.py` regenerates the simulated NEXUS and the numeric
-Rust fixture derived from the archived BEAST JSON. The generated Rust file is
-data, with node indices remapped into postorder. `--check` detects stale copies.
+Rust fixtures derived from the archived BEAST JSON: the benchmark state and
+both final states used by the Mkv tests. The generated Rust files are data,
+with node indices remapped into postorder. `--check` detects stale copies.
 
 ## Timing and allocations
 

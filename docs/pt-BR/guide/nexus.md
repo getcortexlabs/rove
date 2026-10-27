@@ -78,6 +78,6 @@ assert_eq!(patterns.weights().iter().sum::<usize>(), 50);
 
 A compressão compara as observações completas das células, incluindo seu tipo. Células faltantes e incertas permanecem como padrões separados mesmo quando suas máscaras de verossimilhança coincidem. Colunas idênticas em partições diferentes também permanecem separadas. Isso preserva as observações originais por meio da matriz e do mapeamento, ao custo de, ocasionalmente, manter cálculos redundantes.
 
-Apenas colunas observadas são comprimidas. Colunas constantes e colunas só com faltantes permanecem presentes, e nenhum padrão artificial de ascertainment é adicionado. A correção Mkv é um trabalho separado, em [#14](https://github.com/getcortexlabs/rove/issues/14).
+Apenas colunas observadas são comprimidas. Colunas constantes e colunas só com faltantes permanecem presentes, e nenhum padrão artificial de ascertainment é adicionado. A [correção Mkv](./kernel#condicionando-a-caracteres-variaveis) acrescenta seus padrões constantes separadamente e rejeita caracteres que poderiam ser constantes.
 
 Os testes leem as duas [fixtures 20 × 50](./fixtures), reconstroem suas colunas a partir do mapeamento de padrões e comparam verossimilhanças comprimidas e não comprimidas em matrizes geradas com dados incertos e faltantes.

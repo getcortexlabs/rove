@@ -9,7 +9,7 @@ O Rove é um projeto de inferência filogenética escrito em Rust. Ele começa c
 O nome vem de explorar, vagar e descobrir caminhos.
 
 ::: info Status do projeto
-Estágio inicial. O núcleo de verossimilhança, o leitor de NEXUS, a compressão de padrões e os testes numéricos estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. Inferência independente, caminhos de código SIMD e comparações de desempenho entre engines continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
+Estágio inicial. O núcleo de verossimilhança, a correção Mkv, o leitor de NEXUS, a compressão de padrões e os testes numéricos estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. Inferência independente, caminhos de código SIMD e comparações de desempenho entre engines continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Por que outro kernel
@@ -28,6 +28,7 @@ O repositório é uma única crate Rust, sem dependências em tempo de execuçã
 
 - `LikelihoodCore`: poda de Felsenstein sobre um layout pattern-major, com categorias de taxa, reescalonamento opcional por nó e store/restore do estado dos nós para um amostrador.
 - `model::Mk`: o modelo Mk com sua matriz de transição em forma fechada, para frequências de estados uniformes ou personalizadas.
+- `ascertainment::VariableCharacters`: a correção Mkv para matrizes de caracteres variáveis, verificada contra dois estados fixos do BEAST 2.7.8.
 - `reference::Problem`: uma implementação recursiva simples, mantida como referência nos testes.
 - `nexus::parse` e `data::Matrix::compress`: entrada morfológica, observações preservadas, partições explícitas e padrões de sítio ponderados. Veja [Lendo NEXUS](./nexus).
 - Testes de propriedade que comparam o núcleo com a referência em árvores aleatórias com 2 a 10 terminais, 2 a 6 estados e 1 a 4 categorias de taxa.
@@ -38,7 +39,7 @@ A página do [núcleo de verossimilhança](./kernel) mostra como chamá-lo. A p�
 ## O que ainda não existe
 
 - Inferência independente: propostas de árvore, MCMC, priors e modelos de relógio.
-- O caminho rápido de forma fechada do Mk dentro do kernel, e a correção de ascertainment Mkv.
+- O caminho rápido de forma fechada do Mk dentro do kernel.
 - Caminhos de código NEON ou AVX2. O kernel atual é Rust escalar; o layout está preparado para vetorização.
 - Comparações de desempenho entre engines com o BEAST ou o BEAGLE.
 - Uma interface de usuário e os adaptadores opcionais para BEAST 2 ou BEAGLE.

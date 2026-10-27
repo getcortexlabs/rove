@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Estágio inicial
-O núcleo de verossimilhança, o modelo Mk e os testes de igualdade estão implementados. Inferência independente, caminhos SIMD e benchmarks não estão. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
+O núcleo de verossimilhança, o modelo Mk com a correção Mkv e os testes de igualdade estão implementados. Inferência independente, caminhos SIMD e comparações entre motores não estão. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
 :::
 
 </div>

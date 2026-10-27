@@ -9,7 +9,7 @@ Rove es un proyecto de inferencia filogenética escrito en Rust. Empieza con un 
 El nombre viene de explorar, recorrer y descubrir caminos.
 
 ::: info Estado del proyecto
-Etapa inicial. El núcleo de verosimilitud, el lector de NEXUS, la compresión de patrones y las pruebas numéricas están implementados. Hay un experimento de referencia con BEAST 2.7.8 documentado. La inferencia independiente, las rutas de código SIMD y las comparaciones de rendimiento entre motores siguen siendo trabajo futuro. El trabajo se sigue en los [issues](https://github.com/getcortexlabs/rove/issues).
+Etapa inicial. El núcleo de verosimilitud, la corrección Mkv, el lector de NEXUS, la compresión de patrones y las pruebas numéricas están implementados. Hay un experimento de referencia con BEAST 2.7.8 documentado. La inferencia independiente, las rutas de código SIMD y las comparaciones de rendimiento entre motores siguen siendo trabajo futuro. El trabajo se sigue en los [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Por qué otro kernel
@@ -28,6 +28,7 @@ El repositorio es un único crate de Rust sin dependencias en tiempo de ejecuci�
 
 - `LikelihoodCore`: poda de Felsenstein sobre una disposición por patrones, con categorías de tasa, reescalado opcional por nodo y guardado/restauración del estado de los nodos para un muestreador.
 - `model::Mk`: el modelo Mk con su matriz de transición en forma cerrada, para frecuencias de estados uniformes o personalizadas.
+- `ascertainment::VariableCharacters`: la corrección Mkv para matrices de caracteres variables, comprobada contra dos estados fijos de BEAST 2.7.8.
 - `reference::Problem`: una implementación recursiva simple que se conserva como referencia en las pruebas.
 - `nexus::parse` y `data::Matrix::compress`: entrada morfológica, observaciones preservadas, particiones explícitas y patrones de sitio ponderados. Ver [Lectura de NEXUS](./nexus).
 - Pruebas de propiedades que comparan el núcleo con la referencia en árboles aleatorios de 2 a 10 terminales, 2 a 6 estados y 1 a 4 categorías de tasa.
@@ -38,7 +39,7 @@ La página del [núcleo de verosimilitud](./kernel) muestra cómo llamarlo. La p
 ## Lo que aún no existe
 
 - Inferencia independiente: propuestas de árboles, MCMC, priors y modelos de reloj.
-- La ruta rápida de la forma cerrada de Mk dentro del kernel, y la corrección de ascertainment de Mkv.
+- La ruta rápida de la forma cerrada de Mk dentro del kernel.
 - Rutas de código NEON o AVX2. El kernel actual es Rust escalar; la disposición está preparada para la vectorización.
 - Comparaciones de rendimiento entre motores con BEAST o BEAGLE.
 - Una interfaz de usuario y los adaptadores opcionales para BEAST 2 o BEAGLE.
