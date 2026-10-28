@@ -9,7 +9,7 @@ Rove is a phylogenetic inference project written in Rust. It starts with a likel
 The name comes from exploring, wandering and discovering paths.
 
 ::: info Project status
-Early. The likelihood core with its direct Mk path, the Mkv correction, the NEXUS reader, pattern compression, numerical tests and a minimal standalone sampler are implemented. A BEAST 2.7.8 reference experiment is recorded. The relaxed-clock model of that experiment, SIMD code paths and cross-engine performance comparisons remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
+Early. The likelihood core with its direct Mk path, the Mkv correction, the NEXUS reader, pattern compression, numerical tests and a minimal standalone sampler are implemented. A BEAST 2.7.8 reference experiment is recorded. The relaxed-clock model of that experiment, SIMD code paths and controlled cross-engine benchmarks remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Why another kernel
@@ -41,7 +41,7 @@ The [likelihood core](./kernel) page shows how to call it. The [synthetic matric
 
 - The rest of the reference model: gamma rate variation and the relaxed clock, as well as multiple partitions.
 - NEON or AVX2 code paths. The current kernel is scalar Rust; the layout is prepared for vectorisation.
-- Cross-engine performance comparisons with BEAST or BEAGLE.
+- Controlled performance benchmarks against BEAST or BEAGLE.
 - A user interface and the optional BEAST 2 or BEAGLE adapters.
 
 Nothing on this list is documented as available anywhere on this site. The [roadmap](./roadmap) gives the order.

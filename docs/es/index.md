@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Etapa inicial
-El núcleo de verosimilitud con la ruta directa de Mk, la corrección Mkv, las pruebas de igualdad y un muestreador independiente mínimo están implementados. El modelo de reloj relajado, las rutas SIMD y las comparaciones de rendimiento entre motores no. [Ver lo que existe hoy →](/es/guide/#lo-que-existe-hoy)
+El núcleo de verosimilitud con la ruta directa de Mk, la corrección Mkv, las pruebas de igualdad y un muestreador independiente mínimo están implementados. El modelo de reloj relajado, las rutas SIMD y los benchmarks controlados entre motores no. [Ver lo que existe hoy →](/es/guide/#lo-que-existe-hoy)
 :::
 
 </div>

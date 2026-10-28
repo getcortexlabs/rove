@@ -1,0 +1,968 @@
+{
+  "posterior": -224.91633172527804,
+  "distributions": {
+    "BirthDeath.t:matriz_20x50": 31.281557696512493,
+    "BirthRatePrior.t:matriz_20x50": -6.907755278982137,
+    "DeathRatePrior.t:matriz_20x50": 0,
+    "likelihood": -249.2901341428084,
+    "morphTreeLikelihood.matriz_20x502": -249.2901341428084,
+    "posterior": -224.91633172527804,
+    "prior": 24.373802417530356,
+    "root.prior": 0
+  },
+  "parameters": {
+    "BDBirthRate.t:matriz_20x50": [
+      18.22758227603578
+    ],
+    "BDDeathRate.t:matriz_20x50": [
+      0.03682895075603852
+    ]
+  },
+  "taxa": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10",
+    "T11",
+    "T12",
+    "T13",
+    "T14",
+    "T15",
+    "T16",
+    "T17",
+    "T18",
+    "T19",
+    "T20"
+  ],
+  "root": 38,
+  "nodes": [
+    {
+      "index": 0,
+      "height": 0,
+      "children": [],
+      "taxon": "T1",
+      "branch_rate": 1
+    },
+    {
+      "index": 1,
+      "height": 0,
+      "children": [],
+      "taxon": "T2",
+      "branch_rate": 1
+    },
+    {
+      "index": 2,
+      "height": 0,
+      "children": [],
+      "taxon": "T3",
+      "branch_rate": 1
+    },
+    {
+      "index": 3,
+      "height": 0,
+      "children": [],
+      "taxon": "T4",
+      "branch_rate": 1
+    },
+    {
+      "index": 4,
+      "height": 0,
+      "children": [],
+      "taxon": "T5",
+      "branch_rate": 1
+    },
+    {
+      "index": 5,
+      "height": 0,
+      "children": [],
+      "taxon": "T6",
+      "branch_rate": 1
+    },
+    {
+      "index": 6,
+      "height": 0,
+      "children": [],
+      "taxon": "T7",
+      "branch_rate": 1
+    },
+    {
+      "index": 7,
+      "height": 0,
+      "children": [],
+      "taxon": "T8",
+      "branch_rate": 1
+    },
+    {
+      "index": 8,
+      "height": 0,
+      "children": [],
+      "taxon": "T9",
+      "branch_rate": 1
+    },
+    {
+      "index": 9,
+      "height": 0,
+      "children": [],
+      "taxon": "T10",
+      "branch_rate": 1
+    },
+    {
+      "index": 10,
+      "height": 0,
+      "children": [],
+      "taxon": "T11",
+      "branch_rate": 1
+    },
+    {
+      "index": 11,
+      "height": 0,
+      "children": [],
+      "taxon": "T12",
+      "branch_rate": 1
+    },
+    {
+      "index": 12,
+      "height": 0,
+      "children": [],
+      "taxon": "T13",
+      "branch_rate": 1
+    },
+    {
+      "index": 13,
+      "height": 0,
+      "children": [],
+      "taxon": "T14",
+      "branch_rate": 1
+    },
+    {
+      "index": 14,
+      "height": 0,
+      "children": [],
+      "taxon": "T15",
+      "branch_rate": 1
+    },
+    {
+      "index": 15,
+      "height": 0,
+      "children": [],
+      "taxon": "T16",
+      "branch_rate": 1
+    },
+    {
+      "index": 16,
+      "height": 0,
+      "children": [],
+      "taxon": "T17",
+      "branch_rate": 1
+    },
+    {
+      "index": 17,
+      "height": 0,
+      "children": [],
+      "taxon": "T18",
+      "branch_rate": 1
+    },
+    {
+      "index": 18,
+      "height": 0,
+      "children": [],
+      "taxon": "T19",
+      "branch_rate": 1
+    },
+    {
+      "index": 19,
+      "height": 0,
+      "children": [],
+      "taxon": "T20",
+      "branch_rate": 1
+    },
+    {
+      "index": 20,
+      "height": 0.024060791651285218,
+      "children": [
+        8,
+        9
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 21,
+      "height": 0.018240510731579618,
+      "children": [
+        6,
+        7
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 22,
+      "height": 0.10250149195505129,
+      "children": [
+        29,
+        35
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 23,
+      "height": 0.006942931728879359,
+      "children": [
+        12,
+        13
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 24,
+      "height": 0.023126831293623057,
+      "children": [
+        33,
+        30
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 25,
+      "height": 0.018166860825211795,
+      "children": [
+        16,
+        17
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 26,
+      "height": 0.1794564023480696,
+      "children": [
+        32,
+        27
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 27,
+      "height": 0.17319875906471693,
+      "children": [
+        36,
+        22
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 28,
+      "height": 0.021064673476854895,
+      "children": [
+        10,
+        11
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 29,
+      "height": 0.03952042143278428,
+      "children": [
+        23,
+        37
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 30,
+      "height": 0.004577895727902098,
+      "children": [
+        2,
+        3
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 31,
+      "height": 0.035731669692249834,
+      "children": [
+        34,
+        21
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 32,
+      "height": 0.09414410561188152,
+      "children": [
+        24,
+        31
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 33,
+      "height": 0.002552139480468507,
+      "children": [
+        0,
+        1
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 34,
+      "height": 7.577240081112768E-4,
+      "children": [
+        4,
+        5
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 35,
+      "height": 0.04544615647931943,
+      "children": [
+        25,
+        18
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 36,
+      "height": 0.0402629523866595,
+      "children": [
+        20,
+        28
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 37,
+      "height": 0.002097157495022456,
+      "children": [
+        14,
+        15
+      ],
+      "branch_rate": 1
+    },
+    {
+      "index": 38,
+      "height": 0.23985143326850827,
+      "children": [
+        26,
+        19
+      ]
+    }
+  ],
+  "frequencies": [
+    0.5,
+    0.5
+  ],
+  "category_rates": [
+    1
+  ],
+  "category_weights": [
+    1
+  ],
+  "patterns": [
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "weight": 1,
+      "log_likelihood": -4.985370845463583
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.423371893271095
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -4.694489734469864
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.159165644165533
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 1,
+      "log_likelihood": -6.865807496496913
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.2790316603240255
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -4.611850909783644
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -4.474308840944755
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.75171374877164
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 1,
+      "log_likelihood": -5.638944960979735
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.871678069953284
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -3.9339217588399973
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -5.097723790931646
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 1,
+      "log_likelihood": -5.914904895904932
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.838080722757763
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.251359065250936
+    },
+    {
+      "states": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -4.658378274263831
+    },
+    {
+      "states": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 1,
+      "log_likelihood": -7.29684516223439
+    },
+    {
+      "states": [
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.8355578589876345
+    },
+    {
+      "states": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 2,
+      "log_likelihood": -5.747320136553443
+    },
+    {
+      "states": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -4.500144987531961
+    },
+    {
+      "states": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -4.295428146157747
+    },
+    {
+      "states": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "weight": 3,
+      "log_likelihood": -3.1583212842959494
+    }
+  ],
+  "log_ascertainment_correction": 0,
+  "reconstructed_log_likelihood": -249.2901341428084
+}

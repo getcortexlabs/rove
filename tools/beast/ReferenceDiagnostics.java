@@ -194,7 +194,7 @@ public final class ReferenceDiagnostics {
             nodes.put(record);
         }
         double[] patternLogs = likelihood.getPatternLogLikelihoods();
-        double correction = data.getAscertainmentCorrection(patternLogs);
+        double correction = data.isAscertained ? data.getAscertainmentCorrection(patternLogs) : 0;
         double reconstructed = 0;
         JSONArray patterns = new JSONArray();
         for (int index = 0; index < data.getPatternCount(); index++) {
@@ -206,7 +206,7 @@ public final class ReferenceDiagnostics {
                     .put("log_likelihood", patternLogs[index]));
         }
         if (Math.abs(reconstructed - likelihood.getCurrentLogP()) > 1e-9) {
-            throw new IllegalStateException("Pattern likelihoods do not reconstruct the Mkv likelihood");
+            throw new IllegalStateException("Pattern likelihoods do not reconstruct the tree likelihood");
         }
         JSONObject parameters = new JSONObject();
         for (StateNode node : state.stateNodeInput.get()) {

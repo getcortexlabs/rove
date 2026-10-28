@@ -11,6 +11,10 @@ use rove::tree::Tree;
 #[path = "support/reference_states.rs"]
 mod reference_states;
 
+#[rustfmt::skip]
+#[path = "support/strict_clock_states.rs"]
+mod strict_clock_states;
+
 fn patterns(rows: &[&str]) -> Patterns {
     let matrix: String = rows
         .iter()
@@ -374,5 +378,62 @@ fn the_tree_prior_matches_beast_at_the_archived_states() {
             state.seed,
             state.birth_death
         );
+    }
+}
+
+#[test]
+fn the_posterior_matches_beast_at_the_strict_clock_states() {
+    let data = nexus::parse(include_str!("../fixtures/reference/20x50/matrix.nex")).unwrap();
+    assert_eq!(data.taxa(), strict_clock_states::TAXA);
+    let sites = 0..data.character_count();
+    let patterns = data
+        .compress(std::slice::from_ref(&sites), GapTreatment::Reject)
+        .unwrap()
+        .remove(0);
+    for state in strict_clock_states::STATES {
+        let settings = Settings {
+            conditioning: if state.variable {
+                Conditioning::Variable
+            } else {
+                Conditioning::None
+            },
+            monophyly: vec![(0..19).collect()],
+            initial: BirthDeath {
+                birth_difference: state.birth_difference,
+                relative_death: state.relative_death,
+            },
+            ..Settings::default()
+        };
+        let tree = Tree::new(state.children.to_vec(), state.heights.to_vec()).unwrap();
+        let posterior = Sampler::with_tree(&patterns, &settings, tree, 1)
+            .unwrap()
+            .posterior();
+        // These Mkv trees are so short that a character is constant with
+        // probability up to 0.997, and log(1 − P(constant)) amplifies
+        // rounding by up to 1/P(variable), about 390.
+        let exact = if state.variable { 1e-10 } else { 1e-11 };
+        for (component, rove, expected, tolerance) in [
+            (
+                "exact likelihood",
+                posterior.likelihood,
+                state.exact_log_likelihood,
+                exact,
+            ),
+            (
+                "BEAST likelihood",
+                posterior.likelihood,
+                state.log_likelihood,
+                1e-10,
+            ),
+            ("tree prior", posterior.tree_prior, state.birth_death, 1e-12),
+            ("prior", posterior.prior(), state.prior, 1e-12),
+            ("posterior", posterior.total(), state.posterior, 1e-10),
+        ] {
+            assert!(
+                (rove - expected).abs() < tolerance,
+                "{}: {component} {rove} != {expected}",
+                state.name
+            );
+        }
     }
 }

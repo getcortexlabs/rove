@@ -40,7 +40,7 @@ La corrección Mkv necesita la probabilidad de cada patrón constante con el mis
 
 ## Un muestreador sobre los mismos búferes
 
-El [muestreador](./sampler) mantiene el árbol y sus parámetros fuera del núcleo. Antes de cada paso, los guarda y guarda los índices de los búferes del núcleo. Después de una propuesta, compara el árbol nuevo con el guardado, da a cada rama modificada una distancia nueva en su otro búfer y recalcula solo los ancestros de esas ramas. Un paso rechazado vuelve a intercambiar los índices. Las propuestas reproducen los operadores y las razones de Hastings de BEAST 2, así que una comparación con BEAST puede usar los mismos movimientos y pesos.
+El [muestreador](./sampler) mantiene el árbol y sus parámetros fuera del núcleo. Antes de cada paso, los guarda y registra los índices de los búferes del núcleo. Después de una propuesta, compara el árbol nuevo con el guardado, da a cada rama modificada una distancia nueva en su otro búfer y recalcula solo los ancestros de esas ramas. Un paso rechazado vuelve a intercambiar los índices. Las propuestas reproducen los operadores y las razones de Hastings de BEAST 2, así que una comparación con BEAST puede usar los mismos movimientos y pesos.
 
 ## Primero NEON, después AVX2
 

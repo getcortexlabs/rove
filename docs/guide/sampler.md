@@ -78,8 +78,15 @@ Before each step the sampler saves the tree and the rate parameters, and stores 
 - **Tuning** moves each value in the right direction by the right amount, checked against a hand-computed step.
 - **Bookkeeping.** On a six-taxon matrix with missing and uncertain cells, after every step of 4,000-step chains under Mkv and Mk, the cached posterior matches an evaluation from scratch, a rejected step restores the exact previous state, the constraint holds, and every move is both accepted and rejected.
 - **The tree prior** matches BEAST 2.7.8's value at both archived states of the reference analysis within 10⁻¹².
+- **Fixed states.** At the final state of each BEAST chain of the comparison below, Rove's likelihood and posterior match BEAST 2.7.8's within 10⁻¹⁰, and its tree prior and prior within 10⁻¹².
 
 `tests/allocations.rs` checks that 20,000 steps on the reference matrix make no heap allocation. `tests/cli.rs` runs the command, checks the three files and the rejected settings, and checks that closing standard error does not stop a run.
+
+## Comparison with BEAST
+
+Rove and BEAST 2.7.8 sampled the reference matrix under this model, with and without the Mkv correction, using the same moves, weights and fixed step sizes and four chains each. Every posterior mean was within four combined Monte Carlo standard errors of BEAST's and every clade frequency within 0.05, the criteria fixed before the runs. Acceptance rates were not part of the criteria; with 36 Mkv chains per engine, no move's rate differed by more than 1.7 standard errors.
+
+The matrix has no homoplasy, so under Mkv the likelihood does not penalize short trees: the posterior tree height is about 0.003 expected changes per character, the posterior of λ − μ is cut off by its prior's upper bound of 1000, and the topology barely moves. Under Mk, the reference topology has a posterior frequency of 0.82 to 0.83 in every chain of both engines. The [report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md) gives the numbers, the run times and the commands.
 
 ## Limitations
 

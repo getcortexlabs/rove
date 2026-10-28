@@ -38,7 +38,7 @@ analysis and the integrations are not. Work is tracked in the
 The first [BEAST 2.7.8 reference experiment](benchmarks/beast-2.7.8/2026-10-25/README.md)
 records the exact model, runtime, sampling diagnostics, and fixed numerical
 states for a selected 20 x 50 dataset. It used BEAST's Java likelihood core.
-No cross-engine speedup has been measured.
+No controlled cross-engine benchmark has been run yet.
 
 The [Rust baseline on Apple M4 Max](benchmarks/rove/2026-10-26/README.md)
 measures 11 workloads, separating setup, full evaluations, partial updates and
@@ -85,11 +85,11 @@ other when reproducing a result.
 2. Read morphological NEXUS and compress observed patterns. Done.
 3. Record the Rust kernel baseline and add the Mkv correction. Done.
 4. Add direct Mk pruning, measuring the change. Done.
-5. Build a minimal standalone MCMC, then add NEON where its profiles show
-   kernel time.
-6. Add the relaxed-clock reference model, validate complete inference and
+5. Build a minimal standalone MCMC. Done.
+6. Add NEON where profiles of complete runs show kernel time.
+7. Add the relaxed-clock reference model, validate complete inference and
    evaluate subtree repeats.
-7. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
+8. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 
 ## Sampling trees
 
@@ -102,7 +102,10 @@ cargo run --release --bin rove -- sample fixtures/reference/20x50/matrix.nex \
 The first sampler supports one partition of binary characters under Mk or Mkv,
 a strict clock with rate 1 and the birth–death tree prior of the reference
 analysis, with monophyly constraints. The [sampling guide](docs/guide/sampler.md)
-describes the model, the output files and the checks.
+describes the model, the output files and the checks. With the same moves and
+fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the
+reference matrix met criteria fixed before the runs
+([report](benchmarks/strict-clock/2026-10-28/README.md)).
 
 ## Reading a matrix
 

@@ -16,8 +16,8 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Full-inference and cross-engine benchmarks | Pending, #8 |
 | Mkv ascertainment correction | Done |
 | Direct Mk pruning | Done |
-| Minimal standalone MCMC | Next, #15 |
-| NEON vectorisation | Planned, #5 |
+| Minimal standalone MCMC | Done |
+| NEON vectorisation | Next, #5 |
 | Relaxed-clock reference model | Planned, #16 |
 | Complete inference validation | Planned, #12 |
 | Evaluation of repeats within subtrees | Planned, #17 |
@@ -27,17 +27,17 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 
 The [core](./kernel) is checked against an independent scalar implementation. The [NEXUS reader](./nexus) supplies weighted observations without BEAST. The [reference experiment](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) records exact inputs, model settings, two completed BEAST runs and fixed numerical states.
 
-The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) records 11 Rust workloads, separating setup, full evaluations, partial updates and proposal bookkeeping. Raw samples, allocation observations and variation across three processes are included. Full-inference and cross-engine comparisons remain pending; no cross-engine speedup has been measured.
+The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) records 11 Rust workloads, separating setup, full evaluations, partial updates and proposal bookkeeping. Raw samples, allocation observations and variation across three processes are included. Full-inference and cross-engine benchmarks remain pending. The strict-clock comparison below records wall times for both engines on one small configuration, but it is not a controlled benchmark.
 
 ## Correctness before optimization
 
 Mkv conditions the likelihood on the observation process for variable-only matrices. It reproduces both archived BEAST states, and its constant patterns stay separate from the observed pattern weights.
 
-The direct Mk path replaces the generic matrix product for Mk models. On Apple M4 Max, the matrix path took 1.25 times as long for a full evaluation of the reference matrix, and 2.66 times as long with eight states ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). NEON on Apple silicon follows the minimal sampler, so that profiles of complete runs can show where kernel time matters. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
+The direct Mk path replaces the generic matrix product for Mk models. On Apple M4 Max, the matrix path took 1.25 times as long for a full evaluation of the reference matrix, and 2.66 times as long with eight states ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). NEON on Apple silicon comes next, so that profiles of complete sampler runs can show where kernel time matters. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
 
 ## Standalone inference
 
-A minimal sampler comes before the full relaxed-clock and birth–death configuration. Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
+The [minimal sampler](./sampler) supports binary Mk or Mkv, a strict clock and the birth–death prior. With the same moves and fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the reference matrix met criteria fixed before the runs ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). The relaxed-clock configuration of the reference analysis follows NEON. Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
 
 The intended product is a native macOS application. Application UI work has not started. BEAST and BEAGLE adapters are optional compatibility paths, not dependencies of the Rust engine.
 

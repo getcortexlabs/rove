@@ -16,8 +16,8 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Benchmarks de inferencia completa y entre motores | Pendiente, #8 |
 | Corrección de ascertainment de Mkv | Hecho |
 | Poda directa de Mk | Hecho |
-| MCMC independiente mínimo | Siguiente, #15 |
-| Vectorización NEON | Planificado, #5 |
+| MCMC independiente mínimo | Hecho |
+| Vectorización NEON | Siguiente, #5 |
 | Modelo de referencia con reloj relajado | Planificado, #16 |
 | Validación de la inferencia completa | Planificado, #12 |
 | Evaluación de repeticiones dentro de subárboles | Planificado, #17 |
@@ -27,17 +27,17 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 
 El [núcleo](./kernel) se comprueba contra una implementación escalar independiente. El [lector de NEXUS](./nexus) suministra observaciones ponderadas sin BEAST. El [experimento de referencia](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) registra las entradas exactas, la configuración del modelo, dos ejecuciones completas de BEAST y estados numéricos fijos.
 
-La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 casos en Rust, separando preparación, evaluaciones completas, actualizaciones parciales y gestión del estado de las propuestas. Incluye muestras originales, observaciones de asignación de memoria y variación entre tres procesos. Las comparaciones de inferencia completa y entre motores siguen pendientes; no se ha medido ninguna aceleración entre motores.
+La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 casos en Rust, separando preparación, evaluaciones completas, actualizaciones parciales y gestión del estado de las propuestas. Incluye muestras originales, observaciones de asignación de memoria y variación entre tres procesos. Los benchmarks de inferencia completa y entre motores siguen pendientes. La comparación con reloj estricto, más abajo, registra el tiempo transcurrido de ambos motores en una configuración pequeña, pero no es un benchmark controlado.
 
 ## Corrección antes que optimización
 
 Mkv condiciona la verosimilitud al proceso de observación para matrices con solo caracteres variables. Reproduce los dos estados archivados de BEAST, y sus patrones constantes se mantienen separados de los pesos de los patrones observados.
 
-La ruta directa de Mk sustituye el producto genérico de matrices en los modelos Mk. En un Apple M4 Max, la ruta de matrices tardó 1,25 veces lo que la ruta Mk en una evaluación completa de la matriz de referencia, y 2,66 veces con ocho estados ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). NEON en Apple silicon llega después del muestreador mínimo, para que los perfiles de ejecuciones completas muestren dónde pesa el tiempo del kernel. La implementación escalar sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
+La ruta directa de Mk sustituye el producto genérico de matrices en los modelos Mk. En un Apple M4 Max, la ruta de matrices tardó 1,25 veces lo que la ruta Mk en una evaluación completa de la matriz de referencia, y 2,66 veces con ocho estados ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). NEON en Apple silicon es el siguiente paso, para que los perfiles de ejecuciones completas del muestreador muestren dónde pesa el tiempo del kernel. La implementación escalar sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
 
 ## Inferencia independiente
 
-Un muestreador mínimo viene antes de la configuración completa con reloj relajado y nacimiento-muerte. La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
+El [muestreador mínimo](./sampler) admite Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). La configuración con reloj relajado del análisis de referencia viene después de NEON. La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
 
 El producto previsto es una aplicación nativa para macOS. El trabajo en la interfaz de la aplicación no ha comenzado. Los adaptadores de BEAST y BEAGLE son rutas de compatibilidad opcionales, no dependencias del motor en Rust.
 

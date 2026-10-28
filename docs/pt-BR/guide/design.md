@@ -40,7 +40,7 @@ A correção Mkv precisa da probabilidade de cada padrão constante sob a mesma 
 
 ## Um amostrador sobre os mesmos buffers
 
-O [amostrador](./sampler) mantém a árvore e os seus parâmetros fora do núcleo. Antes de cada passo, ele os guarda e guarda os índices dos buffers do núcleo. Depois de uma proposta, compara a nova árvore com a guardada, dá a cada ramo alterado uma nova distância no seu outro buffer e recalcula só os ancestrais desses ramos. Um passo rejeitado troca os índices de volta. As propostas reproduzem os operadores e as razões de Hastings do BEAST 2, então uma comparação com o BEAST pode usar os mesmos movimentos e pesos.
+O [amostrador](./sampler) mantém a árvore e os seus parâmetros fora do núcleo. Antes de cada passo, ele os guarda e registra os índices dos buffers do núcleo. Depois de uma proposta, compara a nova árvore com a guardada, dá a cada ramo alterado uma nova distância no seu outro buffer e recalcula só os ancestrais desses ramos. Um passo rejeitado troca os índices de volta. As propostas reproduzem os operadores e as razões de Hastings do BEAST 2, então uma comparação com o BEAST pode usar os mesmos movimentos e pesos.
 
 ## NEON primeiro, AVX2 depois
 

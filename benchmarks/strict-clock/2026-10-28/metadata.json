@@ -1,0 +1,1691 @@
+{
+  "date_local": "2026-10-28",
+  "timezone": "America/Sao_Paulo",
+  "hardware": {
+    "model": "MacBook Pro (Mac16,6)",
+    "chip": "Apple M4 Max",
+    "performance_cores": 12,
+    "efficiency_cores": 4,
+    "memory_gb": 64,
+    "power": "AC adapter"
+  },
+  "os": {
+    "name": "macOS",
+    "version": "26.6.2",
+    "build": "25G83"
+  },
+  "java": "Eclipse Temurin OpenJDK 17.0.15+6, aarch64",
+  "jvm_flags": [
+    "-Xms256m",
+    "-Xmx2g",
+    "-Xss8m",
+    "-Djava.awt.headless=true",
+    "-Duser.language=en"
+  ],
+  "beast": {
+    "entrypoint": "beastfx.app.beast.BeastMCMC",
+    "arguments": [
+      "-batch",
+      "-seed",
+      "<seed>",
+      "-threads",
+      "1"
+    ],
+    "backend": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+    "packages": {
+      "BEAST.base": "2.7.8",
+      "BEASTLabs": "2.0.3",
+      "BEAST.app": "2.7.8",
+      "MM": "1.2.1",
+      "ORC": "1.2.1"
+    },
+    "jars": {
+      "launcher.jar": "7d51654fd80dd4c32f64e02b02ca90aa6387c2c9837761befe665ff730a5dc01",
+      "BEAST.app.jar": "45949db1372c6dc874256754489b374c03f205c07af1d3513026664b20db32d2",
+      "BEAST.base.jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+      "BEASTlabs.v2.0.3.jar": "feea1bccaee3fe88868d2c60ffe72410f680f5e1301300b918517603e51aa259",
+      "MM.addon.jar": "78f02140b79f8061cbfacfe73600d6ecc2660af00d852a125bda2c683c595a68",
+      "ORC.addon.jar": "2fa7390b9313e769388ba5863f58807cf7bcc7a54b0cd22e2d72f9a618bbdb3e"
+    }
+  },
+  "rove": {
+    "commit": "a4206c73d52e8bd8b51ead3b37fea2daa3c1d72c",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "build": "cargo build --release --locked: opt-level 3, fat LTO, one codegen unit, default target CPU",
+    "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+  },
+  "chain_length": 10000000,
+  "log_every": 1000,
+  "burnin_percent": 10,
+  "order": "BEAST chains, then Rove chains, one at a time, for mkv, mk and mkv-replication in turn",
+  "move_counts": {
+    "beast": [
+      "accepted",
+      "rejected"
+    ],
+    "rove": [
+      "accepted",
+      "rejected",
+      "failed"
+    ]
+  },
+  "configurations": {
+    "mkv": {
+      "xml": "beast-mkv.xml",
+      "xml_sha256": "34bb09199e44026953f6732ac387ff63c5acdc1a1d5008a66a87a9e9cec97507",
+      "truth_sha256": "5f2e291e6c295cfe4b78bea60790a3b856a96107e552a454bbdfe24134925990",
+      "runs": [
+        {
+          "seed": 20261028,
+          "beast": {
+            "wall_seconds": 18.315725542,
+            "calculation_seconds": 18.144,
+            "started_at": "2026-10-28T05:46:07.862482+00:00",
+            "moves": {
+              "node_height": [1697434, 2148769],
+              "subtree_slide": [421435, 1501624],
+              "narrow_exchange": [97, 1923236],
+              "wide_exchange": [8, 384848],
+              "wilson_balding": [6, 385137],
+              "root_scale": [88004, 295621],
+              "tree_scale": [90948, 294023],
+              "birth_difference_scale": [90043, 293952],
+              "relative_death_scale": [90347, 294469]
+            },
+            "output_sha256": {
+              "analysis.log": "591f4fc6c7b35c46e8799909c4a851e85760bfe9d5e06964ec377113abdcb698",
+              "matriz_20x50.trees": "2407cbd85efc12225ea0e77e7289a515f313012fadea56e08d4a96dedca7d3d6",
+              "analysis.xml.state": "6d62e8dc0b155ec968345c43bde634e33dfe77a38ad3b976921d1f8013bced78",
+              "console.log": "74d6c5feb81b174cfd48414792851b8c7460594de7a51d1a517a8aa50808974c"
+            }
+          },
+          "rove": {
+            "wall_seconds": 12.015909957999995,
+            "chain_seconds": 12.008862958,
+            "started_unix_seconds": 1793166446,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1696121, 2147486, 0],
+              "subtree_slide": [413981, 678317, 831708],
+              "narrow_exchange": [93, 1731475, 191651],
+              "wide_exchange": [1, 167541, 217041],
+              "wilson_balding": [9, 294433, 90647],
+              "root_scale": [88681, 175710, 120445],
+              "tree_scale": [91869, 293754, 0],
+              "birth_difference_scale": [89723, 103009, 191196],
+              "relative_death_scale": [89844, 85921, 209344]
+            },
+            "output_sha256": {
+              "trace.log": "6ee54898ad62431ba424cf07f7493321b239484b9a675ee6685f7ebf0989adf9",
+              "trees.nexus": "bfc4d682f6a731d03d180ec0634d61bf0b73b59724848b8be81cdf6497a1fe84",
+              "run.json": "861a59cbc855115b10d26dc434f3cfe0d59d522d770f63826049fd44c0b0d415"
+            }
+          }
+        },
+        {
+          "seed": 20261029,
+          "beast": {
+            "wall_seconds": 18.336498624999997,
+            "calculation_seconds": 18.178,
+            "started_at": "2026-10-28T05:46:26.185664+00:00",
+            "moves": {
+              "node_height": [1699513, 2149952],
+              "subtree_slide": [420771, 1500822],
+              "narrow_exchange": [122, 1922072],
+              "wide_exchange": [1, 384781],
+              "wilson_balding": [6, 384245],
+              "root_scale": [88144, 296685],
+              "tree_scale": [90864, 292824],
+              "birth_difference_scale": [89952, 294874],
+              "relative_death_scale": [89638, 294735]
+            },
+            "output_sha256": {
+              "analysis.log": "38ffccf45b843ebe5c814edc7258d745d596e778e44bc69c4f358eb72a66d9fc",
+              "matriz_20x50.trees": "1f10bc4cdc3fa197fa97c1c45abd11fae0dfe594e8cb046a2b9530a5cd1d523a",
+              "analysis.xml.state": "6d7f57e5cd6f4a4b7e34b68ff5729a253a570ce76bfa99a1724d31c755f5840f",
+              "console.log": "ff36b22cd23904d59743c94c8d8ba3e16bca7cc19f6a197c38c82ce22aaf2f47"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.981515915999992,
+            "chain_seconds": 11.975925792,
+            "started_unix_seconds": 1793166458,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1698740, 2150769, 0],
+              "subtree_slide": [424531, 688273, 808787],
+              "narrow_exchange": [90, 1728921, 192073],
+              "wide_exchange": [4, 167158, 217520],
+              "wilson_balding": [10, 294011, 91266],
+              "root_scale": [88387, 175565, 120575],
+              "tree_scale": [90937, 293382, 0],
+              "birth_difference_scale": [89588, 104498, 190283],
+              "relative_death_scale": [90020, 85033, 209579]
+            },
+            "output_sha256": {
+              "trace.log": "b27c84cfbde422d6410267d5a4a6f1528145250666345ed1874e5d6d20a834d1",
+              "trees.nexus": "4f28996a963819726991a302927c2064d4b096bd449247557e1461d3db0176d6",
+              "run.json": "78776a6664e575ea8a7fc05486fdb23c9e46214ab1e7d7127334c5090909333c"
+            }
+          }
+        },
+        {
+          "seed": 20261030,
+          "beast": {
+            "wall_seconds": 17.643959541,
+            "calculation_seconds": 17.472,
+            "started_at": "2026-10-28T05:46:44.529390+00:00",
+            "moves": {
+              "node_height": [1699130, 2148613],
+              "subtree_slide": [424186, 1498513],
+              "narrow_exchange": [108, 1921849],
+              "wide_exchange": [3, 384449],
+              "wilson_balding": [10, 384586],
+              "root_scale": [88236, 296043],
+              "tree_scale": [90494, 293579],
+              "birth_difference_scale": [90112, 295198],
+              "relative_death_scale": [91234, 293658]
+            },
+            "output_sha256": {
+              "analysis.log": "d4e34dff29d588ae5076443ac900938f5fa29ca61f6f908a4104ba334828a0f7",
+              "matriz_20x50.trees": "15df195975af8a85d23e8558ad20865a8ee96897f06f0b66f004f80c1d76157b",
+              "analysis.xml.state": "4abf143076623093f6d331a64d88bede3b6d5ebfcbc7e09a165ed55fa363aaf5",
+              "console.log": "1ae547c7cecb38a0a352e403ebc4e85249817c48a1bbca1c008d52e3dacaee0d"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.983188834000003,
+            "chain_seconds": 11.977761208,
+            "started_unix_seconds": 1793166470,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1699055, 2146324, 0],
+              "subtree_slide": [428051, 689480, 807685],
+              "narrow_exchange": [88, 1729890, 192556],
+              "wide_exchange": [8, 167238, 217297],
+              "wilson_balding": [7, 293944, 90825],
+              "root_scale": [88449, 175119, 119829],
+              "tree_scale": [90537, 293680, 0],
+              "birth_difference_scale": [89919, 105399, 189410],
+              "relative_death_scale": [91507, 85618, 208085]
+            },
+            "output_sha256": {
+              "trace.log": "33c8573eb48c6a54a628977005738c9181e3d05c9fcb0f243510f1289a9b05dd",
+              "trees.nexus": "7d5674e1d5f46afa57bf8e3340ca0ceeea44373da7696e92c862a4f05b9aa249",
+              "run.json": "bf45b86c0c2a4932e57949e151a43ac2da9259d765f897909f0c5335ce27efff"
+            }
+          }
+        },
+        {
+          "seed": 20261031,
+          "beast": {
+            "wall_seconds": 17.819106375000004,
+            "calculation_seconds": 17.657,
+            "started_at": "2026-10-28T05:47:02.179879+00:00",
+            "moves": {
+              "node_height": [1697367, 2147422],
+              "subtree_slide": [429233, 1492993],
+              "narrow_exchange": [91, 1923812],
+              "wide_exchange": [3, 384896],
+              "wilson_balding": [3, 383548],
+              "root_scale": [88196, 297404],
+              "tree_scale": [91414, 294393],
+              "birth_difference_scale": [91173, 293655],
+              "relative_death_scale": [89084, 295314]
+            },
+            "output_sha256": {
+              "analysis.log": "333ff5e68781e31794ce0f02e589266f9c927d6f19afda8470a5d583bfaca3e1",
+              "matriz_20x50.trees": "988c68002a82b7b774990e63f6f46a29f117717c56cc39dc5bf6cfe21097543b",
+              "analysis.xml.state": "914cc24a850f93e58203ebd683c89eb8bfb6e9e5eaa96702ce061f3f0e250cc1",
+              "console.log": "e6d9541381af6e747e8e9fe277efdc2a0ea8f727edb21a7876146213cf1d8daa"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.973352792,
+            "chain_seconds": 11.967543125,
+            "started_unix_seconds": 1793166482,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1698602, 2149457, 0],
+              "subtree_slide": [418723, 686158, 818791],
+              "narrow_exchange": [81, 1729469, 192907],
+              "wide_exchange": [4, 167621, 216721],
+              "wilson_balding": [4, 293581, 91444],
+              "root_scale": [88071, 174936, 120181],
+              "tree_scale": [91322, 292727, 0],
+              "birth_difference_scale": [90043, 104421, 190014],
+              "relative_death_scale": [89007, 85628, 210087]
+            },
+            "output_sha256": {
+              "trace.log": "62b480475e5c3dbf40030a22bac437efc5f5ee61ef237bdc96567f3a091bffea",
+              "trees.nexus": "964828463511d89bb110e92d0663d512d64a594f3745191ec6f623982a8e0717",
+              "run.json": "c9bb62a23e7a853e5742460c8e373a6247b2494ba28f5eb49569832960363f4f"
+            }
+          }
+        }
+      ]
+    },
+    "mk": {
+      "xml": "beast-mk.xml",
+      "xml_sha256": "977ce8325e14708e64cdbf104eea9775b1c0003aad22b21bf7888599683214e6",
+      "truth_sha256": "5f2e291e6c295cfe4b78bea60790a3b856a96107e552a454bbdfe24134925990",
+      "runs": [
+        {
+          "seed": 20261028,
+          "beast": {
+            "wall_seconds": 16.852431167,
+            "calculation_seconds": 16.687,
+            "started_at": "2026-10-28T05:50:36.226467+00:00",
+            "moves": {
+              "node_height": [1795865, 2051676],
+              "subtree_slide": [456341, 1465610],
+              "narrow_exchange": [49261, 1875066],
+              "wide_exchange": [305, 384706],
+              "wilson_balding": [1044, 383016],
+              "root_scale": [90597, 293804],
+              "tree_scale": [93241, 291115],
+              "birth_difference_scale": [87454, 296111],
+              "relative_death_scale": [87474, 297315]
+            },
+            "output_sha256": {
+              "analysis.log": "4ff9c5dd28dea211941ce85307db688dc00b223457264a494034c1d7c683efda",
+              "matriz_20x50.trees": "78c2c84a6f0272a591aeba8dd87f9ccbcf48027ed7e9c0392eb1a2c6834ddad4",
+              "analysis.xml.state": "2d6299d1a2e55d09e115d7bfedee7c012a61f2a5074109a04dfea04bc6a9210e",
+              "console.log": "16dd599a09b866050dc989efd79dab8f077d2208e53fd1ed6b97757d9cb78bf6"
+            }
+          },
+          "rove": {
+            "wall_seconds": 12.617915291999992,
+            "chain_seconds": 12.609903083,
+            "started_unix_seconds": 1793166711,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1796144, 2049392, 0],
+              "subtree_slide": [455701, 773516, 693327],
+              "narrow_exchange": [48871, 1682790, 191706],
+              "wide_exchange": [289, 167001, 217576],
+              "wilson_balding": [1092, 292747, 91319],
+              "root_scale": [90031, 178185, 115715],
+              "tree_scale": [93891, 291196, 0],
+              "birth_difference_scale": [87603, 297139, 0],
+              "relative_death_scale": [87650, 79042, 218077]
+            },
+            "output_sha256": {
+              "trace.log": "b5cf252ed34c0e616d57830b26a1cf2671a3fdc9986301f0b1318a9c7ac9a7f1",
+              "trees.nexus": "64e79ba20ee5f6d87e463e32a642898a5e8df1ea6b39c2e0291c57c91c2a7589",
+              "run.json": "4fe6d33e57bdc80aaf1c3602c1651a76aa6f7a24fae2fd99eff9d219af92ed8d"
+            }
+          }
+        },
+        {
+          "seed": 20261029,
+          "beast": {
+            "wall_seconds": 17.246524292000004,
+            "calculation_seconds": 17.09,
+            "started_at": "2026-10-28T05:50:53.086327+00:00",
+            "moves": {
+              "node_height": [1797243, 2051291],
+              "subtree_slide": [456439, 1465020],
+              "narrow_exchange": [49526, 1872042],
+              "wide_exchange": [313, 383750],
+              "wilson_balding": [1098, 384600],
+              "root_scale": [90476, 294317],
+              "tree_scale": [93117, 291434],
+              "birth_difference_scale": [87579, 296770],
+              "relative_death_scale": [87212, 297774]
+            },
+            "output_sha256": {
+              "analysis.log": "6fbc947332e580f7df9a0a3639be0e20e69b7eaa14909c744dab560a1e96bb76",
+              "matriz_20x50.trees": "d102fbbc32df0cacbb4c34c4cff6f7db37a388789debfd3182bda3ccf357abf6",
+              "analysis.xml.state": "964f93ddb15d4b00259d0e80a9a214754ee2ac2355c44daa223a016515dc43ba",
+              "console.log": "1f817fa80fe504c6cb1877b2bb3e0e1bee7f7f5ea45eafe54ceaa8679859eb95"
+            }
+          },
+          "rove": {
+            "wall_seconds": 12.207841791999996,
+            "chain_seconds": 12.202375209,
+            "started_unix_seconds": 1793166724,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1795345, 2052561, 0],
+              "subtree_slide": [456199, 771309, 694432],
+              "narrow_exchange": [49597, 1680472, 191703],
+              "wide_exchange": [306, 167727, 217172],
+              "wilson_balding": [1042, 292751, 90688],
+              "root_scale": [90858, 178604, 115674],
+              "tree_scale": [92892, 291024, 0],
+              "birth_difference_scale": [87954, 296829, 0],
+              "relative_death_scale": [86790, 77989, 220082]
+            },
+            "output_sha256": {
+              "trace.log": "43fa59ea4a5172b89c5456cce01c211dc92bbeae81052d6a9ff5e6c92cc22dae",
+              "trees.nexus": "8afa87dc4c55dd91fb1b51e31239fce93e507b7bc5c1fa9dcb370a56d7a491bc",
+              "run.json": "c0f6244f31eda98e1cecf55eb657f155415624b9dd84344bc9ad73c5b6cea2a2"
+            }
+          }
+        },
+        {
+          "seed": 20261030,
+          "beast": {
+            "wall_seconds": 17.345509625,
+            "calculation_seconds": 17.176,
+            "started_at": "2026-10-28T05:51:10.339833+00:00",
+            "moves": {
+              "node_height": [1793780, 2050893],
+              "subtree_slide": [455154, 1467445],
+              "narrow_exchange": [48807, 1873574],
+              "wide_exchange": [323, 385229],
+              "wilson_balding": [1064, 384372],
+              "root_scale": [90413, 294175],
+              "tree_scale": [93132, 292104],
+              "birth_difference_scale": [88092, 297750],
+              "relative_death_scale": [87124, 296570]
+            },
+            "output_sha256": {
+              "analysis.log": "e28d730e367bacde3c98e15f575383303b790c57ad4ef6b385166aaeb9bdadec",
+              "matriz_20x50.trees": "ca69864a87867a4a98da691466fc0db51da206c63375cae904ee8c9257c94edb",
+              "analysis.xml.state": "985115d45549a95a95571324433ef660c068cd33183058e670fd3ee30f806835",
+              "console.log": "16cc8f8bfea8aa6918a729780d42c2029bb479e3edf4cdced5221bb0e041b738"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.770356458999998,
+            "chain_seconds": 11.764712041,
+            "started_unix_seconds": 1793166736,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1793857, 2050645, 0],
+              "subtree_slide": [456127, 772897, 697631],
+              "narrow_exchange": [48945, 1681634, 191558],
+              "wide_exchange": [297, 167691, 216676],
+              "wilson_balding": [1056, 292025, 90951],
+              "root_scale": [90253, 177945, 115201],
+              "tree_scale": [93334, 290632, 0],
+              "birth_difference_scale": [87516, 296959, 0],
+              "relative_death_scale": [86995, 78542, 220633]
+            },
+            "output_sha256": {
+              "trace.log": "845a2071987db7111ca05ee18d209450e3873e725280c02cf621014f81c90f08",
+              "trees.nexus": "741da69b1251b20dedd5da3090c4829fd7712b69c5d0ea6880227a1b5efbf146",
+              "run.json": "2b95a67aedd29632c486705bcc8f8cc3389c9df961edc963700a6f34f3394663"
+            }
+          }
+        },
+        {
+          "seed": 20261031,
+          "beast": {
+            "wall_seconds": 16.841729665999992,
+            "calculation_seconds": 16.663,
+            "started_at": "2026-10-28T05:51:27.693050+00:00",
+            "moves": {
+              "node_height": [1797345, 2047868],
+              "subtree_slide": [455418, 1467625],
+              "narrow_exchange": [49605, 1874291],
+              "wide_exchange": [279, 384405],
+              "wilson_balding": [1042, 383754],
+              "root_scale": [90496, 293587],
+              "tree_scale": [93476, 292038],
+              "birth_difference_scale": [87642, 296410],
+              "relative_death_scale": [87870, 296850]
+            },
+            "output_sha256": {
+              "analysis.log": "8320cf4f603cd348bc478a74114ea760ba2e3f5ca0b6b413045ca1e14293e14f",
+              "matriz_20x50.trees": "7fc00167053569fccea6fd7acf74b1aab3d73cf2e2e80cedabc645362f321c13",
+              "analysis.xml.state": "9574aac60bcada165903ac8b2fb290fa9e2aaf10e380182539bc6e42a37e88dd",
+              "console.log": "1f3a495d8f967b0db45733a70423d695d3ae3e3d4324ad3a9f15abcf75fabe00"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.62797766700001,
+            "chain_seconds": 11.622611709,
+            "started_unix_seconds": 1793166748,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1794498, 2052487, 0],
+              "subtree_slide": [456674, 773398, 695149],
+              "narrow_exchange": [49252, 1681726, 191751],
+              "wide_exchange": [300, 166708, 217192],
+              "wilson_balding": [1059, 291445, 91510],
+              "root_scale": [90409, 177945, 115283],
+              "tree_scale": [93343, 290759, 0],
+              "birth_difference_scale": [88304, 297004, 0],
+              "relative_death_scale": [87121, 78423, 218260]
+            },
+            "output_sha256": {
+              "trace.log": "a840c9a302b575def595f1d06923784a9045ddc4871cd9a0b19df5bd6d394ec9",
+              "trees.nexus": "3811d2071bf9f3534f5daede85908083c19fa56e60caf560507521eca9dfd06e",
+              "run.json": "1c6ce3d6a0d177e98a058795a080e5027e834d480651933d568cea709a8ecb60"
+            }
+          }
+        }
+      ]
+    },
+    "mkv-replication": {
+      "xml": "beast-mkv.xml",
+      "xml_sha256": "34bb09199e44026953f6732ac387ff63c5acdc1a1d5008a66a87a9e9cec97507",
+      "truth_sha256": "5f2e291e6c295cfe4b78bea60790a3b856a96107e552a454bbdfe24134925990",
+      "runs": [
+        {
+          "seed": 20261101,
+          "beast": {
+            "wall_seconds": 17.390808125,
+            "calculation_seconds": 17.228,
+            "started_at": "2026-10-28T05:56:29.429744+00:00",
+            "moves": {
+              "node_height": [1697274, 2147797],
+              "subtree_slide": [422662, 1502574],
+              "narrow_exchange": [130, 1922773],
+              "wide_exchange": [5, 384282],
+              "wilson_balding": [8, 384005],
+              "root_scale": [88410, 296646],
+              "tree_scale": [90611, 294219],
+              "birth_difference_scale": [90571, 293890],
+              "relative_death_scale": [89278, 294866]
+            },
+            "output_sha256": {
+              "analysis.log": "01e0d02f2bdf659f6483763561b95a64b96adea8f0164057e5d47eff0d337fc8",
+              "matriz_20x50.trees": "7ff00c30d71fecb2376cea18abd8aad612481ab170fb530b6fabe70fac22bc47",
+              "analysis.xml.state": "78de1e93a8fc00c4d30e2ae36d5d6ef5ed0bff7de5409fdce3ba6ea536271a15",
+              "console.log": "481029cd766e052ae1abbe83dd12f39446dbf74fa1ae0775533e52373126c12a"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.981370999999996,
+            "chain_seconds": 11.974135541999999,
+            "started_unix_seconds": 1793167142,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1698677, 2144574, 0],
+              "subtree_slide": [425100, 693175, 803376],
+              "narrow_exchange": [132, 1734308, 192560],
+              "wide_exchange": [6, 167457, 217601],
+              "wilson_balding": [9, 292971, 91081],
+              "root_scale": [88553, 176049, 120501],
+              "tree_scale": [90497, 293055, 0],
+              "birth_difference_scale": [88789, 103837, 191527],
+              "relative_death_scale": [93008, 86141, 207016]
+            },
+            "output_sha256": {
+              "trace.log": "e778dc8b4ffeb9d478fdc38445216ad937f072d62e104fed6a6f03c60ec83e7c",
+              "trees.nexus": "1d92ac8c50e5172be7eb9dbcc559d1276d15efc277e242660ecb646b4a39b015",
+              "run.json": "86f86c50bca4e57f1ee52d7ba247a630c8e317d7ca1f63d8e250d166ce86c7e4"
+            }
+          }
+        },
+        {
+          "seed": 20261102,
+          "beast": {
+            "wall_seconds": 17.297240541,
+            "calculation_seconds": 17.137,
+            "started_at": "2026-10-28T05:56:46.827085+00:00",
+            "moves": {
+              "node_height": [1699836, 2146721],
+              "subtree_slide": [420445, 1501704],
+              "narrow_exchange": [155, 1920746],
+              "wide_exchange": [5, 385454],
+              "wilson_balding": [5, 385067],
+              "root_scale": [87908, 297050],
+              "tree_scale": [91101, 294266],
+              "birth_difference_scale": [89688, 295516],
+              "relative_death_scale": [89820, 294514]
+            },
+            "output_sha256": {
+              "analysis.log": "f8139eceddff74c3918605f68941ad825ff545aa821fdea8941e0241681e83d3",
+              "matriz_20x50.trees": "4fb1c78971943edd952ced702b8a7ab617970b807fda3b215bb74dc1f5ca9589",
+              "analysis.xml.state": "d6cd99b8b82ac3ca0e0c3521f38ff51f961ff5ca971786c180fd9311fcbde4ca",
+              "console.log": "2fd9c69e797a200d6b4dab1c03406c7ba1b54207e5726e11b2c4179a8b0d8f99"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.893405666999996,
+            "chain_seconds": 11.887391667,
+            "started_unix_seconds": 1793167154,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1698404, 2146884, 0],
+              "subtree_slide": [423304, 679831, 822791],
+              "narrow_exchange": [159, 1727742, 193192],
+              "wide_exchange": [4, 167143, 216599],
+              "wilson_balding": [7, 293835, 91089],
+              "root_scale": [88714, 176430, 120712],
+              "tree_scale": [91382, 293535, 0],
+              "birth_difference_scale": [90884, 106072, 187185],
+              "relative_death_scale": [88253, 85970, 209879]
+            },
+            "output_sha256": {
+              "trace.log": "60cc53c3ab40d07ac9a2842e178de739afdf608f87c6e404672edacb6c01789e",
+              "trees.nexus": "9fd57af9267ba9bcf9a24ca083a5788e0c81fd76aacc5c277c0e8a378abc1233",
+              "run.json": "f978a6eb73b4a21c2eaa9cc4adceb961c4857659e38f6c5365af3ba925c70b6e"
+            }
+          }
+        },
+        {
+          "seed": 20261103,
+          "beast": {
+            "wall_seconds": 17.578047333,
+            "calculation_seconds": 17.416,
+            "started_at": "2026-10-28T05:57:04.131270+00:00",
+            "moves": {
+              "node_height": [1698552, 2148665],
+              "subtree_slide": [424254, 1498868],
+              "narrow_exchange": [123, 1921605],
+              "wide_exchange": [6, 383737],
+              "wilson_balding": [3, 385096],
+              "root_scale": [88057, 296218],
+              "tree_scale": [91302, 294051],
+              "birth_difference_scale": [90168, 294602],
+              "relative_death_scale": [90262, 294432]
+            },
+            "output_sha256": {
+              "analysis.log": "3591f3600dbf432779282d0dcd9a0fa87904573b86d8600ef83194c552aa9b29",
+              "matriz_20x50.trees": "82691daad17b3151b661e65d975499573ac25aed6d7a4ee4f8be4142f3f2c399",
+              "analysis.xml.state": "dca7210403a070d883e92a40b3413382c15e8df34a8b5ec3d09ff8cfb0527d5c",
+              "console.log": "76402151736d75b0822d504f4058aeada02d3198b29d96e7cbe601cc898bcbbc"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.816227249999997,
+            "chain_seconds": 11.810509208,
+            "started_unix_seconds": 1793167166,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1696840, 2146422, 0],
+              "subtree_slide": [418144, 676496, 829775],
+              "narrow_exchange": [114, 1733684, 191955],
+              "wide_exchange": [7, 166764, 216658],
+              "wilson_balding": [7, 293668, 90959],
+              "root_scale": [88159, 175311, 120658],
+              "tree_scale": [91220, 293154, 0],
+              "birth_difference_scale": [90298, 105747, 189351],
+              "relative_death_scale": [89078, 85360, 210171]
+            },
+            "output_sha256": {
+              "trace.log": "532f396af12529cccb412bee84d6a5179b1fabd35f3166d436a44ed8f941c223",
+              "trees.nexus": "8ad069f0d35d70eb5fe97f7167c11b418450f9343243ad5fa689fb95d0f3ee08",
+              "run.json": "043f4b823111d9bca756f785682ab73caf93af057b3d4dee42895b00d538ca4a"
+            }
+          }
+        },
+        {
+          "seed": 20261104,
+          "beast": {
+            "wall_seconds": 17.727107165999996,
+            "calculation_seconds": 17.571,
+            "started_at": "2026-10-28T05:57:21.715366+00:00",
+            "moves": {
+              "node_height": [1693219, 2151099],
+              "subtree_slide": [402784, 1522712],
+              "narrow_exchange": [137, 1923263],
+              "wide_exchange": [2, 384736],
+              "wilson_balding": [7, 385057],
+              "root_scale": [88525, 296189],
+              "tree_scale": [92329, 292286],
+              "birth_difference_scale": [91153, 293085],
+              "relative_death_scale": [84152, 299266]
+            },
+            "output_sha256": {
+              "analysis.log": "346ac72b99b51e7644b17056744d9d8383e2b0d331d80042e37490dad63adef3",
+              "matriz_20x50.trees": "fd1c9bd9f2b800078486f08f14fd720de1b4969e0a92a370acccdf4aad242860",
+              "analysis.xml.state": "7689bda61366de91079fd9917dfa5a3b8d6483c7f6a9d565241047dbe7d94ff6",
+              "console.log": "71c91fe2212b730ed29aff46bac5028b4fa993f982d4a4b6565c5dc91dc3c346"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.851613415999992,
+            "chain_seconds": 11.846179708,
+            "started_unix_seconds": 1793167178,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1698074, 2146995, 0],
+              "subtree_slide": [425533, 685126, 813439],
+              "narrow_exchange": [86, 1730845, 191763],
+              "wide_exchange": [3, 167475, 217181],
+              "wilson_balding": [4, 293227, 91094],
+              "root_scale": [88340, 175962, 120577],
+              "tree_scale": [90920, 292494, 0],
+              "birth_difference_scale": [90415, 105637, 188925],
+              "relative_death_scale": [90593, 86408, 208884]
+            },
+            "output_sha256": {
+              "trace.log": "42946e35cde6ddcb3581e2b9616258d858e4853ac2929b46a8ff2c41a5e6a467",
+              "trees.nexus": "f53640277e38b910ef61f65232f0918264727a543811e613742b56eafd72de55",
+              "run.json": "5f299f5cb0fbc59e869283fd8cf7ab6d6e82a7b838ece422b051f88432ff6f76"
+            }
+          }
+        },
+        {
+          "seed": 20261105,
+          "beast": {
+            "wall_seconds": 17.41710074999999,
+            "calculation_seconds": 17.265,
+            "started_at": "2026-10-28T05:57:39.449672+00:00",
+            "moves": {
+              "node_height": [1699936, 2145612],
+              "subtree_slide": [430771, 1493129],
+              "narrow_exchange": [115, 1923142],
+              "wide_exchange": [2, 385511],
+              "wilson_balding": [4, 384198],
+              "root_scale": [87953, 296328],
+              "tree_scale": [90836, 293124],
+              "birth_difference_scale": [90182, 294752],
+              "relative_death_scale": [92118, 292288]
+            },
+            "output_sha256": {
+              "analysis.log": "e8ff94a4d36294bcc1a8ecf1f048063134468334245462b1fa06dbe0894d2e2b",
+              "matriz_20x50.trees": "3243778930b5f76c1ee093282deafea66e66f6f414b34a99c538b0350337b2db",
+              "analysis.xml.state": "4a817ad242df58df33bda96dd004910ce5dbb75e9f3cd7fe88acf8ee63e7c224",
+              "console.log": "96b2aed3346de26c148b65e99a777327137d2325f5ff998787fc373448a938ac"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.882979042000017,
+            "chain_seconds": 11.87743475,
+            "started_unix_seconds": 1793167190,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1696435, 2150357, 0],
+              "subtree_slide": [423096, 688871, 812602],
+              "narrow_exchange": [117, 1728981, 192274],
+              "wide_exchange": [3, 167290, 217957],
+              "wilson_balding": [12, 293421, 90947],
+              "root_scale": [88470, 176016, 120729],
+              "tree_scale": [91155, 292708, 0],
+              "birth_difference_scale": [89665, 104898, 190284],
+              "relative_death_scale": [89228, 84764, 209720]
+            },
+            "output_sha256": {
+              "trace.log": "14798b5d474ae87fc7e52188add7bb8a02eb9751c9835f5ca93229ba114af615",
+              "trees.nexus": "67d2c7cb5baabc9e9ce52f76449ce14dd41be9b6b18b25d1e5eb221dbb0b91a7",
+              "run.json": "84392e783d1699227494b9eb29c1a9e0f584dc8c97c3f0a503f82299041e2a97"
+            }
+          }
+        },
+        {
+          "seed": 20261106,
+          "beast": {
+            "wall_seconds": 17.505398375,
+            "calculation_seconds": 17.34,
+            "started_at": "2026-10-28T05:57:56.873081+00:00",
+            "moves": {
+              "node_height": [1698732, 2147243],
+              "subtree_slide": [427222, 1495229],
+              "narrow_exchange": [130, 1922968],
+              "wide_exchange": [6, 384991],
+              "wilson_balding": [7, 384098],
+              "root_scale": [88362, 297280],
+              "tree_scale": [90725, 293297],
+              "birth_difference_scale": [90100, 294926],
+              "relative_death_scale": [91174, 293511]
+            },
+            "output_sha256": {
+              "analysis.log": "a5c8cb4a79018e1f479655d762278168c548ae1ca1b09f54d25e2e5de5cf8e69",
+              "matriz_20x50.trees": "07758c80c3edfe5a835fb694f18dedff32411b34d4965472e45c7aea8cec021c",
+              "analysis.xml.state": "5ace9c4cd65bed828bd1967fec413ebf612b58d9a77cb3b7f6961bb5d5cb7509",
+              "console.log": "8495de20827bb55c1191526d77c3f0f284494cee38d3ed04c7b3ea77759d2db8"
+            }
+          },
+          "rove": {
+            "wall_seconds": 12.022563583000021,
+            "chain_seconds": 12.016386208,
+            "started_unix_seconds": 1793167202,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1697922, 2149660, 0],
+              "subtree_slide": [425948, 688553, 807735],
+              "narrow_exchange": [107, 1729557, 191811],
+              "wide_exchange": [7, 167139, 217753],
+              "wilson_balding": [9, 292603, 90893],
+              "root_scale": [88291, 176162, 120639],
+              "tree_scale": [90744, 294241, 0],
+              "birth_difference_scale": [90056, 105358, 189914],
+              "relative_death_scale": [91828, 85766, 207304]
+            },
+            "output_sha256": {
+              "trace.log": "918e2551a1686a7058ccabbaf9625d5a17dfcbc9cb48443a493b896b8ae40358",
+              "trees.nexus": "0e083e510896dcd8ae8aef14bb8ed1b584dac2468eab4294976f14a0fdb9004f",
+              "run.json": "f3f0bdc6301521d489e731b101e4c36f01758f14e8415ce17728fbaf277d4521"
+            }
+          }
+        },
+        {
+          "seed": 20261107,
+          "beast": {
+            "wall_seconds": 17.767383582999997,
+            "calculation_seconds": 17.614,
+            "started_at": "2026-10-28T05:58:14.386267+00:00",
+            "moves": {
+              "node_height": [1697493, 2150126],
+              "subtree_slide": [418695, 1507392],
+              "narrow_exchange": [100, 1922350],
+              "wide_exchange": [4, 383678],
+              "wilson_balding": [5, 384219],
+              "root_scale": [88291, 296088],
+              "tree_scale": [90882, 292268],
+              "birth_difference_scale": [89817, 293910],
+              "relative_death_scale": [89121, 295562]
+            },
+            "output_sha256": {
+              "analysis.log": "4abc1476a5642884873eb894d6c8063040d427e97d9a57d2229ef2f01658fab0",
+              "matriz_20x50.trees": "b91a72ce5b0311e96bfbaa18faf9480be001ff396b181bfa008858a7c970663e",
+              "analysis.xml.state": "33d742712fc058e65367695f9ae235f6bab6b2265ce536d12f98dd5cd50edf8b",
+              "console.log": "e9a06ca537568fc6948db40cbbfdf2d04643c904b3eb464e897c9d4755a657d8"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.97895650000001,
+            "chain_seconds": 11.973365833,
+            "started_unix_seconds": 1793167214,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1696539, 2147873, 0],
+              "subtree_slide": [417744, 680244, 828457],
+              "narrow_exchange": [72, 1728878, 192867],
+              "wide_exchange": [2, 167350, 217469],
+              "wilson_balding": [4, 293400, 91287],
+              "root_scale": [88699, 174775, 120119],
+              "tree_scale": [91073, 294263, 0],
+              "birth_difference_scale": [90118, 103672, 190932],
+              "relative_death_scale": [89193, 85225, 209745]
+            },
+            "output_sha256": {
+              "trace.log": "36ed6263a5d0a250095801744b9945adf852bc2595e33da9507c63c6410eed8c",
+              "trees.nexus": "caafeb084b10a776409099fd19615f0e005dd112c635ed9862431f807e1ed90b",
+              "run.json": "0b70cc08250bdd19f3b9e1c1634870896196f9b19e90f824f7d827f228edb39c"
+            }
+          }
+        },
+        {
+          "seed": 20261108,
+          "beast": {
+            "wall_seconds": 17.73823575,
+            "calculation_seconds": 17.573,
+            "started_at": "2026-10-28T05:58:32.160621+00:00",
+            "moves": {
+              "node_height": [1698482, 2147302],
+              "subtree_slide": [413040, 1509342],
+              "narrow_exchange": [155, 1925470],
+              "wide_exchange": [3, 384174],
+              "wilson_balding": [13, 385055],
+              "root_scale": [88135, 295860],
+              "tree_scale": [91637, 292554],
+              "birth_difference_scale": [90024, 293500],
+              "relative_death_scale": [89646, 295609]
+            },
+            "output_sha256": {
+              "analysis.log": "38483a901edc980356a53634f9880712ed8bcc586a5b384311ae305a807bd66a",
+              "matriz_20x50.trees": "0529ff8c766a5cc23a32086ccc2a3dd33dc866e759838308cfa696296c24ba07",
+              "analysis.xml.state": "6719637e441a24bf24701670253406907012069114f9de2faad21ce5e43ba912",
+              "console.log": "e458459bd7276c00bd03e23fd76230f85d6ef3dcf7f4c7c002e0928291525c71"
+            }
+          },
+          "rove": {
+            "wall_seconds": 11.800836167,
+            "chain_seconds": 11.795179959,
+            "started_unix_seconds": 1793167226,
+            "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b",
+            "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+            "moves": {
+              "node_height": [1700213, 2148117, 0],
+              "subtree_slide": [434063, 692744, 794314],
+              "narrow_exchange": [96, 1728752, 192241],
+              "wide_exchange": [1, 167334, 217262],
+              "wilson_balding": [6, 293850, 90419],
+              "root_scale": [88343, 176253, 120647],
+              "tree_scale": [91030, 294323, 0],
+              "birth_difference_scale": [90426, 105889, 188841],
+              "relative_death_scale": [92559, 86134, 206143]
+            },
+            "output_sha256": {
+              "trace.log": "607eb023c17a921211a2dbc55cab54124018c97f6ee71d8e14535d961f7000e6",
+              "trees.nexus": "561b6b29334c9975faa4950bbed25a6afbd3be0a30aed805d64212e64d0a627d",
+              "run.json": "f27d56b39050ae47d39c60a63ba6a8c1c787b8e0ebc7eb0b0ce857acad739ac9"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "additional_checks": {
+    "mkv_off_reference_trees": {
+      "description": "retained Mkv trees whose topology differs from the most common one, by chain seed and state",
+      "rove": [
+        {
+          "seed": 20261031,
+          "state": 1926000
+        }
+      ],
+      "beast": [
+        {
+          "seed": 20261031,
+          "state": 5185000
+        }
+      ]
+    },
+    "mkv_root_height_ratio": {
+      "description": "per chain: mean of log(root height / older child height), and the fraction of retained trees in which a root scale of 0.75 would fail",
+      "mean_log_ratio": {
+        "rove": [
+          0.07211899004145372,
+          0.07127797511757537,
+          0.07275891003212277,
+          0.07205451444417427
+        ],
+        "beast": [
+          0.07244176384167914,
+          0.07241180727000102,
+          0.07087757756291198,
+          0.07197484114947493
+        ],
+        "z": 0.27
+      },
+      "fraction_failing_at_0.75": {
+        "rove": [
+          0.9860015553827353,
+          0.9876680368847905,
+          0.9855571603155205,
+          0.9858904566159316
+        ],
+        "beast": [
+          0.9867792467503611,
+          0.9856682590823241,
+          0.9897789134540607,
+          0.9867792467503611
+        ],
+        "z": -0.97
+      }
+    },
+    "mkv_birth_difference_rate_histogram": {
+      "description": "fraction of the pooled retained samples of the four Mkv chains in each interval of width 100, from [0, 100) to [900, 1000]",
+      "rove": [
+        0.0166,
+        0.0528,
+        0.0816,
+        0.098,
+        0.1053,
+        0.1217,
+        0.1241,
+        0.1286,
+        0.1343,
+        0.1371
+      ],
+      "beast": [
+        0.0177,
+        0.0546,
+        0.0812,
+        0.0982,
+        0.1098,
+        0.1191,
+        0.125,
+        0.1294,
+        0.1297,
+        0.1353
+      ]
+    },
+    "mk_first_attempt": {
+      "description": "SHA-256 of BEAST's outputs in the first Mk attempt, which stopped at the snapshot export; each equals the hash of the archived rerun",
+      "beast_output_sha256": {
+        "20261028": {
+          "analysis.log": "4ff9c5dd28dea211941ce85307db688dc00b223457264a494034c1d7c683efda",
+          "matriz_20x50.trees": "78c2c84a6f0272a591aeba8dd87f9ccbcf48027ed7e9c0392eb1a2c6834ddad4",
+          "analysis.xml.state": "2d6299d1a2e55d09e115d7bfedee7c012a61f2a5074109a04dfea04bc6a9210e"
+        },
+        "20261029": {
+          "analysis.log": "6fbc947332e580f7df9a0a3639be0e20e69b7eaa14909c744dab560a1e96bb76",
+          "matriz_20x50.trees": "d102fbbc32df0cacbb4c34c4cff6f7db37a388789debfd3182bda3ccf357abf6",
+          "analysis.xml.state": "964f93ddb15d4b00259d0e80a9a214754ee2ac2355c44daa223a016515dc43ba"
+        },
+        "20261030": {
+          "analysis.log": "e28d730e367bacde3c98e15f575383303b790c57ad4ef6b385166aaeb9bdadec",
+          "matriz_20x50.trees": "ca69864a87867a4a98da691466fc0db51da206c63375cae904ee8c9257c94edb",
+          "analysis.xml.state": "985115d45549a95a95571324433ef660c068cd33183058e670fd3ee30f806835"
+        },
+        "20261031": {
+          "analysis.log": "8320cf4f603cd348bc478a74114ea760ba2e3f5ca0b6b413045ca1e14293e14f",
+          "matriz_20x50.trees": "7fc00167053569fccea6fd7acf74b1aab3d73cf2e2e80cedabc645362f321c13",
+          "analysis.xml.state": "9574aac60bcada165903ac8b2fb290fa9e2aaf10e380182539bc6e42a37e88dd"
+        }
+      }
+    }
+  },
+  "acceptance_check": {
+    "description": "24 further Mkv chains per engine, run eight at a time after the comparisons; only the operator counts are kept",
+    "xml": "beast-mkv.xml",
+    "runs": [
+      {
+        "seed": 20261201,
+        "beast": {
+          "moves": {
+            "node_height": [1701610, 2146806],
+            "subtree_slide": [433541, 1489859],
+            "narrow_exchange": [150, 1922388],
+            "wide_exchange": [5, 383836],
+            "wilson_balding": [4, 384739],
+            "root_scale": [88271, 296507],
+            "tree_scale": [90266, 293784],
+            "birth_difference_scale": [89039, 294696],
+            "relative_death_scale": [92988, 291512]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1697440, 2150561, 0],
+            "subtree_slide": [414685, 676633, 832460],
+            "narrow_exchange": [113, 1731004, 192413],
+            "wide_exchange": [2, 166319, 216627],
+            "wilson_balding": [7, 292412, 91058],
+            "root_scale": [88402, 175447, 120259],
+            "tree_scale": [91513, 293504, 0],
+            "birth_difference_scale": [90629, 105557, 188640],
+            "relative_death_scale": [88080, 85275, 210960]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261202,
+        "beast": {
+          "moves": {
+            "node_height": [1697918, 2148252],
+            "subtree_slide": [427188, 1495135],
+            "narrow_exchange": [134, 1924132],
+            "wide_exchange": [5, 382994],
+            "wilson_balding": [10, 384569],
+            "root_scale": [88009, 296634],
+            "tree_scale": [91186, 294164],
+            "birth_difference_scale": [89855, 294381],
+            "relative_death_scale": [91598, 293837]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1699454, 2149076, 0],
+            "subtree_slide": [428507, 692079, 802754],
+            "narrow_exchange": [92, 1729790, 192515],
+            "wide_exchange": [2, 166911, 217136],
+            "wilson_balding": [4, 293370, 90655],
+            "root_scale": [88034, 176112, 120465],
+            "tree_scale": [91108, 293790, 0],
+            "birth_difference_scale": [88891, 104114, 190742],
+            "relative_death_scale": [90935, 85820, 207644]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261203,
+        "beast": {
+          "moves": {
+            "node_height": [1698609, 2147066],
+            "subtree_slide": [437656, 1487106],
+            "narrow_exchange": [104, 1921884],
+            "wide_exchange": [3, 385006],
+            "wilson_balding": [8, 383769],
+            "root_scale": [87793, 296659],
+            "tree_scale": [90651, 294164],
+            "birth_difference_scale": [90348, 294405],
+            "relative_death_scale": [94875, 289895]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1700587, 2147508, 0],
+            "subtree_slide": [417384, 678632, 828061],
+            "narrow_exchange": [123, 1730517, 191664],
+            "wide_exchange": [9, 167374, 217133],
+            "wilson_balding": [4, 293126, 91400],
+            "root_scale": [88533, 175142, 119968],
+            "tree_scale": [91478, 293735, 0],
+            "birth_difference_scale": [89976, 103555, 190097],
+            "relative_death_scale": [89300, 84853, 209841]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261204,
+        "beast": {
+          "moves": {
+            "node_height": [1695634, 2149411],
+            "subtree_slide": [416549, 1505152],
+            "narrow_exchange": [106, 1924112],
+            "wide_exchange": [4, 384363],
+            "wilson_balding": [4, 385238],
+            "root_scale": [88631, 295811],
+            "tree_scale": [91285, 294223],
+            "birth_difference_scale": [90796, 293328],
+            "relative_death_scale": [88892, 296462]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1698954, 2146860, 0],
+            "subtree_slide": [427874, 693196, 802904],
+            "narrow_exchange": [130, 1729591, 192372],
+            "wide_exchange": [4, 167402, 217070],
+            "wilson_balding": [7, 293168, 90701],
+            "root_scale": [87846, 176505, 120419],
+            "tree_scale": [90671, 294230, 0],
+            "birth_difference_scale": [88901, 103505, 193059],
+            "relative_death_scale": [92608, 85807, 206216]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261205,
+        "beast": {
+          "moves": {
+            "node_height": [1697735, 2147253],
+            "subtree_slide": [431551, 1492691],
+            "narrow_exchange": [103, 1924075],
+            "wide_exchange": [5, 384676],
+            "wilson_balding": [4, 384334],
+            "root_scale": [88253, 296625],
+            "tree_scale": [90598, 292665],
+            "birth_difference_scale": [89572, 295475],
+            "relative_death_scale": [92886, 291500]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1696561, 2148525, 0],
+            "subtree_slide": [426696, 682638, 814561],
+            "narrow_exchange": [134, 1729696, 191902],
+            "wide_exchange": [5, 167951, 217404],
+            "wilson_balding": [7, 293867, 90911],
+            "root_scale": [88124, 175662, 120673],
+            "tree_scale": [91140, 293229, 0],
+            "birth_difference_scale": [90671, 106864, 187538],
+            "relative_death_scale": [89662, 86035, 209544]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261206,
+        "beast": {
+          "moves": {
+            "node_height": [1696093, 2148868],
+            "subtree_slide": [416532, 1506671],
+            "narrow_exchange": [101, 1923040],
+            "wide_exchange": [4, 384488],
+            "wilson_balding": [4, 385221],
+            "root_scale": [88628, 296370],
+            "tree_scale": [91534, 292525],
+            "birth_difference_scale": [90308, 294249],
+            "relative_death_scale": [88724, 296641]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1698144, 2147164, 0],
+            "subtree_slide": [423171, 692457, 805995],
+            "narrow_exchange": [107, 1730334, 191924],
+            "wide_exchange": [6, 167919, 216880],
+            "wilson_balding": [6, 293526, 90944],
+            "root_scale": [88027, 176087, 121110],
+            "tree_scale": [91935, 294854, 0],
+            "birth_difference_scale": [89920, 103051, 191556],
+            "relative_death_scale": [90580, 85417, 208886]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261207,
+        "beast": {
+          "moves": {
+            "node_height": [1699295, 2148682],
+            "subtree_slide": [425160, 1496211],
+            "narrow_exchange": [139, 1922225],
+            "wide_exchange": [4, 383613],
+            "wilson_balding": [5, 385448],
+            "root_scale": [88165, 296855],
+            "tree_scale": [91150, 292901],
+            "birth_difference_scale": [89671, 295221],
+            "relative_death_scale": [91547, 293709]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1699532, 2147522, 0],
+            "subtree_slide": [416234, 685782, 819288],
+            "narrow_exchange": [143, 1731787, 191647],
+            "wide_exchange": [6, 167561, 216545],
+            "wilson_balding": [8, 293845, 91512],
+            "root_scale": [88451, 174819, 120962],
+            "tree_scale": [91390, 293600, 0],
+            "birth_difference_scale": [89641, 102249, 193853],
+            "relative_death_scale": [90585, 85058, 207980]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261208,
+        "beast": {
+          "moves": {
+            "node_height": [1699367, 2147967],
+            "subtree_slide": [426935, 1495543],
+            "narrow_exchange": [126, 1920905],
+            "wide_exchange": [2, 385127],
+            "wilson_balding": [6, 384593],
+            "root_scale": [88570, 296542],
+            "tree_scale": [91167, 293169],
+            "birth_difference_scale": [89394, 295084],
+            "relative_death_scale": [91900, 293604]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1697749, 2151976, 0],
+            "subtree_slide": [409037, 677800, 834140],
+            "narrow_exchange": [107, 1729378, 193077],
+            "wide_exchange": [3, 166926, 216859],
+            "wilson_balding": [8, 294010, 91061],
+            "root_scale": [88034, 175411, 120680],
+            "tree_scale": [91078, 293599, 0],
+            "birth_difference_scale": [89747, 102587, 192178],
+            "relative_death_scale": [88205, 85463, 210887]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261209,
+        "beast": {
+          "moves": {
+            "node_height": [1694473, 2149321],
+            "subtree_slide": [415528, 1507901],
+            "narrow_exchange": [91, 1924489],
+            "wide_exchange": [5, 385135],
+            "wilson_balding": [5, 384734],
+            "root_scale": [88035, 296770],
+            "tree_scale": [91107, 293524],
+            "birth_difference_scale": [90223, 294237],
+            "relative_death_scale": [88752, 295671]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1697559, 2147461, 0],
+            "subtree_slide": [424988, 685388, 810975],
+            "narrow_exchange": [83, 1733997, 191443],
+            "wide_exchange": [0, 167877, 217088],
+            "wilson_balding": [15, 293823, 91236],
+            "root_scale": [88833, 175981, 120649],
+            "tree_scale": [91442, 292625, 0],
+            "birth_difference_scale": [89496, 104552, 189504],
+            "relative_death_scale": [89805, 85550, 209630]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261210,
+        "beast": {
+          "moves": {
+            "node_height": [1699281, 2147164],
+            "subtree_slide": [420485, 1501956],
+            "narrow_exchange": [119, 1921503],
+            "wide_exchange": [3, 384381],
+            "wilson_balding": [6, 384867],
+            "root_scale": [88806, 296758],
+            "tree_scale": [91558, 293740],
+            "birth_difference_scale": [89970, 293999],
+            "relative_death_scale": [90368, 295037]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1700125, 2146808, 0],
+            "subtree_slide": [432960, 686027, 804789],
+            "narrow_exchange": [100, 1729977, 191373],
+            "wide_exchange": [3, 167620, 216515],
+            "wilson_balding": [7, 294402, 90542],
+            "root_scale": [87772, 176635, 121243],
+            "tree_scale": [90526, 294292, 0],
+            "birth_difference_scale": [89958, 105621, 189192],
+            "relative_death_scale": [92457, 85901, 205155]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261211,
+        "beast": {
+          "moves": {
+            "node_height": [1698670, 2145562],
+            "subtree_slide": [428537, 1495772],
+            "narrow_exchange": [145, 1923758],
+            "wide_exchange": [3, 384599],
+            "wilson_balding": [7, 384828],
+            "root_scale": [87772, 295806],
+            "tree_scale": [90976, 292669],
+            "birth_difference_scale": [89224, 295801],
+            "relative_death_scale": [92021, 293851]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1695629, 2149847, 0],
+            "subtree_slide": [414231, 675542, 833266],
+            "narrow_exchange": [98, 1731196, 193008],
+            "wide_exchange": [3, 167405, 216957],
+            "wilson_balding": [10, 292809, 91261],
+            "root_scale": [89031, 175227, 120521],
+            "tree_scale": [91511, 293244, 0],
+            "birth_difference_scale": [91013, 104851, 189104],
+            "relative_death_scale": [87404, 85836, 210996]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261212,
+        "beast": {
+          "moves": {
+            "node_height": [1696365, 2148656],
+            "subtree_slide": [423301, 1501550],
+            "narrow_exchange": [86, 1924289],
+            "wide_exchange": [8, 385148],
+            "wilson_balding": [0, 384733],
+            "root_scale": [88223, 295764],
+            "tree_scale": [91440, 292715],
+            "birth_difference_scale": [89646, 294316],
+            "relative_death_scale": [89954, 293807]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1699403, 2147148, 0],
+            "subtree_slide": [419604, 678536, 822380],
+            "narrow_exchange": [131, 1731115, 192820],
+            "wide_exchange": [7, 166628, 217412],
+            "wilson_balding": [15, 294024, 91181],
+            "root_scale": [89289, 175676, 120929],
+            "tree_scale": [91063, 293578, 0],
+            "birth_difference_scale": [89749, 103674, 190787],
+            "relative_death_scale": [89309, 85704, 209838]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261213,
+        "beast": {
+          "moves": {
+            "node_height": [1698333, 2146316],
+            "subtree_slide": [420390, 1503607],
+            "narrow_exchange": [81, 1923487],
+            "wide_exchange": [5, 384084],
+            "wilson_balding": [8, 385252],
+            "root_scale": [87994, 296187],
+            "tree_scale": [91201, 293601],
+            "birth_difference_scale": [90374, 294235],
+            "relative_death_scale": [89633, 295213]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1698920, 2149746, 0],
+            "subtree_slide": [416601, 683164, 823298],
+            "narrow_exchange": [123, 1728669, 191876],
+            "wide_exchange": [5, 167020, 216612],
+            "wilson_balding": [7, 293723, 91491],
+            "root_scale": [88367, 175942, 120631],
+            "tree_scale": [91556, 292998, 0],
+            "birth_difference_scale": [90099, 103127, 191028],
+            "relative_death_scale": [89709, 85727, 209561]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261214,
+        "beast": {
+          "moves": {
+            "node_height": [1697523, 2148190],
+            "subtree_slide": [418637, 1502542],
+            "narrow_exchange": [104, 1923576],
+            "wide_exchange": [7, 385037],
+            "wilson_balding": [6, 384743],
+            "root_scale": [88439, 296306],
+            "tree_scale": [91212, 294647],
+            "birth_difference_scale": [89598, 294744],
+            "relative_death_scale": [89164, 295526]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1697608, 2150811, 0],
+            "subtree_slide": [410088, 679104, 835382],
+            "narrow_exchange": [105, 1730137, 192744],
+            "wide_exchange": [2, 166929, 216912],
+            "wilson_balding": [1, 293005, 90751],
+            "root_scale": [88513, 175188, 121248],
+            "tree_scale": [91039, 291984, 0],
+            "birth_difference_scale": [90062, 103127, 191471],
+            "relative_death_scale": [88062, 85078, 210649]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261215,
+        "beast": {
+          "moves": {
+            "node_height": [1697814, 2150319],
+            "subtree_slide": [420211, 1503052],
+            "narrow_exchange": [132, 1920736],
+            "wide_exchange": [3, 384369],
+            "wilson_balding": [4, 384994],
+            "root_scale": [87988, 296053],
+            "tree_scale": [90695, 293223],
+            "birth_difference_scale": [90388, 294924],
+            "relative_death_scale": [89660, 295436]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1700133, 2144753, 0],
+            "subtree_slide": [429800, 694872, 799838],
+            "narrow_exchange": [97, 1731817, 191822],
+            "wide_exchange": [4, 166666, 216958],
+            "wilson_balding": [11, 293018, 90764],
+            "root_scale": [88331, 176610, 120613],
+            "tree_scale": [90515, 293883, 0],
+            "birth_difference_scale": [89846, 103815, 191005],
+            "relative_death_scale": [92193, 85741, 206895]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261216,
+        "beast": {
+          "moves": {
+            "node_height": [1698637, 2150402],
+            "subtree_slide": [419358, 1502833],
+            "narrow_exchange": [131, 1924175],
+            "wide_exchange": [3, 383733],
+            "wilson_balding": [4, 384204],
+            "root_scale": [87729, 295989],
+            "tree_scale": [91185, 294208],
+            "birth_difference_scale": [89123, 294437],
+            "relative_death_scale": [90723, 293127]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1702497, 2144253, 0],
+            "subtree_slide": [432733, 698275, 789184],
+            "narrow_exchange": [137, 1730632, 192246],
+            "wide_exchange": [2, 167505, 216945],
+            "wilson_balding": [2, 293293, 90974],
+            "root_scale": [88039, 176114, 120642],
+            "tree_scale": [90733, 294481, 0],
+            "birth_difference_scale": [90072, 104252, 191095],
+            "relative_death_scale": [93190, 86160, 206544]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261217,
+        "beast": {
+          "moves": {
+            "node_height": [1698447, 2148987],
+            "subtree_slide": [412154, 1511407],
+            "narrow_exchange": [114, 1923307],
+            "wide_exchange": [3, 383958],
+            "wilson_balding": [8, 384045],
+            "root_scale": [88361, 296047],
+            "tree_scale": [92048, 292125],
+            "birth_difference_scale": [90451, 294246],
+            "relative_death_scale": [87652, 296641]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1701620, 2145202, 0],
+            "subtree_slide": [436792, 699757, 788892],
+            "narrow_exchange": [109, 1729799, 192322],
+            "wide_exchange": [2, 167198, 216752],
+            "wilson_balding": [7, 293645, 90320],
+            "root_scale": [88073, 175864, 120314],
+            "tree_scale": [90195, 293446, 0],
+            "birth_difference_scale": [89099, 104275, 190955],
+            "relative_death_scale": [93675, 85552, 206135]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261218,
+        "beast": {
+          "moves": {
+            "node_height": [1697467, 2149493],
+            "subtree_slide": [416202, 1509667],
+            "narrow_exchange": [97, 1920452],
+            "wide_exchange": [4, 383713],
+            "wilson_balding": [5, 385130],
+            "root_scale": [88295, 297499],
+            "tree_scale": [91235, 292663],
+            "birth_difference_scale": [90098, 293535],
+            "relative_death_scale": [87872, 296574]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1699239, 2146036, 0],
+            "subtree_slide": [429459, 688464, 807279],
+            "narrow_exchange": [127, 1730991, 192174],
+            "wide_exchange": [5, 167253, 216954],
+            "wilson_balding": [6, 293623, 91174],
+            "root_scale": [87933, 175742, 120926],
+            "tree_scale": [90683, 293395, 0],
+            "birth_difference_scale": [89944, 104787, 189311],
+            "relative_death_scale": [91626, 85916, 206953]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261219,
+        "beast": {
+          "moves": {
+            "node_height": [1699024, 2145991],
+            "subtree_slide": [422054, 1502111],
+            "narrow_exchange": [90, 1920673],
+            "wide_exchange": [5, 384374],
+            "wilson_balding": [7, 385692],
+            "root_scale": [88356, 296317],
+            "tree_scale": [91055, 293673],
+            "birth_difference_scale": [89141, 295661],
+            "relative_death_scale": [91245, 294532]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1699343, 2147792, 0],
+            "subtree_slide": [424151, 679553, 818984],
+            "narrow_exchange": [114, 1731273, 192279],
+            "wide_exchange": [1, 167188, 216857],
+            "wilson_balding": [6, 293114, 90703],
+            "root_scale": [87762, 176040, 121163],
+            "tree_scale": [90458, 293075, 0],
+            "birth_difference_scale": [90476, 104724, 189778],
+            "relative_death_scale": [91468, 85365, 208333]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261220,
+        "beast": {
+          "moves": {
+            "node_height": [1700221, 2145554],
+            "subtree_slide": [429476, 1491020],
+            "narrow_exchange": [98, 1924547],
+            "wide_exchange": [3, 385077],
+            "wilson_balding": [11, 386044],
+            "root_scale": [87936, 297409],
+            "tree_scale": [90751, 293356],
+            "birth_difference_scale": [88760, 294757],
+            "relative_death_scale": [92628, 292353]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1697598, 2147287, 0],
+            "subtree_slide": [418505, 681013, 823413],
+            "narrow_exchange": [105, 1728880, 192472],
+            "wide_exchange": [6, 167948, 218353],
+            "wilson_balding": [10, 293360, 91086],
+            "root_scale": [87765, 175572, 121344],
+            "tree_scale": [91881, 292824, 0],
+            "birth_difference_scale": [90979, 105176, 189219],
+            "relative_death_scale": [88390, 85764, 211050]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261221,
+        "beast": {
+          "moves": {
+            "node_height": [1697387, 2148294],
+            "subtree_slide": [419978, 1505283],
+            "narrow_exchange": [120, 1920479],
+            "wide_exchange": [4, 384635],
+            "wilson_balding": [3, 384164],
+            "root_scale": [87923, 296494],
+            "tree_scale": [91743, 293540],
+            "birth_difference_scale": [89966, 294600],
+            "relative_death_scale": [90126, 295262]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1698850, 2147281, 0],
+            "subtree_slide": [433400, 692973, 797304],
+            "narrow_exchange": [94, 1730554, 191908],
+            "wide_exchange": [2, 167118, 217205],
+            "wilson_balding": [2, 293338, 91187],
+            "root_scale": [87902, 176338, 120578],
+            "tree_scale": [90588, 293816, 0],
+            "birth_difference_scale": [89309, 104605, 190651],
+            "relative_death_scale": [92869, 85939, 206189]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261222,
+        "beast": {
+          "moves": {
+            "node_height": [1699567, 2148758],
+            "subtree_slide": [424734, 1496766],
+            "narrow_exchange": [104, 1923524],
+            "wide_exchange": [3, 384237],
+            "wilson_balding": [3, 383947],
+            "root_scale": [88373, 297274],
+            "tree_scale": [90950, 293516],
+            "birth_difference_scale": [89228, 295179],
+            "relative_death_scale": [91436, 292402]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1697461, 2148614, 0],
+            "subtree_slide": [415187, 676759, 830779],
+            "narrow_exchange": [82, 1731042, 192421],
+            "wide_exchange": [10, 167524, 217438],
+            "wilson_balding": [4, 294375, 91050],
+            "root_scale": [88014, 175415, 121814],
+            "tree_scale": [91319, 293927, 0],
+            "birth_difference_scale": [90484, 103917, 188715],
+            "relative_death_scale": [87988, 85327, 210334]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261223,
+        "beast": {
+          "moves": {
+            "node_height": [1696119, 2149932],
+            "subtree_slide": [421360, 1502157],
+            "narrow_exchange": [143, 1925831],
+            "wide_exchange": [3, 384252],
+            "wilson_balding": [8, 383130],
+            "root_scale": [87632, 295814],
+            "tree_scale": [90958, 293772],
+            "birth_difference_scale": [90369, 294390],
+            "relative_death_scale": [88439, 295692]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1699751, 2147459, 0],
+            "subtree_slide": [419035, 683726, 820284],
+            "narrow_exchange": [123, 1729445, 192233],
+            "wide_exchange": [9, 167855, 216757],
+            "wilson_balding": [4, 294492, 91096],
+            "root_scale": [88558, 174943, 120583],
+            "tree_scale": [91360, 293483, 0],
+            "birth_difference_scale": [89477, 102761, 191283],
+            "relative_death_scale": [90255, 86206, 208822]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      },
+      {
+        "seed": 20261224,
+        "beast": {
+          "moves": {
+            "node_height": [1698234, 2147764],
+            "subtree_slide": [410282, 1513448],
+            "narrow_exchange": [84, 1922709],
+            "wide_exchange": [3, 384480],
+            "wilson_balding": [6, 384186],
+            "root_scale": [88212, 297002],
+            "tree_scale": [91924, 293181],
+            "birth_difference_scale": [90044, 294062],
+            "relative_death_scale": [87617, 296763]
+          }
+        },
+        "rove": {
+          "moves": {
+            "node_height": [1699400, 2148300, 0],
+            "subtree_slide": [426264, 689632, 809003],
+            "narrow_exchange": [88, 1729809, 191481],
+            "wide_exchange": [3, 166853, 216367],
+            "wilson_balding": [7, 293794, 91116],
+            "root_scale": [88589, 175295, 120218],
+            "tree_scale": [91075, 294208, 0],
+            "birth_difference_scale": [89781, 103567, 191146],
+            "relative_death_scale": [91300, 85611, 207093]
+          },
+          "executable_sha256": "efb188f5051310d7cf7e291d293ab48b04278b5643dfda1d71a71d7cf936406b"
+        }
+      }
+    ]
+  }
+}

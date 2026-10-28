@@ -9,7 +9,7 @@ O Rove é um projeto de inferência filogenética escrito em Rust. Ele começa c
 O nome vem de explorar, vagar e descobrir caminhos.
 
 ::: info Status do projeto
-Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk, a correção Mkv, o leitor de NEXUS, a compressão de padrões, os testes numéricos e um amostrador independente mínimo estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. O modelo de relógio relaxado desse experimento, caminhos de código SIMD e comparações de desempenho entre engines continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
+Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk, a correção Mkv, o leitor de NEXUS, a compressão de padrões, os testes numéricos e um amostrador independente mínimo estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. O modelo de relógio relaxado desse experimento, caminhos de código SIMD e benchmarks controlados entre motores continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Por que outro kernel
@@ -41,7 +41,7 @@ A página do [núcleo de verossimilhança](./kernel) mostra como chamá-lo. A p�
 
 - O restante do modelo de referência: variação de taxas gama e o relógio relaxado, além de múltiplas partições.
 - Caminhos de código NEON ou AVX2. O kernel atual é Rust escalar; o layout está preparado para vetorização.
-- Comparações de desempenho entre engines com o BEAST ou o BEAGLE.
+- Benchmarks controlados de desempenho contra o BEAST ou o BEAGLE.
 - Uma interface de usuário e os adaptadores opcionais para BEAST 2 ou BEAGLE.
 
 Nada desta lista está documentado como disponível em qualquer parte deste site. O [roadmap](./roadmap) dá a ordem.

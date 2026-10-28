@@ -1,0 +1,1432 @@
+{
+  "rove": {
+    "20261028": {
+      "burnin_percent": 10,
+      "discarded_samples": 1000,
+      "retained_samples": 9001,
+      "statistics": {
+        "posterior": {
+          "mean": -90.10610037823217,
+          "sd": 20.729637638722963,
+          "ess": 147.91110827832668,
+          "hpd_low": -130.19534410305332,
+          "hpd_high": -48.89853150836217
+        },
+        "likelihood": {
+          "mean": -203.0147217154698,
+          "sd": 2.591061134054545,
+          "ess": 8293.786953158788,
+          "hpd_low": -208.2448994357528,
+          "hpd_high": -198.3714875946414
+        },
+        "prior": {
+          "mean": 112.9086213372381,
+          "sd": 20.20739810770697,
+          "ess": 142.57193750325445,
+          "hpd_low": 75.97724149315948,
+          "hpd_high": 153.37067291739527
+        },
+        "birth_death": {
+          "mean": 119.81637661622007,
+          "sd": 20.20739810770454,
+          "ess": 142.57193750316324,
+          "hpd_low": 82.88499677214162,
+          "hpd_high": 160.2784281963774
+        },
+        "birth_difference_rate": {
+          "mean": 603.056845852038,
+          "sd": 250.58506481864856,
+          "ess": 4450.918797910605,
+          "hpd_low": 173.05865146914746,
+          "hpd_high": 999.7998169593328
+        },
+        "relative_death_rate": {
+          "mean": 0.6468237502782517,
+          "sd": 0.2586122261567506,
+          "ess": 623.1559289758256,
+          "hpd_low": 0.1352803118592122,
+          "hpd_high": 0.9980138805925969
+        },
+        "tree_height": {
+          "mean": 0.003016687889009476,
+          "sd": 0.0027541130633624454,
+          "ess": 1881.7330738083251,
+          "hpd_low": 9.363202600687075e-06,
+          "hpd_high": 0.007939257231064423
+        },
+        "tree_length": {
+          "mean": 0.0194195289320108,
+          "sd": 0.017414544339422543,
+          "ess": 1823.1436942659227,
+          "hpd_low": 6.16995876893827e-05,
+          "hpd_high": 0.051379754454486545
+        }
+      },
+      "reference_clades": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4,T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T11,T12": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16,T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        }
+      },
+      "observed_clade_frequencies": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": 1,
+        "T1,T2": 1,
+        "T1,T2,T3,T4": 1,
+        "T1,T2,T3,T4,T5,T6,T7,T8": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": 1,
+        "T10,T11,T12,T9": 1,
+        "T10,T9": 1,
+        "T11,T12": 1,
+        "T13,T14": 1,
+        "T13,T14,T15,T16": 1,
+        "T13,T14,T15,T16,T17,T18,T19": 1,
+        "T15,T16": 1,
+        "T17,T18": 1,
+        "T17,T18,T19": 1,
+        "T3,T4": 1,
+        "T5,T6": 1,
+        "T5,T6,T7,T8": 1,
+        "T7,T8": 1
+      },
+      "unique_topologies": 1,
+      "reference_topology_posterior": 1,
+      "mean_rooted_rf_distance_to_reference": 0
+    },
+    "20261029": {
+      "burnin_percent": 10,
+      "discarded_samples": 1000,
+      "retained_samples": 9001,
+      "statistics": {
+        "posterior": {
+          "mean": -91.62668064418133,
+          "sd": 17.815401891596863,
+          "ess": 1329.0192615553187,
+          "hpd_low": -124.83959829861203,
+          "hpd_high": -52.84769714399573
+        },
+        "likelihood": {
+          "mean": -202.95437107929988,
+          "sd": 2.5558263101381433,
+          "ess": 8954.039481825444,
+          "hpd_low": -208.24452326617768,
+          "hpd_high": -198.54541282416116
+        },
+        "prior": {
+          "mean": 111.32769043511878,
+          "sd": 17.2311522567555,
+          "ess": 1302.883632126704,
+          "hpd_low": 77.39633148221853,
+          "hpd_high": 146.996200097571
+        },
+        "birth_death": {
+          "mean": 118.23544571410075,
+          "sd": 17.23115225675587,
+          "ess": 1302.8836321254964,
+          "hpd_low": 84.30408676120067,
+          "hpd_high": 153.90395537655314
+        },
+        "birth_difference_rate": {
+          "mean": 600.0517884805408,
+          "sd": 252.9012802526177,
+          "ess": 4453.600904323105,
+          "hpd_low": 167.73758355405587,
+          "hpd_high": 999.7019249028887
+        },
+        "relative_death_rate": {
+          "mean": 0.6440881107393666,
+          "sd": 0.25780051028804096,
+          "ess": 2137.795957359606,
+          "hpd_low": 0.13534264016905026,
+          "hpd_high": 0.9948788996350326
+        },
+        "tree_height": {
+          "mean": 0.0031493555772109634,
+          "sd": 0.003024909186958457,
+          "ess": 3163.296902230003,
+          "hpd_low": 4.499576913925242e-05,
+          "hpd_high": 0.008628971509104981
+        },
+        "tree_length": {
+          "mean": 0.020323979792250573,
+          "sd": 0.01946963380233935,
+          "ess": 3141.0272323133177,
+          "hpd_low": 0.00017715514491180426,
+          "hpd_high": 0.05509297159620345
+        }
+      },
+      "reference_clades": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4,T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T11,T12": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16,T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        }
+      },
+      "observed_clade_frequencies": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": 1,
+        "T1,T2": 1,
+        "T1,T2,T3,T4": 1,
+        "T1,T2,T3,T4,T5,T6,T7,T8": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": 1,
+        "T10,T11,T12,T9": 1,
+        "T10,T9": 1,
+        "T11,T12": 1,
+        "T13,T14": 1,
+        "T13,T14,T15,T16": 1,
+        "T13,T14,T15,T16,T17,T18,T19": 1,
+        "T15,T16": 1,
+        "T17,T18": 1,
+        "T17,T18,T19": 1,
+        "T3,T4": 1,
+        "T5,T6": 1,
+        "T5,T6,T7,T8": 1,
+        "T7,T8": 1
+      },
+      "unique_topologies": 1,
+      "reference_topology_posterior": 1,
+      "mean_rooted_rf_distance_to_reference": 0
+    },
+    "20261030": {
+      "burnin_percent": 10,
+      "discarded_samples": 1000,
+      "retained_samples": 9001,
+      "statistics": {
+        "posterior": {
+          "mean": -91.42637687544081,
+          "sd": 18.87560623927199,
+          "ess": 667.1648622514422,
+          "hpd_low": -127.38608333179717,
+          "hpd_high": -52.25564056956878
+        },
+        "likelihood": {
+          "mean": -202.9602266817986,
+          "sd": 2.5513354632337544,
+          "ess": 8710.066628267003,
+          "hpd_low": -207.99788731316988,
+          "hpd_high": -198.34713592098922
+        },
+        "prior": {
+          "mean": 111.53384980635795,
+          "sd": 18.2767183847118,
+          "ess": 639.227910316986,
+          "hpd_low": 76.31677535477571,
+          "hpd_high": 148.364324889858
+        },
+        "birth_death": {
+          "mean": 118.44160508534006,
+          "sd": 18.276718384712247,
+          "ess": 639.2279103171644,
+          "hpd_low": 83.22453063375785,
+          "hpd_high": 155.27208016884015
+        },
+        "birth_difference_rate": {
+          "mean": 597.4940737838857,
+          "sd": 251.47217201225632,
+          "ess": 4055.793350446139,
+          "hpd_low": 169.1225859595364,
+          "hpd_high": 999.359100259193
+        },
+        "relative_death_rate": {
+          "mean": 0.6412416203047336,
+          "sd": 0.256618758286487,
+          "ess": 1692.3558742237144,
+          "hpd_low": 0.13716162124370163,
+          "hpd_high": 0.996545844734185
+        },
+        "tree_height": {
+          "mean": 0.003146424803282197,
+          "sd": 0.002913508067169846,
+          "ess": 2319.051077367776,
+          "hpd_low": 1.912108684700644e-05,
+          "hpd_high": 0.00834233357035194
+        },
+        "tree_length": {
+          "mean": 0.02029130656165556,
+          "sd": 0.018683234754416092,
+          "ess": 2326.237111575722,
+          "hpd_low": 0.00011234199570913834,
+          "hpd_high": 0.05390106913186656
+        }
+      },
+      "reference_clades": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4,T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T11,T12": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16,T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        }
+      },
+      "observed_clade_frequencies": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": 1,
+        "T1,T2": 1,
+        "T1,T2,T3,T4": 1,
+        "T1,T2,T3,T4,T5,T6,T7,T8": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": 1,
+        "T10,T11,T12,T9": 1,
+        "T10,T9": 1,
+        "T11,T12": 1,
+        "T13,T14": 1,
+        "T13,T14,T15,T16": 1,
+        "T13,T14,T15,T16,T17,T18,T19": 1,
+        "T15,T16": 1,
+        "T17,T18": 1,
+        "T17,T18,T19": 1,
+        "T3,T4": 1,
+        "T5,T6": 1,
+        "T5,T6,T7,T8": 1,
+        "T7,T8": 1
+      },
+      "unique_topologies": 1,
+      "reference_topology_posterior": 1,
+      "mean_rooted_rf_distance_to_reference": 0
+    },
+    "20261031": {
+      "burnin_percent": 10,
+      "discarded_samples": 1000,
+      "retained_samples": 9001,
+      "statistics": {
+        "posterior": {
+          "mean": -91.16960744118157,
+          "sd": 17.96077022670768,
+          "ess": 854.7603407899808,
+          "hpd_low": -126.7827184236119,
+          "hpd_high": -54.55908338314924
+        },
+        "likelihood": {
+          "mean": -202.94151991510176,
+          "sd": 2.52320428687243,
+          "ess": 8098.501022725272,
+          "hpd_low": -208.02516051752335,
+          "hpd_high": -198.39544804059952
+        },
+        "prior": {
+          "mean": 111.77191247392075,
+          "sd": 17.41192206705974,
+          "ess": 826.1714537386069,
+          "hpd_low": 80.10053436814158,
+          "hpd_high": 150.25735911637133
+        },
+        "birth_death": {
+          "mean": 118.67966775290274,
+          "sd": 17.4119220670599,
+          "ess": 826.1714537376029,
+          "hpd_low": 87.00828964712372,
+          "hpd_high": 157.16511439535347
+        },
+        "birth_difference_rate": {
+          "mean": 600.5251694258131,
+          "sd": 248.94233422790467,
+          "ess": 5052.378594759271,
+          "hpd_low": 178.7082707957559,
+          "hpd_high": 999.8631331612174
+        },
+        "relative_death_rate": {
+          "mean": 0.6468953700863538,
+          "sd": 0.25556253691472586,
+          "ess": 1956.6964042074549,
+          "hpd_low": 0.13840888634481638,
+          "hpd_high": 0.9945901173789035
+        },
+        "tree_height": {
+          "mean": 0.0030686332333207133,
+          "sd": 0.002797153612836567,
+          "ess": 2469.3218608863876,
+          "hpd_low": 2.6703886719847764e-05,
+          "hpd_high": 0.008269764002489176
+        },
+        "tree_length": {
+          "mean": 0.019732465459701354,
+          "sd": 0.017803048680808686,
+          "ess": 2424.9869091357755,
+          "hpd_low": 0.00022211989272229773,
+          "hpd_high": 0.05348363723663607
+        }
+      },
+      "reference_clades": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4,T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T9": {
+          "posterior": 0.9998889012331963,
+          "constant_trace": false,
+          "ess": 9001
+        },
+        "T11,T12": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16,T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        }
+      },
+      "observed_clade_frequencies": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": 1,
+        "T1,T2": 1,
+        "T1,T2,T3,T4": 1,
+        "T1,T2,T3,T4,T5,T6,T7,T8": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": 1,
+        "T10,T11,T12,T9": 1,
+        "T10,T9": 0.9998889012331963,
+        "T11,T12": 1,
+        "T11,T12,T9": 0.00011109876680368848,
+        "T13,T14": 1,
+        "T13,T14,T15,T16": 1,
+        "T13,T14,T15,T16,T17,T18,T19": 1,
+        "T15,T16": 1,
+        "T17,T18": 1,
+        "T17,T18,T19": 1,
+        "T3,T4": 1,
+        "T5,T6": 1,
+        "T5,T6,T7,T8": 1,
+        "T7,T8": 1
+      },
+      "unique_topologies": 2,
+      "reference_topology_posterior": 0.9998889012331963,
+      "mean_rooted_rf_distance_to_reference": 0.00022219753360737697
+    }
+  },
+  "beast": {
+    "20261028": {
+      "burnin_percent": 10,
+      "discarded_samples": 1000,
+      "retained_samples": 9001,
+      "statistics": {
+        "posterior": {
+          "mean": -90.49036776780892,
+          "sd": 19.964338568681463,
+          "ess": 550.9921919049507,
+          "hpd_low": -129.200298293407,
+          "hpd_high": -45.98561274605004
+        },
+        "likelihood": {
+          "mean": -202.9971042169494,
+          "sd": 2.535366782814027,
+          "ess": 7952.08757415099,
+          "hpd_low": -208.1298920055443,
+          "hpd_high": -198.4932762139329
+        },
+        "prior": {
+          "mean": 112.5067364491401,
+          "sd": 19.41469858461752,
+          "ess": 530.5399563876434,
+          "hpd_low": 75.89871073630962,
+          "hpd_high": 156.08074983408855
+        },
+        "BirthDeath": {
+          "mean": 119.41449172812233,
+          "sd": 19.414698584617145,
+          "ess": 530.5399563879688,
+          "hpd_low": 82.80646601529176,
+          "hpd_high": 162.9885051130707
+        },
+        "BDBirthRate": {
+          "mean": 596.6567362620075,
+          "sd": 251.14578276288512,
+          "ess": 4983.941767446803,
+          "hpd_low": 161.2982644991149,
+          "hpd_high": 999.9783504556299
+        },
+        "BDDeathRate": {
+          "mean": 0.6469477691054039,
+          "sd": 0.260264060100969,
+          "ess": 1306.3104168315929,
+          "hpd_low": 0.1396763894494519,
+          "hpd_high": 0.9954836359048416
+        },
+        "Tree.height": {
+          "mean": 0.003104484858517912,
+          "sd": 0.002960857239163241,
+          "ess": 2103.8669126920327,
+          "hpd_low": 2.050224766321465e-05,
+          "hpd_high": 0.008346805235401057
+        },
+        "Tree.treeLength": {
+          "mean": 0.020023295702429014,
+          "sd": 0.019052430117275518,
+          "ess": 2087.1103006249887,
+          "hpd_low": 0.00013365090645889302,
+          "hpd_high": 0.05380405107013743
+        }
+      },
+      "reference_clades": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4,T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T11,T12": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16,T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        }
+      },
+      "observed_clade_frequencies": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": 1,
+        "T1,T2": 1,
+        "T1,T2,T3,T4": 1,
+        "T1,T2,T3,T4,T5,T6,T7,T8": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": 1,
+        "T10,T11,T12,T9": 1,
+        "T10,T9": 1,
+        "T11,T12": 1,
+        "T13,T14": 1,
+        "T13,T14,T15,T16": 1,
+        "T13,T14,T15,T16,T17,T18,T19": 1,
+        "T15,T16": 1,
+        "T17,T18": 1,
+        "T17,T18,T19": 1,
+        "T3,T4": 1,
+        "T5,T6": 1,
+        "T5,T6,T7,T8": 1,
+        "T7,T8": 1
+      },
+      "unique_topologies": 1,
+      "reference_topology_posterior": 1,
+      "mean_rooted_rf_distance_to_reference": 0
+    },
+    "20261029": {
+      "burnin_percent": 10,
+      "discarded_samples": 1000,
+      "retained_samples": 9001,
+      "statistics": {
+        "posterior": {
+          "mean": -90.69211925094685,
+          "sd": 18.77989664702424,
+          "ess": 819.2120000704878,
+          "hpd_low": -126.14916787956506,
+          "hpd_high": -49.55113638261747
+        },
+        "likelihood": {
+          "mean": -202.95319907877277,
+          "sd": 2.5344955940567737,
+          "ess": 7925.86507082965,
+          "hpd_low": -207.93205227685715,
+          "hpd_high": -198.25698611984956
+        },
+        "prior": {
+          "mean": 112.26107982782543,
+          "sd": 18.225842100028096,
+          "ess": 807.1559870166693,
+          "hpd_low": 78.65069202525402,
+          "hpd_high": 153.27066212144504
+        },
+        "BirthDeath": {
+          "mean": 119.16883510680755,
+          "sd": 18.2258421000275,
+          "ess": 807.1559870167441,
+          "hpd_low": 85.55844730423615,
+          "hpd_high": 160.17841740042718
+        },
+        "BDBirthRate": {
+          "mean": 596.7193177504175,
+          "sd": 252.2071184456259,
+          "ess": 5089.397983282062,
+          "hpd_low": 156.9100156451772,
+          "hpd_high": 999.6815258910872
+        },
+        "BDDeathRate": {
+          "mean": 0.6526805683297103,
+          "sd": 0.2576011245828987,
+          "ess": 1771.9003611260764,
+          "hpd_low": 0.13896186204361788,
+          "hpd_high": 0.9955281294967168
+        },
+        "Tree.height": {
+          "mean": 0.0030710918690458845,
+          "sd": 0.0029195330863418948,
+          "ess": 2410.2875280868107,
+          "hpd_low": 4.1084126521053124e-05,
+          "hpd_high": 0.008325349715952479
+        },
+        "Tree.treeLength": {
+          "mean": 0.01975071665892624,
+          "sd": 0.01875583458779169,
+          "ess": 2414.6827443254415,
+          "hpd_low": 0.000199359495225188,
+          "hpd_high": 0.053111350952885716
+        }
+      },
+      "reference_clades": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4,T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T11,T12": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16,T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        }
+      },
+      "observed_clade_frequencies": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": 1,
+        "T1,T2": 1,
+        "T1,T2,T3,T4": 1,
+        "T1,T2,T3,T4,T5,T6,T7,T8": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": 1,
+        "T10,T11,T12,T9": 1,
+        "T10,T9": 1,
+        "T11,T12": 1,
+        "T13,T14": 1,
+        "T13,T14,T15,T16": 1,
+        "T13,T14,T15,T16,T17,T18,T19": 1,
+        "T15,T16": 1,
+        "T17,T18": 1,
+        "T17,T18,T19": 1,
+        "T3,T4": 1,
+        "T5,T6": 1,
+        "T5,T6,T7,T8": 1,
+        "T7,T8": 1
+      },
+      "unique_topologies": 1,
+      "reference_topology_posterior": 1,
+      "mean_rooted_rf_distance_to_reference": 0
+    },
+    "20261030": {
+      "burnin_percent": 10,
+      "discarded_samples": 1000,
+      "retained_samples": 9001,
+      "statistics": {
+        "posterior": {
+          "mean": -91.07482832156242,
+          "sd": 19.423356654557082,
+          "ess": 276.71932228530176,
+          "hpd_low": -128.41566886444005,
+          "hpd_high": -53.10188657130149
+        },
+        "likelihood": {
+          "mean": -202.9729048682093,
+          "sd": 2.5715911687555084,
+          "ess": 8122.50963187989,
+          "hpd_low": -207.92610963308837,
+          "hpd_high": -198.166211365269
+        },
+        "prior": {
+          "mean": 111.89807654664686,
+          "sd": 18.89515946665473,
+          "ess": 273.93850812458544,
+          "hpd_low": 76.18471919343934,
+          "hpd_high": 148.8808117016199
+        },
+        "BirthDeath": {
+          "mean": 118.80583182562903,
+          "sd": 18.89515946665266,
+          "ess": 273.9385081245554,
+          "hpd_low": 83.09247447242147,
+          "hpd_high": 155.78856698060204
+        },
+        "BDBirthRate": {
+          "mean": 604.9567301488851,
+          "sd": 248.76183141407822,
+          "ess": 5624.167876872477,
+          "hpd_low": 173.27555774718843,
+          "hpd_high": 999.9965310063345
+        },
+        "BDDeathRate": {
+          "mean": 0.6416623591990611,
+          "sd": 0.25636979851456143,
+          "ess": 1875.9060939412086,
+          "hpd_low": 0.13396919429666035,
+          "hpd_high": 0.998621329443626
+        },
+        "Tree.height": {
+          "mean": 0.0030983487451073373,
+          "sd": 0.002812678415002392,
+          "ess": 1774.089704928014,
+          "hpd_low": 5.4655467785072005e-06,
+          "hpd_high": 0.008136716807246982
+        },
+        "Tree.treeLength": {
+          "mean": 0.02000902182569266,
+          "sd": 0.018071719439071873,
+          "ess": 1767.5190542263244,
+          "hpd_low": 3.712089844537329e-05,
+          "hpd_high": 0.05274001079174722
+        }
+      },
+      "reference_clades": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4,T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T11,T12": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16,T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        }
+      },
+      "observed_clade_frequencies": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": 1,
+        "T1,T2": 1,
+        "T1,T2,T3,T4": 1,
+        "T1,T2,T3,T4,T5,T6,T7,T8": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": 1,
+        "T10,T11,T12,T9": 1,
+        "T10,T9": 1,
+        "T11,T12": 1,
+        "T13,T14": 1,
+        "T13,T14,T15,T16": 1,
+        "T13,T14,T15,T16,T17,T18,T19": 1,
+        "T15,T16": 1,
+        "T17,T18": 1,
+        "T17,T18,T19": 1,
+        "T3,T4": 1,
+        "T5,T6": 1,
+        "T5,T6,T7,T8": 1,
+        "T7,T8": 1
+      },
+      "unique_topologies": 1,
+      "reference_topology_posterior": 1,
+      "mean_rooted_rf_distance_to_reference": 0
+    },
+    "20261031": {
+      "burnin_percent": 10,
+      "discarded_samples": 1000,
+      "retained_samples": 9001,
+      "statistics": {
+        "posterior": {
+          "mean": -91.26514485304043,
+          "sd": 19.193518952722073,
+          "ess": 602.0024818673489,
+          "hpd_low": -127.54452740092714,
+          "hpd_high": -49.7032181628079
+        },
+        "likelihood": {
+          "mean": -202.98002842563096,
+          "sd": 2.5726989720972497,
+          "ess": 7572.684870355374,
+          "hpd_low": -208.06006765439366,
+          "hpd_high": -198.20658949444493
+        },
+        "prior": {
+          "mean": 111.71488357258981,
+          "sd": 18.641165524120083,
+          "ess": 587.8160959135859,
+          "hpd_low": 75.38971882210095,
+          "hpd_high": 150.86172478335575
+        },
+        "BirthDeath": {
+          "mean": 118.62263885157189,
+          "sd": 18.641165524121206,
+          "ess": 587.8160959135705,
+          "hpd_low": 82.29747410108308,
+          "hpd_high": 157.7694800623379
+        },
+        "BDBirthRate": {
+          "mean": 588.7348546140109,
+          "sd": 253.54065503817927,
+          "ess": 4462.486077936623,
+          "hpd_low": 163.12714858485504,
+          "hpd_high": 999.1740009067079
+        },
+        "BDDeathRate": {
+          "mean": 0.6492060190134537,
+          "sd": 0.2576381836233961,
+          "ess": 1510.751362080724,
+          "hpd_low": 0.13942868174054368,
+          "hpd_high": 0.9970180979610458
+        },
+        "Tree.height": {
+          "mean": 0.003202136196852083,
+          "sd": 0.0030468682540501445,
+          "ess": 2081.781973144049,
+          "hpd_low": 2.1267609007712947e-05,
+          "hpd_high": 0.008713837162582441
+        },
+        "Tree.treeLength": {
+          "mean": 0.020607858185383812,
+          "sd": 0.019640177862405912,
+          "ess": 2090.862738088471,
+          "hpd_low": 0.00011892224619080026,
+          "hpd_high": 0.056161283872772756
+        }
+      },
+      "reference_clades": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T1,T2,T3,T4,T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T11,T12,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T10,T9": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T11,T12": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T13,T14,T15,T16,T17,T18,T19": {
+          "posterior": 0.9998889012331963,
+          "constant_trace": false,
+          "ess": 9001
+        },
+        "T15,T16": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T17,T18,T19": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T3,T4": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T5,T6,T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        },
+        "T7,T8": {
+          "posterior": 1,
+          "constant_trace": true,
+          "ess": null
+        }
+      },
+      "observed_clade_frequencies": {
+        "T1,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T2,T3,T4,T5,T6,T7,T8,T9": 1,
+        "T1,T2": 1,
+        "T1,T2,T3,T4": 1,
+        "T1,T2,T3,T4,T5,T6,T7,T8": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T9": 1,
+        "T10,T11,T12,T13,T14,T15,T16,T9": 0.00011109876680368848,
+        "T10,T11,T12,T9": 1,
+        "T10,T9": 1,
+        "T11,T12": 1,
+        "T13,T14": 1,
+        "T13,T14,T15,T16": 1,
+        "T13,T14,T15,T16,T17,T18,T19": 0.9998889012331963,
+        "T15,T16": 1,
+        "T17,T18": 1,
+        "T17,T18,T19": 1,
+        "T3,T4": 1,
+        "T5,T6": 1,
+        "T5,T6,T7,T8": 1,
+        "T7,T8": 1
+      },
+      "unique_topologies": 2,
+      "reference_topology_posterior": 0.9998889012331963,
+      "mean_rooted_rf_distance_to_reference": 0.00022219753360737697
+    }
+  }
+}

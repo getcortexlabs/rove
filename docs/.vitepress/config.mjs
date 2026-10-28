@@ -129,7 +129,7 @@ const locales = {
       what: 'Rove 是什么？',
       design: '设计',
       kernel: '似然核心',
-      sampler: '采样树',
+      sampler: '树的采样',
       nexus: '读取 NEXUS',
       fixtures: '合成矩阵',
       outline: '本页目录',

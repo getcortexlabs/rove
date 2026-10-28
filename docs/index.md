@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Early
-The likelihood core with its direct Mk path, the Mkv correction, the equality tests and a minimal standalone sampler are implemented. The relaxed-clock model, SIMD paths and cross-engine performance comparisons are not. [See what exists today →](/guide/#what-exists-today)
+The likelihood core with its direct Mk path, the Mkv correction, the equality tests and a minimal standalone sampler are implemented. The relaxed-clock model, SIMD paths and controlled cross-engine benchmarks are not. [See what exists today →](/guide/#what-exists-today)
 :::
 
 </div>

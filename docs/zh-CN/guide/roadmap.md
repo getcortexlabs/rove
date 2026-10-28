@@ -16,8 +16,8 @@ Rove 处于早期。没有发布版本，没有发布的 crate，也没有日期
 | 完整推断和跨引擎基准测试 | 待完成，#8 |
 | Mkv 确认偏差校正 | 已完成 |
 | 直接 Mk 剪枝 | 已完成 |
-| 最小的独立 MCMC | 下一步，#15 |
-| NEON 向量化 | 计划中，#5 |
+| 最小的独立 MCMC | 已完成 |
+| NEON 向量化 | 下一步，#5 |
 | 松弛时钟参考模型 | 计划中，#16 |
 | 完整推断验证 | 计划中，#12 |
 | 子树内重复的评估 | 计划中，#17 |
@@ -27,17 +27,17 @@ Rove 处于早期。没有发布版本，没有发布的 crate，也没有日期
 
 [核心](./kernel)已与一个独立的标量实现核对。[NEXUS 读取器](./nexus)在不依赖 BEAST 的情况下提供带权重的观测。[参考实验](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md)记录了确切的输入、模型设置、两次完成的 BEAST 运行和固定的数值状态。
 
-[Apple M4 Max 基线](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md)记录了 11 个 Rust 工作负载，分别测量初始化、整树计算、局部更新和提议状态管理。报告包含原始样本、内存分配观测以及三个独立进程之间的变动。完整推断和跨引擎比较仍待完成，目前尚未测得任何跨引擎的加速。
+[Apple M4 Max 基线](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md)记录了 11 个 Rust 工作负载，分别测量初始化、整树计算、局部更新和提议状态管理。报告包含原始样本、内存分配观测以及三个独立进程之间的变动。完整推断和跨引擎基准测试仍待完成。下文的严格时钟比较记录了两个引擎在一个小型配置上的运行时间，但它不是受控的基准测试。
 
 ## 先正确，再优化
 
 Mkv 把似然条件化于仅含可变性状的矩阵的观测过程。它重现了两个存档的 BEAST 状态，其恒定模式与观测到的模式权重保持分开。
 
-对 Mk 模型，直接 Mk 路径取代了通用矩阵乘积。在 Apple M4 Max 上，对参考矩阵做一次完整求值，矩阵路径用时是 Mk 路径的 1.25 倍，八个状态时为 2.66 倍（[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)）。Apple silicon 上的 NEON 放在最小采样器之后，以便用完整运行的性能剖析找出内核时间花在哪里。标量实现仍是参考和回退。每项优化都需要前后对比的测量，而不只是算术运算的计数。
+对 Mk 模型，直接 Mk 路径取代了通用矩阵乘积。在 Apple M4 Max 上，对参考矩阵做一次完整求值，矩阵路径用时是 Mk 路径的 1.25 倍，八个状态时为 2.66 倍（[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)）。接下来是 Apple silicon 上的 NEON，以便用采样器完整运行的性能剖析找出内核时间花在哪里。标量实现仍是参考和回退。每项优化都需要前后对比的测量，而不只是算术运算的计数。
 
 ## 独立推断
 
-最小的采样器先于完整的松弛时钟和生灭配置。验证从固定状态的似然推进到已知矩阵上的完整运行。采样质量，包括单位时间的 ESS 和树诊断，与运行时间一同计入。
+[最小采样器](./sampler)支持二态 Mk 或 Mkv、严格时钟和生灭先验。在与 BEAST 2.7.8 使用相同移动和固定步长的情况下，它在参考矩阵上的后验均值和支系频率满足了运行前确定的标准（[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)）。参考分析的松弛时钟配置排在 NEON 之后。验证从固定状态的似然推进到已知矩阵上的完整运行。采样质量，包括单位时间的 ESS 和树诊断，与运行时间一同计入。
 
 预期的产品是一个原生 macOS 应用程序。应用程序 UI 的工作尚未开始。BEAST 和 BEAGLE 适配器是可选的兼容路径，不是 Rust 引擎的依赖。
 
