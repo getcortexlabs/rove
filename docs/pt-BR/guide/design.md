@@ -20,6 +20,8 @@ O Mk tem forma fechada. A matriz de transição de um ramo é `P(t) = e·I + (1 
 
 Um núcleo Mk, construído com `LikelihoodCore::mk`, usa essa forma diretamente. Cada ramo guarda uma distância, `e` e `1 − e` por categoria de taxa em vez de uma matriz, e a atualização de um filho calcula, para cada padrão, uma única soma ponderada pelas frequências, que serve a todos os estados. O núcleo de matrizes continua disponível para modelos sem essa forma, e os testes comparam os dois com a referência.
 
+Num Apple M4 Max, a [comparação do Mk direto](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md) mediu os dois núcleos nos mesmos processos. Numa avaliação completa da referência 20 × 50, o núcleo de matrizes levou 1,25 vez o tempo do núcleo Mk; numa matriz binária de 90 × 250, 1,11 vez; com oito estados, 2,66 vezes. Com dois estados, os dois caminhos fazem quase as mesmas contas, e o caminho Mk percorre a memória menos vezes.
+
 ## Uma referência escalar, sempre
 
 `reference::Problem` é uma implementação recursiva simples do algoritmo de poda de Felsenstein. É lenta e simples de propósito. Os testes de igualdade constroem árvores aleatórias e comparam `LikelihoodCore` com ela, com estados nos terminais e com parciais nos terminais, com e sem reescalonamento, a uma tolerância relativa de 1e-9. `variable_log_likelihood` aplica a correção Mkv da mesma forma direta.

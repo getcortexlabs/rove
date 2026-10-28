@@ -15,8 +15,8 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Baseline do núcleo Rust | Concluído, #8 |
 | Benchmarks de inferência completa e entre motores | Pendente, #8 |
 | Correção de ascertainment Mkv | Concluído |
-| Poda direta do Mk | Próximo, #4 |
-| MCMC independente mínimo | Planejado, #15 |
+| Poda direta do Mk | Concluído |
+| MCMC independente mínimo | Próximo, #15 |
 | Vetorização NEON | Planejado, #5 |
 | Modelo de referência com relógio relaxado | Planejado, #16 |
 | Validação completa da inferência | Planejado, #12 |
@@ -33,7 +33,7 @@ O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/ben
 
 O Mkv condiciona a verossimilhança ao processo de observação em matrizes só com caracteres variáveis. Ele reproduz os dois estados arquivados do BEAST, e seus padrões constantes ficam separados dos pesos dos padrões observados.
 
-O caminho direto do Mk substitui o produto genérico de matrizes nos modelos Mk. O NEON em Apple silicon vem depois do amostrador mínimo, para que perfis de execuções completas mostrem onde o tempo do kernel pesa. A implementação escalar continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
+O caminho direto do Mk substitui o produto genérico de matrizes nos modelos Mk. Num Apple M4 Max, o caminho de matrizes levou 1,25 vez o tempo do caminho Mk numa avaliação completa da matriz de referência, e 2,66 vezes com oito estados ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). O NEON em Apple silicon vem depois do amostrador mínimo, para que perfis de execuções completas mostrem onde o tempo do kernel pesa. A implementação escalar continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
 
 ## Inferência independente
 

@@ -15,8 +15,8 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Línea base del núcleo Rust | Hecho, #8 |
 | Benchmarks de inferencia completa y entre motores | Pendiente, #8 |
 | Corrección de ascertainment de Mkv | Hecho |
-| Poda directa de Mk | Siguiente, #4 |
-| MCMC independiente mínimo | Planificado, #15 |
+| Poda directa de Mk | Hecho |
+| MCMC independiente mínimo | Siguiente, #15 |
 | Vectorización NEON | Planificado, #5 |
 | Modelo de referencia con reloj relajado | Planificado, #16 |
 | Validación de la inferencia completa | Planificado, #12 |
@@ -33,7 +33,7 @@ La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main
 
 Mkv condiciona la verosimilitud al proceso de observación para matrices con solo caracteres variables. Reproduce los dos estados archivados de BEAST, y sus patrones constantes se mantienen separados de los pesos de los patrones observados.
 
-La ruta directa de Mk sustituye el producto genérico de matrices en los modelos Mk. NEON en Apple silicon llega después del muestreador mínimo, para que los perfiles de ejecuciones completas muestren dónde pesa el tiempo del kernel. La implementación escalar sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
+La ruta directa de Mk sustituye el producto genérico de matrices en los modelos Mk. En un Apple M4 Max, la ruta de matrices tardó 1,25 veces lo que la ruta Mk en una evaluación completa de la matriz de referencia, y 2,66 veces con ocho estados ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). NEON en Apple silicon llega después del muestreador mínimo, para que los perfiles de ejecuciones completas muestren dónde pesa el tiempo del kernel. La implementación escalar sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
 
 ## Inferencia independiente
 

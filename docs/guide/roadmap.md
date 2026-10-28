@@ -15,8 +15,8 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Rust kernel benchmark baseline | Done, #8 |
 | Full-inference and cross-engine benchmarks | Pending, #8 |
 | Mkv ascertainment correction | Done |
-| Direct Mk pruning | Next, #4 |
-| Minimal standalone MCMC | Planned, #15 |
+| Direct Mk pruning | Done |
+| Minimal standalone MCMC | Next, #15 |
 | NEON vectorisation | Planned, #5 |
 | Relaxed-clock reference model | Planned, #16 |
 | Complete inference validation | Planned, #12 |
@@ -33,7 +33,7 @@ The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benc
 
 Mkv conditions the likelihood on the observation process for variable-only matrices. It reproduces both archived BEAST states, and its constant patterns stay separate from the observed pattern weights.
 
-The direct Mk path replaces the generic matrix product for Mk models. NEON on Apple silicon follows the minimal sampler, so that profiles of complete runs can show where kernel time matters. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
+The direct Mk path replaces the generic matrix product for Mk models. On Apple M4 Max, the matrix path took 1.25 times as long for a full evaluation of the reference matrix, and 2.66 times as long with eight states ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). NEON on Apple silicon follows the minimal sampler, so that profiles of complete runs can show where kernel time matters. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
 
 ## Standalone inference
 

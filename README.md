@@ -42,6 +42,10 @@ No cross-engine speedup has been measured.
 The [Rust baseline on Apple M4 Max](benchmarks/rove/2026-10-26/README.md)
 measures 11 workloads, separating setup, full evaluations, partial updates and
 proposal bookkeeping. It includes raw samples and the variation between runs.
+The [direct Mk comparison](benchmarks/rove/2026-10-28/README.md) measures both
+pruning paths in the same processes: the matrix path took 1.25 times as long as
+the closed form for a full evaluation of the reference dataset, and 2.66 times
+as long with eight states.
 
 With the [Mkv correction](docs/guide/kernel.md#conditioning-on-variable-characters),
 Rove reproduces the likelihood of both archived BEAST states for the reference
@@ -79,7 +83,7 @@ other when reproducing a result.
 1. Establish the scalar core, tests, CI and BEAST reference. Done.
 2. Read morphological NEXUS and compress observed patterns. Done.
 3. Record the Rust kernel baseline and add the Mkv correction. Done.
-4. Add direct Mk pruning, measuring the change.
+4. Add direct Mk pruning, measuring the change. Done.
 5. Build a minimal standalone MCMC, then add NEON where its profiles show
    kernel time.
 6. Add the relaxed-clock reference model, validate complete inference and

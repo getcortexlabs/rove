@@ -20,6 +20,8 @@ Mk has a closed form. The transition matrix for a branch is `P(t) = e·I + (1 �
 
 An Mk core, built with `LikelihoodCore::mk`, uses that form directly. Each branch holds a distance, `e` and `1 − e` per rate category instead of a matrix, and a child update computes one frequency-weighted sum per pattern for all states. The matrix core stays for models without such a form, and the tests compare both with the reference.
 
+On an Apple M4 Max, the [direct Mk comparison](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md) measured both cores in the same processes. For a full evaluation of the 20 × 50 reference, the matrix core took 1.25 times as long as the Mk core; for a binary 90 × 250 matrix, 1.11 times; with eight states, 2.66 times. With two states both paths do about the same arithmetic, and the Mk path makes fewer passes over memory.
+
 ## A scalar reference, always
 
 `reference::Problem` is a plain recursive implementation of Felsenstein's pruning algorithm. It is slow and simple on purpose. The equality tests build random trees and compare `LikelihoodCore` against it, with tip states and with tip partials, with and without rescaling, to a relative tolerance of 1e-9. `variable_log_likelihood` applies the Mkv correction in the same direct way.

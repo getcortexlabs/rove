@@ -7,7 +7,9 @@ needed to execute it. No cross-engine performance comparison is implied.
 
 The first [Apple M4 Max baseline](rove/2026-10-26/README.md) includes all raw
 samples, timing variability, allocation observations and reproduction commands.
-It predates the direct path.
+It predates the direct path. The
+[direct Mk comparison](rove/2026-10-28/README.md) measures both paths in the
+same processes.
 
 ## Run
 
