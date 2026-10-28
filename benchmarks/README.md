@@ -1,11 +1,13 @@
 # Likelihood benchmarks
 
-The Rust harness measures the current generic Mk pruning implementation. It
-does not run MCMC, compute priors or apply Mkv ascertainment correction. BEAST
-is not needed to execute it. No cross-engine performance comparison is implied.
+The Rust harness measures both pruning paths for Mk: the generic product with
+full transition matrices and the direct closed form. It does not run MCMC or
+compute priors; one case applies the Mkv ascertainment correction. BEAST is not
+needed to execute it. No cross-engine performance comparison is implied.
 
 The first [Apple M4 Max baseline](rove/2026-10-26/README.md) includes all raw
 samples, timing variability, allocation observations and reproduction commands.
+It predates the direct path.
 
 ## Run
 
@@ -48,15 +50,18 @@ process startup or disk-read latency.
 | --- | --- |
 | `parse` | Parse the in-memory NEXUS text; drop the resulting matrix. |
 | `compress` | Compress an already parsed matrix as one explicit partition; build tip partials and drop the result. |
-| `core_setup` | Allocate the core and scratch matrix; populate tips and all branch matrices; drop them. Does not prune. |
-| `full_cached` | Recalculate every internal node and integrate the root, using existing branch matrices. |
-| `full_with_matrices` | Alternate all branch distances between 90% and 110% of their baseline; rebuild matrices and perform a full evaluation. |
-| `tip_update` | Change a deepest tip's branch distance, rebuild its matrices, update its ancestors and integrate the root. |
-| `internal_update` | Change an internal branch immediately below the root; rebuild its matrices, update the root and integrate. Descendant partials are reused. |
+| `core_setup` | Allocate the core and scratch matrix; populate tips and all branches; drop them. Does not prune. |
+| `full_cached` | Recalculate every internal node and integrate the root, using the existing branches. |
+| `full_with_branches` | Alternate all branch distances between 90% and 110% of their baseline; rebuild every branch and perform a full evaluation. |
+| `tip_update` | Change a deepest tip's branch distance, rebuild that branch, update its ancestors and integrate the root. |
+| `internal_update` | Change an internal branch immediately below the root; rebuild that branch, update the root and integrate. Descendant partials are reused. |
 | `accept_proposal` | Store buffer indices, switch the affected buffers, perform a deepest-tip update and retain it. |
 | `reject_proposal` | The same proposal, followed by restoring the saved buffer indices. |
-| `store` | Copy current partial and matrix buffer indices into the stored arrays. |
+| `store` | Copy current partial and branch buffer indices into the stored arrays. |
 | `store_restore` | Store indices and restore them, without calculating likelihoods. |
+
+Rebuilding a branch means computing its matrices on the `matrices` path, and
+its distance, `e` and `1 − e` per rate category on the `mk` path.
 
 Accepted and rejected outcomes are forced to isolate costs. They contain no
 proposal generation, Hastings ratio, prior evaluation, acceptance test, tree
@@ -67,6 +72,13 @@ Each metric gets a separate initialized core. Timing includes the harness loop,
 dispatch and `black_box` barriers; no overhead is subtracted. Very small
 bookkeeping measurements should be read with that limitation in mind.
 
+Every metric is measured on both transition paths in turn, recorded in the
+`transitions` column: `matrices` uses `LikelihoodCore::new` with full matrices
+and `mk` uses `LikelihoodCore::mk`. The two measurements of a metric run back
+to back in the same process, and the order alternates between metrics. Parsing
+and compression do not depend on the path, so their paired values show the
+noise between identical operations.
+
 ## Workloads and correctness
 
 - `reference_20x50` imports the selected matrix and the frozen tree, branch
@@ -75,6 +87,9 @@ bookkeeping measurements should be read with that limitation in mind.
   log likelihood is checked against the exported pattern likelihoods within
   an absolute tolerance of `1e-9`. The two zero-weight ascertainment patterns
   are excluded. This value differs from the XML's Mkv likelihood.
+- `reference_20x50_mkv` evaluates the same state with the two constant patterns
+  of the Mkv correction, 25 patterns with a stride of 32. Its conditioned log
+  likelihood is checked against the XML's value within `1e-9`.
 - `morphology_90x250` imports the [generated matrix](../fixtures/benchmarks/morphology_90x250.nex).
   It was simulated under binary Mk on a balanced tree, distance 0.1 per branch,
   one rate, and SplitMix64 seed 20261026. Constant characters were retained.
@@ -91,16 +106,19 @@ bookkeeping measurements should be read with that limitation in mind.
 Generated cases use uniform state frequencies. Four-rate cases use the mixture
 above; single-rate cases use rate 1. Every generated branch has distance 0.1.
 Tree shapes are fixed, not optimized. Counts distinguish original characters,
-observed patterns, padded stride and the number of dirty internal nodes.
+observed patterns, patterns evaluated by the core (`core_patterns`, including
+the constant Mkv patterns), padded stride and the number of dirty internal
+nodes.
 
-Before timing, every case is compared with the independent scalar reference.
-Partial updates, accepted proposals, rejection restoration and full matrix
-updates are also checked. CI runs those checks, verifies generated fixtures,
-and tests report aggregation; CI timings are not benchmark results.
+Before timing, every case is compared with the independent scalar reference
+on both paths. Partial updates, accepted proposals, rejection restoration and
+full branch updates are also checked. CI runs those checks, verifies generated
+fixtures, and tests report aggregation; CI timings are not benchmark results.
 
 `tools/benchmarks/prepare.py` regenerates the simulated NEXUS and the numeric
 Rust fixtures derived from the archived BEAST JSON: the benchmark state and
-both final states used by the Mkv tests. The generated Rust files are data,
+both final states used by the Mkv tests, with their pattern likelihoods also
+evaluated to 60 significant digits. The generated Rust files are data,
 with node indices remapped into postorder. `--check` detects stale copies.
 
 ## Timing and allocations
@@ -128,16 +146,20 @@ measurements. No allocator instrumentation is installed in the Rove library.
 The only new unsafe code is the forwarding implementation required by Rust's
 `GlobalAlloc` API, with arguments and return values passed through unchanged.
 
-The driver records hardware, OS, available power/thermal reports, commands and
-hashes. It does not pin CPU cores, fix clock frequencies or suppress background
-work. Results describe the recorded machine and configuration. JVM warm-up and
-BEAGLE thread settings do not apply to these Rust-only measurements. A future
-cross-engine comparison must match supported calculations on the same hardware.
+The driver records hardware, OS, available power/thermal reports, load
+averages before and after the runs, commands and hashes. It does not pin CPU
+cores, fix clock frequencies or suppress background work. Results describe the
+recorded machine and configuration. JVM warm-up and BEAGLE thread settings do
+not apply to these Rust-only measurements. A future cross-engine comparison
+must match supported calculations on the same hardware.
 
 ## Outputs
 
 `metadata.json` records provenance and settings. `run-*.tsv` retains the raw
-batches and allocation observations; `summary.json` contains derived summaries.
+batches and allocation observations; `summary.json` contains derived summaries,
+keyed by case and path, such as `reference_20x50/mk`. `comparison.json` divides
+the matrix path's median by the Mk path's, process by process, for each case
+and metric, and reports the median and range of those ratios.
 `build.log` is a local diagnostic. Version a report with the compact result
 files, keeping machine identifiers and unrelated local logs out of the commit.
 

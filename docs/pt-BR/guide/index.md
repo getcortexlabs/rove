@@ -9,14 +9,14 @@ O Rove é um projeto de inferência filogenética escrito em Rust. Ele começa c
 O nome vem de explorar, vagar e descobrir caminhos.
 
 ::: info Status do projeto
-Estágio inicial. O núcleo de verossimilhança, a correção Mkv, o leitor de NEXUS, a compressão de padrões e os testes numéricos estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. Inferência independente, caminhos de código SIMD e comparações de desempenho entre engines continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
+Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk, a correção Mkv, o leitor de NEXUS, a compressão de padrões e os testes numéricos estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. Inferência independente, caminhos de código SIMD e comparações de desempenho entre engines continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Por que outro kernel
 
 Espaços de estados pequenos e alinhamentos morfológicos curtos merecem ser medidos como uma carga de trabalho própria.
 
-- O Mk tem forma fechada, `P(t) = e·I + (1 − e)·π`, o que permite uma atualização de filho em O(k) por padrão em vez de uma multiplicação completa de matriz em O(k²). A crate atual constrói essas matrizes; o caminho de poda direta está planejado.
+- O Mk tem forma fechada, `P(t) = e·I + (1 − e)·π`, o que permite uma atualização de filho em O(k) por padrão em vez de uma multiplicação completa de matriz em O(k²). O núcleo Mk do Rove faz a poda diretamente com ela.
 - Vetorização específica para ARM e reaproveitamento de cálculos repetidos são otimizações candidatas. Seu valor precisa de benchmarks pareados, incluindo os custos de preparação e de atualização parcial.
 - A referência registrada com o BEAST 2.7.8 usou o núcleo de verossimilhança em Java do próprio BEAST. Essa observação não estabelece qual backend é usado por toda versão, instalação ou modelo do BEAST.
 
@@ -26,12 +26,12 @@ O Rove, em vez disso, parte dos dados: um layout que vetoriza ao longo dos padr�
 
 O repositório é uma única crate Rust, sem dependências em tempo de execução.
 
-- `LikelihoodCore`: poda de Felsenstein sobre um layout pattern-major, com categorias de taxa, reescalonamento opcional por nó e store/restore do estado dos nós para um amostrador.
-- `model::Mk`: o modelo Mk com sua matriz de transição em forma fechada, para frequências de estados uniformes ou personalizadas.
+- `LikelihoodCore`: poda de Felsenstein sobre um layout pattern-major, com categorias de taxa, reescalonamento opcional por nó e store/restore do estado dos nós para um amostrador. `LikelihoodCore::mk` faz a poda com a forma fechada do Mk; `LikelihoodCore::new` multiplica uma matriz de transição por ramo.
+- `model::Mk`: o modelo Mk com sua matriz de transição em forma fechada, para frequências de estados uniformes ou personalizadas, que são validadas.
 - `ascertainment::VariableCharacters`: a correção Mkv para matrizes de caracteres variáveis, verificada contra dois estados fixos do BEAST 2.7.8.
 - `reference::Problem`: uma implementação recursiva simples, mantida como referência nos testes.
 - `nexus::parse` e `data::Matrix::compress`: entrada morfológica, observações preservadas, partições explícitas e padrões de sítio ponderados. Veja [Lendo NEXUS](./nexus).
-- Testes de propriedade que comparam o núcleo com a referência em árvores aleatórias com 2 a 10 terminais, 2 a 6 estados e 1 a 4 categorias de taxa.
+- Testes de propriedade que comparam os dois tipos de núcleo com a referência em árvores aleatórias com 2 a 10 terminais, 2 a 6 estados e 1 a 4 categorias de taxa, incluindo comprimentos de ramo de 10⁻⁹ a 100 e sequências de mudanças aceitas e rejeitadas.
 - Uma matriz sintética de controle positivo com 20 táxons e 50 caracteres binários, com o script que a gera e variantes degradadas.
 
 A página do [núcleo de verossimilhança](./kernel) mostra como chamá-lo. A página de [matrizes sintéticas](./fixtures) descreve o controle.
@@ -39,7 +39,6 @@ A página do [núcleo de verossimilhança](./kernel) mostra como chamá-lo. A p�
 ## O que ainda não existe
 
 - Inferência independente: propostas de árvore, MCMC, priors e modelos de relógio.
-- O caminho rápido de forma fechada do Mk dentro do kernel.
 - Caminhos de código NEON ou AVX2. O kernel atual é Rust escalar; o layout está preparado para vetorização.
 - Comparações de desempenho entre engines com o BEAST ou o BEAGLE.
 - Uma interface de usuário e os adaptadores opcionais para BEAST 2 ou BEAGLE.

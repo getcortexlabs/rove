@@ -97,7 +97,7 @@ impl VariableCharacters {
     }
 
     /// Observed patterns plus one constant pattern per state: the pattern
-    /// count for `LikelihoodCore::new`.
+    /// count for `LikelihoodCore::new` or `LikelihoodCore::mk`.
     pub fn pattern_count(&self) -> usize {
         self.weights.len() + self.states
     }

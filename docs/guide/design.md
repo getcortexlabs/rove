@@ -4,7 +4,7 @@ description: "How Rove lays out likelihood data, why the kernel is model-aware, 
 
 # Design
 
-Rove is one Rust crate. It computes the likelihood of a rooted binary tree under the Mk model for a matrix of discrete characters. The decisions below are the ones already visible in the code. The SIMD and fast-path work they prepare for is on the [roadmap](./roadmap).
+Rove is one Rust crate. It computes the likelihood of a rooted binary tree under the Mk model for a matrix of discrete characters. The decisions below are the ones already visible in the code. The SIMD work they prepare for is on the [roadmap](./roadmap).
 
 ## Pattern-major layout
 
@@ -18,7 +18,7 @@ Rove stores partials the other way round. For each rate category and each state 
 
 Mk has a closed form. The transition matrix for a branch is `P(t) = e·I + (1 − e)·π`, where `e` depends only on the branch length and `π` holds the state frequencies. Multiplying that into a vector costs O(k) per pattern instead of O(k²).
 
-Today `model::Mk` produces the full matrix and the kernel multiplies it generically. The closed form is tested against Lewis' formula. The direct Mk path is next on the [roadmap](./roadmap).
+An Mk core, built with `LikelihoodCore::mk`, uses that form directly. Each branch holds a distance, `e` and `1 − e` per rate category instead of a matrix, and a child update computes one frequency-weighted sum per pattern for all states. The matrix core stays for models without such a form, and the tests compare both with the reference.
 
 ## A scalar reference, always
 
@@ -28,7 +28,7 @@ Every optimised path added later has to pass the same tests. The reference stays
 
 ## Double buffers and rescaling
 
-Each node owns two buffers for partials and two for transition matrices. Before a proposal overwrites a node, `set_node_partials_for_update` or `set_node_matrix_for_update` flips that node to its other buffer, so the previous values survive. `store` records which buffers are current. `restore` brings that set back by swapping, `unstore` by copying. Accepting a move costs nothing. This is what an MCMC sampler needs to reject a move cheaply.
+Each node owns two buffers for partials and two for its branch: transition matrices, or Mk distances. Before a proposal overwrites a node, `set_node_partials_for_update` or `set_node_matrix_for_update` flips that node to its other buffer, so the previous values survive. `store` records which buffers are current. `restore` brings that set back by swapping, `unstore` by copying. Accepting a move costs nothing. This is what an MCMC sampler needs to reject a move cheaply.
 
 With `Scaling::Always`, each internal node's partials are divided by their per-pattern maximum after they are computed, and the logarithm of that maximum is kept per node. The log likelihood adds the scalers back. Without scaling, deep trees underflow.
 

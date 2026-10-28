@@ -12,6 +12,14 @@ mod reference_states;
 
 const REFERENCE: &str = include_str!("../fixtures/reference/20x50/matrix.nex");
 
+#[derive(Clone, Copy, Debug)]
+enum Path {
+    Matrices,
+    Mk,
+}
+
+const PATHS: [Path; 2] = [Path::Matrices, Path::Mk];
+
 /// A rooted tree whose parents follow their children, with the model on it.
 #[derive(Debug)]
 struct Setup {
@@ -29,7 +37,7 @@ impl Setup {
             lengths: state.distances.to_vec(),
             rates: state.rates.to_vec(),
             category_weights: state.category_weights.to_vec(),
-            model: Mk::with_frequencies(state.frequencies.to_vec()),
+            model: Mk::with_frequencies(state.frequencies.to_vec()).unwrap(),
         }
     }
 
@@ -52,25 +60,41 @@ impl Setup {
             .collect()
     }
 
-    fn core(&self, variable: &VariableCharacters, scaling: Scaling) -> LikelihoodCore {
-        let k = self.model.states();
-        let mut core = LikelihoodCore::new(
-            k,
+    fn core(&self, variable: &VariableCharacters, scaling: Scaling, path: Path) -> LikelihoodCore {
+        let (patterns, categories, nodes) = (
             variable.pattern_count(),
             self.rates.len(),
             self.children.len(),
-            scaling,
         );
+        let mut core = match path {
+            Path::Matrices => {
+                LikelihoodCore::new(self.model.states(), patterns, categories, nodes, scaling)
+            }
+            Path::Mk => LikelihoodCore::mk(&self.model, patterns, categories, nodes, scaling),
+        };
         for (tip, partials) in variable.tip_partials().iter().enumerate() {
             core.set_tip_partials(tip, partials);
         }
-        for (node, matrices) in self.matrices().iter().enumerate().take(self.root()) {
-            for (category, matrix) in matrices.chunks_exact(k * k).enumerate() {
-                core.set_node_matrix(node, category, matrix);
-            }
+        for node in 0..self.root() {
+            self.set_branch(&mut core, path, node, self.lengths[node]);
         }
         self.prune(&mut core);
         core
+    }
+
+    /// Sets the branch above `node` in every rate category.
+    fn set_branch(&self, core: &mut LikelihoodCore, path: Path, node: usize, length: f64) {
+        let k = self.model.states();
+        let mut matrix = vec![0.0; k * k];
+        for (category, rate) in self.rates.iter().enumerate() {
+            match path {
+                Path::Matrices => {
+                    self.model.transition_matrix(length * rate, &mut matrix);
+                    core.set_node_matrix(node, category, &matrix);
+                }
+                Path::Mk => core.set_node_distance(node, category, length * rate),
+            }
+        }
     }
 
     fn prune(&self, core: &mut LikelihoodCore) {
@@ -190,7 +214,7 @@ fn setup(
             lengths,
             rates,
             category_weights: normalized(weights),
-            model: Mk::with_frequencies(normalized(frequencies)),
+            model: Mk::with_frequencies(normalized(frequencies)).unwrap(),
         })
 }
 
@@ -217,6 +241,13 @@ fn variable_cells(taxa: usize, states: usize) -> impl Strategy<Value = Vec<Vec<u
     )
 }
 
+fn assert_within(actual: f64, expected: f64, tolerance: f64, context: &str) {
+    assert!(
+        (actual - expected).abs() < tolerance,
+        "{context}: {actual} != {expected}"
+    );
+}
+
 #[test]
 fn archived_beast_states_are_reproduced() {
     let patterns = reference_patterns();
@@ -225,13 +256,17 @@ fn archived_beast_states_are_reproduced() {
     assert_eq!(patterns.weights().iter().sum::<usize>(), 50);
     assert_eq!(variable.pattern_count(), 25);
 
-    for state in reference_states::STATES {
+    for (state, path) in reference_states::STATES
+        .iter()
+        .flat_map(|s| PATHS.map(|p| (s, p)))
+    {
         let setup = Setup::reference(state);
         assert_eq!(state.patterns.len(), variable.pattern_count());
         for scaling in [Scaling::None, Scaling::Always] {
-            let mut core = setup.core(&variable, scaling);
+            let context = format!("seed {}, {path:?}, {scaling:?}", state.seed);
+            let mut core = setup.core(&variable, scaling, path);
             let lls = setup.pattern_log_likelihoods(&mut core);
-            for (pattern, ll) in lls.iter().enumerate() {
+            for (pattern, &ll) in lls.iter().enumerate() {
                 let column: Vec<u8> = variable
                     .tip_partials()
                     .iter()
@@ -244,27 +279,29 @@ fn archived_beast_states_are_reproduced() {
                     .expect("BEAST evaluated the same pattern");
                 let weight = patterns.weights().get(pattern).copied().unwrap_or(0);
                 assert_eq!(beast.weight, weight);
-                assert!(
-                    (ll - beast.log_likelihood).abs() < 1e-12,
-                    "seed {}, {scaling:?}, pattern {pattern}: {ll} != {}",
-                    state.seed,
-                    beast.log_likelihood
-                );
+                let context = format!("{context}, pattern {pattern}");
+                assert_within(ll, beast.exact_log_likelihood, 2e-14, &context);
+                // BEAST 2.7.8 computes 1 − e as 1 − exp(−x), which loses digits on
+                // these short branches: its own values are up to 1.3e-12 from exact.
+                assert_within(ll, beast.log_likelihood, 2e-12, &context);
             }
             let log_variable = variable.log_variable_probability(&lls).unwrap();
-            assert!(
-                (log_variable - state.log_variable_probability).abs() < 1e-12,
-                "seed {}: {log_variable} != {}",
-                state.seed,
-                state.log_variable_probability
+            assert_within(
+                log_variable,
+                state.exact_log_variable_probability,
+                1e-13,
+                &context,
             );
+            assert_within(
+                log_variable,
+                state.log_variable_probability,
+                1e-12,
+                &context,
+            );
+            // Fifty characters each subtract the amplified correction.
             let log_likelihood = variable.log_likelihood(&lls).unwrap();
-            assert!(
-                (log_likelihood - state.log_likelihood).abs() < 1e-10,
-                "seed {}: {log_likelihood} != {}",
-                state.seed,
-                state.log_likelihood
-            );
+            assert_within(log_likelihood, state.exact_log_likelihood, 1e-11, &context);
+            assert_within(log_likelihood, state.log_likelihood, 1e-10, &context);
         }
     }
 }
@@ -273,37 +310,32 @@ fn archived_beast_states_are_reproduced() {
 fn rejected_proposals_restore_the_constant_patterns() {
     let setup = Setup::reference(&reference_states::STATES[0]);
     let variable = VariableCharacters::new(&reference_patterns()).unwrap();
-    let mut core = setup.core(&variable, Scaling::Always);
-    let before = variable
-        .log_likelihood(&setup.pattern_log_likelihoods(&mut core))
-        .unwrap();
+    for path in PATHS {
+        let mut core = setup.core(&variable, Scaling::Always, path);
+        let before = variable
+            .log_likelihood(&setup.pattern_log_likelihoods(&mut core))
+            .unwrap();
 
-    core.store();
-    let k = setup.model.states();
-    let mut matrix = vec![0.0; k * k];
-    core.set_node_matrix_for_update(0);
-    for (category, rate) in setup.rates.iter().enumerate() {
-        setup
-            .model
-            .transition_matrix(10.0 * setup.lengths[0] * rate, &mut matrix);
-        core.set_node_matrix(0, category, &matrix);
-    }
-    for (parent, pair) in setup.children.iter().enumerate() {
-        if pair.is_some() {
-            core.set_node_partials_for_update(parent);
+        core.store();
+        core.set_node_matrix_for_update(0);
+        setup.set_branch(&mut core, path, 0, 10.0 * setup.lengths[0]);
+        for (parent, pair) in setup.children.iter().enumerate() {
+            if pair.is_some() {
+                core.set_node_partials_for_update(parent);
+            }
         }
-    }
-    setup.prune(&mut core);
-    let proposed = variable
-        .log_likelihood(&setup.pattern_log_likelihoods(&mut core))
-        .unwrap();
-    assert!((proposed - before).abs() > 1e-3);
+        setup.prune(&mut core);
+        let proposed = variable
+            .log_likelihood(&setup.pattern_log_likelihoods(&mut core))
+            .unwrap();
+        assert!((proposed - before).abs() > 1e-3, "{path:?}");
 
-    core.restore();
-    let after = variable
-        .log_likelihood(&setup.pattern_log_likelihoods(&mut core))
-        .unwrap();
-    assert_eq!(after, before);
+        core.restore();
+        let after = variable
+            .log_likelihood(&setup.pattern_log_likelihoods(&mut core))
+            .unwrap();
+        assert_eq!(after, before, "{path:?}");
+    }
 }
 
 #[test]
@@ -376,19 +408,22 @@ fn two_taxa_reach_the_closed_form_at_short_and_long_branches() {
                 lengths: vec![0.25 * distance, 0.75 * distance, 0.0],
                 rates: vec![0.5, 1.5],
                 category_weights: vec![0.3, 0.7],
-                model: Mk::with_frequencies(frequencies.clone()),
+                model: Mk::with_frequencies(frequencies.clone()).unwrap(),
             };
-            let mut core = setup.core(&variable, Scaling::Always);
-            let lls = setup.pattern_log_likelihoods(&mut core);
-            let log_variable = variable.log_variable_probability(&lls).unwrap();
-            for (site, column) in columns.iter().enumerate() {
-                let expected =
-                    (frequencies[column[0]] * frequencies[column[1]] / (1.0 - homozygosity)).ln();
-                let actual = lls[patterns.site_to_pattern()[site]] - log_variable;
-                assert!(
-                    (actual - expected).abs() < tolerance,
-                    "{k} states, distance {distance}: {actual} != {expected}"
-                );
+            for path in PATHS {
+                let mut core = setup.core(&variable, Scaling::Always, path);
+                let lls = setup.pattern_log_likelihoods(&mut core);
+                let log_variable = variable.log_variable_probability(&lls).unwrap();
+                for (site, column) in columns.iter().enumerate() {
+                    let expected = (frequencies[column[0]] * frequencies[column[1]]
+                        / (1.0 - homozygosity))
+                        .ln();
+                    let actual = lls[patterns.site_to_pattern()[site]] - log_variable;
+                    assert!(
+                        (actual - expected).abs() < tolerance,
+                        "{k} states, {path:?}, distance {distance}: {actual} != {expected}"
+                    );
+                }
             }
         }
     }
@@ -411,15 +446,17 @@ fn zero_length_trees_leave_the_correction_undefined() {
             lengths: vec![0.0; 3],
             rates: vec![1.0],
             category_weights: vec![1.0],
-            model: Mk::with_frequencies(frequencies.clone()),
+            model: Mk::with_frequencies(frequencies.clone()).unwrap(),
         };
-        let mut core = setup.core(&variable, Scaling::Always);
-        let lls = setup.pattern_log_likelihoods(&mut core);
-        assert_eq!(
-            variable.log_likelihood(&lls),
-            Err(Error::UndefinedCorrection),
-            "{frequencies:?}"
-        );
+        for path in PATHS {
+            let mut core = setup.core(&variable, Scaling::Always, path);
+            let lls = setup.pattern_log_likelihoods(&mut core);
+            assert_eq!(
+                variable.log_likelihood(&lls),
+                Err(Error::UndefinedCorrection),
+                "{frequencies:?}, {path:?}"
+            );
+        }
     }
 }
 
@@ -443,26 +480,28 @@ proptest! {
         );
         let patterns = compress(k, &columns);
         let variable = VariableCharacters::new(&patterns).unwrap();
-        let mut core = setup.core(&variable, Scaling::Always);
-        let lls = setup.pattern_log_likelihoods(&mut core);
-        let log_variable = variable.log_variable_probability(&lls).unwrap();
-        let conditioned =
-            |site: usize| (lls[patterns.site_to_pattern()[site]] - log_variable).exp();
+        for path in PATHS {
+            let mut core = setup.core(&variable, Scaling::Always, path);
+            let lls = setup.pattern_log_likelihoods(&mut core);
+            let log_variable = variable.log_variable_probability(&lls).unwrap();
+            let conditioned =
+                |site: usize| (lls[patterns.site_to_pattern()[site]] - log_variable).exp();
 
-        let total: f64 = (0..complete.len()).map(conditioned).sum();
-        prop_assert!((total - 1.0).abs() < 1e-10, "variable patterns sum to {total}");
-        for (offset, cells) in partial.iter().enumerate() {
-            let expected: f64 = complete
-                .iter()
-                .enumerate()
-                .filter(|(_, c)| c.iter().zip(cells).all(|(state, allowed)| allowed.contains(state)))
-                .map(|(site, _)| conditioned(site))
-                .sum();
-            let actual = conditioned(complete.len() + offset);
-            prop_assert!(
-                (actual - expected).abs() <= 1e-10 * expected,
-                "{cells:?}: {actual} != {expected}"
-            );
+            let total: f64 = (0..complete.len()).map(conditioned).sum();
+            prop_assert!((total - 1.0).abs() < 1e-10, "{path:?}: variable patterns sum to {total}");
+            for (offset, cells) in partial.iter().enumerate() {
+                let expected: f64 = complete
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, c)| c.iter().zip(cells).all(|(state, allowed)| allowed.contains(state)))
+                    .map(|(site, _)| conditioned(site))
+                    .sum();
+                let actual = conditioned(complete.len() + offset);
+                prop_assert!(
+                    (actual - expected).abs() <= 1e-10 * expected,
+                    "{path:?}, {cells:?}: {actual} != {expected}"
+                );
+            }
         }
     }
 
@@ -497,13 +536,13 @@ proptest! {
         }
         .variable_log_likelihood();
         prop_assert!(expected.is_finite());
-        for scaling in [Scaling::None, Scaling::Always] {
-            let mut core = setup.core(&variable, scaling);
+        for (path, scaling) in PATHS.into_iter().flat_map(|p| [(p, Scaling::None), (p, Scaling::Always)]) {
+            let mut core = setup.core(&variable, scaling, path);
             let lls = setup.pattern_log_likelihoods(&mut core);
             let actual = variable.log_likelihood(&lls).unwrap();
             prop_assert!(
                 (actual - expected).abs() <= 1e-9 * expected.abs().max(1.0),
-                "{scaling:?}: {actual} != {expected}"
+                "{path:?}, {scaling:?}: {actual} != {expected}"
             );
         }
     }

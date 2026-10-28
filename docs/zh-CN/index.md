@@ -31,9 +31,9 @@ features:
     link: /zh-CN/guide/design
     linkText: 设计
   - title: Mk 的闭式解
-    details: Mk 模型随附其闭式解转移矩阵。跳过通用 k×k 乘积的快速路径已列入路线图。
-    link: /zh-CN/guide/roadmap
-    linkText: 路线图
+    details: Mk 核心直接用模型的闭式解做剪枝。每次子节点更新只需对每个模式做一次加权求和，而不是 k×k 矩阵乘积。
+    link: /zh-CN/guide/kernel#mk-分枝
+    linkText: Mk 分枝
   - title: 与参考实现核对
     details: 一个朴素的递归实现作为参考保留在 crate 中。属性测试在随机树上把核心与它比较，有重缩放和无重缩放两种情况都测。
     link: /zh-CN/guide/kernel
@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info 早期
-似然核心、带 Mkv 校正的 Mk 模型和等价性测试已经实现。独立推断、SIMD 路径和跨引擎比较尚未实现。[看看今天已有什么 →](/zh-CN/guide/#今天已有什么)
+带直接 Mk 路径的似然核心、Mkv 校正和等价性测试已经实现。独立推断、SIMD 路径和跨引擎比较尚未实现。[看看今天已有什么 →](/zh-CN/guide/#今天已有什么)
 :::
 
 </div>

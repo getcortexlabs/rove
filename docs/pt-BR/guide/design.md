@@ -4,7 +4,7 @@ description: "Como o Rove organiza os dados de verossimilhança, por que o kerne
 
 # Design
 
-O Rove é uma única crate Rust. Ela calcula a verossimilhança de uma árvore binária enraizada sob o modelo Mk para uma matriz de caracteres discretos. As decisões abaixo são as que já estão visíveis no código. O trabalho de SIMD e de caminhos rápidos que elas preparam está no [roadmap](./roadmap).
+O Rove é uma única crate Rust. Ela calcula a verossimilhança de uma árvore binária enraizada sob o modelo Mk para uma matriz de caracteres discretos. As decisões abaixo são as que já estão visíveis no código. O trabalho de SIMD que elas preparam está no [roadmap](./roadmap).
 
 ## Layout pattern-major
 
@@ -18,7 +18,7 @@ O Rove armazena as parciais no sentido inverso. Para cada categoria de taxa e ca
 
 O Mk tem forma fechada. A matriz de transição de um ramo é `P(t) = e·I + (1 − e)·π`, onde `e` depende apenas do comprimento de ramo e `π` contém as frequências de estados. Multiplicá-la por um vetor custa O(k) por padrão em vez de O(k²).
 
-Hoje `model::Mk` produz a matriz completa e o kernel a multiplica de forma genérica. A forma fechada é testada contra a fórmula de Lewis. O caminho direto do Mk é o próximo passo no [roadmap](./roadmap).
+Um núcleo Mk, construído com `LikelihoodCore::mk`, usa essa forma diretamente. Cada ramo guarda uma distância, `e` e `1 − e` por categoria de taxa em vez de uma matriz, e a atualização de um filho calcula, para cada padrão, uma única soma ponderada pelas frequências, que serve a todos os estados. O núcleo de matrizes continua disponível para modelos sem essa forma, e os testes comparam os dois com a referência.
 
 ## Uma referência escalar, sempre
 
@@ -28,7 +28,7 @@ Todo caminho otimizado adicionado depois tem de passar nos mesmos testes. A refe
 
 ## Buffers duplos e reescalonamento
 
-Cada nó possui dois buffers para parciais e dois para matrizes de transição. Antes que uma proposta sobrescreva um nó, `set_node_partials_for_update` ou `set_node_matrix_for_update` alterna esse nó para o seu outro buffer, de modo que os valores anteriores sobrevivem. `store` registra quais buffers estão em uso. `restore` traz esse conjunto de volta trocando os buffers, `unstore` copiando. Aceitar um movimento não custa nada. É disso que um amostrador MCMC precisa para rejeitar um movimento a baixo custo.
+Cada nó possui dois buffers para parciais e dois para o seu ramo: matrizes de transição ou distâncias do Mk. Antes que uma proposta sobrescreva um nó, `set_node_partials_for_update` ou `set_node_matrix_for_update` alterna esse nó para o seu outro buffer, de modo que os valores anteriores sobrevivem. `store` registra quais buffers estão em uso. `restore` traz esse conjunto de volta trocando os buffers, `unstore` copiando. Aceitar um movimento não custa nada. É disso que um amostrador MCMC precisa para rejeitar um movimento a baixo custo.
 
 Com `Scaling::Always`, as parciais de cada nó interno são divididas pelo seu máximo por padrão depois de calculadas, e o logaritmo desse máximo é guardado por nó. A log-verossimilhança soma os fatores de escala de volta. Sem escalonamento, árvores profundas sofrem underflow.
 

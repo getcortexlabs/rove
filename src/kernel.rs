@@ -1,4 +1,5 @@
 use crate::layout::Layout;
+use crate::model::Mk;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Scaling {
@@ -6,17 +7,35 @@ pub enum Scaling {
     Always,
 }
 
+/// What each node's transition buffers hold for its branch.
+enum Transition {
+    /// One `states × states` row-major matrix per rate category.
+    Matrix,
+    /// The distance, `e` and `1 − e` of the Mk closed form per rate category.
+    Mk(Mk),
+}
+
+impl Transition {
+    fn len(&self, layout: &Layout) -> usize {
+        match self {
+            Self::Matrix => layout.matrices_len(),
+            Self::Mk(_) => 3 * layout.categories,
+        }
+    }
+}
+
 pub struct LikelihoodCore {
     layout: Layout,
     node_count: usize,
     scaling: Scaling,
+    transition: Transition,
     partials: Vec<Vec<f64>>,
-    matrices: Vec<Vec<f64>>,
+    transitions: Vec<Vec<f64>>,
     log_scalers: Vec<Vec<f64>>,
     current_partials: Vec<u8>,
     stored_partials: Vec<u8>,
-    current_matrices: Vec<u8>,
-    stored_matrices: Vec<u8>,
+    current_transitions: Vec<u8>,
+    stored_transitions: Vec<u8>,
     root_partials: Vec<f64>,
     pattern_log_likelihoods: Vec<f64>,
     acc1: Vec<f64>,
@@ -25,6 +44,7 @@ pub struct LikelihoodCore {
 }
 
 impl LikelihoodCore {
+    /// A core that multiplies a transition matrix per branch and rate category.
     pub fn new(
         states: usize,
         patterns: usize,
@@ -33,6 +53,28 @@ impl LikelihoodCore {
         scaling: Scaling,
     ) -> Self {
         let layout = Layout::new(states, categories, patterns);
+        Self::with_transition(layout, node_count, scaling, Transition::Matrix)
+    }
+
+    /// A core for the Mk model that takes a distance per branch and rate
+    /// category, and prunes with the closed form instead of matrices.
+    pub fn mk(
+        model: &Mk,
+        patterns: usize,
+        categories: usize,
+        node_count: usize,
+        scaling: Scaling,
+    ) -> Self {
+        let layout = Layout::new(model.states(), categories, patterns);
+        Self::with_transition(layout, node_count, scaling, Transition::Mk(model.clone()))
+    }
+
+    fn with_transition(
+        layout: Layout,
+        node_count: usize,
+        scaling: Scaling,
+        transition: Transition,
+    ) -> Self {
         let buffers = node_count * 2;
         Self {
             layout,
@@ -41,16 +83,17 @@ impl LikelihoodCore {
             partials: (0..buffers)
                 .map(|_| vec![0.0; layout.partials_len()])
                 .collect(),
-            matrices: (0..buffers)
-                .map(|_| vec![0.0; layout.matrices_len()])
+            transitions: (0..buffers)
+                .map(|_| vec![0.0; transition.len(&layout)])
                 .collect(),
+            transition,
             log_scalers: (0..buffers).map(|_| vec![0.0; layout.stride]).collect(),
             current_partials: vec![0; node_count],
             stored_partials: vec![0; node_count],
-            current_matrices: vec![0; node_count],
-            stored_matrices: vec![0; node_count],
-            root_partials: vec![0.0; states * layout.stride],
-            pattern_log_likelihoods: vec![0.0; patterns],
+            current_transitions: vec![0; node_count],
+            stored_transitions: vec![0; node_count],
+            root_partials: vec![0.0; layout.states * layout.stride],
+            pattern_log_likelihoods: vec![0.0; layout.patterns],
             acc1: vec![0.0; layout.stride],
             acc2: vec![0.0; layout.stride],
             scale: vec![0.0; layout.stride],
@@ -75,8 +118,8 @@ impl LikelihoodCore {
     }
 
     #[inline]
-    fn matrices_buffer(&self, node: usize) -> usize {
-        node * 2 + self.current_matrices[node] as usize
+    fn transitions_buffer(&self, node: usize) -> usize {
+        node * 2 + self.current_transitions[node] as usize
     }
 
     pub fn set_tip_states(&mut self, node: usize, states: &[u32]) {
@@ -121,22 +164,52 @@ impl LikelihoodCore {
         self.current_partials[node] ^= 1;
     }
 
+    /// Switches the buffer that holds the branch above `node`: its matrices,
+    /// or its distances in an Mk core.
     pub fn set_node_matrix_for_update(&mut self, node: usize) {
-        self.current_matrices[node] ^= 1;
+        self.current_transitions[node] ^= 1;
     }
 
     pub fn set_node_matrix(&mut self, node: usize, category: usize, matrix: &[f64]) {
+        assert!(
+            matches!(self.transition, Transition::Matrix),
+            "an Mk core takes distances; use set_node_distance"
+        );
         let l = self.layout;
         assert_eq!(matrix.len(), l.states * l.states);
-        let buffer = self.matrices_buffer(node);
+        let buffer = self.transitions_buffer(node);
         let start = l.matrix_offset(category);
-        self.matrices[buffer][start..start + matrix.len()].copy_from_slice(matrix);
+        self.transitions[buffer][start..start + matrix.len()].copy_from_slice(matrix);
     }
 
     pub fn node_matrix(&self, node: usize, category: usize) -> &[f64] {
+        assert!(
+            matches!(self.transition, Transition::Matrix),
+            "an Mk core stores distances; use node_distance"
+        );
         let l = self.layout;
         let start = l.matrix_offset(category);
-        &self.matrices[self.matrices_buffer(node)][start..start + l.states * l.states]
+        &self.transitions[self.transitions_buffer(node)][start..start + l.states * l.states]
+    }
+
+    /// Sets the branch above `node`, in one rate category, to `distance`
+    /// expected changes per character. Only for cores made by `mk`.
+    pub fn set_node_distance(&mut self, node: usize, category: usize, distance: f64) {
+        let Transition::Mk(model) = &self.transition else {
+            panic!("a matrix core takes transition matrices; use set_node_matrix");
+        };
+        let (stay, change) = model.stay_and_change(distance);
+        let buffer = self.transitions_buffer(node);
+        self.transitions[buffer][3 * category..3 * category + 3]
+            .copy_from_slice(&[distance, stay, change]);
+    }
+
+    pub fn node_distance(&self, node: usize, category: usize) -> f64 {
+        assert!(
+            matches!(self.transition, Transition::Mk(_)),
+            "a matrix core stores matrices; use node_matrix"
+        );
+        self.transitions[self.transitions_buffer(node)][3 * category]
     }
 
     pub fn node_partials(&self, node: usize) -> &[f64] {
@@ -145,50 +218,91 @@ impl LikelihoodCore {
 
     pub fn calculate_partials(&mut self, child1: usize, child2: usize, parent: usize) {
         debug_assert!(parent != child1 && parent != child2 && child1 != child2);
-        let l = self.layout;
-        let (k, stride) = (l.states, l.stride);
-        let in1 = self.partials_buffer(child1);
-        let in2 = self.partials_buffer(child2);
         let out = self.partials_buffer(parent);
-        let m1 = self.matrices_buffer(child1);
-        let m2 = self.matrices_buffer(child2);
         let mut dst = std::mem::take(&mut self.partials[out]);
-        {
-            let p1 = &self.partials[in1];
-            let p2 = &self.partials[in2];
-            let mat1 = &self.matrices[m1];
-            let mat2 = &self.matrices[m2];
-            for c in 0..l.categories {
-                let mo = l.matrix_offset(c);
-                for i in 0..k {
-                    let row1 = &mat1[mo + i * k..mo + (i + 1) * k];
-                    let row2 = &mat2[mo + i * k..mo + (i + 1) * k];
-                    self.acc1.fill(0.0);
-                    self.acc2.fill(0.0);
-                    for (j, (&a, &b)) in row1.iter().zip(row2).enumerate() {
-                        let o = l.offset(c, j);
-                        for (acc, x) in self.acc1.iter_mut().zip(&p1[o..o + stride]) {
-                            *acc += a * x;
-                        }
-                        for (acc, x) in self.acc2.iter_mut().zip(&p2[o..o + stride]) {
-                            *acc += b * x;
-                        }
-                    }
-                    let o = l.offset(c, i);
-                    for ((d, a), b) in dst[o..o + stride]
-                        .iter_mut()
-                        .zip(&self.acc1)
-                        .zip(&self.acc2)
-                    {
-                        *d = a * b;
-                    }
-                }
-            }
+        match self.transition {
+            Transition::Matrix => self.multiply_matrices(child1, child2, &mut dst),
+            Transition::Mk(_) => self.apply_mk(child1, child2, &mut dst),
         }
         if self.scaling == Scaling::Always {
             self.rescale(&mut dst, out);
         }
         self.partials[out] = dst;
+    }
+
+    fn multiply_matrices(&mut self, child1: usize, child2: usize, dst: &mut [f64]) {
+        let l = self.layout;
+        let (k, stride) = (l.states, l.stride);
+        let p1 = &self.partials[self.partials_buffer(child1)];
+        let p2 = &self.partials[self.partials_buffer(child2)];
+        let mat1 = &self.transitions[self.transitions_buffer(child1)];
+        let mat2 = &self.transitions[self.transitions_buffer(child2)];
+        for c in 0..l.categories {
+            let mo = l.matrix_offset(c);
+            for i in 0..k {
+                let row1 = &mat1[mo + i * k..mo + (i + 1) * k];
+                let row2 = &mat2[mo + i * k..mo + (i + 1) * k];
+                self.acc1.fill(0.0);
+                self.acc2.fill(0.0);
+                for (j, (&a, &b)) in row1.iter().zip(row2).enumerate() {
+                    let o = l.offset(c, j);
+                    for (acc, x) in self.acc1.iter_mut().zip(&p1[o..o + stride]) {
+                        *acc += a * x;
+                    }
+                    for (acc, x) in self.acc2.iter_mut().zip(&p2[o..o + stride]) {
+                        *acc += b * x;
+                    }
+                }
+                let o = l.offset(c, i);
+                for ((d, a), b) in dst[o..o + stride]
+                    .iter_mut()
+                    .zip(&self.acc1)
+                    .zip(&self.acc2)
+                {
+                    *d = a * b;
+                }
+            }
+        }
+    }
+
+    /// `(P·L)ᵢ = e·Lᵢ + (1 − e)·Σⱼ πⱼ·Lⱼ` for each child: one weighted sum per
+    /// pattern, shared by every state, instead of a row of `P` per state.
+    fn apply_mk(&mut self, child1: usize, child2: usize, dst: &mut [f64]) {
+        let Transition::Mk(model) = &self.transition else {
+            unreachable!("only Mk cores store distances");
+        };
+        let l = self.layout;
+        let stride = l.stride;
+        let p1 = &self.partials[self.partials_buffer(child1)];
+        let p2 = &self.partials[self.partials_buffer(child2)];
+        let t1 = &self.transitions[self.transitions_buffer(child1)];
+        let t2 = &self.transitions[self.transitions_buffer(child2)];
+        for c in 0..l.categories {
+            let (stay1, change1) = (t1[3 * c + 1], t1[3 * c + 2]);
+            let (stay2, change2) = (t2[3 * c + 1], t2[3 * c + 2]);
+            self.acc1.fill(0.0);
+            self.acc2.fill(0.0);
+            for (j, &f) in model.frequencies().iter().enumerate() {
+                let o = l.offset(c, j);
+                let (a, b) = (change1 * f, change2 * f);
+                for (acc, x) in self.acc1.iter_mut().zip(&p1[o..o + stride]) {
+                    *acc += a * x;
+                }
+                for (acc, x) in self.acc2.iter_mut().zip(&p2[o..o + stride]) {
+                    *acc += b * x;
+                }
+            }
+            for i in 0..l.states {
+                let o = l.offset(c, i);
+                let children = p1[o..o + stride].iter().zip(&p2[o..o + stride]);
+                let sums = self.acc1.iter().zip(&self.acc2);
+                for ((d, (x1, x2)), (s1, s2)) in
+                    dst[o..o + stride].iter_mut().zip(children).zip(sums)
+                {
+                    *d = (stay1 * x1 + s1) * (stay2 * x2 + s2);
+                }
+            }
+        }
     }
 
     fn rescale(&mut self, partials: &mut [f64], buffer: usize) {
@@ -285,16 +399,18 @@ impl LikelihoodCore {
 
     pub fn store(&mut self) {
         self.stored_partials.copy_from_slice(&self.current_partials);
-        self.stored_matrices.copy_from_slice(&self.current_matrices);
+        self.stored_transitions
+            .copy_from_slice(&self.current_transitions);
     }
 
     pub fn restore(&mut self) {
         std::mem::swap(&mut self.current_partials, &mut self.stored_partials);
-        std::mem::swap(&mut self.current_matrices, &mut self.stored_matrices);
+        std::mem::swap(&mut self.current_transitions, &mut self.stored_transitions);
     }
 
     pub fn unstore(&mut self) {
         self.current_partials.copy_from_slice(&self.stored_partials);
-        self.current_matrices.copy_from_slice(&self.stored_matrices);
+        self.current_transitions
+            .copy_from_slice(&self.stored_transitions);
     }
 }

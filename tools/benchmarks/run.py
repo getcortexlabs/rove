@@ -19,12 +19,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 METRICS = {
-    "parse", "compress", "core_setup", "full_cached", "full_with_matrices",
+    "parse", "compress", "core_setup", "full_cached", "full_with_branches",
     "tip_update", "internal_update", "accept_proposal", "reject_proposal",
     "store", "store_restore",
 }
+TRANSITIONS = {"matrices", "mk"}
 COUNTS = ["allocation_calls", "reallocation_calls", "requested_bytes", "deallocation_calls"]
-CASE_FIELDS = ["taxa", "characters", "patterns", "stride", "states", "categories", "missing_cells"]
+CASE_FIELDS = ["taxa", "characters", "patterns", "core_patterns", "stride", "states", "categories",
+               "missing_cells"]
 
 
 def command(args, *, check=True, env=None):
@@ -46,11 +48,15 @@ def percentile(values, fraction):
 def read_results(text, samples):
     cases = {}
     for row in csv.DictReader(io.StringIO(text), delimiter="\t"):
-        name, metric = row["case"], row["metric"]
+        metric, transitions = row["metric"], row["transitions"]
         if metric not in METRICS:
             raise ValueError(f"unknown metric: {metric}")
+        if transitions not in TRANSITIONS:
+            raise ValueError(f"unknown transitions: {transitions}")
+        name = f"{row['case']}/{transitions}"
         metadata = {field: int(row[field]) for field in CASE_FIELDS}
-        metadata.update(shape=row["shape"], baseline_log_likelihood=float(row["baseline_log_likelihood"]))
+        metadata.update(case=row["case"], transitions=transitions, shape=row["shape"],
+                        baseline_log_likelihood=float(row["baseline_log_likelihood"]))
         if not math.isfinite(metadata["baseline_log_likelihood"]):
             raise ValueError(f"nonfinite likelihood: {name}")
         case = cases.setdefault(name, {"configuration": metadata, "metrics": {}})
@@ -107,6 +113,31 @@ def summarize(runs):
             }
         summary[name] = result
     return summary
+
+
+def compare(summary):
+    """Per-process time ratios of the matrix path over the Mk path, for each metric."""
+    comparison = {}
+    for name, result in summary.items():
+        case, transitions = name.rsplit("/", 1)
+        if transitions != "mk" or f"{case}/matrices" not in summary:
+            continue
+        matrices = summary[f"{case}/matrices"]["metrics"]
+        comparison[case] = {}
+        for metric, entry in result["metrics"].items():
+            ratios = [m / k for m, k in zip(matrices[metric]["process_medians_ns"], entry["process_medians_ns"])]
+            comparison[case][metric] = {
+                "process_ratios": ratios, "median_ratio": statistics.median(ratios),
+                "min_ratio": min(ratios), "max_ratio": max(ratios),
+            }
+    return comparison
+
+
+def load_average():
+    try:
+        return list(os.getloadavg())
+    except OSError:
+        return None
 
 
 def hardware():
@@ -202,8 +233,9 @@ def main():
         "source_sha256": {path: sha256(ROOT / path) for path in sources},
         "threads": 1, "processes_run_in_parallel": 1, "cpu_affinity": None,
         "background_load_controlled": False, "scaling": "Always",
-        "model": "observed Mk; no ascertainment correction or priors",
-        "power_before": power_state(), "runs": [],
+        "model": "Mk on observed patterns; reference_20x50_mkv also conditions on variable characters; no priors",
+        "transitions": "each metric on the matrix path and the Mk path back to back, alternating which runs first",
+        "power_before": power_state(), "load_average_before": load_average(), "runs": [],
     }
     runs = []
     for repetition in range(args.repetitions):
@@ -216,9 +248,12 @@ def main():
         runs.append(read_results(path.read_text(), args.samples))
         metadata["runs"].append({"file": path.name, "sha256": sha256(path), "wall_seconds": elapsed})
     metadata["power_after"] = power_state()
+    metadata["load_average_after"] = load_average()
     metadata["finished_utc"] = datetime.now(timezone.utc).isoformat()
     write_json(output / "metadata.json", metadata)
-    write_json(output / "summary.json", summarize(runs))
+    summary = summarize(runs)
+    write_json(output / "summary.json", summary)
+    write_json(output / "comparison.json", compare(summary))
     print(f"Saved {len(runs)} runs to {output}")
 
 

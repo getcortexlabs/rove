@@ -20,13 +20,21 @@ struct Case {
     frequencies: Vec<f64>,
 }
 
+impl Case {
+    fn model(&self) -> Mk {
+        Mk::with_frequencies(self.frequencies.clone()).unwrap()
+    }
+}
+
+const MAX_TIPS: usize = 10;
+
 fn normalized(v: Vec<f64>) -> Vec<f64> {
     let total: f64 = v.iter().sum();
     v.into_iter().map(|x| x / total).collect()
 }
 
 fn case() -> impl Strategy<Value = Case> {
-    (2usize..=6, 1usize..=4, 1usize..=40, 2usize..=10).prop_flat_map(
+    (2usize..=6, 1usize..=4, 1usize..=40, 2usize..=MAX_TIPS).prop_flat_map(
         |(states, categories, patterns, tips)| {
             let nodes = 2 * tips - 1;
             (
@@ -68,6 +76,24 @@ fn case() -> impl Strategy<Value = Case> {
     )
 }
 
+/// Branch lengths spread evenly in magnitude from 10⁻⁹ to 100, and state
+/// frequencies that differ by up to six orders of magnitude.
+fn extremes() -> impl Strategy<Value = Case> {
+    (
+        case(),
+        vec(-9.0f64..2.0, 2 * MAX_TIPS - 1),
+        vec(-6.0f64..0.0, 6),
+    )
+        .prop_map(|(mut case, lengths, weights)| {
+            for (length, exponent) in case.lengths.iter_mut().zip(lengths) {
+                *length = 10f64.powf(exponent);
+            }
+            let weights = weights.iter().take(case.states).map(|e| 10f64.powf(*e));
+            case.frequencies = normalized(weights.collect());
+            case
+        })
+}
+
 fn tree(tips: usize, joins: &[u32]) -> Vec<Option<(usize, usize)>> {
     let mut children = vec![None; 2 * tips - 1];
     let mut available: Vec<usize> = (0..tips).collect();
@@ -78,20 +104,6 @@ fn tree(tips: usize, joins: &[u32]) -> Vec<Option<(usize, usize)>> {
         available.push(tips + n);
     }
     children
-}
-
-fn matrices(case: &Case, model: &Mk) -> Vec<Vec<f64>> {
-    let k = case.states;
-    case.lengths
-        .iter()
-        .map(|&len| {
-            let mut m = vec![0.0; case.categories * k * k];
-            for (c, &rate) in case.rates.iter().enumerate() {
-                model.transition_matrix(len * rate, &mut m[c * k * k..(c + 1) * k * k]);
-            }
-            m
-        })
-        .collect()
 }
 
 fn expand(states: &[u32], k: usize) -> Vec<f64> {
@@ -106,6 +118,45 @@ fn expand(states: &[u32], k: usize) -> Vec<f64> {
     out
 }
 
+#[derive(Clone, Copy, Debug)]
+enum Path {
+    Matrices,
+    Mk,
+}
+
+const PATHS: [Path; 2] = [Path::Matrices, Path::Mk];
+
+fn new_core(case: &Case, path: Path, nodes: usize, scaling: Scaling) -> LikelihoodCore {
+    match path {
+        Path::Matrices => {
+            LikelihoodCore::new(case.states, case.patterns, case.categories, nodes, scaling)
+        }
+        Path::Mk => LikelihoodCore::mk(
+            &case.model(),
+            case.patterns,
+            case.categories,
+            nodes,
+            scaling,
+        ),
+    }
+}
+
+/// Sets the branch above `node` in every rate category.
+fn set_branch(core: &mut LikelihoodCore, path: Path, case: &Case, node: usize, length: f64) {
+    let model = case.model();
+    let k = case.states;
+    let mut matrix = vec![0.0; k * k];
+    for (category, &rate) in case.rates.iter().enumerate() {
+        match path {
+            Path::Matrices => {
+                model.transition_matrix(length * rate, &mut matrix);
+                core.set_node_matrix(node, category, &matrix);
+            }
+            Path::Mk => core.set_node_distance(node, category, length * rate),
+        }
+    }
+}
+
 enum Tips<'a> {
     States(&'a [Vec<u32>]),
     Partials(&'a [Vec<f64>]),
@@ -114,14 +165,13 @@ enum Tips<'a> {
 fn run_core(
     case: &Case,
     children: &[Option<(usize, usize)>],
-    matrices: &[Vec<f64>],
     tips: Tips,
+    path: Path,
     scaling: Scaling,
 ) -> f64 {
     let nodes = children.len();
     let root = nodes - 1;
-    let k = case.states;
-    let mut core = LikelihoodCore::new(k, case.patterns, case.categories, nodes, scaling);
+    let mut core = new_core(case, path, nodes, scaling);
     match tips {
         Tips::States(all) => {
             for (tip, states) in all.iter().enumerate() {
@@ -134,10 +184,8 @@ fn run_core(
             }
         }
     }
-    for (node, m) in matrices.iter().enumerate().take(root) {
-        for c in 0..case.categories {
-            core.set_node_matrix(node, c, &m[c * k * k..(c + 1) * k * k]);
-        }
+    for node in 0..root {
+        set_branch(&mut core, path, case, node, case.lengths[node]);
     }
     for (parent, node) in children.iter().enumerate().skip(case.tips) {
         let (a, b) = node.unwrap();
@@ -152,6 +200,36 @@ fn run_core(
     )
 }
 
+fn reference(
+    case: &Case,
+    children: &[Option<(usize, usize)>],
+    tips: &[Vec<f64>],
+    lengths: &[f64],
+) -> f64 {
+    let model = case.model();
+    let k = case.states;
+    let matrices: Vec<Vec<f64>> = lengths
+        .iter()
+        .map(|&length| {
+            let mut m = vec![0.0; case.categories * k * k];
+            for (matrix, rate) in m.chunks_exact_mut(k * k).zip(&case.rates) {
+                model.transition_matrix(length * rate, matrix);
+            }
+            m
+        })
+        .collect();
+    Problem {
+        children,
+        root: children.len() - 1,
+        tip_partials: tips,
+        matrices: &matrices,
+        category_weights: &case.weights,
+        frequencies: &case.frequencies,
+        pattern_weights: &case.pattern_weights,
+    }
+    .log_likelihood()
+}
+
 fn close(a: f64, b: f64) -> bool {
     (a - b).abs() <= 1e-9 * a.abs().max(1.0)
 }
@@ -160,79 +238,156 @@ proptest! {
     #[test]
     fn tip_states_match_reference(case in case()) {
         let children = tree(case.tips, &case.joins);
-        let model = Mk::with_frequencies(case.frequencies.clone());
-        let matrices = matrices(&case, &model);
         let tips: Vec<Vec<f64>> = case.tip_states.iter().map(|s| expand(s, case.states)).collect();
-        let expected = Problem {
-            children: &children,
-            root: children.len() - 1,
-            tip_partials: &tips,
-            matrices: &matrices,
-            category_weights: &case.weights,
-            frequencies: &case.frequencies,
-            pattern_weights: &case.pattern_weights,
-        }
-        .log_likelihood();
-        let plain = run_core(&case, &children, &matrices, Tips::States(&case.tip_states), Scaling::None);
-        let scaled = run_core(&case, &children, &matrices, Tips::States(&case.tip_states), Scaling::Always);
+        let expected = reference(&case, &children, &tips, &case.lengths);
         prop_assert!(expected.is_finite());
-        prop_assert!(close(plain, expected), "plain {plain} vs {expected}");
-        prop_assert!(close(scaled, expected), "scaled {scaled} vs {expected}");
+        for path in PATHS {
+            for scaling in [Scaling::None, Scaling::Always] {
+                let actual = run_core(&case, &children, Tips::States(&case.tip_states), path, scaling);
+                prop_assert!(close(actual, expected), "{path:?}, {scaling:?}: {actual} vs {expected}");
+            }
+        }
     }
 
     #[test]
     fn tip_partials_match_reference(case in case()) {
         let children = tree(case.tips, &case.joins);
-        let model = Mk::with_frequencies(case.frequencies.clone());
-        let matrices = matrices(&case, &model);
-        let expected = Problem {
-            children: &children,
-            root: children.len() - 1,
-            tip_partials: &case.tip_values,
-            matrices: &matrices,
-            category_weights: &case.weights,
-            frequencies: &case.frequencies,
-            pattern_weights: &case.pattern_weights,
+        let expected = reference(&case, &children, &case.tip_values, &case.lengths);
+        for path in PATHS {
+            for scaling in [Scaling::None, Scaling::Always] {
+                let actual = run_core(&case, &children, Tips::Partials(&case.tip_values), path, scaling);
+                prop_assert!(close(actual, expected), "{path:?}, {scaling:?}: {actual} vs {expected}");
+            }
         }
-        .log_likelihood();
-        let plain = run_core(&case, &children, &matrices, Tips::Partials(&case.tip_values), Scaling::None);
-        let scaled = run_core(&case, &children, &matrices, Tips::Partials(&case.tip_values), Scaling::Always);
-        prop_assert!(close(plain, expected), "plain {plain} vs {expected}");
-        prop_assert!(close(scaled, expected), "scaled {scaled} vs {expected}");
+    }
+
+    #[test]
+    fn extreme_branches_and_frequencies_match_reference(case in extremes()) {
+        let children = tree(case.tips, &case.joins);
+        let tips: Vec<Vec<f64>> = case.tip_states.iter().map(|s| expand(s, case.states)).collect();
+        let expected = reference(&case, &children, &tips, &case.lengths);
+        prop_assert!(expected.is_finite());
+        for path in PATHS {
+            for scaling in [Scaling::None, Scaling::Always] {
+                let actual = run_core(&case, &children, Tips::States(&case.tip_states), path, scaling);
+                prop_assert!(close(actual, expected), "{path:?}, {scaling:?}: {actual} vs {expected}");
+            }
+        }
+    }
+
+    #[test]
+    fn rejected_proposals_restore_the_stored_state(
+        case in case(),
+        moves in vec((any::<usize>(), -3.0f64..1.0, 0u8..3), 1..12),
+    ) {
+        let children = tree(case.tips, &case.joins);
+        let nodes = children.len();
+        let root = nodes - 1;
+        let mut parents = vec![None; nodes];
+        for (parent, pair) in children.iter().enumerate() {
+            if let Some((a, b)) = *pair {
+                parents[a] = Some(parent);
+                parents[b] = Some(parent);
+            }
+        }
+        let score = |core: &mut LikelihoodCore| {
+            core.log_likelihood(root, &case.weights, &case.frequencies, &case.pattern_weights)
+        };
+        for path in PATHS {
+            for scaling in [Scaling::None, Scaling::Always] {
+                let mut core = new_core(&case, path, nodes, scaling);
+                for (tip, values) in case.tip_values.iter().enumerate() {
+                    core.set_tip_partials(tip, values);
+                }
+                for node in 0..root {
+                    set_branch(&mut core, path, &case, node, case.lengths[node]);
+                }
+                for (parent, pair) in children.iter().enumerate().skip(case.tips) {
+                    let (a, b) = pair.unwrap();
+                    core.calculate_partials(a, b, parent);
+                }
+                let mut lengths = case.lengths.clone();
+                // Keep the change, reject it with `restore`, or with `unstore`.
+                for &(node, exponent, outcome) in &moves {
+                    let before = score(&mut core);
+                    let node = node % root;
+                    let mut proposed = lengths.clone();
+                    proposed[node] = 10f64.powf(exponent);
+
+                    core.store();
+                    core.set_node_matrix_for_update(node);
+                    set_branch(&mut core, path, &case, node, proposed[node]);
+                    let mut child = node;
+                    while let Some(parent) = parents[child] {
+                        let (a, b) = children[parent].unwrap();
+                        core.set_node_partials_for_update(parent);
+                        core.calculate_partials(a, b, parent);
+                        child = parent;
+                    }
+                    let expected = reference(&case, &children, &case.tip_values, &proposed);
+                    let actual = score(&mut core);
+                    prop_assert!(close(actual, expected), "{path:?}, {scaling:?}: {actual} vs {expected}");
+
+                    match outcome {
+                        0 => lengths = proposed,
+                        1 => core.restore(),
+                        _ => core.unstore(),
+                    }
+                    if outcome != 0 {
+                        prop_assert_eq!(score(&mut core), before);
+                    }
+                }
+                let expected = reference(&case, &children, &case.tip_values, &lengths);
+                prop_assert!(close(score(&mut core), expected));
+            }
+        }
     }
 }
 
 #[test]
-fn restore_brings_back_the_stored_state() {
-    let children = [None, None, None, Some((0, 1)), Some((3, 2))];
-    let model = Mk::uniform(2);
-    let mut core = LikelihoodCore::new(2, 4, 1, 5, Scaling::Always);
-    core.set_tip_states(0, &[0, 1, 0, 1]);
-    core.set_tip_states(1, &[0, 0, 1, 1]);
-    core.set_tip_states(2, &[1, 1, 0, 2]);
-    let mut m = [0.0; 4];
-    for (node, len) in [(0, 0.1), (1, 0.2), (2, 0.3), (3, 0.4)] {
-        model.transition_matrix(len, &mut m);
-        core.set_node_matrix(node, 0, &m);
+fn a_change_on_a_short_branch_keeps_its_precision() {
+    // For two taxa, P(0, 1) = π₀π₁(1 − e^(−d/β)) at total distance d.
+    let model = Mk::with_frequencies(vec![0.2, 0.8]).unwrap();
+    let beta = 1.0 - 0.2 * 0.2 - 0.8 * 0.8;
+    for path in PATHS {
+        for distance in [1e-15, 1e-12, 1e-9, 1e-6] {
+            let mut core = match path {
+                Path::Matrices => LikelihoodCore::new(2, 1, 1, 3, Scaling::None),
+                Path::Mk => LikelihoodCore::mk(&model, 1, 1, 3, Scaling::None),
+            };
+            core.set_tip_states(0, &[0]);
+            core.set_tip_states(1, &[1]);
+            for (node, length) in [(0, 0.25 * distance), (1, 0.75 * distance)] {
+                match path {
+                    Path::Matrices => {
+                        let mut matrix = [0.0; 4];
+                        model.transition_matrix(length, &mut matrix);
+                        core.set_node_matrix(node, 0, &matrix);
+                    }
+                    Path::Mk => core.set_node_distance(node, 0, length),
+                }
+            }
+            core.calculate_partials(0, 1, 2);
+            let actual = core.log_likelihood(2, &[1.0], model.frequencies(), &[1.0]);
+            let expected = (0.2 * 0.8 * -(-distance / beta).exp_m1()).ln();
+            assert!(
+                (actual - expected).abs() < 1e-14,
+                "{path:?}, distance {distance}: {actual} != {expected}"
+            );
+        }
     }
-    for (parent, node) in children.iter().enumerate().skip(3) {
-        let (a, b) = node.unwrap();
-        core.set_node_partials_for_update(parent);
-        core.calculate_partials(a, b, parent);
-    }
-    let weights = [1.0; 4];
-    let before = core.log_likelihood(4, &[1.0], &[0.5, 0.5], &weights);
-    core.store();
+}
 
-    core.set_node_matrix_for_update(3);
-    model.transition_matrix(1.5, &mut m);
-    core.set_node_matrix(3, 0, &m);
-    core.set_node_partials_for_update(4);
-    core.calculate_partials(3, 2, 4);
-    let proposed = core.log_likelihood(4, &[1.0], &[0.5, 0.5], &weights);
-    assert_ne!(proposed, before);
+#[test]
+#[should_panic(expected = "use set_node_distance")]
+fn an_mk_core_refuses_matrices() {
+    let mut core = LikelihoodCore::mk(&Mk::uniform(2), 1, 1, 3, Scaling::None);
+    core.set_node_matrix(0, 0, &[1.0, 0.0, 0.0, 1.0]);
+}
 
-    core.restore();
-    let after = core.log_likelihood(4, &[1.0], &[0.5, 0.5], &weights);
-    assert_eq!(after, before);
+#[test]
+#[should_panic(expected = "use set_node_matrix")]
+fn a_matrix_core_refuses_distances() {
+    let mut core = LikelihoodCore::new(2, 1, 1, 3, Scaling::None);
+    core.set_node_distance(0, 0, 0.1);
 }

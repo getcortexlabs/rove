@@ -4,7 +4,7 @@ description: "Cómo dispone Rove los datos de verosimilitud, por qué el kernel 
 
 # Diseño
 
-Rove es un único crate de Rust. Calcula la verosimilitud de un árbol binario enraizado bajo el modelo Mk para una matriz de caracteres discretos. Las decisiones siguientes son las que ya se ven en el código. El trabajo de SIMD y rutas rápidas que preparan está en el [roadmap](./roadmap).
+Rove es un único crate de Rust. Calcula la verosimilitud de un árbol binario enraizado bajo el modelo Mk para una matriz de caracteres discretos. Las decisiones siguientes son las que ya se ven en el código. El trabajo de SIMD que preparan está en el [roadmap](./roadmap).
 
 ## Disposición por patrones
 
@@ -18,7 +18,7 @@ Rove almacena los parciales al revés. Para cada categoría de tasa y cada estad
 
 Mk tiene una forma cerrada. La matriz de transición de una rama es `P(t) = e·I + (1 − e)·π`, donde `e` depende solo de la longitud de rama y `π` contiene las frecuencias de estados. Multiplicarla por un vector cuesta O(k) por patrón en lugar de O(k²).
 
-Hoy `model::Mk` produce la matriz completa y el kernel la multiplica de forma genérica. La forma cerrada se comprueba contra la fórmula de Lewis. La ruta directa de Mk es el siguiente paso del [roadmap](./roadmap).
+Un núcleo Mk, construido con `LikelihoodCore::mk`, usa esa forma directamente. Cada rama guarda una distancia, `e` y `1 − e` por categoría de tasa en lugar de una matriz, y la actualización de un hijo calcula, para cada patrón, una sola suma ponderada por las frecuencias que sirve a todos los estados. El núcleo de matrices se mantiene para modelos sin una forma así, y las pruebas comparan ambos con la referencia.
 
 ## Una referencia escalar, siempre
 
@@ -28,7 +28,7 @@ Cada ruta optimizada que se añada después tiene que pasar las mismas pruebas. 
 
 ## Búferes dobles y reescalado
 
-Cada nodo posee dos búferes para parciales y dos para matrices de transición. Antes de que una propuesta sobrescriba un nodo, `set_node_partials_for_update` o `set_node_matrix_for_update` cambia ese nodo a su otro búfer, de modo que los valores anteriores sobreviven. `store` registra qué búferes son los actuales. `restore` recupera ese conjunto intercambiando, `unstore` copiando. Aceptar un movimiento no cuesta nada. Esto es lo que un muestreador MCMC necesita para rechazar un movimiento a bajo costo.
+Cada nodo posee dos búferes para parciales y dos para su rama: matrices de transición o distancias de Mk. Antes de que una propuesta sobrescriba un nodo, `set_node_partials_for_update` o `set_node_matrix_for_update` cambia ese nodo a su otro búfer, de modo que los valores anteriores sobreviven. `store` registra qué búferes son los actuales. `restore` recupera ese conjunto intercambiando, `unstore` copiando. Aceptar un movimiento no cuesta nada. Esto es lo que un muestreador MCMC necesita para rechazar un movimiento a bajo costo.
 
 Con `Scaling::Always`, los parciales de cada nodo interno se dividen por su máximo por patrón después de calcularse, y el logaritmo de ese máximo se guarda por nodo. La log-verosimilitud vuelve a sumar los factores de escala. Sin escalado, en árboles profundos se produce underflow.
 

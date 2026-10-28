@@ -10,7 +10,7 @@ use std::hint::black_box;
 use std::time::Duration;
 
 use rove::{data::GapTreatment, nexus};
-use workload::{Engine, Workload};
+use workload::{Engine, PATHS, Path, Workload};
 
 #[global_allocator]
 static ALLOCATOR: allocations::CountingAllocator = allocations::CountingAllocator;
@@ -21,7 +21,7 @@ enum Metric {
     Compress,
     CoreSetup,
     FullCached,
-    FullMatrices,
+    FullBranches,
     TipUpdate,
     InternalUpdate,
     Accept,
@@ -37,7 +37,7 @@ impl Metric {
             Self::Compress => "compress",
             Self::CoreSetup => "core_setup",
             Self::FullCached => "full_cached",
-            Self::FullMatrices => "full_with_matrices",
+            Self::FullBranches => "full_with_branches",
             Self::TipUpdate => "tip_update",
             Self::InternalUpdate => "internal_update",
             Self::Accept => "accept_proposal",
@@ -49,14 +49,14 @@ impl Metric {
 
     fn dirty_nodes(self, case: &Workload) -> usize {
         match self {
-            Self::FullCached | Self::FullMatrices => case.data.taxa().len() - 1,
+            Self::FullCached | Self::FullBranches => case.data.taxa().len() - 1,
             Self::TipUpdate | Self::Accept | Self::Reject => case.tree.depth(case.tip_branch),
             Self::InternalUpdate => case.tree.depth(case.internal_branch),
             _ => 0,
         }
     }
 
-    fn run(self, case: &Workload, engine: &mut Engine<'_>) -> f64 {
+    fn run(self, case: &Workload, path: Path, engine: &mut Engine<'_>) -> f64 {
         match self {
             Self::Parse => {
                 black_box(nexus::parse(black_box(&case.input)).unwrap()).character_count() as f64
@@ -70,9 +70,9 @@ impl Metric {
                 );
                 patterns[0].weights().len() as f64
             }
-            Self::CoreSetup => black_box(case.engine()).core.node_count() as f64,
+            Self::CoreSetup => black_box(case.engine(path)).core.node_count() as f64,
             Self::FullCached => engine.full(),
-            Self::FullMatrices => engine.full_with_matrices(),
+            Self::FullBranches => engine.full_with_branches(),
             Self::TipUpdate => engine.partial(case.tip_branch),
             Self::InternalUpdate => engine.partial(case.internal_branch),
             Self::Accept => engine.proposal(case.tip_branch, false),
@@ -134,60 +134,76 @@ fn main() -> Result<(), Box<dyn Error>> {
     if cases.is_empty() {
         return Err("no matching benchmark case".into());
     }
-    let baselines: Vec<_> = cases.iter().map(Workload::validate).collect();
+    let baselines: Vec<_> = cases
+        .iter()
+        .map(|case| PATHS.map(|path| case.validate(path)))
+        .collect();
     if check {
         eprintln!(
-            "Validated {} benchmark cases and their update/restore paths.",
+            "Validated {} benchmark cases on both transition paths, with their update/restore paths.",
             cases.len()
         );
         return Ok(());
     }
     println!(
-        "case\tmetric\ttaxa\tcharacters\tpatterns\tstride\tstates\tcategories\tshape\tmissing_cells\tdirty_nodes\tbaseline_log_likelihood\tallocation_calls\treallocation_calls\trequested_bytes\tdeallocation_calls\tsample\titerations\telapsed_ns"
+        "case\ttransitions\tmetric\ttaxa\tcharacters\tpatterns\tcore_patterns\tstride\tstates\tcategories\tshape\tmissing_cells\tdirty_nodes\tbaseline_log_likelihood\tallocation_calls\treallocation_calls\trequested_bytes\tdeallocation_calls\tsample\titerations\telapsed_ns"
     );
-    for (case, baseline) in cases.iter().zip(baselines) {
-        for metric in [
+    for (case, baselines) in cases.iter().zip(baselines) {
+        for (index, metric) in [
             Metric::Parse,
             Metric::Compress,
             Metric::CoreSetup,
             Metric::FullCached,
-            Metric::FullMatrices,
+            Metric::FullBranches,
             Metric::TipUpdate,
             Metric::InternalUpdate,
             Metric::Accept,
             Metric::Reject,
             Metric::Store,
             Metric::StoreRestore,
-        ] {
-            let mut engine = case.engine();
-            engine.full();
-            let stride = engine.core.layout().stride;
-            let measured = timing::measure(&settings, || {
-                metric.run(black_box(case), black_box(&mut engine))
-            });
-            for (sample, elapsed) in measured.elapsed.iter().enumerate() {
-                println!(
-                    "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.17}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
-                    case.name,
-                    metric.name(),
-                    case.data.taxa().len(),
-                    case.data.character_count(),
-                    case.weights.len(),
-                    stride,
-                    case.model.states(),
-                    case.rates.len(),
-                    case.shape,
-                    case.missing_cells(),
-                    metric.dirty_nodes(case),
-                    baseline,
-                    measured.counts.allocations,
-                    measured.counts.reallocations,
-                    measured.counts.bytes,
-                    measured.counts.deallocations,
-                    sample,
-                    measured.iterations,
-                    elapsed.as_nanos()
-                );
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            // Both paths back to back, so each pair is measured close in time.
+            // The order alternates between metrics.
+            let mut paths: Vec<_> = PATHS.into_iter().zip(baselines).collect();
+            if index % 2 == 1 {
+                paths.reverse();
+            }
+            for (path, baseline) in paths {
+                let mut engine = case.engine(path);
+                engine.full();
+                let stride = engine.core.layout().stride;
+                let measured = timing::measure(&settings, || {
+                    metric.run(black_box(case), path, black_box(&mut engine))
+                });
+                for (sample, elapsed) in measured.elapsed.iter().enumerate() {
+                    println!(
+                        "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.17}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+                        case.name,
+                        path.name(),
+                        metric.name(),
+                        case.data.taxa().len(),
+                        case.data.character_count(),
+                        case.weights.len(),
+                        case.core_patterns(),
+                        stride,
+                        case.model.states(),
+                        case.rates.len(),
+                        case.shape,
+                        case.missing_cells(),
+                        metric.dirty_nodes(case),
+                        baseline,
+                        measured.counts.allocations,
+                        measured.counts.reallocations,
+                        measured.counts.bytes,
+                        measured.counts.deallocations,
+                        sample,
+                        measured.iterations,
+                        elapsed.as_nanos()
+                    );
+                }
             }
         }
         eprintln!("Measured {} ({} patterns).", case.name, case.weights.len());

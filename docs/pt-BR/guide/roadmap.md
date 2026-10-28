@@ -33,7 +33,7 @@ O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/ben
 
 O Mkv condiciona a verossimilhança ao processo de observação em matrizes só com caracteres variáveis. Ele reproduz os dois estados arquivados do BEAST, e seus padrões constantes ficam separados dos pesos dos padrões observados.
 
-A seguir, o caminho direto do Mk pode substituir a multiplicação genérica de matrizes. O NEON em Apple silicon vem depois do amostrador mínimo, para que perfis de execuções completas mostrem onde o tempo do kernel pesa. A implementação escalar continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
+O caminho direto do Mk substitui o produto genérico de matrizes nos modelos Mk. O NEON em Apple silicon vem depois do amostrador mínimo, para que perfis de execuções completas mostrem onde o tempo do kernel pesa. A implementação escalar continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
 
 ## Inferência independente
 

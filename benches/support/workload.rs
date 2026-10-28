@@ -1,3 +1,4 @@
+use rove::ascertainment::VariableCharacters;
 use rove::data::{Cell, GapTreatment, Matrix, Patterns};
 use rove::model::Mk;
 use rove::reference::Problem;
@@ -6,6 +7,24 @@ use rove::{LikelihoodCore, Scaling, nexus};
 #[rustfmt::skip]
 #[path = "reference_state.rs"]
 mod reference_state;
+
+/// How branches reach the core: generic matrix products or the Mk closed form.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Path {
+    Matrices,
+    Mk,
+}
+
+pub const PATHS: [Path; 2] = [Path::Matrices, Path::Mk];
+
+impl Path {
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Matrices => "matrices",
+            Self::Mk => "mk",
+        }
+    }
+}
 
 pub struct Tree {
     pub children: Vec<Option<(usize, usize)>>,
@@ -88,6 +107,8 @@ pub struct Workload {
     pub model: Mk,
     pub tip_branch: usize,
     pub internal_branch: usize,
+    /// Conditions on variable characters, adding one constant pattern per state.
+    pub variable: Option<VariableCharacters>,
     expected: Option<f64>,
 }
 
@@ -128,8 +149,16 @@ impl Workload {
             model,
             tip_branch,
             internal_branch,
+            variable: None,
             expected: None,
         }
+    }
+
+    /// Patterns evaluated by the core, including any constant Mkv patterns.
+    pub fn core_patterns(&self) -> usize {
+        self.variable
+            .as_ref()
+            .map_or(self.weights.len(), VariableCharacters::pattern_count)
     }
 
     pub fn missing_cells(&self) -> usize {
@@ -142,33 +171,40 @@ impl Workload {
     }
 
     /// Allocate and populate the core. Pruning is measured separately.
-    pub fn engine(&self) -> Engine<'_> {
-        let mut core = LikelihoodCore::new(
-            self.model.states(),
-            self.weights.len(),
-            self.rates.len(),
-            self.tree.children.len(),
-            Scaling::Always,
-        );
-        for (tip, values) in self.patterns.tip_partials().iter().enumerate() {
+    pub fn engine(&self, path: Path) -> Engine<'_> {
+        let (states, patterns) = (self.model.states(), self.core_patterns());
+        let (categories, nodes) = (self.rates.len(), self.tree.children.len());
+        let mut core = match path {
+            Path::Matrices => {
+                LikelihoodCore::new(states, patterns, categories, nodes, Scaling::Always)
+            }
+            Path::Mk => {
+                LikelihoodCore::mk(&self.model, patterns, categories, nodes, Scaling::Always)
+            }
+        };
+        let tips = match &self.variable {
+            Some(variable) => variable.tip_partials(),
+            None => self.patterns.tip_partials(),
+        };
+        for (tip, values) in tips.iter().enumerate() {
             core.set_tip_partials(tip, values);
         }
-        let matrix = vec![0.0; self.model.states() * self.model.states()];
         let mut engine = Engine {
             workload: self,
+            path,
             core,
-            matrix,
+            matrix: vec![0.0; states * states],
             alternate: false,
         };
         for node in 0..self.tree.root() {
-            engine.set_matrix(node, self.tree.distances[node]);
+            engine.set_branch(node, self.tree.distances[node]);
         }
         engine
     }
 
     /// Check every timed numerical path before collecting any measurements.
-    pub fn validate(&self) -> f64 {
-        let mut engine = self.engine();
+    pub fn validate(&self, path: Path) -> f64 {
+        let mut engine = self.engine(path);
         let initial = engine.full();
         close(initial, engine.reference());
         if let Some(expected) = self.expected {
@@ -188,7 +224,7 @@ impl Workload {
                 close(engine.score(), engine.reference());
             }
         }
-        close(engine.full_with_matrices(), engine.reference());
+        close(engine.full_with_branches(), engine.reference());
         initial
     }
 }
@@ -200,28 +236,47 @@ fn close(actual: f64, expected: f64) {
 
 pub struct Engine<'a> {
     workload: &'a Workload,
+    path: Path,
     pub core: LikelihoodCore,
     matrix: Vec<f64>,
     alternate: bool,
 }
 
 impl Engine<'_> {
-    fn set_matrix(&mut self, node: usize, distance: f64) {
+    fn set_branch(&mut self, node: usize, distance: f64) {
         for (category, rate) in self.workload.rates.iter().enumerate() {
-            self.workload
-                .model
-                .transition_matrix(distance * rate, &mut self.matrix);
-            self.core.set_node_matrix(node, category, &self.matrix);
+            match self.path {
+                Path::Matrices => {
+                    self.workload
+                        .model
+                        .transition_matrix(distance * rate, &mut self.matrix);
+                    self.core.set_node_matrix(node, category, &self.matrix);
+                }
+                Path::Mk => self.core.set_node_distance(node, category, distance * rate),
+            }
         }
     }
 
     pub fn score(&mut self) -> f64 {
-        self.core.log_likelihood(
-            self.workload.tree.root(),
-            &self.workload.category_weights,
-            self.workload.model.frequencies(),
-            &self.workload.weights,
-        )
+        let workload = self.workload;
+        let root = workload.tree.root();
+        let frequencies = workload.model.frequencies();
+        match &workload.variable {
+            Some(variable) => {
+                self.core
+                    .integrate_partials(root, &workload.category_weights);
+                let lls = self.core.calculate_log_likelihoods(frequencies);
+                variable
+                    .log_likelihood(lls)
+                    .expect("defined Mkv correction")
+            }
+            None => self.core.log_likelihood(
+                root,
+                &workload.category_weights,
+                frequencies,
+                &workload.weights,
+            ),
+        }
     }
 
     pub fn full(&mut self) -> f64 {
@@ -238,10 +293,10 @@ impl Engine<'_> {
         if self.alternate { 1.1 } else { 0.9 }
     }
 
-    pub fn full_with_matrices(&mut self) -> f64 {
+    pub fn full_with_branches(&mut self) -> f64 {
         let factor = self.factor();
         for node in 0..self.workload.tree.root() {
-            self.set_matrix(node, self.workload.tree.distances[node] * factor);
+            self.set_branch(node, self.workload.tree.distances[node] * factor);
         }
         self.full()
     }
@@ -251,7 +306,7 @@ impl Engine<'_> {
         if switch_buffers {
             self.core.set_node_matrix_for_update(branch);
         }
-        self.set_matrix(branch, distance);
+        self.set_branch(branch, distance);
         let mut node = branch;
         while let Some(parent) = self.workload.tree.parents[node] {
             if switch_buffers {
@@ -278,15 +333,25 @@ impl Engine<'_> {
         proposed
     }
 
+    /// The scalar reference on the branches currently selected in the core.
     fn reference(&self) -> f64 {
+        let k = self.workload.model.states();
         let matrices: Vec<Vec<f64>> = (0..self.core.node_count())
             .map(|node| {
                 (0..self.workload.rates.len())
-                    .flat_map(|c| self.core.node_matrix(node, c).iter().copied())
+                    .flat_map(|c| match self.path {
+                        Path::Matrices => self.core.node_matrix(node, c).to_vec(),
+                        Path::Mk => {
+                            let mut matrix = vec![0.0; k * k];
+                            let distance = self.core.node_distance(node, c);
+                            self.workload.model.transition_matrix(distance, &mut matrix);
+                            matrix
+                        }
+                    })
                     .collect()
             })
             .collect();
-        Problem {
+        let problem = Problem {
             children: &self.workload.tree.children,
             root: self.workload.tree.root(),
             tip_partials: self.workload.patterns.tip_partials(),
@@ -294,8 +359,11 @@ impl Engine<'_> {
             category_weights: &self.workload.category_weights,
             frequencies: self.workload.model.frequencies(),
             pattern_weights: &self.workload.weights,
+        };
+        match self.workload.variable {
+            Some(_) => problem.variable_log_likelihood(),
+            None => problem.log_likelihood(),
         }
-        .log_likelihood()
     }
 }
 
@@ -339,9 +407,9 @@ fn synthetic(
     text
 }
 
-pub fn suite() -> Vec<Workload> {
+fn reference(name: &'static str) -> Workload {
     let mut reference = Workload::new(
-        "reference_20x50",
+        name,
         include_str!("../../fixtures/reference/20x50/matrix.nex").into(),
         Tree::new(
             reference_state::CHILDREN.to_vec(),
@@ -351,11 +419,19 @@ pub fn suite() -> Vec<Workload> {
         reference_state::RATES.to_vec(),
     );
     assert_eq!(reference.data.taxa(), reference_state::TAXA);
-    reference.model = Mk::with_frequencies(reference_state::FREQUENCIES.to_vec());
+    reference.model = Mk::with_frequencies(reference_state::FREQUENCIES.to_vec()).unwrap();
     reference.category_weights = reference_state::CATEGORY_WEIGHTS.to_vec();
     reference.expected = Some(reference_state::EXPECTED);
+    reference
+}
+
+pub fn suite() -> Vec<Workload> {
+    let mut conditioned = reference("reference_20x50_mkv");
+    conditioned.variable = Some(VariableCharacters::new(&conditioned.patterns).unwrap());
+    conditioned.expected = Some(reference_state::EXPECTED_MKV);
     let mut cases = vec![
-        reference,
+        reference("reference_20x50"),
+        conditioned,
         Workload::new(
             "morphology_90x250",
             include_str!("../../fixtures/benchmarks/morphology_90x250.nex").into(),

@@ -33,7 +33,7 @@ The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benc
 
 Mkv conditions the likelihood on the observation process for variable-only matrices. It reproduces both archived BEAST states, and its constant patterns stay separate from the observed pattern weights.
 
-Next, the direct Mk path can replace generic matrix multiplication. NEON on Apple silicon follows the minimal sampler, so that profiles of complete runs can show where kernel time matters. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
+The direct Mk path replaces the generic matrix product for Mk models. NEON on Apple silicon follows the minimal sampler, so that profiles of complete runs can show where kernel time matters. The scalar implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
 
 ## Standalone inference
 

@@ -31,9 +31,9 @@ features:
     link: /pt-BR/guide/design
     linkText: O design
   - title: Mk, em forma fechada
-    details: O modelo Mk vem com sua matriz de transição em forma fechada. Um caminho rápido que dispensa o produto genérico k×k está no roadmap.
-    link: /pt-BR/guide/roadmap
-    linkText: O roadmap
+    details: O núcleo Mk faz a poda com a forma fechada do modelo. Cada atualização de filho usa uma soma ponderada por padrão em vez de um produto de matrizes k×k.
+    link: /pt-BR/guide/kernel#ramos-no-mk
+    linkText: Ramos no Mk
   - title: Verificado contra uma referência
     details: Uma implementação recursiva simples permanece na crate como referência. Testes de propriedade comparam o núcleo com ela em árvores aleatórias, com e sem reescalonamento.
     link: /pt-BR/guide/kernel
@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Estágio inicial
-O núcleo de verossimilhança, o modelo Mk com a correção Mkv e os testes de igualdade estão implementados. Inferência independente, caminhos SIMD e comparações entre motores não estão. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
+O núcleo de verossimilhança com o caminho direto do Mk, a correção Mkv e os testes de igualdade estão implementados. Inferência independente, caminhos SIMD e comparações entre motores não estão. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
 :::
 
 </div>

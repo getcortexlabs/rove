@@ -1,20 +1,20 @@
 ---
-description: "What the Rove likelihood core computes today, and how to call it from Rust: tips, transition matrices, partials, the Mkv correction, rescaling and the log likelihood."
+description: "What the Rove likelihood core computes today, and how to call it from Rust: tips, Mk branch distances, transition matrices, partials, the Mkv correction, rescaling and the log likelihood."
 ---
 
 # The likelihood core
 
-`LikelihoodCore` computes the log likelihood of a rooted binary tree for a matrix of site patterns, given a transition matrix per branch and per rate category. This page describes the API as it exists in the repository. There is no crate on crates.io yet; use the repository as a Git dependency to try it.
+`LikelihoodCore` computes the log likelihood of a rooted binary tree for a matrix of site patterns. Each branch is given per rate category, either as a distance under the Mk model or as a transition matrix. This page describes the API as it exists in the repository. There is no crate on crates.io yet; use the repository as a Git dependency to try it.
 
 ::: info Scope
-The core takes transition matrices and tip data and returns likelihoods. The separate [NEXUS reader](./nexus) prepares observations and pattern weights, and the [Mkv correction](#conditioning-on-variable-characters) conditions the likelihood on variable characters. Tree proposals and gamma-rate computation remain future work. See the [roadmap](./roadmap).
+The core takes branch distances or transition matrices and tip data, and returns likelihoods. The separate [NEXUS reader](./nexus) prepares observations and pattern weights, and the [Mkv correction](#conditioning-on-variable-characters) conditions the likelihood on variable characters. Tree proposals and gamma-rate computation remain future work. See the [roadmap](./roadmap).
 :::
 
 ## Nodes and buffers
 
 Nodes are numbered from `0` to `node_count − 1`. The core does not know which nodes are tips; it only needs `calculate_partials` to be called for each internal node after its two children are ready.
 
-Every node owns two partials buffers and two transition-matrix buffers. Call `set_node_partials_for_update` or `set_node_matrix_for_update` before overwriting a node during a proposal, and use `store`, `restore` and `unstore` to manage which set is current. The [design](./design#double-buffers-and-rescaling) page explains the mechanism.
+Every node owns two partials buffers and two buffers for its branch. Call `set_node_partials_for_update` or `set_node_matrix_for_update` before overwriting a node during a proposal, and use `store`, `restore` and `unstore` to manage which set is current. `set_node_matrix_for_update` switches the branch buffer in both kinds of core, whether it holds distances or matrices. The [design](./design#double-buffers-and-rescaling) page explains the mechanism.
 
 ## Tips
 
@@ -24,9 +24,25 @@ Every node owns two partials buffers and two transition-matrix buffers. Call `se
 
 Both write to the node's two buffers, so tips survive `restore`.
 
+## Mk branches
+
+`LikelihoodCore::mk(&model, patterns, categories, nodes, scaling)` builds a core for an `Mk` model. `set_node_distance(node, category, distance)` sets the branch above `node`, in one rate category, to a distance in expected changes per character. Rate heterogeneity is up to the caller: pass the branch length multiplied by that category's rate.
+
+The core never builds a transition matrix. Mk's matrix is `P = e·I + (1 − e)·1πᵀ`, with `e = exp(−d/β)` and `β = 1 − Σᵢ πᵢ²`, the normalization that makes one change expected per unit of distance. For each branch the core stores `e` and `1 − e`, and updates a child's partials `L` with
+
+```text
+(P·L)ᵢ = e·Lᵢ + (1 − e)·Σⱼ πⱼ·Lⱼ
+```
+
+The weighted sum is computed once per pattern and shared by every state, so a child update costs O(k) per pattern and rate category instead of the O(k²) of a matrix product. `1 − e` comes from `f64::exp_m1`, which keeps its precision on short branches.
+
+`Mk::uniform(k)` uses equal frequencies. `Mk::with_frequencies` takes unequal ones: the same form holds for any equal-input model, in which a change draws the new state from `π`. It returns a `model::Error` unless there are at least two frequencies, each positive and finite, that sum to one up to rounding error. They are used as given, without normalizing, so values rounded to fewer digits, such as three frequencies of 0.3333333, are rejected: divide them by their sum first. `log_likelihood` still takes the root frequencies, as with a matrix core; pass `model.frequencies()`.
+
+An Mk core panics on `set_node_matrix` and `node_matrix`; a matrix core panics on `set_node_distance` and `node_distance`. `set_node_distance` and `transition_matrix` also panic on a negative or NaN distance.
+
 ## Transition matrices
 
-`set_node_matrix(node, category, matrix)` stores a `states × states` row-major matrix for the branch above `node`, in one rate category. `model::Mk` builds those matrices:
+`LikelihoodCore::new(states, patterns, categories, nodes, scaling)` builds a core that takes matrices instead. `set_node_matrix(node, category, matrix)` stores a `states × states` row-major matrix for the branch above `node`, in one rate category, and the core multiplies it in full. This is the path for models other than Mk. `model::Mk` can also build its own matrices:
 
 ```rust
 use rove::model::Mk;
@@ -36,7 +52,7 @@ let mut matrix = vec![0.0; 4];
 model.transition_matrix(0.1, &mut matrix);
 ```
 
-`Mk::uniform(k)` uses equal frequencies; `Mk::with_frequencies` takes your own. `transition_matrix(distance, out)` fills `out` for a branch of the given expected number of changes per character. Rate heterogeneity is up to the caller: compute one matrix per category with the branch length multiplied by that category's rate.
+`transition_matrix(distance, out)` fills `out` for a branch of the given expected number of changes per character, with the same `e` and `1 − e` as an Mk core.
 
 ## Computing a likelihood
 
@@ -47,21 +63,18 @@ use rove::model::Mk;
 use rove::{LikelihoodCore, Scaling};
 
 // Nodes: A = 0, B = 1, C = 2, (A, B) = 3, root = 4.
-let states = 2;
 let patterns = 4;
 let categories = 1;
 let nodes = 5;
 
-let mut core = LikelihoodCore::new(states, patterns, categories, nodes, Scaling::Always);
+let model = Mk::uniform(2);
+let mut core = LikelihoodCore::mk(&model, patterns, categories, nodes, Scaling::Always);
 core.set_tip_states(0, &[0, 0, 1, 1]);
 core.set_tip_states(1, &[0, 1, 1, 0]);
 core.set_tip_states(2, &[0, 1, 0, 2]); // 2 is out of range: missing data
 
-let model = Mk::uniform(states);
-let mut matrix = vec![0.0; states * states];
 for (node, length) in [(0, 0.1), (1, 0.1), (2, 0.3), (3, 0.2)] {
-    model.transition_matrix(length, &mut matrix);
-    core.set_node_matrix(node, 0, &matrix);
+    core.set_node_distance(node, 0, length);
 }
 
 core.calculate_partials(0, 1, 3);
@@ -71,6 +84,8 @@ let pattern_weights = [1.0, 1.0, 1.0, 1.0];
 let log_likelihood = core.log_likelihood(4, &[1.0], model.frequencies(), &pattern_weights);
 assert!((log_likelihood - -8.957188856221643).abs() < 1e-12);
 ```
+
+A matrix core, `LikelihoodCore::new(2, patterns, categories, nodes, Scaling::Always)`, given the matrices from `model.transition_matrix`, returns the same value up to rounding.
 
 `log_likelihood` integrates the root partials over the category weights, multiplies by the state frequencies, takes the logarithm per pattern, adds any scalers and sums with the pattern weights. The steps are also available separately as `integrate_partials`, `calculate_log_likelihoods` and `pattern_log_likelihoods`.
 
@@ -84,7 +99,7 @@ Morphological matrices often keep only characters that vary among the taxa. Thei
 wᵢ · (ln Lᵢ − ln(1 − Σₛ Pₛ))
 ```
 
-`ascertainment::VariableCharacters` appends one constant pattern per declared state to a partition's tip inputs. The core evaluates them together with the observations, on the same tree, branch matrices, category weights and scalers. They carry no observation weight. Four variable characters on the tree from the previous example:
+`ascertainment::VariableCharacters` appends one constant pattern per declared state to a partition's tip inputs. The core evaluates them together with the observations, on the same tree, branches, category weights and scalers. They carry no observation weight. Four variable characters on the tree from the previous example:
 
 ```rust
 use rove::ascertainment::VariableCharacters;
@@ -108,15 +123,13 @@ let patterns = data.compress(std::slice::from_ref(&sites), GapTreatment::Reject)
 let variable = VariableCharacters::new(&patterns)?;
 
 // Nodes as before. Four observed patterns, then the two constant ones.
-let mut core = LikelihoodCore::new(2, variable.pattern_count(), 1, 5, Scaling::Always);
+let model = Mk::uniform(2);
+let mut core = LikelihoodCore::mk(&model, variable.pattern_count(), 1, 5, Scaling::Always);
 for (tip, partials) in variable.tip_partials().iter().enumerate() {
     core.set_tip_partials(tip, partials);
 }
-let model = Mk::uniform(2);
-let mut matrix = vec![0.0; 4];
 for (node, length) in [(0, 0.1), (1, 0.1), (2, 0.3), (3, 0.2)] {
-    model.transition_matrix(length, &mut matrix);
-    core.set_node_matrix(node, 0, &matrix);
+    core.set_node_distance(node, 0, length);
 }
 core.calculate_partials(0, 1, 3);
 core.calculate_partials(3, 2, 4);
@@ -135,7 +148,7 @@ Every declared state has its own constant pattern, including states no taxon sho
 
 The constant patterns go through the same pruning as the observations. When they hold almost all the probability, as on very short trees, their rounding errors are amplified by `Σₛ Pₛ / (1 − Σₛ Pₛ)`, which exceeds 100 at both archived reference states. With two taxa at distance `d`, the error of each conditioned log probability grows roughly as `10⁻¹⁶ / d`. If the total probability of the constant patterns is within a few rounding errors of one, the result is `ascertainment::Error::UndefinedCorrection` rather than a number.
 
-At both archived BEAST 2.7.8 states of the [reference analysis](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md), Rove reproduces each pattern log likelihood, the correction and the Mkv log likelihood. The largest difference, 4 × 10⁻¹², is in the Mkv value.
+At both archived BEAST 2.7.8 states of the [reference analysis](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md), Rove reproduces each pattern log likelihood within 1.4 × 10⁻¹² and the Mkv log likelihood within 2.2 × 10⁻¹². Almost all of the per-pattern difference is BEAST's own rounding: its LewisMK model computes `1 − e` as `1 − exp(−x)`, which loses digits on the reference's short branches. Against an evaluation of the same inputs with 60 significant digits, Rove's pattern log likelihoods are within 6 × 10⁻¹⁵ of the exact values, and BEAST's within 1.4 × 10⁻¹².
 
 ## Rescaling
 
@@ -143,6 +156,6 @@ Pass `Scaling::Always` to divide each internal node's partials by their per-patt
 
 ## Checking it
 
-`cargo test` runs the property tests in `tests/equality.rs`. They generate random trees with 2 to 10 tips, 2 to 6 states, 1 to 4 rate categories and up to 40 patterns, and compare the core against `reference::Problem` in four combinations: tip states or tip partials, with or without rescaling. A separate test checks that `restore` brings back the likelihood computed before a proposal.
+`cargo test` runs the property tests in `tests/equality.rs`. They generate random trees with 2 to 10 tips, 2 to 6 states, 1 to 4 rate categories and up to 40 patterns, and compare both kinds of core against `reference::Problem`, with tip states or tip partials and with or without rescaling. One of them spreads branch lengths from 10⁻⁹ to 100. Another applies random sequences of branch changes, accepts or rejects each one and checks the likelihood after every step; a rejected change must bring back the previous value exactly. A two-taxon test checks the probability of a change at distances between the taxa as short as 10⁻¹⁵, and unit tests in `src/model.rs` check frequency validation and the rate normalization.
 
-`tests/ascertainment.rs` covers the Mkv correction: the archived BEAST states, complete enumeration of the patterns on trees with two to four tips, the two-taxon closed form at distances from 10⁻⁸ to 1000, random trees against `reference::Problem::variable_log_likelihood`, characters that could be constant, restoration after a rejected proposal, and the undefined correction on a zero-length tree.
+`tests/ascertainment.rs` covers the Mkv correction: the archived BEAST states, against BEAST's values and the 60-digit evaluation, complete enumeration of the patterns on trees with two to four tips, the two-taxon closed form at distances from 10⁻⁸ to 1000, random trees against `reference::Problem::variable_log_likelihood`, characters that could be constant, restoration after a rejected proposal, and the undefined correction on a zero-length tree.

@@ -19,18 +19,18 @@ integration remains a possible compatibility path.
 
 ## Status
 
-Early. The likelihood core, the Mkv correction, the morphological NEXUS reader,
-pattern compression and numerical tests are implemented; standalone inference
-and integrations are not. Work is tracked in the
-[issues](https://github.com/getcortexlabs/rove/issues).
+Early. The likelihood core with its direct Mk path, the Mkv correction, the
+morphological NEXUS reader, pattern compression and numerical tests are
+implemented; standalone inference and integrations are not. Work is tracked
+in the [issues](https://github.com/getcortexlabs/rove/issues).
 
 ## Why
 
 - Small state spaces and short morphological alignments are worth measuring
   as their own workload, including the cost of setup and partial updates.
 - Mk has a closed form, `P(t) = e*I + (1-e)*pi`, which permits an O(k) child
-  update per pattern instead of a full O(k^2) matrix multiplication. The
-  current crate builds these matrices; the direct pruning path is planned.
+  update per pattern instead of a full O(k^2) matrix multiplication. Rove's
+  Mk core prunes with it directly.
 - ARM-specific vectorisation and reuse of repeated calculations are candidate
   optimisations. Their value needs to be established with matched benchmarks.
 
@@ -52,7 +52,8 @@ dataset, pattern by pattern.
 - Pattern-major layout: one contiguous array per state per rate category, so
   the inner loop vectorises across site patterns, not states. Works for k=2
   as well as k=61.
-- Model-aware fast paths, starting with Mk.
+- Model-aware fast paths. Mk prunes through its closed form; other models can
+  pass full transition matrices.
 - NEON first, AVX2 second. Scalar fallback always available and used as the
   reference in tests.
 - One crate today. Optional BEAGLE C ABI and BEAST 2 JNI adapters are planned;

@@ -31,9 +31,9 @@ features:
     link: /guide/design
     linkText: The design
   - title: Mk, in closed form
-    details: The Mk model ships with its closed-form transition matrix. A fast path that skips the generic k×k product is on the roadmap.
-    link: /guide/roadmap
-    linkText: The roadmap
+    details: The Mk core prunes with the model's closed form. Each child update takes one weighted sum per pattern instead of a k×k matrix product.
+    link: /guide/kernel#mk-branches
+    linkText: Mk branches
   - title: Checked against a reference
     details: A plain recursive implementation stays in the crate as the reference. Property tests compare the core against it on random trees, with and without rescaling.
     link: /guide/kernel
@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Early
-The likelihood core, the Mk model with the Mkv correction and the equality tests are implemented. Standalone inference, SIMD paths and cross-engine comparisons are not. [See what exists today →](/guide/#what-exists-today)
+The likelihood core with its direct Mk path, the Mkv correction and the equality tests are implemented. Standalone inference, SIMD paths and cross-engine comparisons are not. [See what exists today →](/guide/#what-exists-today)
 :::
 
 </div>

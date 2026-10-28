@@ -9,14 +9,14 @@ Rove is a phylogenetic inference project written in Rust. It starts with a likel
 The name comes from exploring, wandering and discovering paths.
 
 ::: info Project status
-Early. The likelihood core, the Mkv correction, the NEXUS reader, pattern compression and numerical tests are implemented. A BEAST 2.7.8 reference experiment is recorded. Standalone inference, SIMD code paths and cross-engine performance comparisons remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
+Early. The likelihood core with its direct Mk path, the Mkv correction, the NEXUS reader, pattern compression and numerical tests are implemented. A BEAST 2.7.8 reference experiment is recorded. Standalone inference, SIMD code paths and cross-engine performance comparisons remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Why another kernel
 
 Small state spaces and short morphological alignments are worth measuring as their own workload.
 
-- Mk has a closed form, `P(t) = e·I + (1 − e)·π`, which permits an O(k) child update per pattern instead of a full O(k²) matrix multiplication. The current crate builds these matrices; the direct pruning path is planned.
+- Mk has a closed form, `P(t) = e·I + (1 − e)·π`, which permits an O(k) child update per pattern instead of a full O(k²) matrix multiplication. Rove's Mk core prunes with it directly.
 - ARM-specific vectorisation and reuse of repeated calculations are candidate optimisations. Their value needs matched benchmarks, including setup and partial-update costs.
 - The recorded BEAST 2.7.8 reference used its Java likelihood core. That observation does not establish the backend used by every BEAST version, installation or model.
 
@@ -26,12 +26,12 @@ Rove starts from the data instead: a layout that vectorises across site patterns
 
 The repository is one Rust crate with no runtime dependencies.
 
-- `LikelihoodCore`: Felsenstein pruning over a pattern-major layout, with rate categories, optional per-node rescaling and store/restore of node state for a sampler.
-- `model::Mk`: the Mk model with its closed-form transition matrix, for uniform or custom state frequencies.
+- `LikelihoodCore`: Felsenstein pruning over a pattern-major layout, with rate categories, optional per-node rescaling and store/restore of node state for a sampler. `LikelihoodCore::mk` prunes with the Mk closed form; `LikelihoodCore::new` multiplies a transition matrix per branch.
+- `model::Mk`: the Mk model with its closed-form transition matrix, for uniform or custom state frequencies, which are validated.
 - `ascertainment::VariableCharacters`: the Mkv correction for matrices of variable characters, checked against two fixed BEAST 2.7.8 states.
 - `reference::Problem`: a plain recursive implementation kept as the reference in tests.
 - `nexus::parse` and `data::Matrix::compress`: morphological input, preserved observations, explicit partitions and weighted site patterns. See [Reading NEXUS](./nexus).
-- Property tests that compare the core against the reference on random trees with 2 to 10 tips, 2 to 6 states and 1 to 4 rate categories.
+- Property tests that compare both kinds of core against the reference on random trees with 2 to 10 tips, 2 to 6 states and 1 to 4 rate categories, including branch lengths from 10⁻⁹ to 100 and sequences of accepted and rejected changes.
 - A synthetic positive-control matrix of 20 taxa and 50 binary characters, with the script that generates it and degraded variants.
 
 The [likelihood core](./kernel) page shows how to call it. The [synthetic matrices](./fixtures) page describes the control.
@@ -39,7 +39,6 @@ The [likelihood core](./kernel) page shows how to call it. The [synthetic matric
 ## What does not exist yet
 
 - Standalone inference: tree proposals, MCMC, priors and clock models.
-- The Mk closed-form fast path inside the kernel.
 - NEON or AVX2 code paths. The current kernel is scalar Rust; the layout is prepared for vectorisation.
 - Cross-engine performance comparisons with BEAST or BEAGLE.
 - A user interface and the optional BEAST 2 or BEAGLE adapters.
