@@ -2,12 +2,24 @@
 #[allow(dead_code)] // The executable also uses this module for timing and metadata.
 mod workload;
 
-use workload::{PATHS, Path};
+use rove::Backend;
+use workload::{PATHS, Path, backends};
 
 #[test]
 fn benchmark_paths_match_the_reference_and_restore_rejected_changes() {
     for case in workload::suite() {
-        let [matrices, mk] = PATHS.map(|path| case.validate(path));
+        let [matrices, mk] = PATHS.map(|path| case.validate(path, Backend::Portable));
+        for backend in backends().into_iter().filter(|&b| b != Backend::Portable) {
+            for (path, expected) in PATHS.into_iter().zip([matrices, mk]) {
+                let actual = case.validate(path, backend);
+                assert_eq!(
+                    actual.to_bits(),
+                    expected.to_bits(),
+                    "{} {path:?} {backend:?}",
+                    case.name
+                );
+            }
+        }
         assert!(matrices.is_finite(), "{}", case.name);
         assert!(
             (matrices - mk).abs() < 1e-9,
@@ -23,7 +35,10 @@ fn benchmark_paths_match_the_reference_and_restore_rejected_changes() {
         }
         if case.name == "reference_20x50_mkv" {
             assert_eq!(case.core_patterns(), 25);
-            assert_eq!(case.engine(Path::Mk).core.layout().stride, 32);
+            assert_eq!(
+                case.engine(Path::Mk, Backend::NATIVE).core.layout().stride,
+                32
+            );
         } else {
             assert_eq!(case.core_patterns(), case.weights.len());
         }
@@ -32,11 +47,20 @@ fn benchmark_paths_match_the_reference_and_restore_rejected_changes() {
         }
         if case.name == "small_unpadded" {
             assert_eq!(case.weights.len(), 16);
-            assert_eq!(case.engine(Path::Matrices).core.layout().stride, 16);
+            assert_eq!(
+                case.engine(Path::Matrices, Backend::NATIVE)
+                    .core
+                    .layout()
+                    .stride,
+                16
+            );
         }
         if case.name == "small_padded" {
             assert_eq!(case.weights.len(), 17);
-            assert_eq!(case.engine(Path::Mk).core.layout().stride, 24);
+            assert_eq!(
+                case.engine(Path::Mk, Backend::NATIVE).core.layout().stride,
+                24
+            );
         }
         if case.name == "missing_20_percent" {
             assert!(case.missing_cells() > 0);

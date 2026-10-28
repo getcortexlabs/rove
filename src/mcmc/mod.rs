@@ -12,14 +12,13 @@ pub mod output;
 
 use std::fmt;
 
-use crate::LikelihoodCore;
-use crate::Scaling;
 use crate::ascertainment::{self, VariableCharacters};
 use crate::data::Patterns;
 use crate::model::Mk;
 use crate::random::Random;
 use crate::speciation::BirthDeath;
 use crate::tree::Tree;
+use crate::{Backend, LikelihoodCore, Scaling};
 
 pub use moves::Move;
 
@@ -40,6 +39,8 @@ pub enum Error {
     Tuning(Move),
     /// The initial state has no posterior density.
     InitialState,
+    /// The likelihood backend is not part of this build.
+    Backend(Backend),
 }
 
 impl fmt::Display for Error {
@@ -66,6 +67,11 @@ impl fmt::Display for Error {
                 kind.name()
             ),
             Self::InitialState => write!(f, "the initial state has zero posterior probability"),
+            Self::Backend(backend) => write!(
+                f,
+                "the {} backend is not available on this target",
+                backend.name()
+            ),
         }
     }
 }
@@ -104,6 +110,8 @@ pub struct Settings {
     /// factors toward an acceptance rate of 0.234; otherwise keep them fixed.
     pub tuning: bool,
     pub tuning_delay: u64,
+    /// The likelihood core's backend; every backend gives the same results.
+    pub backend: Backend,
 }
 
 impl Default for Settings {
@@ -133,6 +141,7 @@ impl Default for Settings {
             tuning_values: Vec::new(),
             tuning: true,
             tuning_delay: 10_000,
+            backend: Backend::NATIVE,
         }
     }
 }
@@ -180,7 +189,12 @@ struct Likelihood {
 }
 
 impl Likelihood {
-    fn new(patterns: &Patterns, conditioning: Conditioning, tree: &Tree) -> Result<Self, Error> {
+    fn new(
+        patterns: &Patterns,
+        conditioning: Conditioning,
+        backend: Backend,
+        tree: &Tree,
+    ) -> Result<Self, Error> {
         let model = Mk::uniform(2);
         let variable = match conditioning {
             Conditioning::Variable => {
@@ -193,6 +207,7 @@ impl Likelihood {
             .map_or(patterns.tip_partials(), VariableCharacters::tip_partials);
         let mut core =
             LikelihoodCore::mk(&model, tips[0].len() / 2, 1, tree.nodes(), Scaling::Always);
+        core.set_backend(backend);
         for (tip, partials) in tips.iter().enumerate() {
             core.set_tip_partials(tip, partials);
         }
@@ -273,6 +288,7 @@ pub struct Sampler {
     likelihood: Option<Likelihood>,
     patterns: Patterns,
     conditioning: Conditioning,
+    backend: Backend,
     posterior: Posterior,
     operators: Vec<Operator>,
     constraints: Vec<Vec<bool>>,
@@ -367,10 +383,18 @@ impl Sampler {
                 }
             })
             .collect();
+        if !settings.backend.is_available() {
+            return Err(Error::Backend(settings.backend));
+        }
         let likelihood = if settings.sample_from_prior {
             None
         } else {
-            Some(Likelihood::new(patterns, settings.conditioning, &tree)?)
+            Some(Likelihood::new(
+                patterns,
+                settings.conditioning,
+                settings.backend,
+                &tree,
+            )?)
         };
         let mut sampler = Self {
             stored_tree: tree.clone(),
@@ -379,6 +403,7 @@ impl Sampler {
             likelihood,
             patterns: patterns.clone(),
             conditioning: settings.conditioning,
+            backend: settings.backend,
             posterior: Posterior {
                 likelihood: 0.0,
                 tree_prior: 0.0,
@@ -452,8 +477,10 @@ impl Sampler {
         let (tree_prior, parameter_prior) = self.priors();
         let likelihood = match &self.likelihood {
             None => 0.0,
-            Some(_) => Likelihood::new(&self.patterns, self.conditioning, &self.tree)?
-                .evaluate(self.tree.root()),
+            Some(_) => {
+                Likelihood::new(&self.patterns, self.conditioning, self.backend, &self.tree)?
+                    .evaluate(self.tree.root())
+            }
         };
         Ok(Posterior {
             likelihood,

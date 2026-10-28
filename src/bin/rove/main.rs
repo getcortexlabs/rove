@@ -11,13 +11,14 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use rove::data::GapTreatment;
 use rove::mcmc::output::{TraceWriter, TreeWriter, is_plain_label};
 use rove::mcmc::{Conditioning, Move, Sampler, Settings};
-use rove::nexus;
+use rove::{Backend, nexus};
 
 const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--conditioning variable|none] [--sample-from-prior]
-                   [--no-tuning] [--tuning <move>=<value>]... [--print-every <n>]";
+                   [--no-tuning] [--tuning <move>=<value>]... [--backend portable|neon]
+                   [--print-every <n>]";
 
 const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero";
 
@@ -34,6 +35,7 @@ struct Options {
     sample_from_prior: bool,
     tuning: bool,
     tuning_values: Vec<(Move, f64)>,
+    backend: Backend,
 }
 
 fn parse_options(arguments: &[String]) -> Result<Options, String> {
@@ -50,6 +52,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut sample_from_prior = false;
     let mut tuning = true;
     let mut tuning_values = Vec::new();
+    let mut backend = Backend::NATIVE;
     let mut seen = HashSet::new();
     while let Some(argument) = arguments.next() {
         let repeatable = matches!(argument.as_str(), "--monophyly" | "--tuning");
@@ -102,6 +105,13 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                     }
                 }
             }
+            "--backend" => {
+                let name = value("--backend")?;
+                backend = Backend::ALL
+                    .into_iter()
+                    .find(|backend| backend.name() == name)
+                    .ok_or_else(|| format!("--backend must be portable or neon, not {name:?}"))?;
+            }
             "--sample-from-prior" => sample_from_prior = true,
             "--no-tuning" => tuning = false,
             "--tuning" => {
@@ -139,6 +149,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         sample_from_prior,
         tuning,
         tuning_values,
+        backend,
     };
     if options.steps == 0 || options.sample_every == 0 || options.steps % options.sample_every != 0
     {
@@ -271,6 +282,7 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
         monophyly,
         tuning: options.tuning,
         tuning_values: options.tuning_values.clone(),
+        backend: options.backend,
         ..Settings::default()
     };
     let mut sampler = Sampler::new(&patterns, &settings, options.seed)?;
@@ -459,6 +471,7 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
                 ("tuning_schedule", Json::text(TUNING_SCHEDULE)),
                 ("tuning_delay", Json::Integer(settings.tuning_delay)),
                 ("tuning_target_acceptance", Json::Number(0.234)),
+                ("backend", Json::text(settings.backend.name())),
             ]),
         ),
         ("moves", Json::List(moves)),

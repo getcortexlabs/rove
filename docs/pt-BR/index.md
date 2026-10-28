@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Estágio inicial
-O núcleo de verossimilhança com o caminho direto do Mk, a correção Mkv, os testes de igualdade e um amostrador independente mínimo estão implementados. O modelo de relógio relaxado, caminhos SIMD e benchmarks controlados entre motores não estão. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
+O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON, a correção Mkv, os testes de igualdade e um amostrador independente mínimo estão implementados. O modelo de relógio relaxado, um caminho AVX2 e benchmarks controlados entre motores não estão. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
 :::
 
 </div>

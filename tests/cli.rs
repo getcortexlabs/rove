@@ -280,3 +280,55 @@ fn labels_repeated_options_and_degenerate_inputs_are_rejected() {
     assert!(run(&matrix, &["--tuning", "spin=0.1"]).contains("--tuning needs <move>=<value>"));
     assert!(!Path::new(&out).exists());
 }
+
+#[test]
+fn the_backend_is_recorded_and_does_not_change_the_samples() {
+    let directory = scratch("backend");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let run = |backend: &str| {
+        let output = directory.join(backend);
+        let result = rove(&[
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            output.to_str().unwrap(),
+            "--seed",
+            "5",
+            "--steps",
+            "2000",
+            "--sample-every",
+            "100",
+            "--gaps",
+            "missing",
+            "--backend",
+            backend,
+        ]);
+        (output, result)
+    };
+    let (portable, result) = run("portable");
+    assert!(result.status.success());
+    let samples = |output: &Path| {
+        let trace = fs::read_to_string(output.join("trace.log")).unwrap();
+        let trees = fs::read_to_string(output.join("trees.nexus")).unwrap();
+        let keep = |text: &str, comment: &str| {
+            text.lines()
+                .filter(|line| !line.starts_with(comment))
+                .collect::<Vec<_>>()
+                .join("\n")
+        };
+        (keep(&trace, "#"), keep(&trees, "[command"))
+    };
+    let record = fs::read_to_string(portable.join("run.json")).unwrap();
+    assert!(record.contains("\"backend\": \"portable\""), "{record}");
+    let (neon, result) = run("neon");
+    if rove::Backend::Neon.is_available() {
+        assert!(result.status.success());
+        assert_eq!(samples(&neon), samples(&portable));
+    } else {
+        assert!(error(&result).contains("the neon backend is not available"));
+        assert!(!neon.exists());
+    }
+    let (_, result) = run("avx2");
+    assert!(error(&result).contains("--backend must be portable or neon"));
+}

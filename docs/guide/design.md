@@ -4,7 +4,7 @@ description: "How Rove lays out likelihood data, why the kernel is model-aware, 
 
 # Design
 
-Rove is one Rust crate. It computes the likelihood of a rooted binary tree under the Mk model for a matrix of discrete characters. The decisions below are the ones already visible in the code. The SIMD work they prepare for is on the [roadmap](./roadmap).
+Rove is one Rust crate. It computes the likelihood of a rooted binary tree under the Mk model for a matrix of discrete characters. The decisions below are the ones already visible in the code. The SIMD work they prepare for has started with the [NEON backend](./kernel#backends); the rest is on the [roadmap](./roadmap).
 
 ## Pattern-major layout
 
@@ -44,7 +44,7 @@ The [sampler](./sampler) keeps the tree and its parameters outside the core. Bef
 
 ## NEON first, AVX2 second
 
-The layout exists so that the inner loop can be vectorised. The plan is NEON on Apple silicon first and AVX2 second, with the scalar code kept as the reference and fallback. Neither exists yet; the current kernel is scalar Rust.
+The layout exists so that the inner loops can be vectorised across patterns. In release builds the compiler already vectorises the portable loops, one loop at a time: a node update zeroes two accumulators, adds each state's contribution to them, combines them with the children's partials, and rescaling rereads the results to find each pattern's maximum. The [NEON backend](./kernel#backends) runs the Mk node update as one pass over blocks of eight patterns instead, with the sums and the maxima in registers. Per pattern it performs the same operations in the same order, so it reproduces the portable code's results bit for bit except for the payload of a NaN, and the tests require it. The logarithm of rescaling remains a scalar call per pattern and node. There is no AVX2 path.
 
 ## One crate
 

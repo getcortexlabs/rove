@@ -1,8 +1,9 @@
 use proptest::collection::vec;
 use proptest::prelude::*;
 use rove::model::Mk;
+use rove::random::Random;
 use rove::reference::Problem;
-use rove::{LikelihoodCore, Scaling};
+use rove::{Backend, LikelihoodCore, Scaling};
 
 #[derive(Clone, Debug)]
 struct Case {
@@ -234,7 +235,98 @@ fn close(a: f64, b: f64) -> bool {
     (a - b).abs() <= 1e-9 * a.abs().max(1.0)
 }
 
+/// Every partial, log likelihood and score of a run of updates, kept and
+/// rejected changes, as bits.
+fn trace(
+    case: &Case,
+    children: &[Option<(usize, usize)>],
+    parents: &[Option<usize>],
+    moves: &[(usize, f64, u8)],
+    path: Path,
+    scaling: Scaling,
+    backend: Backend,
+) -> Vec<u64> {
+    let nodes = children.len();
+    let root = nodes - 1;
+    let mut core = new_core(case, path, nodes, scaling);
+    core.set_backend(backend);
+    for tip in 0..case.tips {
+        if tip % 2 == 0 {
+            core.set_tip_states(tip, &case.tip_states[tip]);
+        } else {
+            core.set_tip_partials(tip, &case.tip_values[tip]);
+        }
+    }
+    for node in 0..root {
+        set_branch(&mut core, path, case, node, case.lengths[node]);
+    }
+    let mut bits = Vec::new();
+    let mut record = |core: &mut LikelihoodCore| {
+        let score = core.log_likelihood(
+            root,
+            &case.weights,
+            &case.frequencies,
+            &case.pattern_weights,
+        );
+        bits.push(score.to_bits());
+        bits.extend(core.pattern_log_likelihoods().iter().map(|x| x.to_bits()));
+        for node in case.tips..nodes {
+            bits.extend(core.node_partials(node).iter().map(|x| x.to_bits()));
+        }
+    };
+    for (parent, pair) in children.iter().enumerate().skip(case.tips) {
+        let (a, b) = pair.unwrap();
+        core.calculate_partials(a, b, parent);
+    }
+    record(&mut core);
+    for &(node, exponent, outcome) in moves {
+        let node = node % root;
+        core.store();
+        core.set_node_matrix_for_update(node);
+        set_branch(&mut core, path, case, node, 10f64.powf(exponent));
+        let mut child = node;
+        while let Some(parent) = parents[child] {
+            let (a, b) = children[parent].unwrap();
+            core.set_node_partials_for_update(parent);
+            core.calculate_partials(a, b, parent);
+            child = parent;
+        }
+        record(&mut core);
+        match outcome {
+            0 => {}
+            1 => core.restore(),
+            _ => core.unstore(),
+        }
+        record(&mut core);
+    }
+    bits
+}
+
 proptest! {
+    #[test]
+    fn backends_agree_bit_for_bit(
+        case in case(),
+        moves in vec((any::<usize>(), -3.0f64..1.0, 0u8..3), 1..8),
+    ) {
+        let children = tree(case.tips, &case.joins);
+        let mut parents = vec![None; children.len()];
+        for (parent, pair) in children.iter().enumerate() {
+            if let Some((a, b)) = *pair {
+                parents[a] = Some(parent);
+                parents[b] = Some(parent);
+            }
+        }
+        for path in PATHS {
+            for scaling in [Scaling::None, Scaling::Always] {
+                let portable = trace(&case, &children, &parents, &moves, path, scaling, Backend::Portable);
+                for backend in [Backend::Neon].into_iter().filter(|b| b.is_available()) {
+                    let other = trace(&case, &children, &parents, &moves, path, scaling, backend);
+                    prop_assert!(portable == other, "{path:?}, {scaling:?}, {backend:?}");
+                }
+            }
+        }
+    }
+
     #[test]
     fn tip_states_match_reference(case in case()) {
         let children = tree(case.tips, &case.joins);
@@ -390,4 +482,107 @@ fn an_mk_core_refuses_matrices() {
 fn a_matrix_core_refuses_distances() {
     let mut core = LikelihoodCore::new(2, 1, 1, 3, Scaling::None);
     core.set_node_distance(0, 0, 0.1);
+}
+
+#[test]
+fn a_new_core_uses_the_native_backend() {
+    let core = LikelihoodCore::mk(&Mk::uniform(2), 1, 1, 3, Scaling::None);
+    assert_eq!(core.backend(), Backend::NATIVE);
+    assert!(Backend::NATIVE.is_available() && Backend::Portable.is_available());
+}
+
+#[test]
+#[cfg(target_arch = "aarch64")]
+fn aarch64_runs_the_neon_kernel_by_default() {
+    assert_eq!(Backend::NATIVE, Backend::Neon);
+}
+
+/// Signed zeros, subnormals, infinities and NaNs at the tips, and branches
+/// from zero to infinite length. Every result that is not NaN must agree bit
+/// for bit; a NaN may come out with another payload or sign.
+#[test]
+fn backends_agree_on_special_values() {
+    let tips = [
+        0.0,
+        -0.0,
+        1.0,
+        0.5,
+        5e-324,
+        2.2e-308,
+        f64::INFINITY,
+        f64::NEG_INFINITY,
+        f64::NAN,
+        -f64::NAN,
+        f64::from_bits(0x7ff8_0000_0000_0123),
+        f64::from_bits(0x7ff0_0000_0000_0001),
+        1e300,
+        1e-3,
+    ];
+    let distances = [0.0, 1e-300, 1e-9, 0.1, 5.0, 1e300, f64::INFINITY];
+    for seed in 0..40 {
+        for states in [2, 3, 7] {
+            for categories in [1, 3] {
+                for patterns in [1, 7, 9, 17] {
+                    for scaling in [Scaling::None, Scaling::Always] {
+                        let run = |backend| {
+                            let mut random = Random::new(seed);
+                            let nodes = 2 * (2 + seed as usize % 4) - 1;
+                            let model = Mk::uniform(states);
+                            let mut core =
+                                LikelihoodCore::mk(&model, patterns, categories, nodes, scaling);
+                            core.set_backend(backend);
+                            let leaves = nodes.div_ceil(2);
+                            for tip in 0..leaves {
+                                let values: Vec<f64> = (0..patterns * states)
+                                    .map(|_| tips[random.below(tips.len())])
+                                    .collect();
+                                core.set_tip_partials(tip, &values);
+                            }
+                            for node in 0..nodes - 1 {
+                                for c in 0..categories {
+                                    let d = distances[random.below(distances.len())];
+                                    core.set_node_distance(node, c, d);
+                                }
+                            }
+                            let mut values = Vec::new();
+                            let mut previous = 0;
+                            for (n, parent) in (leaves..nodes).enumerate() {
+                                core.calculate_partials(previous, n + 1, parent);
+                                previous = parent;
+                                values.extend_from_slice(core.node_partials(parent));
+                            }
+                            core.integrate_partials(
+                                nodes - 1,
+                                &vec![1.0 / categories as f64; categories],
+                            );
+                            values.extend_from_slice(
+                                core.calculate_log_likelihoods(model.frequencies()),
+                            );
+                            values
+                        };
+                        let portable = run(Backend::Portable);
+                        for backend in [Backend::Neon].into_iter().filter(|b| b.is_available()) {
+                            for (a, b) in portable.iter().zip(run(backend)) {
+                                assert!(
+                                    a.to_bits() == b.to_bits() || (a.is_nan() && b.is_nan()),
+                                    "seed {seed}, {states} states, {categories} categories, {patterns} patterns, {scaling:?}: {a:e} != {b:e}"
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
+#[cfg_attr(
+    all(target_arch = "aarch64", target_feature = "neon"),
+    ignore = "this target has NEON"
+)]
+#[should_panic(expected = "not available")]
+fn an_unavailable_backend_is_refused() {
+    let mut core = LikelihoodCore::mk(&Mk::uniform(2), 1, 1, 3, Scaling::None);
+    core.set_backend(Backend::Neon);
 }

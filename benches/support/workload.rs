@@ -2,7 +2,7 @@ use rove::ascertainment::VariableCharacters;
 use rove::data::{Cell, GapTreatment, Matrix, Patterns};
 use rove::model::Mk;
 use rove::reference::Problem;
-use rove::{LikelihoodCore, Scaling, nexus};
+use rove::{Backend, LikelihoodCore, Scaling, nexus};
 
 #[rustfmt::skip]
 #[path = "reference_state.rs"]
@@ -16,6 +16,14 @@ pub enum Path {
 }
 
 pub const PATHS: [Path; 2] = [Path::Matrices, Path::Mk];
+
+/// Every backend this build includes, the portable code first.
+pub fn backends() -> Vec<Backend> {
+    Backend::ALL
+        .into_iter()
+        .filter(|backend| backend.is_available())
+        .collect()
+}
 
 impl Path {
     pub fn name(self) -> &'static str {
@@ -171,7 +179,7 @@ impl Workload {
     }
 
     /// Allocate and populate the core. Pruning is measured separately.
-    pub fn engine(&self, path: Path) -> Engine<'_> {
+    pub fn engine(&self, path: Path, backend: Backend) -> Engine<'_> {
         let (states, patterns) = (self.model.states(), self.core_patterns());
         let (categories, nodes) = (self.rates.len(), self.tree.children.len());
         let mut core = match path {
@@ -182,6 +190,7 @@ impl Workload {
                 LikelihoodCore::mk(&self.model, patterns, categories, nodes, Scaling::Always)
             }
         };
+        core.set_backend(backend);
         let tips = match &self.variable {
             Some(variable) => variable.tip_partials(),
             None => self.patterns.tip_partials(),
@@ -203,8 +212,8 @@ impl Workload {
     }
 
     /// Check every timed numerical path before collecting any measurements.
-    pub fn validate(&self, path: Path) -> f64 {
-        let mut engine = self.engine(path);
+    pub fn validate(&self, path: Path, backend: Backend) -> f64 {
+        let mut engine = self.engine(path, backend);
         let initial = engine.full();
         close(initial, engine.reference());
         if let Some(expected) = self.expected {

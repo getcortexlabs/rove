@@ -9,7 +9,7 @@ Rove is a phylogenetic inference project written in Rust. It starts with a likel
 The name comes from exploring, wandering and discovering paths.
 
 ::: info Project status
-Early. The likelihood core with its direct Mk path, the Mkv correction, the NEXUS reader, pattern compression, numerical tests and a minimal standalone sampler are implemented. A BEAST 2.7.8 reference experiment is recorded. The relaxed-clock model of that experiment, SIMD code paths and controlled cross-engine benchmarks remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
+Early. The likelihood core with its direct Mk path and a NEON kernel for it, the Mkv correction, the NEXUS reader, pattern compression, numerical tests and a minimal standalone sampler are implemented. A BEAST 2.7.8 reference experiment is recorded. The relaxed-clock model of that experiment, an AVX2 code path and controlled cross-engine benchmarks remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Why another kernel
@@ -27,6 +27,7 @@ Rove starts from the data instead: a layout that vectorises across site patterns
 The repository is one Rust crate with no runtime dependencies.
 
 - `LikelihoodCore`: Felsenstein pruning over a pattern-major layout, with rate categories, optional per-node rescaling and store/restore of node state for a sampler. `LikelihoodCore::mk` prunes with the Mk closed form; `LikelihoodCore::new` multiplies a transition matrix per branch.
+- `Backend`: portable code for any target and, on aarch64, a NEON kernel for the Mk node update that gives the same results. See [Backends](./kernel#backends).
 - `model::Mk`: the Mk model with its closed-form transition matrix, for uniform or custom state frequencies, which are validated.
 - `ascertainment::VariableCharacters`: the Mkv correction for matrices of variable characters, checked against two fixed BEAST 2.7.8 states.
 - `reference::Problem`: a plain recursive implementation kept as the reference in tests.
@@ -40,7 +41,7 @@ The [likelihood core](./kernel) page shows how to call it. The [synthetic matric
 ## What does not exist yet
 
 - The rest of the reference model: gamma rate variation and the relaxed clock, as well as multiple partitions.
-- NEON or AVX2 code paths. The current kernel is scalar Rust; the layout is prepared for vectorisation.
+- An AVX2 code path. Targets other than aarch64 run the portable code.
 - Controlled performance benchmarks against BEAST or BEAGLE.
 - A user interface and the optional BEAST 2 or BEAGLE adapters.
 

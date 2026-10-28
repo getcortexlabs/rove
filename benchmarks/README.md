@@ -1,7 +1,8 @@
 # Likelihood benchmarks
 
-The Rust harness measures both pruning paths for Mk: the generic product with
-full transition matrices and the direct closed form. It does not run MCMC or
+The Rust harness measures both pruning paths for Mk, the generic product with
+full transition matrices and the direct closed form, on every backend the build
+includes. It does not run MCMC or
 compute priors; one case applies the Mkv ascertainment correction. BEAST is not
 needed to execute it. No cross-engine performance comparison is implied.
 
@@ -27,8 +28,9 @@ python3 tools/benchmarks/run.py --output .local/benchmark-run
 `run.py` sets `target-cpu=native`, optimization level 3, fat LTO, one codegen
 unit, no incremental compilation, and no debug assertions or overflow checks.
 The build targets the compiler's host triple. It records the exact compiler,
-flags, source commit, source hashes and executable hash. The core has no
-explicit SIMD path yet; LLVM can still auto-vectorize ordinary Rust loops.
+flags, source commit, source hashes and executable hash. LLVM vectorises the
+portable loops one at a time; on aarch64 the NEON backend replaces the Mk node
+update with a fused kernel.
 
 The executable can also run a single case for development:
 
@@ -74,12 +76,18 @@ Each metric gets a separate initialized core. Timing includes the harness loop,
 dispatch and `black_box` barriers; no overhead is subtracted. Very small
 bookkeeping measurements should be read with that limitation in mind.
 
-Every metric is measured on both transition paths in turn, recorded in the
-`transitions` column: `matrices` uses `LikelihoodCore::new` with full matrices
-and `mk` uses `LikelihoodCore::mk`. The two measurements of a metric run back
-to back in the same process, and the order alternates between metrics. Parsing
-and compression do not depend on the path, so their paired values show the
-noise between identical operations.
+Every metric is measured on both transition paths and every available
+backend in turn, recorded in the `transitions` and `backend` columns:
+`matrices` uses `LikelihoodCore::new` with full matrices, `mk` uses
+`LikelihoodCore::mk`, and `portable` or `neon` is the core's backend. The
+measurements of a metric run back to back in the same process, in reverse order
+on alternate metrics. Parsing and compression depend on neither, and the matrix
+path runs the same code on both backends, so their paired values show the noise
+between identical operations. Before timing, the harness requires every backend
+to return the same baseline log likelihood bit for bit. `comparison.json` gives
+per-process ratios of the matrix path over the Mk path on each backend
+(`matrices_over_mk`) and of the portable backend over NEON on each path
+(`portable_over_neon`).
 
 ## Workloads and correctness
 
@@ -145,8 +153,9 @@ allocator calls, not a guarantee about optimizations the compiler may perform.
 Counting is disabled during timings, but the forwarding allocator still checks
 an atomic flag on allocation/deallocation. That overhead remains in setup
 measurements. No allocator instrumentation is installed in the Rove library.
-The only new unsafe code is the forwarding implementation required by Rust's
-`GlobalAlloc` API, with arguments and return values passed through unchanged.
+The harness's only unsafe code is the forwarding implementation required by
+Rust's `GlobalAlloc` API, with arguments and return values passed through
+unchanged.
 
 The driver records hardware, OS, available power/thermal reports, load
 averages before and after the runs, commands and hashes. It does not pin CPU
@@ -159,12 +168,15 @@ must match supported calculations on the same hardware.
 
 `metadata.json` records provenance and settings. `run-*.tsv` retains the raw
 batches and allocation observations; `summary.json` contains derived summaries,
-keyed by case and path, such as `reference_20x50/mk`. `comparison.json` divides
-the matrix path's median by the Mk path's, process by process, for each case
-and metric, and reports the median and range of those ratios.
+keyed by case, path and backend, such as `reference_20x50/mk/neon`.
+`comparison.json` divides one variant's median by another's, process by
+process, for each case and metric, and reports the median and range of those
+ratios: the matrix path over the Mk path on each backend, and the portable
+backend over NEON on each path.
 `build.log` is a local diagnostic. Version a report with the compact result
 files, keeping machine identifiers and unrelated local logs out of the commit.
 
-Full-inference runtime, ESS per time and tree diagnostics remain pending the
-standalone samplers in #15 and #16. Issue #8 stays open for those measurements
-and equivalent cross-engine comparisons.
+The [strict-clock comparison](strict-clock/2026-10-28/README.md) records
+runtime, ESS per time and tree diagnostics for the minimal sampler; for the
+complete reference model they wait for #16. Issue #8 stays open for those
+measurements and equivalent cross-engine comparisons.

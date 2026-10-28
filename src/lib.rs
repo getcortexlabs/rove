@@ -10,5 +10,5 @@ pub mod reference;
 pub mod speciation;
 pub mod tree;
 
-pub use kernel::{LikelihoodCore, Scaling};
+pub use kernel::{Backend, LikelihoodCore, Scaling};
 pub use layout::{LANES, Layout};

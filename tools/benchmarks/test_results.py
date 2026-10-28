@@ -5,15 +5,19 @@ import unittest
 from run import METRICS, compare, read_results, redact_power_identifier, summarize
 
 
-def output(samples=3, transitions="matrices", elapsed=100):
+def output(samples=3, transitions="matrices", elapsed=100, backend="portable"):
     stream = io.StringIO()
     writer = csv.writer(stream, delimiter="\t", lineterminator="\n")
-    writer.writerow("case transitions metric taxa characters patterns core_patterns stride states categories shape missing_cells dirty_nodes baseline_log_likelihood allocation_calls reallocation_calls requested_bytes deallocation_calls sample iterations elapsed_ns".split())
+    writer.writerow("case transitions backend metric taxa characters patterns core_patterns stride states categories shape missing_cells dirty_nodes baseline_log_likelihood allocation_calls reallocation_calls requested_bytes deallocation_calls sample iterations elapsed_ns".split())
     for metric in sorted(METRICS):
         for sample in range(samples):
-            writer.writerow(["case", transitions, metric, 3, 4, 2, 2, 8, 2, 1, "balanced", 0, 2,
+            writer.writerow(["case", transitions, backend, metric, 3, 4, 2, 2, 8, 2, 1, "balanced", 0, 2,
                              -20, 0, 0, 0, 0, sample, 10, elapsed + sample * elapsed // 10])
     return stream.getvalue()
+
+
+def rows(text):
+    return text.split("\n", 1)[1]
 
 
 class ResultsTest(unittest.TestCase):
@@ -24,7 +28,7 @@ class ResultsTest(unittest.TestCase):
     def test_reports_medians_of_batch_means_without_counting_iterations_as_samples(self):
         first = read_results(output(), 3)
         second = read_results(output().replace("\t100\n", "\t200\n").replace("\t110\n", "\t220\n").replace("\t120\n", "\t240\n"), 3)
-        result = summarize([first, second])["case/matrices"]["metrics"]["full_cached"]
+        result = summarize([first, second])["case/matrices/portable"]["metrics"]["full_cached"]
         self.assertEqual(result["process_medians_ns"], [11, 22])
         self.assertEqual(result["median_ns"], 16.5)
         self.assertEqual(result["min_process_median_ns"], 11)
@@ -38,20 +42,28 @@ class ResultsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             read_results("", 3)
 
-    def test_keeps_transition_paths_apart(self):
-        both = read_results(output() + output(transitions="mk").split("\n", 1)[1], 3)
-        self.assertEqual(set(both), {"case/matrices", "case/mk"})
-        self.assertEqual(both["case/mk"]["configuration"]["transitions"], "mk")
+    def test_keeps_transition_paths_and_backends_apart(self):
+        both = read_results(output() + rows(output(transitions="mk")) + rows(output(backend="neon")), 3)
+        self.assertEqual(set(both), {"case/matrices/portable", "case/mk/portable", "case/matrices/neon"})
+        self.assertEqual(both["case/mk/portable"]["configuration"]["transitions"], "mk")
+        self.assertEqual(both["case/matrices/neon"]["configuration"]["backend"], "neon")
         with self.assertRaises(ValueError):
             read_results(output(transitions="eigen"), 3)
+        with self.assertRaises(ValueError):
+            read_results(output(backend="avx2"), 3)
 
-    def test_compares_paths_within_each_process(self):
-        def both(mk_elapsed):
-            return read_results(output() + output(transitions="mk", elapsed=mk_elapsed).split("\n", 1)[1], 3)
-        comparison = compare(summarize([both(50), both(200)]))["case"]["full_cached"]
-        self.assertEqual(comparison["process_ratios"], [2, 0.5])
-        self.assertEqual(comparison["median_ratio"], 1.25)
-        self.assertEqual((comparison["min_ratio"], comparison["max_ratio"]), (0.5, 2))
+    def test_compares_paths_and_backends_within_each_process(self):
+        def process(mk_elapsed, neon_elapsed):
+            return read_results(output() + rows(output(transitions="mk", elapsed=mk_elapsed))
+                                + rows(output(transitions="mk", backend="neon", elapsed=neon_elapsed)), 3)
+        comparison = compare(summarize([process(40, 20), process(200, 400)]))
+        paths = comparison["matrices_over_mk"]["case"]["portable"]["full_cached"]
+        self.assertEqual(paths["process_ratios"], [2.5, 0.5])
+        self.assertEqual(paths["median_ratio"], 1.5)
+        self.assertEqual((paths["min_ratio"], paths["max_ratio"]), (0.5, 2.5))
+        backends = comparison["portable_over_neon"]["case"]["mk"]["full_cached"]
+        self.assertEqual(backends["process_ratios"], [2, 0.5])
+        self.assertNotIn("neon", comparison["matrices_over_mk"]["case"])
 
     def test_rejects_changed_workloads_between_processes(self):
         first = read_results(output(), 3)

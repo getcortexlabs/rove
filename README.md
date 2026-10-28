@@ -19,9 +19,9 @@ integration remains a possible compatibility path.
 
 ## Status
 
-Early. The likelihood core with its direct Mk path, the Mkv correction, the
-morphological NEXUS reader, pattern compression, numerical tests and a minimal
-standalone sampler are implemented. The relaxed-clock model of the reference
+Early. The likelihood core with its direct Mk path and a NEON kernel for it,
+the Mkv correction, the morphological NEXUS reader, pattern compression,
+numerical tests and a minimal standalone sampler are implemented. The relaxed-clock model of the reference
 analysis and the integrations are not. Work is tracked in the
 [issues](https://github.com/getcortexlabs/rove/issues).
 
@@ -59,8 +59,9 @@ dataset, pattern by pattern.
   as well as k=61.
 - Model-aware fast paths. Mk prunes through its closed form; other models can
   pass full transition matrices.
-- NEON first, AVX2 second. Scalar fallback always available and used as the
-  reference in tests.
+- NEON first, AVX2 second. On aarch64 a NEON kernel runs the Mk node update;
+  the portable code runs everywhere else, is its reference and gives the same
+  results. There is no AVX2 path yet.
 - One crate today. Optional BEAGLE C ABI and BEAST 2 JNI adapters are planned;
   neither is required by the Rust core.
 

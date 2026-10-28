@@ -24,6 +24,7 @@ METRICS = {
     "store", "store_restore",
 }
 TRANSITIONS = {"matrices", "mk"}
+BACKENDS = {"portable", "neon"}
 COUNTS = ["allocation_calls", "reallocation_calls", "requested_bytes", "deallocation_calls"]
 CASE_FIELDS = ["taxa", "characters", "patterns", "core_patterns", "stride", "states", "categories",
                "missing_cells"]
@@ -48,14 +49,16 @@ def percentile(values, fraction):
 def read_results(text, samples):
     cases = {}
     for row in csv.DictReader(io.StringIO(text), delimiter="\t"):
-        metric, transitions = row["metric"], row["transitions"]
+        metric, transitions, backend = row["metric"], row["transitions"], row["backend"]
         if metric not in METRICS:
             raise ValueError(f"unknown metric: {metric}")
         if transitions not in TRANSITIONS:
             raise ValueError(f"unknown transitions: {transitions}")
-        name = f"{row['case']}/{transitions}"
+        if backend not in BACKENDS:
+            raise ValueError(f"unknown backend: {backend}")
+        name = f"{row['case']}/{transitions}/{backend}"
         metadata = {field: int(row[field]) for field in CASE_FIELDS}
-        metadata.update(case=row["case"], transitions=transitions, shape=row["shape"],
+        metadata.update(case=row["case"], transitions=transitions, backend=backend, shape=row["shape"],
                         baseline_log_likelihood=float(row["baseline_log_likelihood"]))
         if not math.isfinite(metadata["baseline_log_likelihood"]):
             raise ValueError(f"nonfinite likelihood: {name}")
@@ -115,22 +118,28 @@ def summarize(runs):
     return summary
 
 
+def ratios(numerator, denominator):
+    """Per-process time ratios of one variant over another, for each metric."""
+    result = {}
+    for metric, entry in denominator["metrics"].items():
+        values = [n / d for n, d in zip(numerator["metrics"][metric]["process_medians_ns"],
+                                        entry["process_medians_ns"])]
+        result[metric] = {"process_ratios": values, "median_ratio": statistics.median(values),
+                          "min_ratio": min(values), "max_ratio": max(values)}
+    return result
+
+
 def compare(summary):
-    """Per-process time ratios of the matrix path over the Mk path, for each metric."""
-    comparison = {}
+    """The matrix path over the Mk path on each backend, and the portable
+    backend over NEON on each path."""
+    transitions, backends = {}, {}
     for name, result in summary.items():
-        case, transitions = name.rsplit("/", 1)
-        if transitions != "mk" or f"{case}/matrices" not in summary:
-            continue
-        matrices = summary[f"{case}/matrices"]["metrics"]
-        comparison[case] = {}
-        for metric, entry in result["metrics"].items():
-            ratios = [m / k for m, k in zip(matrices[metric]["process_medians_ns"], entry["process_medians_ns"])]
-            comparison[case][metric] = {
-                "process_ratios": ratios, "median_ratio": statistics.median(ratios),
-                "min_ratio": min(ratios), "max_ratio": max(ratios),
-            }
-    return comparison
+        case, path, backend = name.rsplit("/", 2)
+        if path == "mk" and f"{case}/matrices/{backend}" in summary:
+            transitions.setdefault(case, {})[backend] = ratios(summary[f"{case}/matrices/{backend}"], result)
+        if backend == "neon" and f"{case}/{path}/portable" in summary:
+            backends.setdefault(case, {})[path] = ratios(summary[f"{case}/{path}/portable"], result)
+    return {"matrices_over_mk": transitions, "portable_over_neon": backends}
 
 
 def load_average():
@@ -234,7 +243,7 @@ def main():
         "threads": 1, "processes_run_in_parallel": 1, "cpu_affinity": None,
         "background_load_controlled": False, "scaling": "Always",
         "model": "Mk on observed patterns; reference_20x50_mkv also conditions on variable characters; no priors",
-        "transitions": "each metric on the matrix path and the Mk path back to back, alternating which runs first",
+        "variants": "each metric on every combination of transition path and backend back to back, in reverse order on alternate metrics and alternate processes",
         "power_before": power_state(), "load_average_before": load_average(), "runs": [],
     }
     runs = []
@@ -242,11 +251,14 @@ def main():
         path = output / f"run-{repetition + 1}.tsv"
         print(f"Starting process {repetition + 1}/{args.repetitions}...", flush=True)
         start = time.perf_counter()
+        # Alternate processes also reverse the order of the variants.
+        order = ["--reverse"] if repetition % 2 == 1 else []
         with path.open("w") as stream:
-            subprocess.run([str(executable), *arguments], cwd=ROOT, env=env, stdout=stream, check=True)
+            subprocess.run([str(executable), *arguments, *order], cwd=ROOT, env=env, stdout=stream, check=True)
         elapsed = time.perf_counter() - start
         runs.append(read_results(path.read_text(), args.samples))
-        metadata["runs"].append({"file": path.name, "sha256": sha256(path), "wall_seconds": elapsed})
+        metadata["runs"].append({"file": path.name, "sha256": sha256(path), "wall_seconds": elapsed,
+                                 "arguments": [*arguments, *order]})
     metadata["power_after"] = power_state()
     metadata["load_average_after"] = load_average()
     metadata["finished_utc"] = datetime.now(timezone.utc).isoformat()

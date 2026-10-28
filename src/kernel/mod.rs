@@ -1,10 +1,53 @@
 use crate::layout::Layout;
 use crate::model::Mk;
 
+#[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+mod neon;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Scaling {
     None,
     Always,
+}
+
+const NEON: bool = cfg!(all(target_arch = "aarch64", target_feature = "neon"));
+
+/// The code a core runs. Per pattern, every backend performs the same
+/// floating-point operations in the same order, so every result that is not
+/// NaN agrees bit for bit. The compiler may order the operands of an addition
+/// or multiplication differently, which can change only the payload and sign
+/// of a NaN.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Backend {
+    /// Plain Rust for any target, which the compiler may vectorize loop by
+    /// loop. The reference for the others.
+    Portable,
+    /// An aarch64 NEON kernel for the Mk node update; everything else as in
+    /// `Portable`.
+    Neon,
+}
+
+impl Backend {
+    pub const ALL: [Self; 2] = [Self::Portable, Self::Neon];
+
+    /// NEON where the target enables it, the portable code elsewhere.
+    pub const NATIVE: Self = if NEON { Self::Neon } else { Self::Portable };
+
+    /// Whether this build includes the backend.
+    pub const fn is_available(self) -> bool {
+        match self {
+            Self::Portable => true,
+            Self::Neon => NEON,
+        }
+    }
+
+    /// The name the command line and the benchmarks use.
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Portable => "portable",
+            Self::Neon => "neon",
+        }
+    }
 }
 
 /// What each node's transition buffers hold for its branch.
@@ -28,6 +71,7 @@ pub struct LikelihoodCore {
     layout: Layout,
     node_count: usize,
     scaling: Scaling,
+    backend: Backend,
     transition: Transition,
     partials: Vec<Vec<f64>>,
     transitions: Vec<Vec<f64>>,
@@ -80,6 +124,7 @@ impl LikelihoodCore {
             layout,
             node_count,
             scaling,
+            backend: Backend::NATIVE,
             partials: (0..buffers)
                 .map(|_| vec![0.0; layout.partials_len()])
                 .collect(),
@@ -110,6 +155,20 @@ impl LikelihoodCore {
 
     pub fn scaling(&self) -> Scaling {
         self.scaling
+    }
+
+    pub fn backend(&self) -> Backend {
+        self.backend
+    }
+
+    /// Runs later calculations with `backend`, which this build must include.
+    pub fn set_backend(&mut self, backend: Backend) {
+        assert!(
+            backend.is_available(),
+            "the {} backend is not available on this target",
+            backend.name()
+        );
+        self.backend = backend;
     }
 
     #[inline]
@@ -220,14 +279,48 @@ impl LikelihoodCore {
         debug_assert!(parent != child1 && parent != child2 && child1 != child2);
         let out = self.partials_buffer(parent);
         let mut dst = std::mem::take(&mut self.partials[out]);
-        match self.transition {
-            Transition::Matrix => self.multiply_matrices(child1, child2, &mut dst),
-            Transition::Mk(_) => self.apply_mk(child1, child2, &mut dst),
-        }
+        let maxima = match self.transition {
+            Transition::Matrix => {
+                self.multiply_matrices(child1, child2, &mut dst);
+                false
+            }
+            #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+            Transition::Mk(_) if self.backend == Backend::Neon => {
+                self.apply_mk_neon(child1, child2, &mut dst)
+            }
+            Transition::Mk(_) => {
+                self.apply_mk(child1, child2, &mut dst);
+                false
+            }
+        };
         if self.scaling == Scaling::Always {
-            self.rescale(&mut dst, out);
+            self.rescale(&mut dst, out, maxima);
         }
         self.partials[out] = dst;
+    }
+
+    /// `apply_mk` through the NEON kernel, which also finds the maxima that
+    /// `rescale` needs when the core rescales. Returns whether it did.
+    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    fn apply_mk_neon(&mut self, child1: usize, child2: usize, dst: &mut [f64]) -> bool {
+        let Transition::Mk(model) = &self.transition else {
+            unreachable!("only Mk cores store distances");
+        };
+        let buffers = [child1, child2]
+            .map(|node| (self.partials_buffer(node), self.transitions_buffer(node)));
+        let children = buffers.map(|(partials, transitions)| neon::Child {
+            partials: &self.partials[partials],
+            transition: &self.transitions[transitions],
+        });
+        let maxima = self.scaling == Scaling::Always;
+        neon::mk(
+            &self.layout,
+            model.frequencies(),
+            children,
+            dst,
+            maxima.then_some(&mut self.scale[..]),
+        );
+        maxima
     }
 
     fn multiply_matrices(&mut self, child1: usize, child2: usize, dst: &mut [f64]) {
@@ -305,15 +398,20 @@ impl LikelihoodCore {
         }
     }
 
-    fn rescale(&mut self, partials: &mut [f64], buffer: usize) {
+    /// Divides each pattern's partials by their largest value over states and
+    /// categories, and keeps its logarithm. With `maxima`, `scale` already
+    /// holds those values.
+    fn rescale(&mut self, partials: &mut [f64], buffer: usize, maxima: bool) {
         let l = self.layout;
         let stride = l.stride;
-        self.scale.fill(0.0);
-        for c in 0..l.categories {
-            for s in 0..l.states {
-                let o = l.offset(c, s);
-                for (m, x) in self.scale.iter_mut().zip(&partials[o..o + stride]) {
-                    *m = m.max(*x);
+        if !maxima {
+            self.scale.fill(0.0);
+            for c in 0..l.categories {
+                for s in 0..l.states {
+                    let o = l.offset(c, s);
+                    for (m, x) in self.scale.iter_mut().zip(&partials[o..o + stride]) {
+                        *m = m.max(*x);
+                    }
                 }
             }
         }

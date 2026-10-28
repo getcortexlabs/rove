@@ -34,17 +34,18 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-from-prior` | Ignore the characters and sample the prior. |
 | `--no-tuning` | Keep every slide size and scale factor fixed. |
 | `--tuning <move>=<value>` | Starting slide size or scale factor for a move, such as `subtree_slide=0.001`. Can be repeated. |
+| `--backend portable\|neon` | The likelihood [backend](./kernel#backends): the portable code, or the NEON kernel (the default on aarch64). Both give the same samples. |
 | `--print-every <n>` | Steps between progress lines on standard error; by default, a twentieth of the chain. |
 
-The command stops with a message on input it does not support: characters with more than two states, partitions or model blocks in the NEXUS file, characters that could be constant under Mkv, taxon labels with characters other than letters, digits, spaces, `_`, `.` and `-` (or with both spaces and `_`), unknown taxa in a constraint, overlapping constraints that are not nested, out-of-range tuning values, and options it does not know or that are given twice.
+The command stops with a message on input it does not support: characters with more than two states, partitions or model blocks in the NEXUS file, characters that could be constant under Mkv, taxon labels with characters other than letters, digits, spaces, `_`, `.` and `-` (or with both spaces and `_`), unknown taxa in a constraint, overlapping constraints that are not nested, out-of-range tuning values, a backend that the build does not include, and options it does not know or that are given twice.
 
-Given the same executable, input, settings and seed on the same platform, a run produces the same samples. The logarithms and exponentials come from the platform's math library, so another platform can differ in the last digits and then diverge.
+Given the same executable, input, settings and seed on the same platform, a run produces the same samples, whichever the backend. The logarithms and exponentials come from the platform's math library, so another platform can differ in the last digits and then diverge.
 
 ## Output files
 
 - **`trace.log`** is tab-separated, after lines starting with `#` that record the version, the command and the SHA-256 of the input and of the executable. Its columns are `Sample`, `posterior`, `likelihood`, `prior`, `birth_death` (the log density of the tree prior), `birth_difference_rate`, `relative_death_rate`, `tree_height` and `tree_length`. The layout is that of a BEAST trace, and BEAST's LogAnalyser reads it.
 - **`trees.nexus`** is a NEXUS trees block with a translate table and one tree per sample, which BEAST's NexusParser reads. Spaces in taxon labels are written as `_`. Branch lengths are in expected changes per character.
-- **`run.json`** records the command's arguments, the platform, the input's path and SHA-256, the executable's SHA-256 taken when the run starts, the model, every setting, each move's weight, tuning and acceptance counts, the final posterior and the wall time.
+- **`run.json`** records the command's arguments, the platform, the input's path and SHA-256, the executable's SHA-256 taken when the run starts, the model, every setting (including the backend), each move's weight, tuning and acceptance counts, the final posterior and the wall time.
 
 ## Proposals
 
@@ -79,6 +80,7 @@ Before each step the sampler saves the tree and the rate parameters, and stores 
 - **Bookkeeping.** On a six-taxon matrix with missing and uncertain cells, after every step of 4,000-step chains under Mkv and Mk, the cached posterior matches an evaluation from scratch, a rejected step restores the exact previous state, the constraint holds, and every move is both accepted and rejected.
 - **The tree prior** matches BEAST 2.7.8's value at both archived states of the reference analysis within 10⁻¹².
 - **Fixed states.** At the final state of each BEAST chain of the comparison below, Rove's likelihood and posterior match BEAST 2.7.8's within 10⁻¹⁰, and its tree prior and prior within 10⁻¹².
+- **Backends.** The same chain on every backend the build includes makes the same moves and reaches the same posterior, bit for bit, at every step.
 
 `tests/allocations.rs` checks that 20,000 steps on the reference matrix make no heap allocation. `tests/cli.rs` runs the command, checks the three files and the rejected settings, and checks that closing standard error does not stop a run.
 

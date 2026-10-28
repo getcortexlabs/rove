@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use rove::Backend;
 use rove::data::{GapTreatment, Patterns};
 use rove::mcmc::{Conditioning, Move, Sampler, Settings};
 use rove::nexus;
@@ -434,6 +435,39 @@ fn the_posterior_matches_beast_at_the_strict_clock_states() {
                 "{}: {component} {rove} != {expected}",
                 state.name
             );
+        }
+    }
+}
+
+#[test]
+fn every_backend_gives_the_same_chain() {
+    let data = nexus::parse(include_str!("../fixtures/reference/20x50/matrix.nex")).unwrap();
+    let sites = 0..data.character_count();
+    let patterns = data
+        .compress(std::slice::from_ref(&sites), GapTreatment::Reject)
+        .unwrap()
+        .remove(0);
+    let mut chains: Vec<Sampler> = Backend::ALL
+        .into_iter()
+        .filter(|backend| backend.is_available())
+        .map(|backend| {
+            let settings = Settings {
+                monophyly: vec![(0..19).collect()],
+                backend,
+                ..Settings::default()
+            };
+            Sampler::new(&patterns, &settings, 17).unwrap()
+        })
+        .collect();
+    for _ in 0..3000 {
+        let steps: Vec<_> = chains.iter_mut().map(Sampler::step).collect();
+        let bits = |chain: &Sampler| {
+            let p = chain.posterior();
+            [p.likelihood, p.tree_prior, p.parameter_prior].map(f64::to_bits)
+        };
+        for (chain, step) in chains.iter().zip(&steps).skip(1) {
+            assert_eq!(*step, steps[0]);
+            assert_eq!(bits(chain), bits(&chains[0]));
         }
     }
 }

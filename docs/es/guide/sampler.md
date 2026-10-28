@@ -34,17 +34,18 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-from-prior` | Ignorar los caracteres y muestrear el prior. |
 | `--no-tuning` | Mantener fijos todos los tamaños de desplazamiento y factores de escala. |
 | `--tuning <movimiento>=<valor>` | Tamaño inicial de desplazamiento o factor de escala de un movimiento, como `subtree_slide=0.001`. Se puede repetir. |
+| `--backend portable\|neon` | El [backend](./kernel#backends) de la verosimilitud: el código portable o el kernel NEON (por defecto en aarch64). Ambos dan las mismas muestras. |
 | `--print-every <n>` | Pasos entre líneas de progreso en la salida de error estándar; por defecto, una vigésima parte de la cadena. |
 
-El comando se detiene con un mensaje ante entradas que no admite: caracteres con más de dos estados, particiones o bloques de modelo en el archivo NEXUS, caracteres que podrían ser constantes bajo Mkv, nombres de taxones con caracteres distintos de letras, dígitos, espacios, `_`, `.` y `-` (o con espacios y `_` a la vez), taxones desconocidos en una restricción, restricciones solapadas que no están anidadas, valores de ajuste fuera de rango y opciones que no conoce o que aparecen dos veces.
+El comando se detiene con un mensaje ante entradas que no admite: caracteres con más de dos estados, particiones o bloques de modelo en el archivo NEXUS, caracteres que podrían ser constantes bajo Mkv, nombres de taxones con caracteres distintos de letras, dígitos, espacios, `_`, `.` y `-` (o con espacios y `_` a la vez), taxones desconocidos en una restricción, restricciones solapadas que no están anidadas, valores de ajuste fuera de rango, un backend que la compilación no incluya y opciones que no conoce o que aparecen dos veces.
 
-Con el mismo ejecutable, la misma entrada, la misma configuración y la misma semilla, en la misma plataforma, una ejecución produce las mismas muestras. Los logaritmos y las exponenciales vienen de la biblioteca matemática de la plataforma, así que otra plataforma puede diferir en los últimos dígitos y, a partir de ahí, divergir.
+Con el mismo ejecutable, la misma entrada, la misma configuración y la misma semilla, en la misma plataforma, una ejecución produce las mismas muestras, sea cual sea el backend. Los logaritmos y las exponenciales vienen de la biblioteca matemática de la plataforma, así que otra plataforma puede diferir en los últimos dígitos y, a partir de ahí, divergir.
 
 ## Archivos de salida
 
 - **`trace.log`** está separado por tabuladores, después de líneas que empiezan por `#` y registran la versión, el comando y el SHA-256 de la entrada y del ejecutable. Sus columnas son `Sample`, `posterior`, `likelihood`, `prior`, `birth_death` (la log-densidad del prior del árbol), `birth_difference_rate`, `relative_death_rate`, `tree_height` y `tree_length`. Tiene el formato de una traza de BEAST, y el LogAnalyser de BEAST la lee.
 - **`trees.nexus`** es un bloque de árboles NEXUS con una tabla de traducción y un árbol por muestra, que el NexusParser de BEAST lee. Los espacios de los nombres de taxones se escriben como `_`. Las longitudes de rama están en cambios esperados por carácter.
-- **`run.json`** registra los argumentos del comando, la plataforma, la ruta y el SHA-256 de la entrada, el SHA-256 del ejecutable tomado al empezar la ejecución, el modelo, toda la configuración, el peso, el ajuste y los recuentos de aceptación de cada movimiento, la posterior final y el tiempo transcurrido.
+- **`run.json`** registra los argumentos del comando, la plataforma, la ruta y el SHA-256 de la entrada, el SHA-256 del ejecutable tomado al empezar la ejecución, el modelo, toda la configuración (incluido el backend), el peso, el ajuste y los recuentos de aceptación de cada movimiento, la posterior final y el tiempo transcurrido.
 
 ## Propuestas
 
@@ -79,6 +80,7 @@ Antes de cada paso, el muestreador guarda el árbol y los parámetros de tasa, y
 - **Gestión del estado.** En una matriz de seis taxones con celdas faltantes e inciertas, después de cada paso de cadenas de 4.000 pasos bajo Mkv y Mk, la posterior guardada coincide con una evaluación desde cero, un paso rechazado restaura exactamente el estado anterior, la restricción se mantiene y cada movimiento se acepta y se rechaza al menos una vez.
 - **El prior del árbol** reproduce el valor de BEAST 2.7.8 en los dos estados archivados del análisis de referencia, salvo una diferencia menor que 10⁻¹².
 - **Estados fijos.** En el estado final de cada cadena de BEAST de la comparación siguiente, la verosimilitud y la posterior de Rove reproducen las de BEAST 2.7.8 con una diferencia menor que 10⁻¹⁰, y el prior del árbol y el prior, con una diferencia menor que 10⁻¹².
+- **Backends.** La misma cadena con todos los backends que incluye la compilación hace los mismos movimientos y llega a la misma posterior, bit a bit, en cada paso.
 
 `tests/allocations.rs` comprueba que 20.000 pasos sobre la matriz de referencia no hacen ninguna asignación de memoria en el heap. `tests/cli.rs` ejecuta el comando, comprueba los tres archivos y las configuraciones rechazadas, y comprueba que cerrar la salida de error estándar no detiene una ejecución.
 

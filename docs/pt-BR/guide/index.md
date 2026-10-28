@@ -9,7 +9,7 @@ O Rove é um projeto de inferência filogenética escrito em Rust. Ele começa c
 O nome vem de explorar, vagar e descobrir caminhos.
 
 ::: info Status do projeto
-Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk, a correção Mkv, o leitor de NEXUS, a compressão de padrões, os testes numéricos e um amostrador independente mínimo estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. O modelo de relógio relaxado desse experimento, caminhos de código SIMD e benchmarks controlados entre motores continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
+Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON para ele, a correção Mkv, o leitor de NEXUS, a compressão de padrões, os testes numéricos e um amostrador independente mínimo estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. O modelo de relógio relaxado desse experimento, um caminho de código AVX2 e benchmarks controlados entre motores continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Por que outro kernel
@@ -27,6 +27,7 @@ O Rove, em vez disso, parte dos dados: um layout que vetoriza ao longo dos padr�
 O repositório é uma única crate Rust, sem dependências em tempo de execução.
 
 - `LikelihoodCore`: poda de Felsenstein sobre um layout pattern-major, com categorias de taxa, reescalonamento opcional por nó e store/restore do estado dos nós para um amostrador. `LikelihoodCore::mk` faz a poda com a forma fechada do Mk; `LikelihoodCore::new` multiplica uma matriz de transição por ramo.
+- `Backend`: código portátil para qualquer alvo e, em aarch64, um kernel NEON para a atualização de nó do Mk, que dá os mesmos resultados. Veja [Backends](./kernel#backends).
 - `model::Mk`: o modelo Mk com sua matriz de transição em forma fechada, para frequências de estados uniformes ou personalizadas, que são validadas.
 - `ascertainment::VariableCharacters`: a correção Mkv para matrizes de caracteres variáveis, verificada contra dois estados fixos do BEAST 2.7.8.
 - `reference::Problem`: uma implementação recursiva simples, mantida como referência nos testes.
@@ -40,7 +41,7 @@ A página do [núcleo de verossimilhança](./kernel) mostra como chamá-lo. A p�
 ## O que ainda não existe
 
 - O restante do modelo de referência: variação de taxas gama e o relógio relaxado, além de múltiplas partições.
-- Caminhos de código NEON ou AVX2. O kernel atual é Rust escalar; o layout está preparado para vetorização.
+- Um caminho de código AVX2. Alvos que não são aarch64 rodam o código portátil.
 - Benchmarks controlados de desempenho contra o BEAST ou o BEAGLE.
 - Uma interface de usuário e os adaptadores opcionais para BEAST 2 ou BEAGLE.
 

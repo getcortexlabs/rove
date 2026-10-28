@@ -4,7 +4,7 @@ description: "Como o Rove organiza os dados de verossimilhança, por que o kerne
 
 # Design
 
-O Rove é uma única crate Rust. Ela calcula a verossimilhança de uma árvore binária enraizada sob o modelo Mk para uma matriz de caracteres discretos. As decisões abaixo são as que já estão visíveis no código. O trabalho de SIMD que elas preparam está no [roadmap](./roadmap).
+O Rove é uma única crate Rust. Ela calcula a verossimilhança de uma árvore binária enraizada sob o modelo Mk para uma matriz de caracteres discretos. As decisões abaixo são as que já estão visíveis no código. O trabalho de SIMD que elas preparam começou com o [backend NEON](./kernel#backends); o resto está no [roadmap](./roadmap).
 
 ## Layout pattern-major
 
@@ -44,7 +44,7 @@ O [amostrador](./sampler) mantém a árvore e os seus parâmetros fora do núcle
 
 ## NEON primeiro, AVX2 depois
 
-O layout existe para que o laço interno possa ser vetorizado. O plano é NEON em Apple silicon primeiro e AVX2 depois, com o código escalar mantido como referência e fallback. Nenhum dos dois existe ainda; o kernel atual é Rust escalar.
+O layout existe para que os laços internos possam ser vetorizados ao longo dos padrões. Nos builds de release, o compilador já vetoriza os laços portáteis, um de cada vez: uma atualização de nó zera dois acumuladores, soma neles a contribuição de cada estado, combina-os com as parciais dos filhos, e o reescalonamento relê os resultados para achar o máximo de cada padrão. O [backend NEON](./kernel#backends) faz, em vez disso, a atualização de nó do Mk numa única passada por blocos de oito padrões, com as somas e os máximos em registradores. Para cada padrão ele faz as mesmas operações na mesma ordem, então reproduz bit a bit os resultados do código portátil, exceto o payload dos NaN, e os testes exigem isso. O logaritmo do reescalonamento continua sendo uma chamada escalar por padrão e por nó. Não há caminho AVX2.
 
 ## Uma única crate
 
