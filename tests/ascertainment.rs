@@ -7,6 +7,7 @@ use rove::reference::Problem;
 use rove::{LikelihoodCore, Scaling, nexus};
 
 #[rustfmt::skip]
+#[allow(dead_code)] // Each test crate reads a different part of the fixture.
 #[path = "support/reference_states.rs"]
 mod reference_states;
 

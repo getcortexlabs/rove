@@ -20,9 +20,10 @@ integration remains a possible compatibility path.
 ## Status
 
 Early. The likelihood core with its direct Mk path, the Mkv correction, the
-morphological NEXUS reader, pattern compression and numerical tests are
-implemented; standalone inference and integrations are not. Work is tracked
-in the [issues](https://github.com/getcortexlabs/rove/issues).
+morphological NEXUS reader, pattern compression, numerical tests and a minimal
+standalone sampler are implemented. The relaxed-clock model of the reference
+analysis and the integrations are not. Work is tracked in the
+[issues](https://github.com/getcortexlabs/rove/issues).
 
 ## Why
 
@@ -89,6 +90,19 @@ other when reproducing a result.
 6. Add the relaxed-clock reference model, validate complete inference and
    evaluate subtree repeats.
 7. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
+
+## Sampling trees
+
+```sh
+cargo run --release --bin rove -- sample fixtures/reference/20x50/matrix.nex \
+  --output runs/seed-1 --seed 1 --steps 10000000 --sample-every 1000 \
+  --monophyly T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19
+```
+
+The first sampler supports one partition of binary characters under Mk or Mkv,
+a strict clock with rate 1 and the birth–death tree prior of the reference
+analysis, with monophyly constraints. The [sampling guide](docs/guide/sampler.md)
+describes the model, the output files and the checks.
 
 ## Reading a matrix
 

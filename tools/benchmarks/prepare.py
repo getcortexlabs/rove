@@ -14,7 +14,8 @@ SNAPSHOTS = [SNAPSHOT, REFERENCE / "snapshot-20261026.json"]
 
 
 def postorder_tree(state):
-    """Child pairs and branch distances, with tips first and parents after children."""
+    """Child pairs, branch distances and node heights, with tips first and
+    parents after children."""
     nodes = {node["index"]: node for node in state["nodes"]}
     order = list(range(len(state["taxa"])))
     visited = set()
@@ -34,6 +35,7 @@ def postorder_tree(state):
     parents = {child: node for node in nodes.values() for child in node["children"]}
     children = []
     distances = []
+    heights = []
     for index in order:
         node = nodes[index]
         pair = node["children"]
@@ -44,7 +46,8 @@ def postorder_tree(state):
         ) * node["branch_rate"]
         assert distance >= 0
         distances.append(float(distance))
-    return children, distances
+        heights.append(float(node["height"]))
+    return children, distances, heights
 
 
 def rust_children(children):
@@ -89,7 +92,7 @@ def exact_log_likelihoods(state, children, distances):
 
 def reference_source():
     state = json.loads(SNAPSHOT.read_text())
-    children, distances = postorder_tree(state)
+    children, distances, _ = postorder_tree(state)
     observed = math.fsum(p["weight"] * p["log_likelihood"] for p in state["patterns"])
     assert sum(p["weight"] for p in state["patterns"]) == 50
     lines = [
@@ -135,6 +138,10 @@ def states_source():
         "    pub log_likelihood: f64,",
         "    pub exact_log_variable_probability: f64,",
         "    pub exact_log_likelihood: f64,",
+        "    pub heights: &'static [f64],",
+        "    pub birth_difference: f64,",
+        "    pub relative_death: f64,",
+        "    pub birth_death: f64,",
         "}",
         "pub const TAXA: &[&str] = &[" + ", ".join(json.dumps(t) for t in taxa) + "];",
         "pub const STATES: &[State] = &[",
@@ -144,7 +151,8 @@ def states_source():
         assert sum(p["weight"] for p in state["patterns"]) == 50
         constant = [p["states"] for p in state["patterns"] if p["weight"] == 0]
         assert constant == [[s] * len(taxa) for s in range(len(state["frequencies"]))]
-        children, distances = postorder_tree(state)
+        children, distances, heights = postorder_tree(state)
+        assert all(height == 0 for height in heights[:len(taxa)])
         exact = exact_log_likelihoods(state, children, distances)
         with localcontext() as context:
             context.prec = 60
@@ -170,6 +178,10 @@ def states_source():
             f"        log_likelihood: {float(state['distributions']['likelihood'])!r},",
             f"        exact_log_variable_probability: {float(correction)!r},",
             f"        exact_log_likelihood: {float(conditioned)!r},",
+            f"        heights: &{heights!r},",
+            f"        birth_difference: {float(state['parameters']['BDBirthRate.t:matriz_20x50'][0])!r},",
+            f"        relative_death: {float(state['parameters']['BDDeathRate.t:matriz_20x50'][0])!r},",
+            f"        birth_death: {float(state['distributions']['BirthDeath.t:matriz_20x50'])!r},",
             "    },",
         ]
     lines.append("];")

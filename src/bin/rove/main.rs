@@ -1,0 +1,494 @@
+mod sha256;
+
+use std::collections::HashSet;
+use std::error::Error;
+use std::fmt::Display;
+use std::fs::{self, File};
+use std::io::{BufWriter, Write};
+use std::path::PathBuf;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
+
+use rove::data::GapTreatment;
+use rove::mcmc::output::{TraceWriter, TreeWriter, is_plain_label};
+use rove::mcmc::{Conditioning, Move, Sampler, Settings};
+use rove::nexus;
+
+const USAGE: &str =
+    "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
+                   [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
+                   [--conditioning variable|none] [--sample-from-prior]
+                   [--no-tuning] [--tuning <move>=<value>]... [--print-every <n>]";
+
+const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero";
+
+struct Options {
+    matrix: PathBuf,
+    output: PathBuf,
+    seed: u64,
+    steps: u64,
+    sample_every: u64,
+    print_every: Option<u64>,
+    monophyly: Vec<Vec<String>>,
+    gaps: GapTreatment,
+    conditioning: Conditioning,
+    sample_from_prior: bool,
+    tuning: bool,
+    tuning_values: Vec<(Move, f64)>,
+}
+
+fn parse_options(arguments: &[String]) -> Result<Options, String> {
+    let mut arguments = arguments.iter();
+    if arguments.next().map(String::as_str) != Some("sample") {
+        return Err(USAGE.into());
+    }
+    let mut matrix = None;
+    let (mut output, mut seed, mut steps, mut sample_every, mut print_every) =
+        (None, None, None, None, None);
+    let mut monophyly = Vec::new();
+    let mut gaps = GapTreatment::Reject;
+    let mut conditioning = Conditioning::Variable;
+    let mut sample_from_prior = false;
+    let mut tuning = true;
+    let mut tuning_values = Vec::new();
+    let mut seen = HashSet::new();
+    while let Some(argument) = arguments.next() {
+        let repeatable = matches!(argument.as_str(), "--monophyly" | "--tuning");
+        if argument.starts_with("--") && !repeatable && !seen.insert(argument.as_str()) {
+            return Err(format!("{argument} is given more than once"));
+        }
+        let mut value = |name: &str| {
+            arguments
+                .next()
+                .cloned()
+                .ok_or_else(|| format!("{name} needs a value"))
+        };
+        let number = |name: &str, text: String| {
+            text.parse::<u64>()
+                .map_err(|_| format!("{name} needs a non-negative integer, not {text:?}"))
+        };
+        match argument.as_str() {
+            "--output" => output = Some(PathBuf::from(value("--output")?)),
+            "--seed" => seed = Some(number("--seed", value("--seed")?)?),
+            "--steps" => steps = Some(number("--steps", value("--steps")?)?),
+            "--sample-every" => {
+                sample_every = Some(number("--sample-every", value("--sample-every")?)?)
+            }
+            "--print-every" => {
+                print_every = Some(number("--print-every", value("--print-every")?)?)
+            }
+            "--monophyly" => monophyly.push(
+                value("--monophyly")?
+                    .split(',')
+                    .map(|taxon| taxon.trim().to_string())
+                    .collect(),
+            ),
+            "--gaps" => {
+                gaps = match value("--gaps")?.as_str() {
+                    "reject" => GapTreatment::Reject,
+                    "missing" => GapTreatment::Missing,
+                    other => {
+                        return Err(format!("--gaps must be reject or missing, not {other:?}"));
+                    }
+                }
+            }
+            "--conditioning" => {
+                conditioning = match value("--conditioning")?.as_str() {
+                    "variable" => Conditioning::Variable,
+                    "none" => Conditioning::None,
+                    other => {
+                        return Err(format!(
+                            "--conditioning must be variable or none, not {other:?}"
+                        ));
+                    }
+                }
+            }
+            "--sample-from-prior" => sample_from_prior = true,
+            "--no-tuning" => tuning = false,
+            "--tuning" => {
+                let text = value("--tuning")?;
+                let parsed = text.split_once('=').and_then(|(name, number)| {
+                    let kind = Move::ALL.into_iter().find(|m| m.name() == name)?;
+                    Some((kind, number.parse::<f64>().ok()?))
+                });
+                tuning_values.push(parsed.ok_or_else(|| {
+                    format!(
+                        "--tuning needs <move>=<value>, such as subtree_slide=0.001, not {text:?}"
+                    )
+                })?);
+            }
+            flag if flag.starts_with("--") => {
+                return Err(format!("unsupported option {flag}\n{USAGE}"));
+            }
+            path if matrix.is_none() => matrix = Some(PathBuf::from(path)),
+            extra => return Err(format!("unexpected argument {extra:?}\n{USAGE}")),
+        }
+    }
+    let required = |value: Option<u64>, name: &str| {
+        value.ok_or_else(|| format!("{name} is required\n{USAGE}"))
+    };
+    let options = Options {
+        matrix: matrix.ok_or_else(|| format!("a NEXUS matrix is required\n{USAGE}"))?,
+        output: output.ok_or_else(|| format!("--output is required\n{USAGE}"))?,
+        seed: required(seed, "--seed")?,
+        steps: required(steps, "--steps")?,
+        sample_every: required(sample_every, "--sample-every")?,
+        print_every,
+        monophyly,
+        gaps,
+        conditioning,
+        sample_from_prior,
+        tuning,
+        tuning_values,
+    };
+    if options.steps == 0 || options.sample_every == 0 || options.steps % options.sample_every != 0
+    {
+        return Err(
+            "--steps and --sample-every must be positive, and --steps a multiple of --sample-every"
+                .into(),
+        );
+    }
+    if options.print_every == Some(0) {
+        return Err("--print-every must be positive".into());
+    }
+    Ok(options)
+}
+
+/// Writes a line to standard error, ignoring a closed stream.
+fn progress(line: impl Display) {
+    let _ = writeln!(std::io::stderr(), "{line}");
+}
+
+/// A JSON string literal.
+fn quoted(text: &str) -> String {
+    let mut out = String::from('"');
+    for c in text.chars() {
+        match c {
+            '"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            c if u32::from(c) < 0x20 => out.push_str(&format!("\\u{:04x}", u32::from(c))),
+            c => out.push(c),
+        }
+    }
+    out.push('"');
+    out
+}
+
+/// A minimal JSON value for the run metadata.
+enum Json {
+    Null,
+    Bool(bool),
+    Integer(u64),
+    Number(f64),
+    Text(String),
+    List(Vec<Json>),
+    Object(Vec<(&'static str, Json)>),
+}
+
+impl Json {
+    fn text(value: impl Into<String>) -> Self {
+        Self::Text(value.into())
+    }
+
+    fn write(&self, out: &mut String, depth: usize) {
+        let indent = |out: &mut String, depth: usize| out.push_str(&"  ".repeat(depth));
+        match self {
+            Self::Null => out.push_str("null"),
+            Self::Bool(value) => out.push_str(&value.to_string()),
+            Self::Integer(value) => out.push_str(&value.to_string()),
+            Self::Number(value) if value.is_finite() => out.push_str(&format!("{value:?}")),
+            Self::Number(_) => out.push_str("null"),
+            Self::Text(text) => out.push_str(&quoted(text)),
+            Self::List(items) if items.is_empty() => out.push_str("[]"),
+            Self::List(items) => {
+                out.push_str("[\n");
+                for (index, item) in items.iter().enumerate() {
+                    indent(out, depth + 1);
+                    item.write(out, depth + 1);
+                    out.push_str(if index + 1 < items.len() { ",\n" } else { "\n" });
+                }
+                indent(out, depth);
+                out.push(']');
+            }
+            Self::Object(fields) => {
+                out.push_str("{\n");
+                for (index, (key, value)) in fields.iter().enumerate() {
+                    indent(out, depth + 1);
+                    out.push_str(&quoted(key));
+                    out.push_str(": ");
+                    value.write(out, depth + 1);
+                    out.push_str(if index + 1 < fields.len() {
+                        ",\n"
+                    } else {
+                        "\n"
+                    });
+                }
+                indent(out, depth);
+                out.push('}');
+            }
+        }
+    }
+}
+
+fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
+    let options = parse_options(arguments)?;
+    let executable = std::env::current_exe()
+        .and_then(fs::read)
+        .map(|binary| sha256::hex(&binary))
+        .ok();
+    let bytes = fs::read(&options.matrix)
+        .map_err(|e| format!("cannot read {}: {e}", options.matrix.display()))?;
+    let input = sha256::hex(&bytes);
+    let data = nexus::parse(std::str::from_utf8(&bytes)?)?;
+    let sites = 0..data.character_count();
+    let patterns = data
+        .compress(std::slice::from_ref(&sites), options.gaps)?
+        .remove(0);
+    let taxa = data.taxa();
+    if let Some(name) = taxa.iter().find(|name| !is_plain_label(name)) {
+        return Err(format!(
+            "taxon label {name:?} cannot be written so that BEAST reads it back; use letters, digits, spaces, '_', '.' or '-', and not both spaces and '_'"
+        )
+        .into());
+    }
+    let mut monophyly = Vec::new();
+    for clade in &options.monophyly {
+        let mut tips = Vec::new();
+        for name in clade {
+            // As in the matrix, an underscore stands for a space.
+            let wanted = name.replace('_', " ");
+            let tip = taxa
+                .iter()
+                .position(|taxon| *taxon == wanted)
+                .ok_or_else(|| format!("--monophyly names unknown taxon {name:?}"))?;
+            tips.push(tip);
+        }
+        monophyly.push(tips);
+    }
+    let settings = Settings {
+        conditioning: options.conditioning,
+        sample_from_prior: options.sample_from_prior,
+        monophyly,
+        tuning: options.tuning,
+        tuning_values: options.tuning_values.clone(),
+        ..Settings::default()
+    };
+    let mut sampler = Sampler::new(&patterns, &settings, options.seed)?;
+
+    if let Some(parent) = options
+        .output
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+    {
+        fs::create_dir_all(parent)?;
+    }
+    fs::create_dir(&options.output).map_err(|e| {
+        format!(
+            "cannot create {} (it must not exist yet): {e}",
+            options.output.display()
+        )
+    })?;
+    let command: Vec<String> = std::iter::once("rove".to_string())
+        .chain(arguments.iter().cloned())
+        .collect();
+    let command_json = format!(
+        "[{}]",
+        command
+            .iter()
+            .map(|a| quoted(a))
+            .collect::<Vec<_>>()
+            .join(", ")
+    );
+    let comments = vec![
+        format!("rove {}", env!("CARGO_PKG_VERSION")),
+        format!("command {command_json}"),
+        format!("input sha256 {input}"),
+        format!(
+            "executable sha256 {}",
+            executable.as_deref().unwrap_or("unknown")
+        ),
+    ];
+    let mut trace = TraceWriter::new(
+        BufWriter::new(File::create(options.output.join("trace.log"))?),
+        &comments,
+    )?;
+    let mut trees = TreeWriter::new(
+        BufWriter::new(File::create(options.output.join("trees.nexus"))?),
+        taxa,
+        &comments,
+    )?;
+
+    let started = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
+    let clock = Instant::now();
+    let print_every = options.print_every.unwrap_or((options.steps / 20).max(1));
+    trace.write(0, &sampler)?;
+    trees.write(0, &sampler)?;
+    progress("step\tposterior\tlikelihood\tprior\tseconds");
+    for step in 1..=options.steps {
+        sampler.step();
+        if step % options.sample_every == 0 {
+            trace.write(step, &sampler)?;
+            trees.write(step, &sampler)?;
+        }
+        if step % print_every == 0 {
+            let posterior = sampler.posterior();
+            progress(format_args!(
+                "{step}\t{:.4}\t{:.4}\t{:.4}\t{:.1}",
+                posterior.total(),
+                posterior.likelihood,
+                posterior.prior(),
+                clock.elapsed().as_secs_f64()
+            ));
+        }
+    }
+    trace.finish()?;
+    trees.finish()?;
+    let seconds = clock.elapsed().as_secs_f64();
+
+    let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
+    let posterior = sampler.posterior();
+    let optional = |value: Option<f64>| value.map_or(Json::Null, Json::Number);
+    let moves = sampler
+        .operators()
+        .iter()
+        .map(|operator| {
+            Json::Object(vec![
+                ("name", Json::text(operator.kind.name())),
+                ("weight", Json::Number(operator.weight)),
+                ("initial_tuning", optional(operator.initial_tuning)),
+                ("final_tuning", optional(operator.tuning)),
+                ("accepted", Json::Integer(operator.accepted)),
+                ("rejected", Json::Integer(operator.rejected)),
+                ("failed", Json::Integer(operator.failed)),
+            ])
+        })
+        .collect();
+    let conditioning = match settings.conditioning {
+        Conditioning::Variable => "variable characters (Mkv)",
+        Conditioning::None => "none (Mk)",
+    };
+    let metadata = Json::Object(vec![
+        ("rove_version", Json::text(env!("CARGO_PKG_VERSION"))),
+        (
+            "executable_sha256",
+            executable.map_or(Json::Null, Json::Text),
+        ),
+        (
+            "platform",
+            Json::text(format!(
+                "{}-{}",
+                std::env::consts::ARCH,
+                std::env::consts::OS
+            )),
+        ),
+        (
+            "command",
+            Json::List(command.into_iter().map(Json::Text).collect()),
+        ),
+        (
+            "input",
+            Json::Object(vec![
+                ("path", Json::text(options.matrix.display().to_string())),
+                ("sha256", Json::text(input)),
+                ("taxa", Json::Integer(taxa.len() as u64)),
+                ("characters", Json::Integer(data.character_count() as u64)),
+                (
+                    "observed_patterns",
+                    Json::Integer(patterns.weights().len() as u64),
+                ),
+                (
+                    "gaps",
+                    Json::text(match options.gaps {
+                        GapTreatment::Reject => "reject",
+                        GapTreatment::Missing => "missing",
+                    }),
+                ),
+            ]),
+        ),
+        (
+            "model",
+            Json::Object(vec![
+                (
+                    "substitution",
+                    Json::text("Mk, two states, equal frequencies, one rate category"),
+                ),
+                ("conditioning", Json::text(conditioning)),
+                (
+                    "clock",
+                    Json::text(
+                        "strict, rate fixed at 1; heights in expected changes per character",
+                    ),
+                ),
+                (
+                    "tree_prior",
+                    Json::text(
+                        "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips",
+                    ),
+                ),
+                (
+                    "birth_difference_rate_prior",
+                    Json::text(format!("Uniform(0, {})", settings.birth_difference_upper)),
+                ),
+                ("relative_death_rate_prior", Json::text("Uniform(0, 1)")),
+                ("sample_from_prior", Json::Bool(settings.sample_from_prior)),
+                (
+                    "monophyly",
+                    Json::List(settings.monophyly.iter().map(|c| names(c)).collect()),
+                ),
+            ]),
+        ),
+        (
+            "settings",
+            Json::Object(vec![
+                ("seed", Json::Integer(options.seed)),
+                ("steps", Json::Integer(options.steps)),
+                ("sample_every", Json::Integer(options.sample_every)),
+                (
+                    "initial_birth_difference_rate",
+                    Json::Number(settings.initial.birth_difference),
+                ),
+                (
+                    "initial_relative_death_rate",
+                    Json::Number(settings.initial.relative_death),
+                ),
+                (
+                    "initial_tree",
+                    Json::text("random, with every monophyly constraint satisfied"),
+                ),
+                ("tuning", Json::Bool(settings.tuning)),
+                ("tuning_schedule", Json::text(TUNING_SCHEDULE)),
+                ("tuning_delay", Json::Integer(settings.tuning_delay)),
+                ("tuning_target_acceptance", Json::Number(0.234)),
+            ]),
+        ),
+        ("moves", Json::List(moves)),
+        (
+            "final_state",
+            Json::Object(vec![
+                ("posterior", Json::Number(posterior.total())),
+                ("likelihood", Json::Number(posterior.likelihood)),
+                ("tree_prior", Json::Number(posterior.tree_prior)),
+            ]),
+        ),
+        ("started_unix_seconds", Json::Integer(started)),
+        ("wall_seconds", Json::Number(seconds)),
+    ]);
+    let mut text = String::new();
+    metadata.write(&mut text, 0);
+    text.push('\n');
+    fs::write(options.output.join("run.json"), text)?;
+    progress(format_args!(
+        "Finished {} steps in {seconds:.1} s; wrote {}",
+        options.steps,
+        options.output.display()
+    ));
+    Ok(())
+}
+
+fn main() {
+    let arguments: Vec<String> = std::env::args().skip(1).collect();
+    if let Err(error) = run(&arguments) {
+        progress(format_args!("rove: {error}"));
+        std::process::exit(2);
+    }
+}

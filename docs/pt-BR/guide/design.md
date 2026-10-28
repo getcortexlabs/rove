@@ -38,6 +38,10 @@ Com `Scaling::Always`, as parciais de cada nó interno são divididas pelo seu m
 
 A correção Mkv precisa da probabilidade de cada padrão constante sob a mesma árvore, as mesmas taxas e o mesmo escalonamento que as observações. O Rove acrescenta esses padrões às entradas dos terminais do núcleo em vez de calculá-los separadamente, de modo que atualizações parciais, reescalonamento e store/restore os cobrem sem mudanças. Na referência 20 × 50, os dois padrões extras aumentam o stride com padding de 24 para 32, e cada atualização de nó passa a cobrir um terço a mais de lanes.
 
+## Um amostrador sobre os mesmos buffers
+
+O [amostrador](./sampler) mantém a árvore e os seus parâmetros fora do núcleo. Antes de cada passo, ele os guarda e guarda os índices dos buffers do núcleo. Depois de uma proposta, compara a nova árvore com a guardada, dá a cada ramo alterado uma nova distância no seu outro buffer e recalcula só os ancestrais desses ramos. Um passo rejeitado troca os índices de volta. As propostas reproduzem os operadores e as razões de Hastings do BEAST 2, então uma comparação com o BEAST pode usar os mesmos movimentos e pesos.
+
 ## NEON primeiro, AVX2 depois
 
 O layout existe para que o laço interno possa ser vetorizado. O plano é NEON em Apple silicon primeiro e AVX2 depois, com o código escalar mantido como referência e fallback. Nenhum dos dois existe ainda; o kernel atual é Rust escalar.

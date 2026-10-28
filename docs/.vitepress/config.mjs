@@ -23,6 +23,7 @@ const locales = {
       what: 'What is Rove?',
       design: 'Design',
       kernel: 'The likelihood core',
+      sampler: 'Sampling trees',
       nexus: 'Reading NEXUS',
       fixtures: 'Synthetic matrices',
       outline: 'On this page',
@@ -46,6 +47,7 @@ const locales = {
       what: 'O que é o Rove?',
       design: 'Design',
       kernel: 'O núcleo de verossimilhança',
+      sampler: 'Amostrando árvores',
       nexus: 'Lendo NEXUS',
       fixtures: 'Matrizes sintéticas',
       outline: 'Nesta página',
@@ -86,6 +88,7 @@ const locales = {
       what: '¿Qué es Rove?',
       design: 'Diseño',
       kernel: 'El núcleo de verosimilitud',
+      sampler: 'Muestreo de árboles',
       nexus: 'Lectura de NEXUS',
       fixtures: 'Matrices sintéticas',
       outline: 'En esta página',
@@ -126,6 +129,7 @@ const locales = {
       what: 'Rove 是什么？',
       design: '设计',
       kernel: '似然核心',
+      sampler: '采样树',
       nexus: '读取 NEXUS',
       fixtures: '合成矩阵',
       outline: '本页目录',
@@ -156,7 +160,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, design, kernel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, design, kernel, sampler, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -176,6 +180,7 @@ function themeFor(locale) {
           text: code,
           items: [
             { text: kernel, link: `${prefix}/guide/kernel` },
+            { text: sampler, link: `${prefix}/guide/sampler` },
             { text: nexus, link: `${prefix}/guide/nexus` },
             { text: fixtures, link: `${prefix}/guide/fixtures` }
           ]

@@ -38,6 +38,10 @@ With `Scaling::Always`, each internal node's partials are divided by their per-p
 
 The Mkv correction needs the probability of each constant pattern under the same tree, rates and scaling as the observations. Rove appends those patterns to the core's tip inputs instead of computing them separately, so partial updates, rescaling and store/restore cover them unchanged. For the 20 × 50 reference, the two extra patterns raise the padded stride from 24 to 32, so each node update covers a third more lanes.
 
+## A sampler on the same buffers
+
+The [sampler](./sampler) keeps the tree and its parameters outside the core. Before each step it saves them and stores the core's buffer indices. After a proposal it compares the new tree with the saved one, gives each changed branch a new distance in its other buffer, and recomputes only the ancestors of those branches. A rejected step swaps the indices back. The proposals reproduce BEAST 2's operators and Hastings ratios, so a comparison with BEAST can use the same moves and weights.
+
 ## NEON first, AVX2 second
 
 The layout exists so that the inner loop can be vectorised. The plan is NEON on Apple silicon first and AVX2 second, with the scalar code kept as the reference and fallback. Neither exists yet; the current kernel is scalar Rust.
