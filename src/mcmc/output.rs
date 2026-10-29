@@ -93,6 +93,10 @@ impl<W: Write> TraceWriter<W> {
         writeln!(self.out)
     }
 
+    pub fn flush(&mut self) -> io::Result<()> {
+        self.out.flush()
+    }
+
     pub fn finish(mut self) -> io::Result<W> {
         self.out.flush()?;
         Ok(self.out)
@@ -137,6 +141,10 @@ impl<W: Write> TreeWriter<W> {
             None => tree.to_newick(label),
         };
         writeln!(self.out, "tree STATE_{sample} = {newick}")
+    }
+
+    pub fn flush(&mut self) -> io::Result<()> {
+        self.out.flush()
     }
 
     pub fn finish(mut self) -> io::Result<W> {

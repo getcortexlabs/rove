@@ -17,7 +17,7 @@ fn integer(record: &Value, field: &str) -> Result<u64, Box<dyn Error>> {
         .ok_or_else(|| format!("invalid run {field}").into())
 }
 
-fn source_record(
+pub(super) fn source_record(
     path: &Path,
     trace: &Trace,
     bytes: &[u8],
@@ -42,7 +42,9 @@ fn source_record(
     let completed = integer(&record, "completed_steps")?;
     if every == 0
         || completed > requested
-        || (status == "completed" && completed != requested)
+        || (status == "completed"
+            && completed != requested
+            && record["termination_reason"] != "diagnostic_thresholds")
         || trace.states[0] != 0
         || trace
             .states

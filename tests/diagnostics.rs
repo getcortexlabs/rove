@@ -209,3 +209,26 @@ fn cli_records_burnin_and_detects_incomplete_runs_without_rewriting_sources() {
     assert_eq!(report["source"]["completion"], "cancelled");
     assert_eq!(fs::read(&input).unwrap(), data);
 }
+
+#[test]
+fn rank_normalized_rhat_matches_the_python_oracle() {
+    let cases: serde_json::Value =
+        serde_json::from_str(include_str!("../fixtures/diagnostics/rhat.json")).unwrap();
+    for case in cases.as_array().unwrap() {
+        let chains: Vec<Vec<f64>> = serde_json::from_value(case["chains"].clone()).unwrap();
+        let slices: Vec<_> = chains.iter().map(Vec::as_slice).collect();
+        let actual = rove::diagnostics::rhat(&slices).unwrap();
+        match &case["rhat"] {
+            serde_json::Value::Null => assert!(actual.is_none()),
+            serde_json::Value::String(_) => assert!(actual.unwrap().is_infinite()),
+            value => assert!(
+                (actual.unwrap() - value.as_f64().unwrap()).abs() < 1e-8,
+                "{}: {actual:?} != {value}",
+                case["name"]
+            ),
+        }
+    }
+    assert!(rove::diagnostics::rhat(&[&[1., 2., 3., 4.]]).is_err());
+    assert!(rove::diagnostics::rhat(&[&[1., 2., 3., 4.], &[1., 2., 3.]]).is_err());
+    assert!(rove::diagnostics::rhat(&[&[1., 2., 3., 4.], &[1., 2., 3., f64::NAN]]).is_err());
+}

@@ -729,3 +729,204 @@ fn the_backend_is_recorded_and_does_not_change_the_samples() {
     let (_, result) = run("avx2");
     assert!(error(&result).contains("--backend must be portable or neon"));
 }
+
+#[test]
+fn parallel_chains_replay_individually_and_keep_separate_events() {
+    let directory = scratch("parallel-identity");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let output = directory.join("group");
+    let result = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--output",
+        output.to_str().unwrap(),
+        "--seed",
+        "18446744073709551615",
+        "--steps",
+        "400",
+        "--sample-every",
+        "10",
+        "--gaps",
+        "missing",
+        "--chains",
+        "2",
+        "--events-json",
+    ]);
+    assert!(result.status.success(), "{}", error_text(&result));
+    let metadata: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("run.json")).unwrap()).unwrap();
+    assert_eq!(metadata["status"], "completed");
+    assert_eq!(metadata["chains"][0]["seed"], u64::MAX);
+    assert_eq!(metadata["chains"][1]["seed"], 0);
+    let events: Vec<serde_json::Value> = String::from_utf8(result.stdout)
+        .unwrap()
+        .lines()
+        .map(|s| serde_json::from_str(s).unwrap())
+        .collect();
+    assert_eq!(events.last().unwrap()["event"], "group_completed");
+    for index in 1..=2 {
+        let child = output.join(format!("chain-{index:02}"));
+        let record: serde_json::Value =
+            serde_json::from_slice(&fs::read(child.join("run.json")).unwrap()).unwrap();
+        let direct = directory.join(format!("direct-{index}"));
+        let mut args: Vec<String> = serde_json::from_value(record["command"].clone()).unwrap();
+        args.remove(0);
+        let position = args.iter().position(|a| a == "--output").unwrap();
+        args[position + 1] = direct.display().to_string();
+        let result = rove(&args.iter().map(String::as_str).collect::<Vec<_>>());
+        assert!(result.status.success(), "{}", error_text(&result));
+        for name in ["trace.log", "trees.nexus"] {
+            let body = |p: &Path| {
+                fs::read_to_string(p.join(name))
+                    .unwrap()
+                    .lines()
+                    .filter(|s| !s.contains("command "))
+                    .map(str::to_owned)
+                    .collect::<Vec<_>>()
+            };
+            assert_eq!(body(&child), body(&direct));
+        }
+        let per_chain: Vec<_> = events.iter().filter(|e| e["chain"] == index).collect();
+        assert_eq!(per_chain.first().unwrap()["event"], "started");
+        assert_eq!(per_chain.last().unwrap()["event"], "completed");
+    }
+    let comparison: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("comparison.json")).unwrap()).unwrap();
+    assert_eq!(comparison["retained_per_chain"], 37);
+    assert!(comparison["statistics"].as_array().unwrap().len() >= 8);
+    assert!(!comparison["clades"].as_array().unwrap().is_empty());
+}
+
+#[test]
+fn parallel_stopping_records_the_boundary_and_preserves_replay_prefixes() {
+    let directory = scratch("parallel-stop");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let output = directory.join("group");
+    let result = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--output",
+        output.to_str().unwrap(),
+        "--seed",
+        "42",
+        "--steps",
+        "500000",
+        "--sample-every",
+        "100",
+        "--gaps",
+        "missing",
+        "--chains",
+        "2",
+        "--stop-when-converged",
+        "--check-every",
+        "120000",
+        "--min-ess",
+        "1",
+        "--max-rhat",
+        "1000",
+    ]);
+    assert!(result.status.success(), "{}", error_text(&result));
+    let record: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("run.json")).unwrap()).unwrap();
+    assert_eq!(record["termination_reason"], "diagnostic_thresholds");
+    let step = record["completed_steps"].as_u64().unwrap();
+    assert!(step < 500000 && step % 120000 == 0);
+    let checks = record["checks"].as_array().unwrap();
+    assert!(checks.len() >= 2);
+    assert_eq!(checks.last().unwrap()["consecutive"], 2);
+    for index in 1..=2 {
+        let child = output.join(format!("chain-{index:02}"));
+        let result = rove(&[
+            "diagnose",
+            child.join("trace.log").to_str().unwrap(),
+            "--burnin-percent",
+            "10",
+        ]);
+        assert!(result.status.success(), "{}", error_text(&result));
+        let direct = directory.join(format!("direct-{index}"));
+        let result = rove(&[
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            direct.to_str().unwrap(),
+            "--seed",
+            &(41 + index).to_string(),
+            "--steps",
+            &step.to_string(),
+            "--sample-every",
+            "100",
+            "--gaps",
+            "missing",
+        ]);
+        assert!(result.status.success(), "{}", error_text(&result));
+        let samples = |folder: &Path| {
+            fs::read_to_string(folder.join("trace.log"))
+                .unwrap()
+                .lines()
+                .filter(|l| !l.starts_with('#'))
+                .map(str::to_owned)
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(samples(&child), samples(&direct));
+    }
+}
+
+#[test]
+fn invalid_parallel_options_and_worker_failures_cannot_complete() {
+    let directory = scratch("parallel-errors");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    for (index, flags) in [
+        vec!["--chains", "0"],
+        vec!["--chains", "17"],
+        vec!["--chains", "2", "--burnin-percent", "100"],
+        vec!["--chains", "2", "--max-rhat", "NaN"],
+        vec!["--chains", "2", "--check-every", "15"],
+        vec!["--stop-when-converged"],
+    ]
+    .iter()
+    .enumerate()
+    {
+        let output = directory.join(format!("invalid-{index}"));
+        let mut args = vec![
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            output.to_str().unwrap(),
+            "--seed",
+            "1",
+            "--steps",
+            "100",
+            "--sample-every",
+            "10",
+            "--gaps",
+            "missing",
+        ];
+        args.extend(flags);
+        assert!(!rove(&args).status.success());
+        assert!(!output.exists());
+    }
+    let output = directory.join("failed-workers");
+    let result = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--output",
+        output.to_str().unwrap(),
+        "--seed",
+        "1",
+        "--steps",
+        "100",
+        "--sample-every",
+        "10",
+        "--chains",
+        "4",
+        "--events-json",
+    ]);
+    assert!(!result.status.success()); // Gaps require an explicit policy.
+    let record: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("run.json")).unwrap()).unwrap();
+    assert_eq!(record["status"], "failed");
+    assert_eq!(record["errors"].as_array().unwrap().len(), 4);
+}

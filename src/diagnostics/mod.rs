@@ -1,6 +1,9 @@
 //! Within-chain trace diagnostics, shared by the CLI and native application.
+mod convergence;
 mod spectrum;
 mod trace;
+
+pub use convergence::rhat;
 
 pub use trace::{Column, PlotPoint, Trace};
 

@@ -89,7 +89,9 @@ pub fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     let run_path = parent.join("run.json");
     let metadata = if run_path.exists() {
         let value = record(&run_path)?;
-        if value["status"] != "completed" || value["completed_steps"] != value["settings"]["steps"]
+        if value["status"] != "completed"
+            || (value["completed_steps"] != value["settings"]["steps"]
+                && value["termination_reason"] != "diagnostic_thresholds")
         {
             return Err("source run is not completed; partial runs cannot be summarized".into());
         }

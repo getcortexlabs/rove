@@ -14,6 +14,7 @@ pub(super) fn emit(fields: Vec<(&'static str, Json)>) -> io::Result<()> {
     out.flush()
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn state(
     event: &str,
     step: u64,
@@ -21,9 +22,11 @@ pub(super) fn state(
     seconds: f64,
     input: &str,
     sampler: &Sampler,
+    chain: Option<usize>,
+    termination: Option<&str>,
 ) -> io::Result<()> {
     let posterior = sampler.posterior();
-    emit(vec![
+    let mut fields = vec![
         ("schema_version", Json::Integer(1)),
         ("event", Json::text(event)),
         ("step", Json::Integer(step)),
@@ -33,17 +36,25 @@ pub(super) fn state(
         ("posterior", Json::Number(posterior.total())),
         ("likelihood", Json::Number(posterior.likelihood)),
         ("prior", Json::Number(posterior.prior())),
-    ])
+    ];
+    if let Some(chain) = chain {
+        fields.push(("chain", Json::Integer(chain as u64)));
+    }
+    if let Some(reason) = termination {
+        fields.push(("termination_reason", Json::text(reason)));
+    }
+    emit(fields)
 }
 
-pub(super) struct Cancellation(Option<Arc<AtomicBool>>);
+#[derive(Clone)]
+pub(super) struct Cancellation(Arc<AtomicBool>);
 
 impl Cancellation {
     pub(super) fn watch_stdin(enabled: bool) -> Self {
-        if !enabled {
-            return Self(None);
-        }
         let requested = Arc::new(AtomicBool::new(false));
+        if !enabled {
+            return Self(requested);
+        }
         let flag = requested.clone();
         // EOF also arrives when the GUI exits unexpectedly, so its child cannot
         // continue sampling after losing its owner. No signal handler is needed.
@@ -60,12 +71,14 @@ impl Cancellation {
             }
             flag.store(true, Ordering::Relaxed);
         });
-        Self(Some(requested))
+        Self(requested)
+    }
+
+    pub(super) fn cancel(&self) {
+        self.0.store(true, Ordering::Relaxed);
     }
 
     pub(super) fn requested(&self) -> bool {
-        self.0
-            .as_ref()
-            .is_some_and(|flag| flag.load(Ordering::Relaxed))
+        self.0.load(Ordering::Relaxed)
     }
 }

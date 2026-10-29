@@ -1,7 +1,9 @@
+mod compare;
 mod diagnose;
 mod events;
 mod inspect;
 mod inspect_tree;
+mod parallel;
 mod sha256;
 mod summarize;
 
@@ -23,9 +25,11 @@ const USAGE: &str =
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|none] [--sample-from-prior]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
-                   [--backend portable|neon]
+                   [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
+                   [--stop-when-converged] [--min-ess <n>] [--max-rhat <n>] [--check-every <n>]
                    [--print-every <n>] [--events-json] [--cancel-on-stdin-close]
                    [--expect-input-sha256 <hash>]
+       rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
        rove inspect <matrix.nex> [--gaps reject|missing]
        rove inspect-tree <summary-directory>
        rove diagnose <trace.log> --burnin-percent <0..99> [--output <new-directory>]
@@ -33,7 +37,14 @@ const USAGE: &str =
 
 const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero";
 
+#[derive(Clone)]
 struct Options {
+    chains: usize,
+    burnin: usize,
+    stop_when_converged: bool,
+    min_ess: f64,
+    max_rhat: f64,
+    check_every: Option<u64>,
     matrix: PathBuf,
     output: PathBuf,
     seed: u64,
@@ -59,6 +70,12 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     if arguments.next().map(String::as_str) != Some("sample") {
         return Err(USAGE.into());
     }
+    let mut chains = 1;
+    let mut burnin = 10;
+    let mut stop_when_converged = false;
+    let mut min_ess = 200.0;
+    let mut max_rhat = 1.01;
+    let mut check_every = None;
     let mut matrix = None;
     let (mut output, mut seed, mut steps, mut sample_every, mut print_every) =
         (None, None, None, None, None);
@@ -91,6 +108,30 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 .map_err(|_| format!("{name} needs a non-negative integer, not {text:?}"))
         };
         match argument.as_str() {
+            "--chains" => {
+                chains = value("--chains")?
+                    .parse::<usize>()
+                    .map_err(|_| "--chains needs an integer")?
+            }
+            "--burnin-percent" => {
+                burnin = value("--burnin-percent")?
+                    .parse::<usize>()
+                    .map_err(|_| "--burnin-percent needs an integer")?
+            }
+            "--stop-when-converged" => stop_when_converged = true,
+            "--min-ess" => {
+                min_ess = value("--min-ess")?
+                    .parse::<f64>()
+                    .map_err(|_| "--min-ess needs a number")?
+            }
+            "--max-rhat" => {
+                max_rhat = value("--max-rhat")?
+                    .parse::<f64>()
+                    .map_err(|_| "--max-rhat needs a number")?
+            }
+            "--check-every" => {
+                check_every = Some(number("--check-every", value("--check-every")?)?)
+            }
             "--events-json" => events_json = true,
             "--cancel-on-stdin-close" => cancel_on_stdin_close = true,
             "--expect-input-sha256" => {
@@ -181,6 +222,12 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         value.ok_or_else(|| format!("{name} is required\n{USAGE}"))
     };
     let options = Options {
+        chains,
+        burnin,
+        stop_when_converged,
+        min_ess,
+        max_rhat,
+        check_every,
         matrix: matrix.ok_or_else(|| format!("a NEXUS matrix is required\n{USAGE}"))?,
         output: output.ok_or_else(|| format!("--output is required\n{USAGE}"))?,
         seed: required(seed, "--seed")?,
@@ -209,6 +256,26 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     }
     if options.print_every == Some(0) {
         return Err("--print-every must be positive".into());
+    }
+    if !(1..=16).contains(&chains) || burnin >= 100 {
+        return Err("--chains must be 1 to 16 and --burnin-percent 0 to 99".into());
+    }
+    if !min_ess.is_finite() || min_ess <= 0.0 || !max_rhat.is_finite() || max_rhat < 1.0 {
+        return Err(
+            "--min-ess must be finite and positive; --max-rhat must be finite and at least 1"
+                .into(),
+        );
+    }
+    if check_every.is_some_and(|n| n == 0 || n % options.sample_every != 0) {
+        return Err("--check-every must be a positive multiple of --sample-every".into());
+    }
+    if (stop_when_converged
+        || check_every.is_some()
+        || seen.contains("--min-ess")
+        || seen.contains("--max-rhat"))
+        && chains < 2
+    {
+        return Err("stopping diagnostics require at least two chains".into());
     }
     Ok(options)
 }
@@ -321,6 +388,27 @@ impl Json {
 fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
     let options = parse_options(arguments)?;
     let cancellation = events::Cancellation::watch_stdin(options.cancel_on_stdin_close);
+    if options.chains > 1 {
+        return parallel::run(arguments, options, cancellation);
+    }
+    run_chain(arguments, options, &cancellation, None)
+}
+
+fn chain_progress(chain: Option<usize>, line: impl Display) {
+    if let Some(index) = chain {
+        progress(format_args!("chain {index}: {line}"));
+    } else {
+        progress(line);
+    }
+}
+
+fn run_chain(
+    arguments: &[String],
+    options: Options,
+    cancellation: &events::Cancellation,
+    mut worker: Option<parallel::Worker>,
+) -> Result<bool, Box<dyn Error>> {
+    let chain = worker.as_ref().map(|w| w.index);
     let executable = std::env::current_exe()
         .and_then(fs::read)
         .map(|binary| sha256::hex(&binary))
@@ -433,11 +521,21 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
     trace.write(0, &sampler)?;
     trees.write(0, &sampler)?;
     if options.events_json {
-        events::state("started", 0, options.steps, 0.0, &input, &sampler)?;
+        events::state(
+            "started",
+            0,
+            options.steps,
+            0.0,
+            &input,
+            &sampler,
+            chain,
+            None,
+        )?;
     } else {
-        progress("step\tposterior\tlikelihood\tprior\tseconds");
+        chain_progress(chain, "step\tposterior\tlikelihood\tprior\tseconds");
     }
     let mut completed_steps = 0;
+    let mut stopped = false;
     for step in 1..=options.steps {
         if step % 1024 == 1 && cancellation.requested() {
             break;
@@ -447,6 +545,16 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
         if step % options.sample_every == 0 {
             trace.write(step, &sampler)?;
             trees.write(step, &sampler)?;
+            if let Some(worker) = worker.as_mut() {
+                if step < options.steps && worker.is_boundary(step) {
+                    trace.flush()?;
+                    trees.flush()?;
+                    if worker.check(step)? {
+                        stopped = !cancellation.requested();
+                        break;
+                    }
+                }
+            }
         }
         if step % print_every == 0 {
             if options.events_json {
@@ -457,23 +565,35 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
                     clock.elapsed().as_secs_f64(),
                     &input,
                     &sampler,
+                    chain,
+                    None,
                 )?;
                 continue;
             }
             let posterior = sampler.posterior();
-            progress(format_args!(
-                "{step}\t{:.4}\t{:.4}\t{:.4}\t{:.1}",
-                posterior.total(),
-                posterior.likelihood,
-                posterior.prior(),
-                clock.elapsed().as_secs_f64()
-            ));
+            chain_progress(
+                chain,
+                format_args!(
+                    "{step}\t{:.4}\t{:.4}\t{:.4}\t{:.1}",
+                    posterior.total(),
+                    posterior.likelihood,
+                    posterior.prior(),
+                    clock.elapsed().as_secs_f64()
+                ),
+            );
         }
     }
     trace.finish()?;
     trees.finish()?;
     let seconds = clock.elapsed().as_secs_f64();
-    let completed = completed_steps == options.steps;
+    let completed = completed_steps == options.steps || stopped;
+    let termination = if stopped {
+        "diagnostic_thresholds"
+    } else if completed {
+        "step_limit"
+    } else {
+        "cancelled"
+    };
     let status = if completed { "completed" } else { "cancelled" };
 
     let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
@@ -500,6 +620,7 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
     };
     let metadata = Json::Object(vec![
         ("status", Json::text(status)),
+        ("termination_reason", Json::text(termination)),
         ("completed_steps", Json::Integer(completed_steps)),
         ("rove_version", Json::text(env!("CARGO_PKG_VERSION"))),
         (
@@ -729,19 +850,26 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
             seconds,
             &input,
             &sampler,
+            chain,
+            Some(termination),
         )?;
     }
-    progress(format_args!(
-        "{status}: {completed_steps} of {} steps in {seconds:.1} s; wrote {}",
-        options.steps,
-        options.output.display()
-    ));
+    chain_progress(
+        chain,
+        format_args!(
+            "{status}: {completed_steps} of {} steps in {seconds:.1} s; wrote {}",
+            options.steps,
+            options.output.display()
+        ),
+    );
     Ok(completed)
 }
 
 fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    let result = if arguments.first().is_some_and(|a| a == "diagnose") {
+    let result = if arguments.first().is_some_and(|a| a == "compare") {
+        compare::run(&arguments[1..]).map(|_| true)
+    } else if arguments.first().is_some_and(|a| a == "diagnose") {
         diagnose::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "inspect-tree") {
         inspect_tree::run(&arguments[1..]).map(|_| true)
