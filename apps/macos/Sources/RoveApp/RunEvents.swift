@@ -22,6 +22,11 @@ struct RunEventReader {
   private var previousTime: Double = 0
   private var pending = Data()
 
+  init(steps: UInt64, fingerprint: String) {
+    self.steps = steps
+    self.fingerprint = fingerprint
+  }
+
   mutating func append(_ data: Data) throws -> [RunEvent] {
     pending.append(data)
     var events: [RunEvent] = []
