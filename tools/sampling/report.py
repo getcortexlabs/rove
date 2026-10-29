@@ -24,6 +24,15 @@ from report_inference import operator_counts, sanitize
 from run_reference import EXPECTED_PACKAGES, digest, write_json
 
 
+def trace_dependence(values, ess):
+    mean = statistics.fmean(values)
+    centered = [value - mean for value in values]
+    variance_sum = sum(value * value for value in centered)
+    lag_one = sum(a * b for a, b in zip(centered, centered[1:])) / variance_sum if variance_sum else None
+    return {"lag_one_autocorrelation": lag_one,
+            "integrated_autocorrelation_samples": len(values) / ess if ess else None}
+
+
 def compare_pair(first, second, names):
     groups = dict(zip(names, [first, second]))
     means, tree_means = {}, {}
@@ -83,6 +92,10 @@ def compare_pair(first, second, names):
         "passes": all(gates.values()), "ess_per_second": efficiency,
         "unique_topologies": {name: [r["summary"]["unique_topologies"] for r in runs] for name, runs in groups.items()},
         "wall_seconds": {name: [r["seconds"] for r in runs] for name, runs in groups.items()},
+        "trace_dependence": {
+            name: {label: [trace_dependence(r["trace"][label], r["statistics"][label]["ess"])
+                           for r in runs] for label in STATISTICS}
+            for name, runs in groups.items()},
         "imposed_ingroup": CONSTRAINT,
     }
 
@@ -174,6 +187,9 @@ def main():
     runs = args.runs.resolve()
     metadata = json.loads((runs / "metadata.json").read_text())
     validate_runs(metadata)
+    for name, sha in metadata["source_files"].items():
+        if digest(ROOT / name) != sha:
+            raise ValueError(f"Engine source changed since the frozen comparison: {name}")
     versions = {}
     for file in args.packages.glob("*/version.xml"):
         package = ET.parse(file).getroot()
@@ -192,7 +208,12 @@ def main():
                f"-Dbeast.user.package.dir={args.packages.resolve()}", "-cp", str(classes) + os.pathsep + cp,
                "rove.reference.ReferenceDiagnostics"]
     comparisons = {}
-    archive = {"metadata": sanitize(metadata, ROOT), "cases": {}, "reference": {
+    scripts = [Path(__file__), ROOT / "tools/sampling/experiment.py",
+               *[ROOT / "tools/beast" / name for name in
+                 ["compare_inference.py", "compare_runs.py", "strict_clock.py", "report_inference.py", "run_reference.py"]]]
+    archive = {"metadata": sanitize(metadata, ROOT),
+               "analysis_scripts_sha256": {str(p.relative_to(ROOT)): digest(p) for p in scripts},
+               "cases": {}, "reference": {
         "packages": versions, "jars": {p.name: digest(p) for p in jars}, "helper_sha256": digest(helper),
         "java": subprocess.run([args.java, "-version"], capture_output=True, text=True, check=True).stderr,
         "source": "archived BEAST 2.7.8 ORC runs, not fresh timing observations",

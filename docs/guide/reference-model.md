@@ -132,8 +132,19 @@ Posterior summaries and clade frequencies met predeclared criteria in six constr
 [report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)
 records every batch, including a longer Mkv batch required by the ESS gate, runtime and
 ESS per second. Rove completed the five unconditioned Mk cases in less time, but BEAST
-delivered more ESS per second for log-posterior density and clock sigma. Improving the
-proposal schedule is tracked in [#27](https://github.com/getcortexlabs/rove/issues/27).
+delivered more ESS per second for log-posterior density and clock sigma with the
+classical Rove schedule.
+
+The subsequent [joint-proposal evaluation](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md)
+passes the same scientific gates in all six cases. Its aggregate posterior/sigma
+ESS-per-second score is 6.63 times classical Rove (90% bootstrap interval
+5.89–7.32), but gamma-shape efficiency falls to 0.69 in control and 0.66 in missing,
+and birth–death density efficiency falls to 0.63 in Mkv. The fixed regression
+criterion therefore rejects promotion: **classical remains the default**,
+including in the native app. The three joint moves are opt-in through `--weight`;
+the report gives the evaluated weights. Every continuous median ESS/second exceeds
+the recorded BEAST ORC value in these cases, but those BEAST timings are archived,
+not fresh observations, and the results do not establish general performance.
 
 Six additional fixed states cover those cases. With imported category rates, likelihood
 differences were at most 1.14e-13; generating the categories independently increased the

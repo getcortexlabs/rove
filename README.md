@@ -166,6 +166,14 @@ matrix, a separate known-tree control and three degradation cases. It records
 concordance, convergence, runtime and ESS per second with the original ORC
 proposals in BEAST and the current Rove moves.
 
+The [joint-proposal study](benchmarks/sampling/2026-10-29/README.md) evaluates
+optional coupled height/rate and sigma/rate moves against that baseline. All
+six cases pass the scientific criteria. The combined schedule improves the
+aggregate posterior/sigma ESS-per-second score, but regressions in gamma
+shape and Mkv birth–death density keep it opt-in. The default is unchanged;
+the report includes every parameter, uncertainty intervals and reproduction
+commands.
+
 ## Reading a matrix
 
 ```sh

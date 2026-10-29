@@ -1,0 +1,326 @@
+{
+  "allocation_steps": 100000,
+  "backend": "neon",
+  "matrix": "fixtures/validation/control/matrix.nex",
+  "method": "step wall time includes proposal, density, cache handling and adaptation; allocations measured in a separate untimed pass; topology comparisons outside timed regions",
+  "operators": [
+    {
+      "accepted": 44106,
+      "allocated_bytes": 0,
+      "allocation_calls": 17947,
+      "allocations": 0,
+      "calls": 88318,
+      "deallocations": 0,
+      "failed": 0,
+      "move": "node_height",
+      "reallocations": 0,
+      "rejected": 44212,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        37539.39439570564,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 154916249,
+      "topology_changes": 0,
+      "tuning": null,
+      "weight": 18.0
+    },
+    {
+      "accepted": 17400,
+      "allocated_bytes": 0,
+      "allocation_calls": 14838,
+      "allocations": 0,
+      "calls": 74308,
+      "deallocations": 0,
+      "failed": 27075,
+      "move": "subtree_slide",
+      "reallocations": 0,
+      "rejected": 29833,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        14826.053774406093,
+        0.0,
+        16.093758453969667
+      ],
+      "step_nanoseconds": 99125747,
+      "topology_changes": 324,
+      "tuning": 0.059281946082254726,
+      "weight": 15.0
+    },
+    {
+      "accepted": 2116,
+      "allocated_bytes": 0,
+      "allocation_calls": 14828,
+      "allocations": 0,
+      "calls": 74319,
+      "deallocations": 0,
+      "failed": 6791,
+      "move": "narrow_exchange",
+      "reallocations": 0,
+      "rejected": 65412,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        9972.739938148368,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 141205178,
+      "topology_changes": 2116,
+      "tuning": null,
+      "weight": 15.0
+    },
+    {
+      "accepted": 17,
+      "allocated_bytes": 0,
+      "allocation_calls": 2950,
+      "allocations": 0,
+      "calls": 14917,
+      "deallocations": 0,
+      "failed": 8453,
+      "move": "wide_exchange",
+      "reallocations": 0,
+      "rejected": 6447,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        33.87133127952143,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 17254939,
+      "topology_changes": 17,
+      "tuning": null,
+      "weight": 3.0
+    },
+    {
+      "accepted": 43,
+      "allocated_bytes": 0,
+      "allocation_calls": 2820,
+      "allocations": 0,
+      "calls": 14869,
+      "deallocations": 0,
+      "failed": 3591,
+      "move": "wilson_balding",
+      "reallocations": 0,
+      "rejected": 11235,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        292.3326109622354,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 28945601,
+      "topology_changes": 43,
+      "tuning": null,
+      "weight": 3.0
+    },
+    {
+      "accepted": 1134,
+      "allocated_bytes": 0,
+      "allocation_calls": 991,
+      "allocations": 0,
+      "calls": 4825,
+      "deallocations": 0,
+      "failed": 1328,
+      "move": "root_scale",
+      "reallocations": 0,
+      "rejected": 2363,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        1493.801385758902,
+        0.0,
+        17.90774336625925
+      ],
+      "step_nanoseconds": 4287718,
+      "topology_changes": 0,
+      "tuning": 0.6571737514682944,
+      "weight": 1.0
+    },
+    {
+      "accepted": 3484,
+      "allocated_bytes": 0,
+      "allocation_calls": 2899,
+      "allocations": 0,
+      "calls": 14870,
+      "deallocations": 0,
+      "failed": 0,
+      "move": "tree_scale",
+      "reallocations": 0,
+      "rejected": 11386,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        59718.7658447601,
+        0.0,
+        183.6866063103068
+      ],
+      "step_nanoseconds": 72942841,
+      "topology_changes": 0,
+      "tuning": 0.43754402649605106,
+      "weight": 3.0
+    },
+    {
+      "accepted": 3441,
+      "allocated_bytes": 0,
+      "allocation_calls": 2942,
+      "allocations": 0,
+      "calls": 14566,
+      "deallocations": 0,
+      "failed": 0,
+      "move": "birth_difference_scale",
+      "reallocations": 0,
+      "rejected": 11125,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        3949.7118675464462,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 5201907,
+      "topology_changes": 0,
+      "tuning": 0.26780789321807447,
+      "weight": 3.0
+    },
+    {
+      "accepted": 3517,
+      "allocated_bytes": 0,
+      "allocation_calls": 3008,
+      "allocations": 0,
+      "calls": 15005,
+      "deallocations": 0,
+      "failed": 8173,
+      "move": "relative_death_scale",
+      "reallocations": 0,
+      "rejected": 3315,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        2057.665767973048,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 3194679,
+      "topology_changes": 0,
+      "tuning": 0.16444337273334858,
+      "weight": 3.0
+    },
+    {
+      "accepted": 105,
+      "allocated_bytes": 0,
+      "allocation_calls": 90,
+      "allocations": 0,
+      "calls": 477,
+      "deallocations": 0,
+      "failed": 0,
+      "move": "gamma_shape_scale",
+      "reallocations": 0,
+      "rejected": 372,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        62.098242714461485,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 3231872,
+      "topology_changes": 0,
+      "tuning": 0.21401466689561005,
+      "weight": 0.1
+    },
+    {
+      "accepted": 1167,
+      "allocated_bytes": 0,
+      "allocation_calls": 981,
+      "allocations": 0,
+      "calls": 5059,
+      "deallocations": 0,
+      "failed": 0,
+      "move": "clock_sigma_scale",
+      "reallocations": 0,
+      "rejected": 3892,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        1151.919942857395,
+        35.00760211083179,
+        0.0
+      ],
+      "step_nanoseconds": 1694966,
+      "topology_changes": 0,
+      "tuning": 0.5209599839785111,
+      "weight": 1.0
+    },
+    {
+      "accepted": 23338,
+      "allocated_bytes": 0,
+      "allocation_calls": 19828,
+      "allocations": 0,
+      "calls": 99377,
+      "deallocations": 0,
+      "failed": 0,
+      "move": "branch_rate_scale",
+      "reallocations": 0,
+      "rejected": 76039,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        21835.523195390037,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 168901732,
+      "topology_changes": 0,
+      "tuning": 0.1752409008024595,
+      "weight": 20.0
+    },
+    {
+      "accepted": 17093,
+      "allocated_bytes": 0,
+      "allocation_calls": 11957,
+      "allocations": 0,
+      "calls": 59483,
+      "deallocations": 0,
+      "failed": 0,
+      "move": "node_time_rates",
+      "reallocations": 0,
+      "rejected": 42390,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        22628.878169090596,
+        0.0,
+        0.0
+      ],
+      "step_nanoseconds": 106452394,
+      "topology_changes": 0,
+      "tuning": null,
+      "weight": 12.0
+    },
+    {
+      "accepted": 2315,
+      "allocated_bytes": 0,
+      "allocation_calls": 1973,
+      "allocations": 0,
+      "calls": 9695,
+      "deallocations": 0,
+      "failed": 2446,
+      "move": "root_time_rates",
+      "reallocations": 0,
+      "rejected": 4934,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        2411.997557814915,
+        0.0,
+        19.200110483774623
+      ],
+      "step_nanoseconds": 9061849,
+      "topology_changes": 0,
+      "tuning": 0.776564754450811,
+      "weight": 2.0
+    },
+    {
+      "accepted": 2344,
+      "allocated_bytes": 0,
+      "allocation_calls": 1948,
+      "allocations": 0,
+      "calls": 9912,
+      "deallocations": 0,
+      "failed": 0,
+      "move": "clock_sigma_rates",
+      "reallocations": 0,
+      "rejected": 7568,
+      "squared_jumps_posterior_log_sigma_log_height": [
+        536285.821946742,
+        589.8321024081546,
+        0.0
+      ],
+      "step_nanoseconds": 55761585,
+      "topology_changes": 0,
+      "tuning": 0.24073567147229705,
+      "weight": 2.0
+    }
+  ],
+  "seed": 27001,
+  "timed_steps": 500000,
+  "warmup_steps": 2000000
+}

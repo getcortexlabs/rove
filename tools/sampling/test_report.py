@@ -39,7 +39,11 @@ class SamplingReportTest(unittest.TestCase):
                            "reference_clades": ["T1,T2", CONSTRAINT], "unique_topologies": 2}}
         first = [copy.deepcopy(run) for _ in range(4)]
         second = copy.deepcopy(first)
-        self.assertTrue(compare_pair(first, second, ["candidate", "classical"])["passes"])
+        result = compare_pair(first, second, ["candidate", "classical"])
+        self.assertTrue(result["passes"])
+        dependence = result["trace_dependence"]["candidate"]["posterior"][0]
+        self.assertEqual(dependence["integrated_autocorrelation_samples"], 2)
+        self.assertAlmostEqual(dependence["lag_one_autocorrelation"], -.999)
         for record in second:
             record["statistics"]["likelihood"]["mean"] = 5
             record["summary"]["observed_clade_frequencies"]["T1,T2"] = .9

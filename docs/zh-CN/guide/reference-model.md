@@ -107,6 +107,15 @@ Rove 使用 gamma 分布的[正项级数](https://dlmf.nist.gov/8.7.E1)，
 其他测试通过无数据采样检查超先验，并检查不同根的速率映射、每步缓存计算与
 重新计算的一致性、拒绝后的恢复、两种后端产生相同样本，以及测试步中没有内存分配。
 
-六个含 20 个分类单元的构造案例中，后验汇总和支系频率满足了预先确定的标准，包括同形性、缺失数据和信号减少的案例。[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)记录了所有批次、ESS 标准要求的 Mkv 延长批次、运行时间和每秒 ESS。Rove 完成五个未校正 Mk 案例所需时间更少，但 BEAST 的对数后验密度和时钟 sigma 每秒 ESS 更高。提议机制的改进由 [#27](https://github.com/getcortexlabs/rove/issues/27) 跟踪。
+六个含 20 个分类单元的构造案例中，后验汇总和支系频率满足了预先确定的标准，包括同形性、缺失数据和信号减少的案例。[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)记录了所有批次、ESS 标准要求的 Mkv 延长批次、运行时间和每秒 ESS。Rove 的经典调度完成五个未校正 Mk 案例所需时间更少，但 BEAST 的对数后验密度和时钟 sigma 每秒 ESS 更高。
+
+后续的[联合提议评估](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md)
+在六个案例中都通过了相同的科学标准。后验密度与 sigma 的每秒 ESS 综合指标为经典
+Rove 的 6.63 倍（90% 自举区间：5.89–7.32）。但 gamma 效率在控制案例中降至
+0.69，在缺失数据案例中降至 0.66，Mkv 的生灭密度效率降至 0.63。因此预先确定的
+回退标准拒绝将候选设为默认：**经典调度仍为默认**，原生应用也保持如此。
+三个联合移动可通过 `--weight` 显式启用；报告提供了评估所用权重。在这些案例中，
+所有连续统计量的每秒 ESS 中位数均超过已归档的 BEAST ORC 值，但 BEAST 时间
+来自旧记录，未在此次重新测量，因此不能据此断言普遍的性能优势。
 
 另有六个固定状态覆盖这些案例。导入相同类别速率时，最大似然差为 1.14e-13；独立生成类别时为 8.16e-8，来自上文所述的分位数近似差异。

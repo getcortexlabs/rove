@@ -42,7 +42,7 @@ The Mkv correction needs the probability of each constant pattern under the same
 
 The [sampler](./sampler) keeps the tree and its parameters outside the core. Before each step it saves them and stores the core's buffer indices. After a proposal it compares the new tree with the saved one, gives each changed branch a new distance in its other buffer, and recomputes only the ancestors of those branches. A rejected step swaps the indices back. The proposals reproduce BEAST 2's operators and Hastings ratios, so a comparison with BEAST can use the same moves and weights.
 
-The reference preset adds gamma shape, clock sigma and explicit branch rates to the stored state. A change of sigma leaves the likelihood untouched; a change of shape updates category distances throughout the tree. Its proposals differ from ORC, as the [reference-model guide](./reference-model#proposals-and-output) records.
+The reference preset adds gamma shape, clock sigma and explicit branch rates to the stored state. Changing sigma alone leaves the likelihood untouched; the joint sigma/rate move updates branch distances; a change of shape updates category distances throughout the tree. Its proposals differ from ORC, as the [reference-model guide](./reference-model#proposals-and-output) records.
 
 ## NEON first, AVX2 second
 

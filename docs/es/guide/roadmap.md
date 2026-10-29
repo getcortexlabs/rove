@@ -20,7 +20,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Vectorización NEON | Hecho |
 | Modelo de referencia con reloj relajado | Hecho, #16 |
 | Validación de inferencia completa | Hecho en seis casos de 20 taxones, #12 |
-| Eficiencia del muestreo con reloj relajado | Siguiente, #27 |
+| Eficiencia del muestreo con reloj relajado | Evaluada; movimientos conjuntos opcionales, se mantiene el predeterminado clásico, #27 |
 | Vista previa nativa para importar y preparar análisis | Implementado, #28 |
 | Ejecución y progreso en la aplicación | Implementado, #29 |
 | Historial de ejecuciones y reutilización de ajustes | Implementado, #30 |
@@ -56,7 +56,7 @@ La ruta directa de Mk sustituye el producto genérico de matrices en los modelos
 
 El [muestreador mínimo](./sampler) admite Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). El [modelo de referencia](./reference-model), con categorías gamma y reloj relajado lognormal, ya reproduce ambos estados archivados componente por componente. Los resúmenes de posterior y las frecuencias de clados cumplieron los criterios fijados antes de las ejecuciones en seis casos construidos con 20 taxones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)). La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
 
-Después de la eficiencia del muestreo (#27), las funciones planificadas siguen lo que necesitan los análisis morfológicos: cadenas en paralelo con informes de convergencia (#23), checkpoints (#22), particiones por número de estados (#19), condicionamiento a caracteres informativos para parsimonia (#20), caracteres ordenados (#21), verosimilitudes marginales para comparar modelos (#24), el prior de nacimiento-muerte fosilizado con fechas de terminales (#25) y comprobaciones predictivas posteriores (#26). RevBayes documenta cada una de ellas para datos morfológicos y puede servir de segunda referencia donde BEAST no tenga una función equivalente.
+Con la evaluación de propuestas registrada (#27), las funciones planificadas siguen lo que necesitan los análisis morfológicos: cadenas en paralelo con informes de convergencia (#23), checkpoints (#22), particiones por número de estados (#19), condicionamiento a caracteres informativos para parsimonia (#20), caracteres ordenados (#21), verosimilitudes marginales para comparar modelos (#24), el prior de nacimiento-muerte fosilizado con fechas de terminales (#25) y comprobaciones predictivas posteriores (#26). RevBayes documenta cada una de ellas para datos morfológicos y puede servir de segunda referencia donde BEAST no tenga una función equivalente.
 
 La [vista previa nativa para Mac](./macos-preview) importa y muestra matrices y prepara los ajustes del análisis. Ejecuta el motor Rust incluido con progreso real, cancelación y reapertura de configuraciones con verificación de huella. Los adaptadores de BEAST y BEAGLE son rutas de compatibilidad opcionales, no dependencias del motor en Rust.
 

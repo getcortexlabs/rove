@@ -42,7 +42,7 @@ A correção Mkv precisa da probabilidade de cada padrão constante sob a mesma 
 
 O [amostrador](./sampler) mantém a árvore e os seus parâmetros fora do núcleo. Antes de cada passo, ele os guarda e registra os índices dos buffers do núcleo. Depois de uma proposta, compara a nova árvore com a guardada, dá a cada ramo alterado uma nova distância no seu outro buffer e recalcula só os ancestrais desses ramos. Um passo rejeitado troca os índices de volta. As propostas reproduzem os operadores e as razões de Hastings do BEAST 2, então uma comparação com o BEAST pode usar os mesmos movimentos e pesos.
 
-A configuração de referência acrescenta forma gama, sigma do relógio e taxas explícitas de ramos ao estado guardado. Mudar sigma não altera a verossimilhança; mudar a forma atualiza as distâncias por categoria em toda a árvore. Suas propostas diferem das do ORC, como registra o [guia do modelo de referência](./reference-model#propostas-e-saida).
+A configuração de referência acrescenta forma gama, sigma do relógio e taxas explícitas de ramos ao estado guardado. Mudar apenas sigma não altera a verossimilhança; o movimento conjunto de sigma e taxas atualiza as distâncias dos ramos; mudar a forma atualiza as distâncias por categoria em toda a árvore. Suas propostas diferem das do ORC, como registra o [guia do modelo de referência](./reference-model#propostas-e-saida).
 
 ## NEON primeiro, AVX2 depois
 

@@ -140,8 +140,19 @@ datos ausentes y señal reducida. El
 registra todos los lotes, incluida la extensión de Mkv exigida por el criterio de ESS,
 tiempos y ESS por segundo. Rove terminó los cinco casos de Mk sin corrección en menos
 tiempo, pero BEAST obtuvo más ESS por segundo para la densidad log-posterior y el sigma
-del reloj. Las mejoras de las propuestas se siguen en
-[#27](https://github.com/getcortexlabs/rove/issues/27).
+del reloj con la configuración clásica de Rove.
+
+La [evaluación posterior de propuestas conjuntas](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md)
+superó los mismos criterios científicos en los seis casos. La medida agregada de
+ESS por segundo para posterior y sigma fue 6,63 veces la de Rove clásico
+(intervalo bootstrap del 90%: 5,89–7,32). Sin embargo, la eficiencia de gamma cayó
+a 0,69 en control y 0,66 en datos ausentes, y la de la densidad de nacimiento–muerte
+a 0,63 en Mkv. El criterio fijado rechaza la promoción: **la configuración clásica
+sigue siendo la predeterminada**, también en la app. Los tres movimientos conjuntos
+son opcionales mediante `--weight`; el informe incluye los pesos evaluados. Todas
+las medianas de ESS por segundo de parámetros continuos superaron los valores
+archivados de BEAST ORC en estos casos, pero los tiempos de BEAST no se midieron
+de nuevo y los resultados no establecen un rendimiento general.
 
 Seis estados fijos adicionales cubren estos casos. Con tasas de categoría importadas, la
 diferencia máxima de verosimilitud fue 1,14e-13; al generar las categorías de forma
