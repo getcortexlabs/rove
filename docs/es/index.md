@@ -52,6 +52,6 @@ El núcleo de verosimilitud con la ruta directa de Mk y un kernel NEON, la corre
 
 ## Hecho en colaboración
 
-Rove nació de las conversaciones entre Rafael Augusto y **Thiago José da Silva**, el biólogo cuyas preguntas sobre análisis filogenético dieron origen al proyecto. Thiago trabaja junto a Rafael, aportando la perspectiva biológica, probando análisis y discutiendo el significado de los resultados.
+Rove nació de las conversaciones entre Rafael Augusto y **Thiago J. Silva**, el biólogo cuyas preguntas sobre análisis filogenético dieron origen al proyecto. Thiago trabaja junto a Rafael, aportando la perspectiva biológica, probando análisis y discutiendo el significado de los resultados.
 
 </div>

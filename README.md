@@ -51,7 +51,7 @@ See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/RE
 
 ## People
 
-Rove began with conversations between Rafael Augusto and **Thiago José da Silva**,
+Rove began with conversations between Rafael Augusto and **Thiago J. Silva**,
 the biologist whose questions about phylogenetic analysis set the project in motion.
 Thiago works alongside Rafael on the project, bringing the biological perspective,
 testing analyses and discussing what the results mean.

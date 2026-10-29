@@ -52,6 +52,6 @@ The likelihood core with its direct Mk path and a NEON kernel, the Mkv correctio
 
 ## Built together
 
-Rove began with conversations between Rafael Augusto and **Thiago José da Silva**, the biologist whose questions about phylogenetic analysis set the project in motion. Thiago works alongside Rafael, bringing the biological perspective, testing analyses and discussing what the results mean.
+Rove began with conversations between Rafael Augusto and **Thiago J. Silva**, the biologist whose questions about phylogenetic analysis set the project in motion. Thiago works alongside Rafael, bringing the biological perspective, testing analyses and discussing what the results mean.
 
 </div>

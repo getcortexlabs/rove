@@ -52,6 +52,6 @@ features:
 
 ## 共同打造
 
-Rove 源于 Rafael Augusto 与生物学家 **Thiago José da Silva** 的交流。Thiago 对系统发育分析的提问促成了这个项目。如今，他与 Rafael 一起推进 Rove，从生物学角度提出意见、测试分析并讨论结果的含义。
+Rove 源于 Rafael Augusto 与生物学家 **Thiago J. Silva** 的交流。Thiago 对系统发育分析的提问促成了这个项目。如今，他与 Rafael 一起推进 Rove，从生物学角度提出意见、测试分析并讨论结果的含义。
 
 </div>

@@ -52,6 +52,6 @@ O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON, a cor
 
 ## Feito em parceria
 
-O Rove nasceu das conversas entre Rafael Augusto e **Thiago José da Silva**, o biólogo cujas perguntas sobre análise filogenética deram início ao projeto. Thiago trabalha junto com Rafael, trazendo o olhar da biologia, testando análises e discutindo o significado dos resultados.
+O Rove nasceu das conversas entre Rafael Augusto e **Thiago J. Silva**, o biólogo cujas perguntas sobre análise filogenética deram início ao projeto. Thiago trabalha junto com Rafael, trazendo o olhar da biologia, testando análises e discutindo o significado dos resultados.
 
 </div>
