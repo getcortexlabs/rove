@@ -5,6 +5,7 @@ import SwiftUI
 struct RoveApp: App {
   @State private var workspace = Workspace()
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
+  private var strings: AppStrings { workspace.strings }
 
   init() { Lab.registerFonts() }
 
@@ -19,20 +20,26 @@ struct RoveApp: App {
     .defaultSize(width: 1240, height: 850)
     .windowResizability(.contentMinSize)
     .commands {
+      CommandGroup(replacing: .appSettings) {
+        SettingsLink { Text(strings("Settings…")) }.keyboardShortcut(",", modifiers: .command)
+      }
       CommandGroup(replacing: .newItem) {
-        Button("New Analysis", action: workspace.reset).keyboardShortcut("n")
-        Button("Open Matrix…", action: workspace.chooseFile).keyboardShortcut("o")
-        Button("Try Example Matrix", action: workspace.loadExample)
+        Button(strings("New Analysis"), action: workspace.reset).keyboardShortcut("n")
+        Button(strings("Open Matrix…"), action: workspace.chooseFile).keyboardShortcut("o")
+        Button(strings("Try Example Matrix"), action: workspace.loadExample)
         Divider()
-        Button("Save Setup…", action: workspace.saveDraft).keyboardShortcut("s")
+        Button(strings("Save Setup…"), action: workspace.saveDraft).keyboardShortcut("s")
           .disabled(workspace.report == nil || workspace.issue != nil)
       }
       CommandGroup(replacing: .help) {
-        Button("Rove Field Guide") {
-          NSWorkspace.shared.open(URL(string: "https://rove.getcortexlabs.com/guide/")!)
+        Button(strings("Rove Field Guide")) {
+          NSWorkspace.shared.open(strings.guideURL)
         }
       }
     }
+    Settings {
+      SettingsView(preferences: workspace.preferences)
+    }.windowResizability(.contentSize)
   }
 }
 
@@ -48,7 +55,7 @@ private struct WindowSetup: NSViewRepresentable {
     Task { @MainActor in
       guard let window = view.window else { return }
       window.titlebarAppearsTransparent = true
-      window.backgroundColor = NSColor(srgbRed: 17 / 255, green: 19 / 255, blue: 15 / 255, alpha: 1)
+      window.backgroundColor = NSColor(srgbRed: 16 / 255, green: 17 / 255, blue: 23 / 255, alpha: 1)
       window.isMovableByWindowBackground = false
       window.appearance = NSAppearance(named: .darkAqua)
       #if DEBUG

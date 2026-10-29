@@ -21,8 +21,17 @@ open build/macos/Rove.app
 ```
 
 This builds a local application with an ad-hoc signature. It is not a
-notarized release or an installer. The app currently uses English and a dark
-appearance inspired by Cortex Labs, with reduced-motion support.
+notarized release or an installer. The app has a dark appearance inspired by
+Cortex Labs and supports English and Brazilian Portuguese.
+
+## Language and settings
+
+Open **Settings** from the sidebar or press **Command-comma**. Follow your Mac's
+language or select English or Brazilian Portuguese. The change is immediate
+and preserves your open matrix and analysis settings. Preferences are saved
+on this Mac. You can also reduce animations and sidebar transparency; system
+accessibility preferences always take priority. System dialogs follow the
+Mac's language, and original engine diagnostics remain under **Technical details**.
 
 ## Explore a matrix
 

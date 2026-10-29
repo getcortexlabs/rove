@@ -22,8 +22,18 @@ open build/macos/Rove.app
 ```
 
 Se genera una aplicación local con firma ad hoc. No es una versión notarizada
-ni un instalador. La interfaz usa inglés y un tema oscuro inspirado en
-Cortex Labs, y respeta la preferencia de reducir movimiento.
+ni un instalador. La interfaz tiene un tema oscuro inspirado en Cortex Labs
+y está disponible en inglés y portugués brasileño.
+
+## Idioma y ajustes
+
+Abre **Settings** desde la barra lateral o pulsa **Command-coma**. Puedes seguir
+el idioma del Mac o elegir inglés o portugués brasileño. El cambio es inmediato
+y conserva la matriz abierta y los ajustes del análisis. Las preferencias se
+guardan en este Mac. También puedes reducir las animaciones y la transparencia
+de la barra lateral; las preferencias de accesibilidad del sistema tienen
+prioridad. Los diálogos del sistema siguen el idioma del Mac y los diagnósticos
+originales del motor permanecen disponibles en **Technical details**.
 
 ## Explorar una matriz
 

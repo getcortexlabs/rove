@@ -18,17 +18,25 @@ final class Workspace {
   var settings = AnalysisSettings()
   var loading = false
   var error: String?
+  var errorDetails: String?
   var notice: String?
   var savedURL: URL?
   var isExample = false
   private var importID = UUID()
   private let executable: URL
+  let preferences: AppPreferences
+  var strings: AppStrings { preferences.strings }
 
-  init(executable: URL = MatrixInspector.executable) { self.executable = executable }
+  init(executable: URL = MatrixInspector.executable, preferences: AppPreferences = AppPreferences())
+  {
+    self.executable = executable
+    self.preferences = preferences
+  }
 
   var title: String {
     isExample
-      ? "A small beginning" : (file?.deletingPathExtension().lastPathComponent ?? "New analysis")
+      ? strings("A small beginning")
+      : (file?.deletingPathExtension().lastPathComponent ?? strings("New analysis"))
   }
   var issue: String? {
     guard let report else { return "Import a matrix to continue." }
@@ -46,9 +54,9 @@ final class Workspace {
 
   func chooseFile() {
     let panel = NSOpenPanel()
-    panel.title = "Choose a morphological matrix"
-    panel.message = "Open a NEXUS file. Your data stays on this Mac."
-    panel.prompt = "Open matrix"
+    panel.title = strings("Choose a morphological matrix")
+    panel.message = strings("Open a NEXUS file. Your data stays on this Mac.")
+    panel.prompt = strings("Open matrix")
     panel.canChooseDirectories = false
     panel.allowsMultipleSelection = false
     if panel.runModal() == .OK, let url = panel.url { load(url) }
@@ -64,6 +72,7 @@ final class Workspace {
     importID = id
     loading = true
     error = nil
+    errorDetails = nil
     notice = nil
     let gaps = preserveSettings ? settings.gapsAsMissing : false
     Task {
@@ -91,7 +100,17 @@ final class Workspace {
         savedURL = nil
       } catch {
         guard importID == id else { return }
-        self.error = error.localizedDescription
+        if let importError = error as? ImportError {
+          switch importError {
+          case .message(let key): self.error = key
+          case .readerFailed(let details):
+            self.error = "The matrix could not be read."
+            errorDetails = details
+          }
+        } else {
+          self.error = "The file could not be opened."
+          errorDetails = error.localizedDescription
+        }
         // A failed gap-policy change must not leave an old report paired with new settings.
         if preserveSettings { report = nil }
       }
@@ -111,6 +130,7 @@ final class Workspace {
     settings = AnalysisSettings()
     loading = false
     error = nil
+    errorDetails = nil
     notice = nil
     savedURL = nil
     isExample = false
@@ -119,11 +139,14 @@ final class Workspace {
   func saveDraft() {
     guard let file, let report, issue == nil else { return }
     let panel = NSSavePanel()
-    panel.title = "Save analysis setup"
+    panel.title = strings("Save analysis setup")
+    panel.prompt = strings("Save setup")
     panel.nameFieldStringValue = "\(title).rove.json"
     panel.allowedContentTypes = [.json]
     panel.message =
-      "Save the matrix location, its fingerprint and your settings. This does not run an analysis."
+      strings(
+        "Save the matrix location, its fingerprint and your settings. This does not run an analysis."
+      )
     guard panel.runModal() == .OK, let url = panel.url else { return }
     do {
       let encoder = JSONEncoder()
@@ -133,7 +156,10 @@ final class Workspace {
       try encoder.encode(draft).write(to: url, options: .atomic)
       savedURL = url
       notice = "Setup saved. Your next discovery has a starting point."
-    } catch { self.error = error.localizedDescription }
+    } catch {
+      self.error = "The setup could not be saved."
+      errorDetails = error.localizedDescription
+    }
   }
 
   func copyCommand() {

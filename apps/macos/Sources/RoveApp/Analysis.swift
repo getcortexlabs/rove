@@ -37,9 +37,11 @@ struct MatrixReport: Decodable, Sendable {
 
 enum ImportError: LocalizedError {
   case message(String)
+  case readerFailed(String)
   var errorDescription: String? {
     switch self {
     case .message(let text): text
+    case .readerFailed(let text): text
     }
   }
 }
@@ -80,7 +82,7 @@ enum MatrixInspector {
       guard process.terminationStatus == 0 else {
         let message =
           (try? String(contentsOf: errors, encoding: .utf8)) ?? "The matrix could not be read."
-        throw ImportError.message(message.trimmingCharacters(in: .whitespacesAndNewlines))
+        throw ImportError.readerFailed(message.trimmingCharacters(in: .whitespacesAndNewlines))
       }
       return try MatrixReport.decode(Data(contentsOf: output))
     }.value

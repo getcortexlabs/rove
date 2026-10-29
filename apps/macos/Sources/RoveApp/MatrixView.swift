@@ -2,17 +2,18 @@ import SwiftUI
 
 struct MatrixView: View {
   @Bindable var workspace: Workspace
+  private var strings: AppStrings { workspace.strings }
   let report: MatrixReport
 
   var body: some View {
     VStack(alignment: .leading, spacing: 23) {
       HStack(alignment: .top) {
         VStack(alignment: .leading, spacing: 10) {
-          Eyebrow(text: "01 / The starting point", color: Lab.lime)
-          Text("Meet your matrix.").font(Lab.display(35)).tracking(-1)
+          Eyebrow(text: strings("01 / The starting point"), color: Lab.accent)
+          Text(strings("Meet your matrix.")).font(Lab.display(35)).tracking(-1)
           Text(
             workspace.isExample
-              ? "Twenty terminals. Fifty characters. Plenty to be curious about."
+              ? strings("Twenty terminals. Fifty characters. Plenty to be curious about.")
               : workspace.file?.lastPathComponent ?? ""
           )
           .font(.system(size: 13)).foregroundStyle(Lab.secondary)
@@ -20,36 +21,39 @@ struct MatrixView: View {
         Spacer()
         HStack(spacing: 6) {
           Image(systemName: "checkmark.circle.fill")
-          Text("Matrix imported")
-        }.font(.system(size: 11, weight: .medium)).foregroundStyle(Lab.lime)
+          Text(strings("Matrix imported"))
+        }.font(.system(size: 11, weight: .medium)).foregroundStyle(Lab.accent)
           .padding(.horizontal, 12).padding(.vertical, 8)
-          .background(Lab.lime.opacity(0.08), in: Capsule())
+          .background(Lab.accent.opacity(0.08), in: Capsule())
       }.padding(.top, 16)
 
       HStack(spacing: 0) {
-        metric("TERMINALS", value: String(report.taxonCount), note: "The taxa in your study")
-        metric("CHARACTERS", value: String(report.characterCount), note: "Observed traits")
         metric(
-          "PATTERNS", value: report.patternCount.map(String.init) ?? "—",
+          "TERMINALS", value: strings.number(report.taxonCount), note: "The taxa in your study")
+        metric("CHARACTERS", value: strings.number(report.characterCount), note: "Observed traits")
+        metric(
+          "PATTERNS", value: report.patternCount.map(strings.number) ?? "—",
           note: "Unique character columns")
         metric(
-          "MISSING", value: String(format: "%.1f%%", report.missingPercent),
-          note: "\(report.missingCount) unknown cells")
+          "MISSING",
+          value: (report.missingPercent / 100).formatted(
+            .percent.precision(.fractionLength(1)).locale(strings.locale)),
+          note: strings("Unknown cells: %@", strings.number(report.missingCount)))
       }.padding(.vertical, 20)
         .background(Lab.surface, in: RoundedRectangle(cornerRadius: 15))
         .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(Lab.border.opacity(0.7)))
 
       VStack(alignment: .leading, spacing: 0) {
         HStack {
-          Text("A closer look").font(.system(size: 13, weight: .semibold))
+          Text(strings("A closer look")).font(.system(size: 13, weight: .semibold))
           Spacer()
           ForEach(Array(report.symbols.prefix(4).enumerated()), id: \.offset) { index, symbol in
             legend(symbol, color: stateColors(index).background)
           }
-          legend("? / other", color: Lab.coral.opacity(0.65))
+          legend(strings("? / other"), color: Lab.coral.opacity(0.65))
         }.padding(17)
         Rectangle().fill(Lab.border).frame(height: 1)
-        MatrixGrid(report: report).id(report.inputSha256).frame(height: 308)
+        MatrixGrid(report: report, strings: strings).id(report.inputSha256).frame(height: 308)
       }.background(Lab.surface, in: RoundedRectangle(cornerRadius: 16))
         .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Lab.border))
         .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -57,28 +61,32 @@ struct MatrixView: View {
       if report.gapCount > 0 {
         Toggle(isOn: $workspace.settings.gapsAsMissing) {
           VStack(alignment: .leading, spacing: 4) {
-            Text("Treat \(report.gapCount) gaps as missing data").font(
+            Text(strings("Treat gaps as missing data (%@)", strings.number(report.gapCount))).font(
               .system(size: 12, weight: .medium))
-            Text("Only choose this if gaps mean an unknown observation in your matrix.")
+            Text(strings("Only choose this if gaps mean an unknown observation in your matrix."))
               .font(.system(size: 11)).foregroundStyle(Lab.secondary)
           }
-        }.toggleStyle(.switch).tint(Lab.lime)
+        }.toggleStyle(.switch).tint(Lab.accent)
           .onChange(of: workspace.settings.gapsAsMissing) { workspace.reloadGapPolicy() }
       }
       if let issue = report.samplerError {
-        InlineMessage(text: issue, isError: true)
+        DiagnosticMessage(
+          title: strings("This matrix cannot be sampled with the current model."), details: issue,
+          strings: strings)
       } else {
         HStack(alignment: .top, spacing: 9) {
           Image(systemName: "info.circle").foregroundStyle(Lab.lilac)
           Text(
-            "Repeated columns share a calculation. All \(report.characterCount) characters still count."
+            strings("Repeated columns share a calculation. Every character still counts.")
           )
           .foregroundStyle(Lab.secondary)
         }.font(.system(size: 11)).padding(.horizontal, 3)
       }
       if report.uncertainCount + report.polymorphicCount > 0 {
         Text(
-          "\(report.uncertainCount) uncertain cells · \(report.polymorphicCount) polymorphic cells"
+          strings(
+            "Uncertain cells: %@ · polymorphic cells: %@", strings.number(report.uncertainCount),
+            strings.number(report.polymorphicCount))
         )
         .font(.system(size: 11)).foregroundStyle(Lab.secondary)
       }
@@ -87,9 +95,9 @@ struct MatrixView: View {
 
   private func metric(_ label: String, value: String, note: String) -> some View {
     VStack(alignment: .leading, spacing: 8) {
-      Eyebrow(text: label)
+      Eyebrow(text: strings(label))
       Text(value).font(Lab.display(30, weight: .semibold)).foregroundStyle(Lab.ink)
-      Text(note).font(.system(size: 10)).foregroundStyle(Lab.secondary)
+      Text(strings(note)).font(.system(size: 10)).foregroundStyle(Lab.secondary)
     }.frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 22)
   }
 
@@ -103,6 +111,7 @@ struct MatrixView: View {
 
 private struct MatrixGrid: View {
   let report: MatrixReport
+  let strings: AppStrings
   @State private var selected: (row: Int, column: Int)?
   private let cell: CGFloat = 25
   private let label: CGFloat = 95
@@ -160,7 +169,7 @@ private struct MatrixGrid: View {
             selected = (row, column)
           }
         }
-        .accessibilityLabel("Morphological matrix preview")
+        .accessibilityLabel(strings("Morphological matrix preview"))
         .accessibilityChildren {
           ForEach(report.taxa.indices, id: \.self) { row in
             Text("\(report.taxa[row]): \(report.cells[row].joined(separator: ", "))")
@@ -169,15 +178,20 @@ private struct MatrixGrid: View {
       }
       HStack {
         if let selected {
-          let name = report.characterLabels[selected.column] ?? "Character \(selected.column + 1)"
+          let name =
+            report.characterLabels[selected.column]
+            ?? strings("Character %@", strings.number(selected.column + 1))
           Text(
             "\(report.taxa[selected.row])  ·  \(name)  ·  \(report.cells[selected.row][selected.column])"
           )
         } else {
-          Text("Click a cell to inspect it. Scroll to explore.")
+          Text(strings("Click a cell to inspect it. Scroll to explore."))
         }
         Spacer()
-        Text("\(report.taxa.count) × \(report.characterLabels.count) shown")
+        Text(
+          strings(
+            "%@ × %@ shown", strings.number(report.taxa.count),
+            strings.number(report.characterLabels.count)))
       }.font(.system(size: 10)).foregroundStyle(Lab.secondary).padding(.horizontal, 15).padding(
         .vertical, 10
       )
@@ -188,9 +202,9 @@ private struct MatrixGrid: View {
 
 private func stateColors(_ index: Int) -> (background: Color, text: Color) {
   switch index {
-  case 0: (Lab.lime.opacity(0.16), Lab.lime.opacity(0.8))
+  case 0: (Lab.ice.opacity(0.13), Lab.ice)
   case 1: (Lab.lilac.opacity(0.82), Lab.background)
-  case 2: (Color(hex: 0x4FD6C0).opacity(0.65), Lab.background)
+  case 2: (Color(hex: 0xE8BE99).opacity(0.65), Lab.background)
   default: (Lab.coral.opacity(0.5), Lab.background)
   }
 }
@@ -203,9 +217,9 @@ struct InlineMessage: View {
       Image(systemName: isError ? "exclamationmark.circle" : "checkmark.circle")
       Text(text).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
       Spacer(minLength: 0)
-    }.font(.system(size: 12)).foregroundStyle(isError ? Lab.coral : Lab.lime)
+    }.font(.system(size: 12)).foregroundStyle(isError ? Lab.coral : Lab.accent)
       .padding(14).background(
-        (isError ? Lab.coral : Lab.lime).opacity(0.07), in: RoundedRectangle(cornerRadius: 10)
+        (isError ? Lab.coral : Lab.accent).opacity(0.07), in: RoundedRectangle(cornerRadius: 10)
       )
       .accessibilityElement(children: .combine)
   }

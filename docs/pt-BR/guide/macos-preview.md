@@ -22,13 +22,23 @@ open build/macos/Rove.app
 ```
 
 Isso gera um aplicativo local com assinatura ad hoc. Não é uma versão
-notarizada nem um instalador. A interface está em inglês e usa um tema escuro
-inspirado na Cortex Labs, respeitando a preferência de reduzir movimento.
+notarizada nem um instalador. A interface usa um tema escuro inspirado na
+Cortex Labs e está disponível em português brasileiro e inglês.
+
+## Idioma e configurações
+
+Abra **Configurações** pela barra lateral ou use **Command-vírgula**. Você pode
+seguir o idioma do Mac ou escolher português brasileiro ou inglês. A mudança
+é imediata e preserva a matriz aberta e a configuração da análise. As preferências
+ficam salvas neste Mac. Também é possível reduzir animações e a transparência
+da barra lateral; as preferências de acessibilidade do sistema sempre têm
+prioridade. Os diálogos do sistema seguem o idioma do Mac, e as mensagens
+originais do motor ficam disponíveis em **Detalhes técnicos**.
 
 ## Explorar uma matriz
 
 Abra um NEXUS com **Command-O**, arraste um arquivo para a tela inicial ou
-escolha **Try an example**. O exemplo é a matriz de referência fornecida,
+escolha **Experimentar**. O exemplo é a matriz de referência fornecida,
 com 20 terminais e 50 caracteres.
 
 A tela mostra táxons, caracteres observados, padrões comprimidos e células
@@ -50,11 +60,11 @@ escolhas antes de salvar. Os priors mantêm os padrões do motor, e nenhum grupo
 recebe uma restrição automaticamente. O tamanho da cadeia sozinho não
 estabelece convergência.
 
-**Save setup** grava um `.rove.json` com o caminho da matriz original,
+**Salvar configuração** grava um `.rove.json` com o caminho da matriz original,
 SHA-256 e configurações. Não copia a matriz nem inicia uma corrida. Reabrir
 esses registros no aplicativo ainda não está implementado.
 
-**Copy terminal command** prepara um comando para o motor Rust incluído.
+**Copiar comando do Terminal** prepara um comando para o motor Rust incluído.
 Colá-lo no Terminal inicia uma análise real usando a matriz original no
 momento da execução. O comando usa uma pasta nova dentro de `~/Rove Runs`.
 O [guia de amostragem](./sampler) explica os arquivos gerados e os diagnósticos.

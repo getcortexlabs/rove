@@ -31,8 +31,9 @@ remain pending. Work is tracked in the
 ## Native Mac preview
 
 The first SwiftUI/AppKit workspace imports matrices through Rust, displays their
-characters and prepares analysis settings. It follows the Cortex Labs palette
-and typography, with keyboard shortcuts and reduced-motion support.
+characters and prepares analysis settings. It uses a glass sidebar, a fossil
+explorer and the Cortex Labs typography. Settings supports English, Brazilian
+Portuguese and preferences for reduced motion and transparency.
 
 ![The native Rove workspace](docs/public/images/macos-preview.png)
 

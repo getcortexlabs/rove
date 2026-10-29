@@ -10,11 +10,16 @@ struct PreviewTests {
     let package = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
     let root = package.deletingLastPathComponent().deletingLastPathComponent()
-    let directory = root.appendingPathComponent(".local/ui")
+    let directory = root.appendingPathComponent(".local/ui/i18n")
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     _ = NSApplication.shared
+    NSApp.appearance = NSAppearance(named: .darkAqua)
     Lab.registerFonts()
-    let workspace = Workspace()
+    let suite = "rove-preview-\(UUID().uuidString)"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let preferences = AppPreferences(defaults: defaults, preferredLanguages: ["en-US"])
+    let workspace = Workspace(preferences: preferences)
     let report = try await MatrixInspector.inspect(
       root.appendingPathComponent("fixtures/reference/20x50/matrix.nex"), gapsAsMissing: false,
       executable: root.appendingPathComponent("target/release/rove"))
@@ -34,15 +39,38 @@ struct PreviewTests {
         contentRect: NSRect(x: 0, y: 0, width: width, height: height),
         styleMask: [.borderless], backing: .buffered, defer: false)
       window.isReleasedWhenClosed = false
+      window.appearance = NSAppearance(named: .darkAqua)
       window.contentView = view
       window.orderBack(nil)
-      try? await Task.sleep(for: .milliseconds(300))
-      view.layoutSubtreeIfNeeded()
-      let bitmap = try #require(view.bitmapImageRepForCachingDisplay(in: view.bounds))
-      view.cacheDisplay(in: view.bounds, to: bitmap)
-      let png = try #require(bitmap.representation(using: .png, properties: [:]))
-      try png.write(to: directory.appendingPathComponent("\(name).png"))
+      for language in [AppLanguage.english, .portuguese] {
+        preferences.language = language
+        try await capture(
+          view, to: directory.appendingPathComponent("\(name)-\(language.rawValue).png"))
+      }
       window.close()
     }
+    let settings = NSHostingView(rootView: SettingsView(preferences: preferences))
+    let settingsWindow = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 560, height: 590),
+      styleMask: [.borderless], backing: .buffered, defer: false)
+    settingsWindow.isReleasedWhenClosed = false
+    settingsWindow.appearance = NSAppearance(named: .darkAqua)
+    settingsWindow.contentView = settings
+    settingsWindow.orderBack(nil)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      try await capture(
+        settings, to: directory.appendingPathComponent("settings-\(language.rawValue).png"))
+    }
+    settingsWindow.close()
+  }
+
+  @MainActor private func capture(_ view: NSView, to url: URL) async throws {
+    try await Task.sleep(for: .milliseconds(350))
+    view.layoutSubtreeIfNeeded()
+    let bitmap = try #require(view.bitmapImageRepForCachingDisplay(in: view.bounds))
+    view.cacheDisplay(in: view.bounds, to: bitmap)
+    let png = try #require(bitmap.representation(using: .png, properties: [:]))
+    try png.write(to: url)
   }
 }

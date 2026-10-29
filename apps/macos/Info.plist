@@ -4,6 +4,8 @@
 <dict>
     <key>CFBundleName</key><string>Rove</string>
     <key>CFBundleDisplayName</key><string>Rove</string>
+    <key>CFBundleDevelopmentRegion</key><string>en</string>
+    <key>CFBundleLocalizations</key><array><string>en</string><string>pt-BR</string></array>
     <key>CFBundleIdentifier</key><string>com.getcortexlabs.rove.preview</string>
     <key>CFBundleExecutable</key><string>Rove</string>
     <key>CFBundlePackageType</key><string>APPL</string>

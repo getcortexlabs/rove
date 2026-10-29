@@ -40,8 +40,15 @@ sandboxes build processes and cannot start SwiftPM's nested sandbox, set
 The window does not run or monitor MCMC, reopen setup files, edit the matrix,
 or display inferred trees. There are no invented runs, progress or results.
 The setup format is a preview format, not a configuration accepted by the CLI.
-The app currently uses English and a dark appearance. Motion respects the
-macOS Reduce Motion preference. No account, network service, Java or BEAST is
+The app supports English and Brazilian Portuguese, with a dark appearance.
+Open Settings from the sidebar or Command-comma to follow the Mac's language
+or choose one explicitly. Changes apply immediately without resetting the
+matrix or analysis settings. Language and visual-comfort preferences persist
+in UserDefaults; scientific exports and CLI arguments retain their format.
+System accessibility preferences take priority over the app's motion and
+transparency controls. Native system dialogs follow the Mac's language;
+original engine diagnostics remain available under Technical details.
+No account, network service, Java or BEAST is
 needed to import a matrix; only the explicitly clicked guide and Cortex links
 open a browser.
 
@@ -59,11 +66,14 @@ swift test --package-path apps/macos
 The tests invoke the actual Rust reader on the reference and missing-data
 fixtures, check import failure/reset behavior, validate sampling settings,
 round-trip draft metadata and execute copied commands against an argument
-recorder to check shell quoting. Set `ROVE_TEST_ENGINE` to test another Rust
+recorder to check shell quoting. Preference tests cover language resolution,
+persistence, localized formatting and analysis preservation during switching.
+Set `ROVE_TEST_ENGINE` to test another Rust
 executable; otherwise tests use `target/release/rove`.
 
 On a local Mac, `PreviewTests` renders the actual SwiftUI/AppKit views in
-normal and compact windows to `.local/ui/`. It skips rendering when `CI` is
+normal and compact windows, plus Settings, in both languages to `.local/ui/i18n/`.
+It skips rendering when `CI` is
 set because CI does not provide an interactive desktop. These images support
 visual review; they are not pixel-equality assertions. Debug app builds also
 accept `--snapshot <path>` with optional `--example`, `--model`, `--review`
@@ -71,9 +81,15 @@ and `--compact`, then exit after capturing their content view.
 
 ## Assets
 
-- Colors and the display typeface follow [Cortex Labs](https://getcortexlabs.com/).
-  The branch character is drawn in SwiftUI; the existing Rove emblem is used
-  unchanged.
+- The display typeface and playful direction follow [Cortex Labs](https://getcortexlabs.com/).
+  The app uses graphite, lavender and ice blue, with native Liquid Glass on
+  macOS 26 and a frosted-material fallback on earlier systems.
+- `Resources/RoveExplorer.png` is a generated, transparent raster illustration
+  of a fictional fossil explorer. SwiftUI animates its hover and click responses;
+  it is not a scientific reconstruction or a live 3D scene. The existing Rove
+  emblem is used unchanged.
+- `Resources/en.lproj/Localizable.strings` and `Resources/pt-BR.lproj/Localizable.strings`
+  contain interface translations. Keep keys and format arguments synchronized.
 - `Resources/BricolageGrotesque.ttf` is the unmodified variable font from
   [Google Fonts](https://github.com/google/fonts/tree/main/ofl/bricolagegrotesque),
   licensed under the bundled `OFL.txt`. Body text uses the system font.
