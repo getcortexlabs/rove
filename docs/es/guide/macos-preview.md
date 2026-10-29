@@ -34,6 +34,11 @@ de la barra lateral; las preferencias de accesibilidad del sistema tienen
 prioridad. Los diálogos del sistema siguen el idioma del Mac y los diagnósticos
 originales del motor permanecen disponibles en **Technical details**.
 
+**Rove → About Rove** muestra el origen del proyecto, la versión de la app y
+los créditos de Rafael Augusto (software y diseño) y Thiago J. Silva (biología
+e investigación). La ventana sigue el idioma de la app y enlaza al sitio web,
+la guía y el repositorio.
+
 ## Explorar una matriz
 
 Abre un NEXUS con **Command-O**, arrastra un archivo a la pantalla inicial o

@@ -33,6 +33,11 @@ on this Mac. You can also reduce animations and sidebar transparency; system
 accessibility preferences always take priority. System dialogs follow the
 Mac's language, and original engine diagnostics remain under **Technical details**.
 
+**Rove → About Rove** opens the project story, app version and credits for
+Rafael Augusto (software and design) and Thiago J. Silva (biology and research).
+The window follows the app language and includes links to the website, field
+guide and source repository.
+
 ## Explore a matrix
 
 Open a NEXUS file with **Command-O**, drop one onto the welcome screen, or

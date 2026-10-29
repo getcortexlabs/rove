@@ -186,6 +186,30 @@ struct PreviewTests {
         settings, to: directory.appendingPathComponent("settings-\(language.rawValue).png"))
     }
     settingsWindow.close()
+    let app = Bundle(url: root.appendingPathComponent("build/macos/Rove.app"))
+    let version = app?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      for solid in [false, true] {
+        preferences.reduceTransparency = solid
+        let view = NSHostingView(rootView: AboutView(preferences: preferences, version: version))
+        let window = NSWindow(
+          contentRect: NSRect(origin: .zero, size: view.fittingSize),
+          styleMask: [.titled, .closable, .fullSizeContentView], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.titleVisibility = .hidden
+        window.titlebarAppearsTransparent = true
+        window.appearance = NSAppearance(named: .darkAqua)
+        window.contentView = view
+        window.orderBack(nil)
+        try await capture(
+          view,
+          to: directory.appendingPathComponent(
+            "about-\(language.rawValue)\(solid ? "-solid" : "").png"))
+        window.close()
+      }
+    }
+
   }
 
   @MainActor private func capture(_ view: NSView, to url: URL) async throws {

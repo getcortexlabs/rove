@@ -5,6 +5,7 @@ import SwiftUI
 struct RoveApp: App {
   @State private var workspace = Workspace()
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
+  @Environment(\.openWindow) private var openWindow
   private var strings: AppStrings { workspace.strings }
 
   init() { Lab.registerFonts() }
@@ -21,6 +22,9 @@ struct RoveApp: App {
     .defaultSize(width: 1240, height: 850)
     .windowResizability(.contentMinSize)
     .commands {
+      CommandGroup(replacing: .appInfo) {
+        Button(strings("About Rove")) { openWindow(id: "about") }
+      }
       CommandGroup(replacing: .appSettings) {
         SettingsLink { Text(strings("Settings…")) }.keyboardShortcut(",", modifiers: .command)
       }
@@ -56,6 +60,14 @@ struct RoveApp: App {
         }
       }
     }
+    Window(strings("About Rove"), id: "about") {
+      AboutView(preferences: workspace.preferences)
+    }
+    .windowStyle(.hiddenTitleBar)
+    .windowResizability(.contentSize)
+    .defaultPosition(.center)
+    .commandsRemoved()
+
     Settings {
       SettingsView(preferences: workspace.preferences)
     }.windowResizability(.contentSize)

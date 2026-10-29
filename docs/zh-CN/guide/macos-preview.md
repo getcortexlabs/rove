@@ -30,6 +30,9 @@ open build/macos/Rove.app
 偏好保存在本机上。还可以减少动画和侧边栏透明度；系统的辅助功能偏好始终
 优先。系统对话框使用 Mac 的语言，引擎的原始诊断信息仍可在 **Technical details** 中查看。
 
+**Rove → About Rove** 显示项目起源、应用版本和贡献者：Rafael Augusto（软件与设计）
+以及 Thiago J. Silva（生物学与研究）。窗口使用应用当前语言，并提供网站、指南和源码仓库链接。
+
 ## 探索矩阵
 
 按 **Command-O** 打开 NEXUS 文件，将单个文件拖到欢迎界面，或选择
