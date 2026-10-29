@@ -98,5 +98,16 @@ The matrix has no homoplasy, so under Mkv the likelihood does not penalize short
 
 - One partition of binary characters. Tip dates, calibrations, other clock distributions and other tree priors are not implemented.
 - The starting tree is random, with coalescent-like node times, and satisfies the constraints.
-- One chain on one thread. A run cannot be resumed from a checkpoint.
-- The command does not compute convergence diagnostics. The repository's scripts in `tools/beast` compute them from its output.
+- Each independent chain uses one thread. Checkpoint and resume are not implemented.
+
+## Independent chains
+
+Add `--chains 2` or `--chains 4` to run independent samplers on separate threads. The CLI accepts 1–16 chains; one remains the default. Each chain receives the base seed plus its zero-based index, wrapping modulo 2⁶⁴. Its scientific samples match a separate run with that seed, on the same executable and platform. Classical proposals remain the default.
+
+For multiple chains, `--output` contains `chain-01/`, `chain-02/`, and so on, each with `trace.log`, `trees.nexus` and `run.json`. The top-level `run.json` records all seeds, member statuses and the termination reason. `comparison.json` reports per-chain ESS, rank-normalized split R-hat including folded ranks, and clade frequencies. There is no concatenated trace or combined MCC tree.
+
+`--burnin-percent` defaults to 10. Diagnostics use the common sample prefix, discarding that percentage of rows from each chain. `rove compare <run-directory> <run-directory> ... --burnin-percent 25` recalculates a comparison as JSON on stdout; the runs must have the same input and model, distinct seeds and matching sample states. ESS uses the existing BEAST convention separately within each chain, not pooled bulk or tail ESS. Constants, short traces and infinite R-hat are marked unavailable, with a reason. Constrained clades are identified separately from support recovered from data; constant clade indicators cannot establish exploration of tree space.
+
+Optional `--stop-when-converged` checks **every traced scalar statistic** against `--min-ess` (200 per chain) and `--max-rhat` (1.01). It requires at least 1,000 retained samples per chain, two consecutive successful checks, and no unavailable or lag-limited ESS estimate. `--check-every` defaults to 1,000 sampling intervals and must be a positive multiple of `--sample-every`. Workers pause at the same recorded state for each check. The step limit still applies; `run.json` records the checks, actual completed steps and `diagnostic_thresholds` or `step_limit` as the reason.
+
+Stopping is disabled by default. These scalar thresholds **do not certify topology convergence**. Review clade agreement and the traces before interpreting results. Canceling a group closes all its workers and preserves partial files; it does not create a checkpoint.

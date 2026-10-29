@@ -81,7 +81,7 @@ final class TreeSummaryProcess: @unchecked Sendable {
     guard (0..<100).contains(burnin), ["keep", "ca"].contains(heights) else {
       throw ImportError.message("Choose a burn-in from 0 to 99 percent.")
     }
-    guard HistoryEntry.read(directory).status == .completed else {
+    guard HistoryEntry.read(RunFiles.session(in: directory)).status == .completed else {
       throw ImportError.message("Only completed runs can be summarized.")
     }
     let parent = directory.appendingPathComponent("summaries")
@@ -97,7 +97,7 @@ final class TreeSummaryProcess: @unchecked Sendable {
     let child = Process()
     child.executableURL = executable
     child.arguments = [
-      "summarize", directory.appendingPathComponent("results/trees.nexus").path,
+      "summarize", RunFiles.output(in: directory).appendingPathComponent("trees.nexus").path,
       "--output", output.path, "--burnin-percent", String(burnin), "--heights", heights,
       "--cancel-on-stdin-close",
     ]

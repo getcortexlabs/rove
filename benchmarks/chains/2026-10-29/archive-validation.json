@@ -1,0 +1,243 @@
+{
+  "engine_sha256": "d7a11624ae710badf7d99cfaa41124de8e11ac4ae7a59e52091a729f057c9c91",
+  "rhat_oracle": "tools/beast/compare_runs.py; Python statistics.NormalDist",
+  "ess_oracle": "archived ReferenceDiagnostics.java summaries, BEAST 2.7.8 convention",
+  "legacy_metadata": "Temporary copies add status=completed and completed_steps=settings.steps; CLI validates complete trace coverage. Original trace, tree and metadata files are unchanged.",
+  "cases": [
+    {
+      "case": "reference-mk",
+      "chains": 4,
+      "retained_per_chain": 9001,
+      "statistics": 14,
+      "all_clade_frequencies_match": true,
+      "maximum_rhat_absolute_error": 5.151434834260726e-13,
+      "maximum_ess_relative_error": 7.900452367728427e-10,
+      "sources": [
+        {
+          "directory": ".local/issue12/production/reference-mk/rove/20261110",
+          "samples": 10001,
+          "trace_sha256": "5b6e5be14bcb2cdb2bf399241dfae28cd3d64f6306cf1a67e6b30fc1557d0b27",
+          "trees_sha256": "53faf59c242678f753ebf6bd2546919003e85cbd31e5c89444ea2267862b7dd3",
+          "original_run_sha256": "9395c008c1cad0663ba9a458028bb1ec33c4ce1ead0d2d1b245516f3899c3362"
+        },
+        {
+          "directory": ".local/issue12/production/reference-mk/rove/20261111",
+          "samples": 10001,
+          "trace_sha256": "f0b6d5bdbbf5a650e1a6668b2cfd680aa8edc58b5070fc3617b218992d3eb95f",
+          "trees_sha256": "762702ec93b65c403c07edfbb4ea952c9437b5623cddf33596fae9313d152c3c",
+          "original_run_sha256": "118b655cdc78c4d03240b8b346f80a845bd0443e4114001ce9231f47d4531312"
+        },
+        {
+          "directory": ".local/issue12/production/reference-mk/rove/20261112",
+          "samples": 10001,
+          "trace_sha256": "e977c59599cac4fbed5e0d502e8ae493aed728b0a2ef3501472fe976d31eb1d3",
+          "trees_sha256": "526e9a098bfa2ba551c11a4c1201775b75309ac94c94deceb77de9b3cc0fc28a",
+          "original_run_sha256": "0c7ab5aeffb0b6128091035bb3da2f42e37695fc2d43603ca974853206443548"
+        },
+        {
+          "directory": ".local/issue12/production/reference-mk/rove/20261113",
+          "samples": 10001,
+          "trace_sha256": "dfe7090ec084c88b7c9916f184f203efc612c8744e282a4a404700a9c25096de",
+          "trees_sha256": "8148769cc0daf1d48b70bf56aaffa9bbeb96c9035bb06fd32b76e9bb28ee9c87",
+          "original_run_sha256": "ea64c82861cfbeaf9e0326b1738db3bf6c840c6232a401989a285bffb6580a84"
+        }
+      ]
+    },
+    {
+      "case": "reference-mkv",
+      "chains": 4,
+      "retained_per_chain": 9001,
+      "statistics": 14,
+      "all_clade_frequencies_match": true,
+      "maximum_rhat_absolute_error": 8.222311720373909e-13,
+      "maximum_ess_relative_error": 8.727269027055688e-10,
+      "sources": [
+        {
+          "directory": ".local/issue12/production/reference-mkv/rove/20261110",
+          "samples": 10001,
+          "trace_sha256": "7f237401a20809d1106595b20ae9ae490658366be4ca9a49c8b754dadfda2c60",
+          "trees_sha256": "551c841944383cdf4762ad63063bef3960478b3f64a108aeaada25043bf909bf",
+          "original_run_sha256": "6d327926f84ada8e71256f7f078da08a732fc60be3242bc96fed332b4b8b33ab"
+        },
+        {
+          "directory": ".local/issue12/production/reference-mkv/rove/20261111",
+          "samples": 10001,
+          "trace_sha256": "53f999f2e1a4e9819a464a286931b646439543f8c3c5e12175b70e58f9478f6a",
+          "trees_sha256": "37ccfe32680d4181b2436b4f146229135d2ce7a4ac724ed36ad3b196b1959e08",
+          "original_run_sha256": "ffcbe78bf2e32a616ba40e8493034d0a5d32c754f6191b34068d28e47a16fd39"
+        },
+        {
+          "directory": ".local/issue12/production/reference-mkv/rove/20261112",
+          "samples": 10001,
+          "trace_sha256": "6b1765c68f220f1d372ef465333e70900714d9bf78ce62245e1528acb421d2ab",
+          "trees_sha256": "3d6c2ad2afb672bd04aaf1d8b3838130916c582c9f30f3fcd3d1f7e13db0aec0",
+          "original_run_sha256": "4d33cae79d19c41bb43c483f001fc6ff615f9177ad1a8367291f726fab5c6d1a"
+        },
+        {
+          "directory": ".local/issue12/production/reference-mkv/rove/20261113",
+          "samples": 10001,
+          "trace_sha256": "045e8a1bccb1f62c634d2df932818cddb5d8ba05a43daa83b022d2d992253686",
+          "trees_sha256": "02116e5410e6ac9c7e91e474a742ce141695f8c01e5a18fe850ee4be9ea269f8",
+          "original_run_sha256": "1b83e9ed59f53248d49cbc782747ad2b0046fcfd9d9b2b7bd7faf2af87e1b59f"
+        }
+      ]
+    },
+    {
+      "case": "control",
+      "chains": 4,
+      "retained_per_chain": 9001,
+      "statistics": 14,
+      "all_clade_frequencies_match": true,
+      "maximum_rhat_absolute_error": 1.3316014957354128e-12,
+      "maximum_ess_relative_error": 6.697928005056164e-10,
+      "sources": [
+        {
+          "directory": ".local/issue12/production/control/rove/20261110",
+          "samples": 10001,
+          "trace_sha256": "cbe247c038d5ca808a71184343a3f14d57fb3c7ab213d401c6d3d3544f4929c5",
+          "trees_sha256": "024c118c2035eb3900898aa8f9e9fc2bf91d3cb6dfc8cbfa060281f0ec11c495",
+          "original_run_sha256": "8471323d226f1d7d12cd376425f234a021155a943519fb37394f50159900f0a4"
+        },
+        {
+          "directory": ".local/issue12/production/control/rove/20261111",
+          "samples": 10001,
+          "trace_sha256": "e51e5057d6c9c04cd70872ed5a2ce100ae641ccc020b9815522d5b45355f0cb8",
+          "trees_sha256": "ec3271276831cf318366a852559674fee786eaf1bb387af1b68be3151cfbb040",
+          "original_run_sha256": "96ea11028209c61d600eb92e9497e678c997ef69a0d9213865727f5354b850b7"
+        },
+        {
+          "directory": ".local/issue12/production/control/rove/20261112",
+          "samples": 10001,
+          "trace_sha256": "8db828e80b2d9f9aae8ee580e4b409fdf78790a9f740288d5733ebc9f16c7217",
+          "trees_sha256": "f3a9b87b1def65f6dc186a2c78a9fbabb08d612f82e41b27f8b2b8689d453daa",
+          "original_run_sha256": "405e796297ca28e36b3b593131b23d2b4411d74600b42c8dd22827b91f40601d"
+        },
+        {
+          "directory": ".local/issue12/production/control/rove/20261113",
+          "samples": 10001,
+          "trace_sha256": "a75c6215bd5f128efe236daf1bacea33d190d20e5513ede05343feab8544d1b0",
+          "trees_sha256": "4cbe45dc11eb7d2f7cb47dcaa7c1ef4faa65a1853677b6f8a9535f6295d5a725",
+          "original_run_sha256": "182f672c7c8f3c62bf74f3b0b08085f252797301778d1ebdf121393db2b131c3"
+        }
+      ]
+    },
+    {
+      "case": "homoplasy",
+      "chains": 4,
+      "retained_per_chain": 9001,
+      "statistics": 14,
+      "all_clade_frequencies_match": true,
+      "maximum_rhat_absolute_error": 3.0242475190789264e-13,
+      "maximum_ess_relative_error": 1.3234018118743722e-09,
+      "sources": [
+        {
+          "directory": ".local/issue12/production/homoplasy/rove/20261110",
+          "samples": 10001,
+          "trace_sha256": "569631751464050c652d109e447a473bc8e5d53b370553047be58c8ec45fbe5d",
+          "trees_sha256": "a739453e10106413402efcbb539075f6a57aa4eff48aeb70b391d7f12842c80f",
+          "original_run_sha256": "0a3a0e05c550f865e637e6bf0be54f4f56fc77da1c6be3f69cc636af0f4584d8"
+        },
+        {
+          "directory": ".local/issue12/production/homoplasy/rove/20261111",
+          "samples": 10001,
+          "trace_sha256": "738a107e02db68961098b49381b335b565c39f4d72368ab8af783c600af65dd7",
+          "trees_sha256": "777bacfc74540e076fd2a4633324d7eb621a7306a546f09a01f26159a06e6c9b",
+          "original_run_sha256": "9422311a931bf0b8123bbf28862a3d1e03b13728926fca6062fdc93ef5a54afb"
+        },
+        {
+          "directory": ".local/issue12/production/homoplasy/rove/20261112",
+          "samples": 10001,
+          "trace_sha256": "14b13355a65de400745e5e216b80db7bd0d0709f370a80953c33735e4746376c",
+          "trees_sha256": "1cddf6e815620b5c9e1967a425578cc45be98da5a7fec9c0e451b4ae693b28d5",
+          "original_run_sha256": "d77b7e6d055e0f3e47a4a39b38fb2c40778ae0242cc8fdfdf3d121318af13e08"
+        },
+        {
+          "directory": ".local/issue12/production/homoplasy/rove/20261113",
+          "samples": 10001,
+          "trace_sha256": "2c907ed51607d2e69494c77e4ebb8be9931bf0f7e6bce0b411b19abf278ebc2a",
+          "trees_sha256": "ffa274505f94a592d7c214d54f3e2914aa7bcb5c73d9c568bc4f77de2a34fe9c",
+          "original_run_sha256": "436799fd1f2c48d9f51332652937f7d68492940adcf97b16c04fa69cb740b166"
+        }
+      ]
+    },
+    {
+      "case": "missing",
+      "chains": 4,
+      "retained_per_chain": 9001,
+      "statistics": 14,
+      "all_clade_frequencies_match": true,
+      "maximum_rhat_absolute_error": 1.4654943925052066e-12,
+      "maximum_ess_relative_error": 5.868032154047813e-10,
+      "sources": [
+        {
+          "directory": ".local/issue12/production/missing/rove/20261110",
+          "samples": 10001,
+          "trace_sha256": "fb1de6601a21231ed5473cc31b580a3d8a956b134086267d158d4c8632df69f7",
+          "trees_sha256": "349558644224c4385237560bf900cf274c4bdffd450443f0e0e3d981e0470800",
+          "original_run_sha256": "3d11d7318cbd7d9e4eb93ad2fd7676467efe0bcccb4ba2b46b518fe234263ac0"
+        },
+        {
+          "directory": ".local/issue12/production/missing/rove/20261111",
+          "samples": 10001,
+          "trace_sha256": "7c35fca98fae1dc179ee097a339558dd601a200477d03fa6c1e128866723eefd",
+          "trees_sha256": "12a1c8c0437924e60203095da1539bb2b10ea0776527a761689e0809abb637a8",
+          "original_run_sha256": "79d9e5334754a8f0f42996502625fa546834fdf14bb83f8960d717ca1e692905"
+        },
+        {
+          "directory": ".local/issue12/production/missing/rove/20261112",
+          "samples": 10001,
+          "trace_sha256": "fb923ce335dce71a7364ce5429a6f7b4f6d4dfbfc20b8e4280ccfc5f44526035",
+          "trees_sha256": "5f69464af2cf5085f85f9a38683bd25bc828deb421c2a624a49d26de0ac8da05",
+          "original_run_sha256": "e5d3fed3caf84f977af4252b8a5998a4c660b4594fe27c9c0dd4097dfca4131d"
+        },
+        {
+          "directory": ".local/issue12/production/missing/rove/20261113",
+          "samples": 10001,
+          "trace_sha256": "2010fecd446ce70bb27fa562baaae838f4ecbc1c6dfdd4d876844f509ce4aa84",
+          "trees_sha256": "276b89db65cb43cb1caba4c10fb116f455f06231513c311255d237210b03b2b3",
+          "original_run_sha256": "84f9bfdd712f5ffcba3e9defcd50a0eec0c24adda3ed9b451bffbbdd5e52468c"
+        }
+      ]
+    },
+    {
+      "case": "reduced",
+      "chains": 4,
+      "retained_per_chain": 9001,
+      "statistics": 14,
+      "all_clade_frequencies_match": true,
+      "maximum_rhat_absolute_error": 6.934453011808728e-13,
+      "maximum_ess_relative_error": 3.7294490222952567e-10,
+      "sources": [
+        {
+          "directory": ".local/issue12/production/reduced/rove/20261110",
+          "samples": 10001,
+          "trace_sha256": "ca6a0b5d9eed71f723f0ed09c6492ebeef4e8547cd6961c2b2e1577ad343a647",
+          "trees_sha256": "735b5a5606a0f1549a6a98f25d768ec475044835f90edeb9d26a2c61a23854d1",
+          "original_run_sha256": "9695fc2924c42262ce3486d44ea87900a4b1cdc12d1dc4bebe1761923a61a07a"
+        },
+        {
+          "directory": ".local/issue12/production/reduced/rove/20261111",
+          "samples": 10001,
+          "trace_sha256": "c39375a7c3ab284eaa3d4cf8f707fc5efe5aaa0049725b9340bb3a59faf3c9fe",
+          "trees_sha256": "be45a950fbe5173371941839e6c109dcc3db8b826edc0b65b3bfd83511c45e7a",
+          "original_run_sha256": "fbc88bd372a8c63a5362676f60591a670afcc544ea0d6e103d2ed0a952029f38"
+        },
+        {
+          "directory": ".local/issue12/production/reduced/rove/20261112",
+          "samples": 10001,
+          "trace_sha256": "597da596d324e6d09a214c1bebae1b4e187883d264a9fc8eab14ac3390eba040",
+          "trees_sha256": "8437df9e2fac4926ce4becf00c47f770a62fa1d901e7d78d430c66c6388265cc",
+          "original_run_sha256": "2499237a69debaaedc175cda7f3133b2c6f42a46fe02a924c9e4be645176197e"
+        },
+        {
+          "directory": ".local/issue12/production/reduced/rove/20261113",
+          "samples": 10001,
+          "trace_sha256": "37e23765e990c2b109a3ef11c4a214bd2c20657b6320a180bf33c9f0c15b6082",
+          "trees_sha256": "f0ee9a4abb4118a25ffac4c94d72bc25ce97b82e930bdc40d77aef6441ea5afb",
+          "original_run_sha256": "86ef2cce4b308e06d8161e58439cf09441c5a7d1b99906859d13fb9a103b12cc"
+        }
+      ]
+    }
+  ],
+  "revision": "9689b36de7cdd3cc7095fa1fecc65bc1f03a1e3a"
+}

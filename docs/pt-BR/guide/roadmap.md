@@ -28,7 +28,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Resumo MCC posterior e exportação anotada | Implementado, #32 |
 | Explorador nativo de árvores anotadas e figuras SVG | Implementado, #33 |
 | Diagnósticos de amostragem e inspeção do burn-in no app | Implementado, #34 |
-| Cadeias paralelas e relatórios de convergência | Planejado, #23 |
+| Cadeias paralelas e relatórios de convergência | Implementado, #23 |
 | Reescalonamento por potências de dois | Planejado, #18 |
 | Checkpoints e retomada de execuções | Planejado, #22 |
 | Partições por número de estados | Planejado, #19 |
@@ -56,7 +56,7 @@ O caminho direto do Mk substitui o produto genérico de matrizes nos modelos Mk.
 
 O [amostrador mínimo](./sampler) suporta Mk ou Mkv binário, um relógio estrito e o prior de nascimento–morte. Com os mesmos movimentos e passos fixos do BEAST 2.7.8, as suas médias posteriores e frequências de clados na matriz de referência atenderam a critérios fixados antes das execuções ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). O [modelo de referência](./reference-model), com categorias gama e relógio relaxado lognormal, agora reproduz os dois estados arquivados componente por componente. Os resumos de posterior e as frequências de clados atenderam aos critérios definidos antes das corridas em seis casos construídos com 20 táxons ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)). A validação avança das verossimilhanças em estados fixos até execuções completas em matrizes conhecidas. A qualidade da amostragem, incluindo ESS por tempo e diagnósticos de árvore, conta junto com o tempo de execução.
 
-Com a avaliação das propostas registrada (#27), os recursos planejados seguem o que as análises morfológicas precisam: cadeias paralelas com relatórios de convergência (#23), checkpoints (#22), partições por número de estados (#19), condicionamento a caracteres informativos para parcimônia (#20), caracteres ordenados (#21), verossimilhanças marginais para comparar modelos (#24), o prior de nascimento–morte fossilizado com datas de terminais (#25) e checagens preditivas posteriores (#26). O RevBayes documenta cada um deles para dados morfológicos e pode servir de segunda referência onde o BEAST não tiver um recurso equivalente.
+Com a avaliação das propostas registrada (#27), os recursos planejados seguem o que as análises morfológicas precisam: checkpoints (#22), partições por número de estados (#19), condicionamento a caracteres informativos para parcimônia (#20), caracteres ordenados (#21), verossimilhanças marginais para comparar modelos (#24), o prior de nascimento–morte fossilizado com datas de terminais (#25) e checagens preditivas posteriores (#26). O RevBayes documenta cada um deles para dados morfológicos e pode servir de segunda referência onde o BEAST não tiver um recurso equivalente.
 
 A [prévia nativa para Mac](./macos-preview) importa e exibe matrizes e prepara as configurações da análise. Ela executa o motor Rust incluído com progresso real, cancelamento e reabertura de configurações com verificação da impressão digital. Os adaptadores BEAST e BEAGLE são caminhos de compatibilidade opcionais, não dependências da engine em Rust.
 

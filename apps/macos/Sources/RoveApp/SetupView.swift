@@ -73,6 +73,38 @@ struct SetupView: View {
       LabPanel {
         VStack(alignment: .leading, spacing: 19) {
           Text(strings("The exploration plan")).font(.system(size: 13, weight: .semibold))
+          HStack(spacing: 20) {
+            VStack(alignment: .leading, spacing: 8) {
+              Eyebrow(text: strings("Independent chains"))
+              Picker(strings("Independent chains"), selection: $workspace.settings.chains) {
+                Text(strings("1 chain")).tag(1)
+                Text(strings("2 chains")).tag(2)
+                Text(strings("4 chains")).tag(4)
+              }.pickerStyle(.segmented).labelsHidden().frame(width: 290)
+                .onChange(of: workspace.settings.chains) { _, count in
+                  if count == 1 { workspace.settings.stopWhenConverged = false }
+                }
+            }
+            Text(
+              strings(
+                "Separate starting trees and seeds, running at the same time. Steps below apply to each chain."
+              )
+            )
+            .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
+          }
+          if workspace.settings.chains > 1 {
+            Toggle(
+              strings("Stop when diagnostic thresholds are met"),
+              isOn: $workspace.settings.stopWhenConverged
+            )
+            .font(.system(size: 12))
+            Text(
+              strings(
+                "Uses 10% burn-in, ESS ≥ 200 per chain and R-hat ≤ 1.01 for every traced statistic, with two consecutive checks and at least 1,000 retained samples per chain. Tree agreement still needs review."
+              )
+            )
+            .font(.system(size: 10)).foregroundStyle(Lab.muted).lineSpacing(3)
+          }
           HStack(alignment: .top, spacing: 25) {
             VStack(alignment: .leading, spacing: 9) {
               Eyebrow(text: strings("Chain length"))
@@ -213,6 +245,7 @@ struct ReviewView: View {
             strings(
               "%@ steps · seed %@", strings.number(workspace.settings.steps),
               workspace.settings.seed))
+          row("Independent chains", String(workspace.settings.chains))
           row("Sampling", strings("Every %@ steps", strings.number(workspace.settings.sampleEvery)))
           row("Gaps", workspace.settings.gapsAsMissing ? "Treat as missing" : "Reject")
         }

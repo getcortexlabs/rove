@@ -1,0 +1,118 @@
+{
+  "checked_chain_outputs": 129,
+  "method": "Compare trace and tree scientific content by seed across every timed run; omit trace provenance comments and tree command comments. Other tree metadata, taxon mappings and every sample remain part of the hash.",
+  "seeds": {
+    "2026102900": {
+      "scientific_sha256": {
+        "trace.log": "321188e2db5ae22947e45dcb5f26706e81f29aab80166483eda982fc3538610b",
+        "trees.nexus": "e657e3e19b80979b3c6856b63811d25e816484ff90bf594dd76332bb3fe1e179"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-02-repeat-3/chain-01"
+    },
+    "2026102901": {
+      "scientific_sha256": {
+        "trace.log": "39bb41e9c9167c27c679fa47539a6e2054bb821928040d3d7442ec908b8b54a2",
+        "trees.nexus": "4c8a1653816561ec730e346f4bfa3efc77f583005d615688253b78c7204094b5"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-02-repeat-3/chain-02"
+    },
+    "2026102902": {
+      "scientific_sha256": {
+        "trace.log": "7a670e6ccf7f5d9cba26e97e103bbfe3e741f1d3f5f83904429768ef5a407fba",
+        "trees.nexus": "2bf2be66d718c4129a0a5de9a502bf92881e3cf94a6663c0e9f93c2f0f1d3174"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-04-repeat-3/chain-03"
+    },
+    "2026102903": {
+      "scientific_sha256": {
+        "trace.log": "4368950aec696be716c49554d74f69c851735075845d968c60b539dbe9956cdd",
+        "trees.nexus": "a88331f9b6b23f1772a2fe57e8969a3804310512af8ca5bf43ab96b98c1ac77d"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-04-repeat-3/chain-04"
+    },
+    "2026102904": {
+      "scientific_sha256": {
+        "trace.log": "194ded32ef8a078ec1fe06942bbddae773286eb1f15a436523979bd3986e9603",
+        "trees.nexus": "08b2474bf11f2f4942dba4a5860f3938d6c98507820be1e2a52c12a1c0fd9420"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-05"
+    },
+    "2026102905": {
+      "scientific_sha256": {
+        "trace.log": "446634a3df6407af0e2ca37db52bf0a509dab25b942609e278f4bb1b0ea698f4",
+        "trees.nexus": "d498b2e6f68b493ed157bed13574b607c50eddc922ab61a7fe90f08d069ff14a"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-06"
+    },
+    "2026102906": {
+      "scientific_sha256": {
+        "trace.log": "799baf2dc6a7c5bb92d7727b061dd98480c41b35a39836974170a370d2a38d05",
+        "trees.nexus": "51cda932edb4e70b9ac126e085b8cfcd7c9a1c380fb09b1651831ead9aa3bf28"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-07"
+    },
+    "2026102907": {
+      "scientific_sha256": {
+        "trace.log": "632fc293ded066a195877ce318d7ab985becbf3021210ba2750866da9cba3df5",
+        "trees.nexus": "d2c8185678581a8e8c9badc53a490451b4033c8fcc855d44de50228b3f7bd818"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-08"
+    },
+    "2026102908": {
+      "scientific_sha256": {
+        "trace.log": "8879338f3f059018db69b7bbd20338b13848728d80d61f4570fc7334562983b5",
+        "trees.nexus": "90b313587ee50804ab9db3978946761f2f8805cf63fbeb30269966c8fd7fa1d1"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-09"
+    },
+    "2026102909": {
+      "scientific_sha256": {
+        "trace.log": "304e3e4f786756b34428e79da64a682a5e6eb8ce329eac336310938d4541e1f1",
+        "trees.nexus": "862d8e9d962cd984c4e58a2fd5ff6851b13438f66ed621249e6377f2e2a19902"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-10"
+    },
+    "2026102910": {
+      "scientific_sha256": {
+        "trace.log": "6bc14032a4eec5c19a54f3455340c7765559a475e8d393d882eb23c63a4ae3eb",
+        "trees.nexus": "83ccacfe785c7e60f188d34f4d879ed6dec1809d1ff66e6e5884adbb65a4c245"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-11"
+    },
+    "2026102911": {
+      "scientific_sha256": {
+        "trace.log": "54232672aba491cc2151e5ccb71692b4fb96b0cf9f568a39695d8bcbdc9b9df7",
+        "trees.nexus": "9951062750604fdf7fcc375f763d7049a2073b0930922465e0d41035a8004030"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-12"
+    },
+    "2026102912": {
+      "scientific_sha256": {
+        "trace.log": "625f4191b4edea69ea749a52f7d982af248bc960043a985c15cef399877a1b3e",
+        "trees.nexus": "7384c6749b6f1901be9d4087f0c18ec03ba2efee31fcfa55508f0ee2b38277bb"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-13"
+    },
+    "2026102913": {
+      "scientific_sha256": {
+        "trace.log": "7d470513a2a4a9016f9c75435230af49f26317b83010fe6b68493e876daea3a7",
+        "trees.nexus": "9486422c5ca3ddb265e62cd5ba00fb647a093e59c4e259eb9bf534af8902fef7"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-14"
+    },
+    "2026102914": {
+      "scientific_sha256": {
+        "trace.log": "bf631cc6e556fa4d2cb82cd1f02774a00d501947b3a9fc831576d9e3ba387bf0",
+        "trees.nexus": "009eb7b423bc5356e24de3597c67865e7f55355db7f7bf6f7722a2df587f5325"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-15"
+    },
+    "2026102915": {
+      "scientific_sha256": {
+        "trace.log": "44aade4a15016b6ccbcc119d7271c8eeb26005318cd96eca5ea228913b8514a3",
+        "trees.nexus": "1190ccff1eb1b54c9af482d64fb2eb9daae21965ad63fe4b1f7c0330b0b7724d"
+      },
+      "first_observed_at": ".local/issue23/throughput-final/chains-16-repeat-2/chain-16"
+    }
+  }
+}

@@ -145,7 +145,7 @@ final class TraceDiagnosticsProcess: @unchecked Sendable {
     let child = Process()
     child.executableURL = executable
     child.arguments = [
-      "diagnose", directory.appendingPathComponent("results/trace.log").path,
+      "diagnose", RunFiles.output(in: directory).appendingPathComponent("trace.log").path,
       "--burnin-percent", String(burnin), "--output", output.path, "--cancel-on-stdin-close",
     ]
     child.standardInput = pipe

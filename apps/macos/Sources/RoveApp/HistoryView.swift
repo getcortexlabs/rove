@@ -244,6 +244,7 @@ private struct HistoryDetail: View {
               strings(
                 draft.settings.conditioning == "variable"
                   ? "Binary Mkv · variable characters" : "Binary Mk · all characters"))
+            field("Independent chains", String(draft.settings.chains))
             field("Sampling", strings("Every %@ steps", strings.number(draft.settings.sampleEvery)))
             field("Gaps", strings(draft.settings.gapsAsMissing ? "Treat as missing" : "Reject"))
             Divider().overlay(Lab.border)
@@ -294,7 +295,12 @@ private struct HistoryDetail: View {
           openWindow(id: "trace-diagnostics")
         }.buttonStyle(LabButtonStyle(compact: true))
       }
-      if entry.status == .completed {
+      if let draft = entry.draft, draft.settings.chains > 1 {
+        ChainResultsView(
+          workspace: workspace, directory: entry.directory,
+          settings: draft.settings, completed: entry.status == .completed)
+      }
+      if entry.status == .completed && entry.draft?.settings.chains == 1 {
         Button(strings("Summarize trees")) { workspace.summarizeTrees(in: entry.directory) }
           .buttonStyle(LabButtonStyle(prominent: true))
       }
@@ -318,8 +324,10 @@ private struct HistoryDetail: View {
   }
 
   @ViewBuilder private var outputButtons: some View {
-    output("Trace", "results/trace.log")
-    output("Trees", "results/trees.nexus")
+    if entry.draft?.settings.chains == 1 {
+      output("Trace", "results/trace.log")
+      output("Trees", "results/trees.nexus")
+    }
     output("Run record", "results/run.json")
     output("Session record", "session.json")
     output("Engine log", "engine.stderr.log")

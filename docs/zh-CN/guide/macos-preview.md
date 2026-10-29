@@ -253,7 +253,7 @@ target/release/rove summarize /path/to/results/trees.nexus \
 ESS 估计等价于独立样本的信息量，而不是 MCMC 步数。Rove 使用 BEAST 2.7.8
 的正自协方差配对约定，滞后小于 2,000；这不是秩归一化的 bulk 或 tail ESS。
 常数序列或保留值少于四个时 ESS 不可用。如果正相关延伸到所评估的滞后上限，会明确提示。
-这些数值不会触发收敛标记或自动停止。
+在此单链视图中，这些数值不会触发收敛标记或自动停止。可选的多链停止需在探索计划中单独配置。
 
 区间使用线性插值的第 2.5 和 97.5 百分位数（R 类型 7）。它描述保留样本的分布，
 **不是 HPD**，也不是均值的蒙特卡洛误差区间。单个样本不提供区间，极短轨迹会被提示。
@@ -279,3 +279,13 @@ target/release/rove diagnose /path/to/results/trace.log --burnin-percent 25 \
 输出目录必须是新目录。运行不需要 Java 或 Tracer。
 [验证与测量报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/diagnostics/2026-10-29/README.md)
 包括合成轨迹及固定版本的 BEAST 参考结果。
+
+## 比较独立链
+
+![四条短独立链的比较](/images/macos-chains.png)
+
+在 **Model → The exploration plan** 中选择 **1、2 或 4 条链**。步数适用于每条链。多条链使用不同且已记录的种子同时运行，界面分别显示各链进度。取消操作会关闭整个组。
+
+完成的组及其 History 详情中有 **Do the chains agree?** 面板，展示所有记录统计量的 R-hat、各链 ESS 和支系频率比较。选择一条链即可打开其诊断、汇总树或查看目录。保存的设置保留链数，旧设置仍使用单链。各链输出独立保存，不会把一条链的 burn-in 当作另一条链的延续。
+
+**Stop when diagnostic thresholds are met** 为可选项，默认关闭。它使用 10% burn-in，要求所有记录的标量统计量满足每链 ESS ≥ 200、R-hat ≤ 1.01，每链至少保留 1,000 个样本，且连续两次检查通过。停止步数和原因会被保存。这些标量诊断标准不保证拓扑收敛，仍需检查支系和 trace。CLI 选项和限制见[独立链](./sampler#独立链)。

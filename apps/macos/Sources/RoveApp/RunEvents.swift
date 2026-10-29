@@ -11,20 +11,30 @@ struct RunEvent: Decodable, Sendable {
   let likelihood: Double?
   let prior: Double?
   let message: String?
+  var chain: Int? = nil
+  var chainCount: Int? = nil
+  var terminationReason: String? = nil
 }
 
 struct RunEventReader {
   let steps: UInt64
   let fingerprint: String
   private(set) var terminal: RunEvent?
-  private var started = false
-  private var previousStep: UInt64 = 0
-  private var previousTime: Double = 0
+  let chains: Int
+  private struct ChainState {
+    var started = false
+    var step: UInt64 = 0
+    var seconds: Double = 0
+    var terminal: RunEvent?
+  }
+  private var states: [ChainState]
   private var pending = Data()
 
-  init(steps: UInt64, fingerprint: String) {
+  init(steps: UInt64, fingerprint: String, chains: Int = 1) {
     self.steps = steps
     self.fingerprint = fingerprint
+    self.chains = chains
+    states = Array(repeating: ChainState(), count: chains)
   }
 
   mutating func append(_ data: Data) throws -> [RunEvent] {
@@ -58,27 +68,54 @@ struct RunEventReader {
       terminal = value
       return
     }
+    if value.event.hasPrefix("group_") {
+      guard chains > 1, value.chain == nil, value.chainCount == chains,
+        value.inputSha256 == fingerprint, value.totalSteps == steps,
+        value.step == states.map(\.step).min(),
+        let seconds = value.elapsedSeconds, seconds.isFinite, seconds >= 0,
+        states.allSatisfy({ $0.terminal != nil }),
+        ["group_completed", "group_cancelled"].contains(value.event)
+      else { throw RunFailure.protocolError }
+      if value.event == "group_completed" {
+        guard states.allSatisfy({ $0.terminal?.event == "completed" }),
+          states.allSatisfy({ $0.terminal?.terminationReason == value.terminationReason }),
+          states.allSatisfy({ $0.step == value.step })
+        else { throw RunFailure.protocolError }
+      }
+      terminal = value
+      return
+    }
+    let number = value.chain ?? 1
+    guard number >= 1, number <= chains,
+      chains == 1 ? value.chain == nil : value.chain != nil
+    else { throw RunFailure.protocolError }
+    let index = number - 1
+    guard states[index].terminal == nil else { throw RunFailure.protocolError }
+    var state = states[index]
     guard let step = value.step, let seconds = value.elapsedSeconds,
-      value.totalSteps == steps, step <= steps, seconds.isFinite, seconds >= previousTime,
+      value.totalSteps == steps, step <= steps, seconds.isFinite, seconds >= state.seconds,
       value.inputSha256 == fingerprint,
       [value.posterior, value.likelihood, value.prior].allSatisfy({ $0?.isFinite == true })
     else { throw RunFailure.protocolError }
     switch value.event {
     case "started":
-      guard !started, step == 0 else { throw RunFailure.protocolError }
-      started = true
+      guard !state.started, step == 0 else { throw RunFailure.protocolError }
+      state.started = true
     case "progress":
-      guard started, step > previousStep else { throw RunFailure.protocolError }
+      guard state.started, step > state.step else { throw RunFailure.protocolError }
     case "completed", "cancelled":
-      guard started, step >= previousStep,
-        value.event != "completed" || step == steps,
+      guard state.started, step >= state.step,
+        value.event != "completed" || step == steps
+          || (chains > 1 && value.terminationReason == "diagnostic_thresholds"),
         value.event != "cancelled" || step < steps
       else { throw RunFailure.protocolError }
-      terminal = value
+      state.terminal = value
+      if chains == 1 { terminal = value }
     default: throw RunFailure.protocolError
     }
-    previousStep = step
-    previousTime = seconds
+    state.step = step
+    state.seconds = seconds
+    states[index] = state
   }
 }
 

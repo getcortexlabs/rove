@@ -54,14 +54,10 @@ struct HistoryEntry: Identifiable, Sendable {
     } else if let session {
       switch session.status {
       case "completed":
-        let outputsPresent = ["results/trace.log", "results/trees.nexus"].allSatisfy {
-          let values = try? directory.appendingPathComponent($0).resourceValues(forKeys: [
-            .isRegularFileKey, .fileSizeKey,
-          ])
-          return values?.isRegularFile == true && (values?.fileSize ?? 0) > 0
-        }
-        if session.exitCode == 0, engine?.status == "completed",
-          engine?.completedSteps == UInt64(session.setup.settings.steps), outputsPresent
+        if session.exitCode == 0,
+          let verified = try? EngineRecord.verify(directory: directory, draft: session.setup),
+          verified.status == "completed",
+          session.completedSteps.map({ $0 == verified.completedSteps }) ?? true
         {
           status = .completed
         } else {

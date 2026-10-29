@@ -228,6 +228,17 @@ fn rank_normalized_rhat_matches_the_python_oracle() {
             ),
         }
     }
+    let a = [-1.0, 0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0];
+    let b = [0.25, 1.0, 0.5, -1.0, 1.0, 1.0, 1.0, 1.0];
+    let huge_a: Vec<_> = a.iter().map(|x| x * f64::MAX).collect();
+    let huge_b: Vec<_> = b.iter().map(|x| x * f64::MAX).collect();
+    near(
+        rove::diagnostics::rhat(&[&huge_a, &huge_b])
+            .unwrap()
+            .unwrap(),
+        rove::diagnostics::rhat(&[&a, &b]).unwrap().unwrap(),
+        1e-8,
+    );
     assert!(rove::diagnostics::rhat(&[&[1., 2., 3., 4.]]).is_err());
     assert!(rove::diagnostics::rhat(&[&[1., 2., 3., 4.], &[1., 2., 3.]]).is_err());
     assert!(rove::diagnostics::rhat(&[&[1., 2., 3., 4.], &[1., 2., 3., f64::NAN]]).is_err());

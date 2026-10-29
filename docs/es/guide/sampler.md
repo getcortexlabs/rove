@@ -98,5 +98,16 @@ La matriz no tiene homoplasia, así que con Mkv la verosimilitud no penaliza los
 
 - Una partición de caracteres binarios. Fechas de terminales, calibraciones, otras distribuciones de reloj y otros priors de árbol no están implementados.
 - El árbol inicial es aleatorio, con tiempos de nodo parecidos a los de un coalescente, y cumple las restricciones.
-- Una cadena en un hilo. Una ejecución no se puede reanudar desde un checkpoint.
-- El comando no calcula diagnósticos de convergencia. Los scripts del repositorio en `tools/beast` los calculan a partir de su salida.
+- Cada cadena independiente usa un hilo. Los checkpoints y la reanudación no están implementados.
+
+## Cadenas independientes
+
+Añade `--chains 2` o `--chains 4` para ejecutar muestreadores independientes en hilos separados. La CLI admite de 1 a 16 cadenas; una sigue siendo el valor predeterminado. Cada cadena recibe la semilla base más su índice desde cero, módulo 2⁶⁴. Sus muestras científicas coinciden con una ejecución separada con esa semilla, usando el mismo ejecutable y plataforma. Las propuestas clásicas siguen siendo las predeterminadas.
+
+Con varias cadenas, `--output` contiene `chain-01/`, `chain-02/`, etc., cada una con `trace.log`, `trees.nexus` y `run.json`. El `run.json` principal registra las semillas, los estados de las cadenas y el motivo de terminación. `comparison.json` presenta ESS por cadena, R-hat dividido y normalizado por rangos, incluidos rangos plegados, y frecuencias de clados. No se concatenan los traces ni se crea un árbol MCC conjunto.
+
+`--burnin-percent` usa 10 por defecto. Los diagnósticos toman el prefijo común de muestras y descartan ese porcentaje de filas de cada cadena. `rove compare <directorio> <directorio> ... --burnin-percent 25` recalcula la comparación como JSON en la salida estándar; las ejecuciones deben compartir datos y modelo, tener semillas distintas y estados muestreados coincidentes. El ESS sigue la convención existente de BEAST por separado en cada cadena; no es ESS bulk o tail combinado. Constantes, traces cortos y R-hat infinito se indican como no disponibles, con el motivo. Los clados restringidos se distinguen del soporte recuperado de los datos; los indicadores constantes no demuestran exploración del espacio de árboles.
+
+La opción `--stop-when-converged` comprueba **todas las estadísticas escalares registradas** frente a `--min-ess` (200 por cadena) y `--max-rhat` (1,01). Exige al menos 1.000 muestras retenidas por cadena, dos comprobaciones satisfactorias consecutivas y ningún ESS no disponible o limitado por el máximo retardo. `--check-every` usa 1.000 intervalos de muestreo por defecto y debe ser múltiplo positivo de `--sample-every`. Los hilos esperan en el mismo estado registrado durante cada comprobación. El límite de pasos sigue vigente; `run.json` registra las comprobaciones, los pasos completados y el motivo `diagnostic_thresholds` o `step_limit`.
+
+La parada está desactivada por defecto. Estos criterios escalares **no certifican la convergencia topológica**. Revisa los clados y los traces antes de interpretar los resultados. Cancelar el grupo cierra todos sus hilos y conserva archivos parciales; no crea un checkpoint.

@@ -98,11 +98,34 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   var sampleEvery = 1_000
   var seed = "42"
   var gapsAsMissing = false
+  var chains = 1
+  var stopWhenConverged = false
+
+  init() {}
+
+  private enum CodingKeys: String, CodingKey {
+    case clock, conditioning, steps, sampleEvery, seed, gapsAsMissing, chains, stopWhenConverged
+  }
+
+  init(from decoder: Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    clock = try values.decode(String.self, forKey: .clock)
+    conditioning = try values.decode(String.self, forKey: .conditioning)
+    steps = try values.decode(Int.self, forKey: .steps)
+    sampleEvery = try values.decode(Int.self, forKey: .sampleEvery)
+    seed = try values.decode(String.self, forKey: .seed)
+    gapsAsMissing = try values.decode(Bool.self, forKey: .gapsAsMissing)
+    chains = try values.decodeIfPresent(Int.self, forKey: .chains) ?? 1
+    stopWhenConverged = try values.decodeIfPresent(Bool.self, forKey: .stopWhenConverged) ?? false
+  }
 
   var validationError: String? {
     guard ["strict", "reference"].contains(clock), ["variable", "none"].contains(conditioning)
     else {
       return "This setup uses an unsupported model."
+    }
+    guard [1, 2, 4].contains(chains), !stopWhenConverged || chains > 1 else {
+      return "Choose one, two or four chains. Automatic stopping needs multiple chains."
     }
     guard UInt64(seed) != nil else {
       return "Use a whole-number seed from 0 to 18446744073709551615."
@@ -119,7 +142,9 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       "--steps", String(steps), "--sample-every", String(sampleEvery),
       "--model", clock, "--conditioning", conditioning,
       "--gaps", gapsAsMissing ? "missing" : "reject",
-    ] + monophyly.flatMap { ["--monophyly", $0.joined(separator: ",")] }
+    ] + (chains > 1 ? ["--chains", String(chains)] : [])
+      + (stopWhenConverged ? ["--stop-when-converged"] : [])
+      + monophyly.flatMap { ["--monophyly", $0.joined(separator: ",")] }
   }
 
   func command(executable: URL, matrix: URL, output: URL, monophyly: [[String]] = []) -> String {

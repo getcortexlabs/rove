@@ -148,7 +148,8 @@ final class RunProcess: @unchecked Sendable {
       try? pipe.fileHandleForWriting.close()
       if cancelledBeforeLaunch { cancel() }
       var reader = RunEventReader(
-        steps: UInt64(request.draft.settings.steps), fingerprint: fingerprint)
+        steps: UInt64(request.draft.settings.steps), fingerprint: fingerprint,
+        chains: request.draft.settings.chains)
       // FileHandle.read(upToCount:) may wait to fill the buffer. A pipe read
       // returns as soon as an event arrives, even when the engine stays alive.
       var buffer = [UInt8](repeating: 0, count: 16_384)
@@ -177,10 +178,13 @@ final class RunProcess: @unchecked Sendable {
             status: .failed, exitCode: child.terminationStatus,
             error: "The engine could not complete this analysis.", details: reader.terminal?.message
           )
-        } else if reader.terminal?.event == "completed", child.terminationStatus == 0 {
-          try verifyRecord(request, status: "completed", step: UInt64(request.draft.settings.steps))
+        } else if ["completed", "group_completed"].contains(reader.terminal?.event ?? ""),
+          child.terminationStatus == 0
+        {
+          try verifyRecord(request, status: "completed", step: reader.terminal?.step ?? 0)
           result = RunResult(status: .completed, exitCode: 0, error: nil, details: nil)
-        } else if reader.terminal?.event == "cancelled", child.terminationStatus == 130,
+        } else if ["cancelled", "group_cancelled"].contains(reader.terminal?.event ?? ""),
+          child.terminationStatus == 130,
           let step = reader.terminal?.step
         {
           try verifyRecord(request, status: "cancelled", step: step)
@@ -222,16 +226,9 @@ final class RunProcess: @unchecked Sendable {
   }
 
   private func verifyRecord(_ request: RunRequest, status: String, step: UInt64) throws {
-    let record = try EngineRecord.read(request.output.appendingPathComponent("run.json"))
-    guard record.status == status, record.completedSteps == step, record.matches(request.draft)
-    else { throw RunFailure.invalidCompletion }
-    for name in ["trace.log", "trees.nexus"] {
-      let values = try request.output.appendingPathComponent(name).resourceValues(forKeys: [
-        .isRegularFileKey, .fileSizeKey,
-      ])
-      guard values.isRegularFile == true, (values.fileSize ?? 0) > 0 else {
-        throw RunFailure.invalidCompletion
-      }
+    let record = try EngineRecord.verify(directory: request.directory, draft: request.draft)
+    guard record.status == status, record.completedSteps == step else {
+      throw RunFailure.invalidCompletion
     }
   }
 

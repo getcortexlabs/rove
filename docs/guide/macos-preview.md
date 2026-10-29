@@ -313,7 +313,7 @@ of MCMC steps. Rove uses the BEAST 2.7.8 paired-positive autocovariance conventi
 with lags below 2,000; it is not rank-normalized bulk or tail ESS. A constant
 series has unavailable ESS; fewer than four retained values also leave ESS
 unavailable. Positive correlation reaching the evaluated lag limit is flagged.
-These numbers do not trigger a convergence badge or an automatic stopping rule.
+This single-chain panel does not trigger a convergence badge or a stopping rule. Optional multi-chain stopping is configured separately in the exploration plan.
 
 The interval uses linearly interpolated 2.5th and 97.5th percentiles (R type 7).
 It describes the retained distribution, **not HPD** or the Monte Carlo error of
@@ -346,3 +346,13 @@ Omit `--output` to emit JSON, or use `--burnin-samples N` instead of a percentag
 An output directory must be new. No Java or Tracer runtime is required.
 [Validation and measurements](https://github.com/getcortexlabs/rove/blob/main/benchmarks/diagnostics/2026-10-29/README.md)
 cover synthetic traces and a pinned BEAST reference.
+
+## Comparing independent chains
+
+![Comparison of four short independent chains](/images/macos-chains.png)
+
+In **Model → The exploration plan**, choose **1, 2 or 4 chains**. The step count applies to each chain. Multiple chains run at the same time with distinct, recorded seeds; progress shows each chain separately. Cancellation closes the whole group.
+
+Completed groups and their History details include **Do the chains agree?**, with R-hat and ESS for every traced statistic and a clade-frequency comparison. Select a chain to open its diagnostics, summarize its trees or inspect its folder. Saved setups preserve the chain count; older setups remain single-chain. Outputs stay separate so one chain's burn-in is never mistaken for another's continuation.
+
+**Stop when diagnostic thresholds are met** is optional and off by default. It uses 10% burn-in, ESS ≥ 200 per chain, R-hat ≤ 1.01 for all traced scalar statistics, at least 1,000 retained samples per chain and two consecutive checks. The actual stopping step and reason are saved. These are scalar diagnostic criteria, not a guarantee of topology convergence; inspect the clades and traces. See [independent chains](./sampler#independent-chains) for the CLI options and limits.

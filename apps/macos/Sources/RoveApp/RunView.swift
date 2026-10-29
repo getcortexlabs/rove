@@ -7,7 +7,7 @@ struct RunView: View {
   @State private var confirmingCancellation = false
   private var strings: AppStrings { workspace.strings }
   private var total: Int { run.request.draft.settings.steps }
-  private var step: UInt64 { run.progress?.step ?? 0 }
+  private var step: UInt64 { run.completedSteps }
   private var statusTitle: String {
     switch run.status {
     case .preparing: "Preparing your exploration…"
@@ -53,6 +53,23 @@ struct RunView: View {
               .accessibilityValue(
                 strings("%@ of %@ steps", strings.number(Int(step)), strings.number(total)))
           }
+          if run.request.draft.settings.chains > 1 {
+            VStack(spacing: 12) {
+              ForEach(1...run.request.draft.settings.chains, id: \.self) { chain in
+                HStack(spacing: 14) {
+                  Text(strings("Chain %@", String(chain))).font(.system(size: 11, weight: .medium))
+                    .frame(width: 72, alignment: .leading)
+                  ProgressView(
+                    value: Double(run.chainProgress[chain]?.step ?? 0), total: Double(total)
+                  )
+                  .progressViewStyle(RunProgressStyle())
+                  Text(strings.number(Int(run.chainProgress[chain]?.step ?? 0)))
+                    .font(.system(size: 10, design: .monospaced)).monospacedDigit().frame(
+                      width: 90, alignment: .trailing)
+                }
+              }
+            }
+          }
           HStack(spacing: 36) {
             if let ended = run.ended {
               metric("Elapsed", duration(ended.timeIntervalSince(run.began)))
@@ -82,7 +99,12 @@ struct RunView: View {
       if let result = run.result, let error = result.error {
         DiagnosticMessage(title: strings(error), details: result.details, strings: strings)
       }
-      if run.status == .completed {
+      if run.status == .completed && run.progress?.terminationReason == "diagnostic_thresholds" {
+        InlineMessage(
+          text: strings(
+            "Stopped at the recorded step after two successful diagnostic checks. Review tree agreement before interpreting the result."
+          ))
+      } else if run.status == .completed {
         InlineMessage(
           text: strings(
             "The requested steps finished and the output files were verified. Assess independent runs, sampling diagnostics and tree support before interpreting the result."
@@ -115,12 +137,19 @@ struct RunView: View {
               horizontal: false, vertical: true)
           if !run.isActive {
             HStack(spacing: 12) {
-              output("Trace", "trace.log")
-              output("Trees", "trees.nexus")
+              if run.request.draft.settings.chains == 1 {
+                output("Trace", "trace.log")
+                output("Trees", "trees.nexus")
+              }
               output("Run record", "run.json")
             }
           }
         }
+      }
+      if !run.isActive && run.request.draft.settings.chains > 1 {
+        ChainResultsView(
+          workspace: workspace, directory: run.request.directory,
+          settings: run.request.draft.settings, completed: run.status == .completed)
       }
       HStack {
         if run.isActive {
@@ -145,7 +174,7 @@ struct RunView: View {
             openWindow(id: "trace-diagnostics")
           }.buttonStyle(LabButtonStyle(compact: true))
         }
-        if run.status == .completed {
+        if run.status == .completed && run.request.draft.settings.chains == 1 {
           Button(strings("Summarize trees")) { workspace.summarizeTrees(in: run.request.directory) }
             .buttonStyle(LabButtonStyle(compact: true))
         }

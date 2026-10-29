@@ -5,6 +5,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,11 +22,31 @@ def main():
     report = {"engine_sha256": hashlib.sha256(args.engine.read_bytes()).hexdigest(),
               "rhat_oracle": "tools/beast/compare_runs.py; Python statistics.NormalDist",
               "ess_oracle": "archived ReferenceDiagnostics.java summaries, BEAST 2.7.8 convention",
+              "legacy_metadata": "Temporary copies add status=completed and completed_steps=settings.steps; CLI validates complete trace coverage. Original trace, tree and metadata files are unchanged.",
               "cases": []}
     for case in ["reference-mk", "reference-mkv", "control", "homoplasy", "missing", "reduced"]:
         directories = sorted(path for path in (args.archive / case / "rove").iterdir() if path.is_dir())
-        command = [str(args.engine), "compare", *map(str, directories), "--burnin-percent", "10"]
-        actual = json.loads(subprocess.check_output(command, text=True))
+        # The #12 archive predates status/completed_steps metadata. Normalize
+        # only a temporary record; keep the scientific files byte-identical.
+        # The CLI then verifies that the trace really reaches the claimed step.
+        with tempfile.TemporaryDirectory(prefix="rove-archive-check-") as temporary:
+            staged = []
+            for index, source in enumerate(directories):
+                target = Path(temporary) / str(index)
+                target.mkdir()
+                record = json.loads((source / "run.json").read_text())
+                if "status" not in record and "completed_steps" not in record:
+                    record["status"] = "completed"
+                    record["completed_steps"] = record["settings"]["steps"]
+                (target / "run.json").write_text(json.dumps(record))
+                for filename in ["trace.log", "trees.nexus"]:
+                    (target / filename).symlink_to((source / filename).resolve())
+                staged.append(target)
+            command = [str(args.engine), "compare", *map(str, staged), "--burnin-percent", "10"]
+            actual = json.loads(subprocess.check_output(command, text=True))
+        for item, source in zip(actual["sources"], directories):
+            item["directory"] = str(source.relative_to(ROOT))
+            item["original_run_sha256"] = hashlib.sha256((source / "run.json").read_bytes()).hexdigest()
         traces = [read_trace(path / "trace.log", 10) for path in directories]
         archived = [json.loads((path / "summary.json").read_text()) for path in directories]
         expected = [x["statistics"] for x in archived]

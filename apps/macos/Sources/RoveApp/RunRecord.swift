@@ -49,6 +49,18 @@ struct EngineRecord: Decodable, Sendable {
   let command: [String]
   let startedUnixSeconds: Double?
   let wallSeconds: Double?
+  let kind: String?
+  let chainCount: Int?
+  let terminationReason: String?
+  let chains: [Chain]?
+
+  struct Chain: Decodable, Sendable {
+    let index: Int
+    let seed: UInt64
+    let directory: String
+    let status: String?
+    let completedSteps: UInt64?
+  }
 
   static func read(_ url: URL) throws -> Self {
     let decoder = JSONDecoder()
@@ -56,7 +68,7 @@ struct EngineRecord: Decodable, Sendable {
     return try decoder.decode(Self.self, from: RecordFile.read(url))
   }
 
-  func matches(_ draft: AnalysisDraft) -> Bool {
+  func matches(_ draft: AnalysisDraft, seed: UInt64? = nil) -> Bool {
     guard let conditioningIndex = command.firstIndex(of: "--conditioning"),
       command.indices.contains(conditioningIndex + 1)
     else { return false }
@@ -66,9 +78,70 @@ struct EngineRecord: Decodable, Sendable {
       && command[conditioningIndex + 1] == draft.settings.conditioning
       && settings.steps == UInt64(draft.settings.steps)
       && settings.sampleEvery == UInt64(draft.settings.sampleEvery)
-      && settings.seed == UInt64(draft.settings.seed) && model.monophyly == draft.constraints
+      && settings.seed == (seed ?? UInt64(draft.settings.seed))
+      && model.monophyly == draft.constraints
       && completedSteps <= settings.steps
   }
+
+  static func verify(directory: URL, draft: AnalysisDraft) throws -> Self {
+    let output = directory.appendingPathComponent("results")
+    let record = try read(output.appendingPathComponent("run.json"))
+    guard record.matches(draft), ["completed", "cancelled"].contains(record.status) else {
+      throw RunFailure.invalidCompletion
+    }
+    func check(_ value: Self, at folder: URL) throws {
+      guard value.completedSteps <= value.settings.steps,
+        value.status != "completed" || value.completedSteps == value.settings.steps
+          || (draft.settings.stopWhenConverged && value.terminationReason == "diagnostic_thresholds"
+            && value.completedSteps > 0 && value.completedSteps % value.settings.sampleEvery == 0)
+      else { throw RunFailure.invalidCompletion }
+      for file in ["trace.log", "trees.nexus"] {
+        let info = try folder.appendingPathComponent(file).resourceValues(forKeys: [
+          .isRegularFileKey, .fileSizeKey,
+        ])
+        guard info.isRegularFile == true, (info.fileSize ?? 0) > 0 else {
+          throw RunFailure.invalidCompletion
+        }
+      }
+    }
+    if draft.settings.chains == 1 {
+      guard record.kind == nil, record.chains == nil else { throw RunFailure.invalidCompletion }
+      try check(record, at: output)
+    } else {
+      guard record.kind == "independent_chains", record.chainCount == draft.settings.chains,
+        let members = record.chains, members.count == draft.settings.chains,
+        let seed = UInt64(draft.settings.seed)
+      else { throw RunFailure.invalidCompletion }
+      var minimum = record.settings.steps
+      for (offset, member) in members.enumerated() {
+        guard member.index == offset + 1, member.seed == seed &+ UInt64(offset),
+          member.directory == String(format: "chain-%02d", offset + 1)
+        else { throw RunFailure.invalidCompletion }
+        let folder = output.appendingPathComponent(member.directory)
+        let child = try read(folder.appendingPathComponent("run.json"))
+        guard child.matches(draft, seed: member.seed), child.status == member.status,
+          child.completedSteps == member.completedSteps,
+          ["completed", "cancelled"].contains(child.status),
+          record.status != "completed"
+            || (child.status == "completed"
+              && child.completedSteps == record.completedSteps
+              && child.terminationReason == record.terminationReason)
+        else { throw RunFailure.invalidCompletion }
+        try check(child, at: folder)
+        minimum = min(minimum, child.completedSteps)
+      }
+      guard minimum == record.completedSteps else { throw RunFailure.invalidCompletion }
+      if record.status == "completed" {
+        let comparison = try ChainComparison.read(output.appendingPathComponent("comparison.json"))
+        guard comparison.chainCount == members.count, comparison.lastState == record.completedSteps
+        else {
+          throw RunFailure.invalidCompletion
+        }
+      }
+    }
+    return record
+  }
+
 }
 
 enum RecordFile {
@@ -78,5 +151,21 @@ enum RecordFile {
       throw RunFailure.invalidCompletion
     }
     return try Data(contentsOf: url)
+  }
+}
+
+// Chain analysis tools keep their derived files beside that chain. The session
+// remains the owner of completion status and the original analysis setup.
+enum RunFiles {
+  static func isChain(_ directory: URL) -> Bool {
+    directory.deletingLastPathComponent().lastPathComponent == "results"
+      && directory.lastPathComponent.hasPrefix("chain-")
+  }
+  static func output(in directory: URL) -> URL {
+    isChain(directory) ? directory : directory.appendingPathComponent("results")
+  }
+  static func session(in directory: URL) -> URL {
+    isChain(directory)
+      ? directory.deletingLastPathComponent().deletingLastPathComponent() : directory
   }
 }

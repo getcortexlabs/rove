@@ -7,6 +7,11 @@ final class AnalysisRun {
   var id: UUID { request.id }
   private(set) var status = RunStatus.preparing
   private(set) var progress: RunEvent?
+  private(set) var chainProgress: [Int: RunEvent] = [:]
+  var completedSteps: UInt64 {
+    if request.draft.settings.chains == 1 { return progress?.step ?? 0 }
+    return (1...request.draft.settings.chains).map { chainProgress[$0]?.step ?? 0 }.min() ?? 0
+  }
   private(set) var result: RunResult?
   private(set) var began = Date()
   private(set) var ended: Date?
@@ -20,7 +25,7 @@ final class AnalysisRun {
     guard task == nil else { return }
     began = Date()
     let (stream, continuation) = AsyncStream<RunEvent>.makeStream(
-      bufferingPolicy: .bufferingNewest(1))
+      bufferingPolicy: .unbounded)
     let request = request
     let worker = worker
     task = Task {
@@ -41,6 +46,7 @@ final class AnalysisRun {
   func receive(_ event: RunEvent, runID: UUID) {
     guard runID == id, isActive else { return }
     if event.step != nil { progress = event }
+    if let chain = event.chain { chainProgress[chain] = event }
     if status == .preparing, event.event != "failed" { status = .running }
   }
 

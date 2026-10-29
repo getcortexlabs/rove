@@ -323,7 +323,7 @@ Usamos la convención de autocovarianzas positivas por pares de BEAST 2.7.8, con
 retardos inferiores a 2.000; no es ESS de centro o colas normalizado por rangos.
 Las series constantes o con menos de cuatro valores retenidos tienen ESS no
 disponible. Se señala si la correlación positiva alcanza el límite de retardos
-evaluado. Estos números no activan un sello de convergencia ni una parada automática.
+evaluado. En esta vista de una sola cadena, estos números no activan un sello de convergencia ni una parada automática. La parada opcional entre varias cadenas se configura en el plan de exploración.
 
 El intervalo usa los percentiles 2,5 y 97,5 con interpolación lineal (tipo 7 de R).
 Describe la distribución retenida; **no es HPD** ni el error de Monte Carlo de la
@@ -356,3 +356,13 @@ Omite `--output` para emitir JSON o usa `--burnin-samples N` en lugar del porcen
 La carpeta de salida debe ser nueva. No se requiere Java ni Tracer.
 [Validación y mediciones](https://github.com/getcortexlabs/rove/blob/main/benchmarks/diagnostics/2026-10-29/README.md)
 incluyen series sintéticas y una referencia BEAST con versión fijada.
+
+## Comparar cadenas independientes
+
+![Comparación de cuatro cadenas independientes cortas](/images/macos-chains.png)
+
+En **Model → The exploration plan**, elige **1, 2 o 4 cadenas**. El número de pasos se aplica a cada cadena. Varias cadenas se ejecutan a la vez con semillas distintas y registradas; el progreso muestra cada una por separado. Cancelar cierra todo el grupo.
+
+Los grupos completados y sus detalles en History incluyen **Do the chains agree?**, con R-hat y ESS para todas las estadísticas registradas y una comparación de frecuencias de clados. Selecciona una cadena para abrir sus diagnósticos, resumir sus árboles o ver su carpeta. Las configuraciones guardadas conservan el número de cadenas; las antiguas siguen usando una sola. Los archivos permanecen separados para no tratar el burn-in de una cadena como continuación de otra.
+
+**Stop when diagnostic thresholds are met** es opcional y está desactivado por defecto. Usa 10% de burn-in, ESS ≥ 200 por cadena, R-hat ≤ 1,01 en todas las estadísticas escalares registradas, al menos 1.000 muestras retenidas por cadena y dos comprobaciones satisfactorias consecutivas. Se guardan el paso y el motivo de parada. Son criterios escalares, no una garantía de convergencia topológica; revisa clados y traces. Consulta [cadenas independientes](./sampler#cadenas-independientes) para las opciones y límites de la CLI.

@@ -123,6 +123,13 @@ The separately supplied [reference dataset](fixtures/reference/20x50/README.md)
 includes its BEAST 2 XML and provenance. Do not substitute one fixture for the
 other when reproducing a result.
 
+Independent chains now run in parallel with `rove sample --chains 2` or `--chains 4`.
+The native app offers 1, 2 or 4 chains, progress per chain, saved group history,
+R-hat, per-chain ESS and clade-frequency comparisons. Each chain keeps its own
+trace and tree files. Optional scalar diagnostic stopping is off by default;
+it does not certify topology convergence. See the [sampler guide](https://rove.getcortexlabs.com/guide/sampler).
+
+
 ## Roadmap
 
 1. Establish the scalar core, tests, CI and BEAST reference. Done.
@@ -133,15 +140,15 @@ other when reproducing a result.
 6. Add NEON where profiles of complete runs show kernel time. Done.
 7. Add the relaxed-clock reference model and check its components. Done.
 8. Validate complete inference on known matrices. Done for six 20-taxon cases.
-9. Improve relaxed-clock sampling efficiency.
-10. Run parallel chains with convergence reports, add checkpoints and rescale
-    by powers of two.
-11. Partition characters by number of states, condition on
+9. Evaluate relaxed-clock proposals. Done; classical defaults retained.
+10. Run independent chains in parallel and compare them. Done.
+11. Add checkpoints and rescale by powers of two.
+12. Partition characters by number of states, condition on
     parsimony-informative characters and support ordered characters.
-12. Add marginal likelihoods, the fossilized birth–death prior with tip dates
+13. Add marginal likelihoods, the fossilized birth–death prior with tip dates
     and posterior predictive checks.
-13. Evaluate subtree repeats.
-14. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
+14. Evaluate subtree repeats.
+15. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 
 ## Sampling trees
 

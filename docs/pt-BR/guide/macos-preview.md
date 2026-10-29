@@ -325,7 +325,7 @@ BEAST 2.7.8, com defasagens abaixo de 2.000. Não é ESS de centro ou caudas por
 normalização dos postos. Séries constantes ou com menos de quatro valores
 mantidos ficam com ESS indisponível. Se a correlação positiva chegar ao limite
 de defasagens avaliado, isso é indicado. Não há selo de convergência nem parada
-automática por esses números.
+automática por esses números nessa tela de uma cadeia. A parada opcional entre várias cadeias é configurada no plano de exploração.
 
 O intervalo usa os percentis 2,5 e 97,5 com interpolação linear (tipo 7 do R).
 Ele descreve a distribuição mantida; **não é HPD** nem o erro de Monte Carlo da
@@ -359,3 +359,13 @@ substitui a porcentagem por uma quantidade. A pasta de saída precisa ser nova.
 Não é necessário Java ou Tracer.
 [A validação e as medições](https://github.com/getcortexlabs/rove/blob/main/benchmarks/diagnostics/2026-10-29/README.md)
 incluem séries sintéticas e uma referência BEAST com versão fixada.
+
+## Comparando cadeias independentes
+
+![Comparação de quatro cadeias independentes curtas](/images/macos-chains.png)
+
+Em **Modelo → O plano de exploração**, escolha **1, 2 ou 4 cadeias**. O número de passos vale para cada cadeia. Várias cadeias rodam ao mesmo tempo, com sementes distintas e registradas; o progresso mostra cada uma separadamente. Cancelar encerra o grupo inteiro.
+
+Os grupos concluídos e seus detalhes no Histórico incluem **As cadeias concordam?**, com R-hat e ESS para todas as estatísticas registradas e comparação das frequências de clados. Selecione uma cadeia para abrir seus diagnósticos, resumir suas árvores ou ver sua pasta. As configurações salvas preservam a quantidade de cadeias; configurações antigas continuam com uma cadeia. Os arquivos ficam separados para que o burn-in de uma não seja tratado como continuação de outra.
+
+**Parar quando os critérios dos diagnósticos forem atingidos** é opcional e vem desligado. Usa 10% de burn-in, ESS ≥ 200 por cadeia, R-hat ≤ 1,01 em todas as estatísticas escalares registradas, pelo menos 1.000 amostras mantidas por cadeia e duas verificações positivas seguidas. O passo e o motivo da parada são salvos. São critérios de diagnóstico escalar, não uma garantia de convergência das topologias; confira clados e traces. Veja [cadeias independentes](./sampler#cadeias-independentes) para opções e limites da CLI.

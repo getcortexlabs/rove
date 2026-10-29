@@ -298,6 +298,66 @@ struct PreviewTests {
 
   }
 
+  @Test @MainActor func renderParallelChains() async throws {
+    guard ProcessInfo.processInfo.environment["CI"] == nil else { return }
+    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+      .deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+    let output = root.appendingPathComponent(".local/ui/parallel")
+    try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
+    _ = NSApplication.shared
+    NSApp.appearance = NSAppearance(named: .darkAqua)
+    Lab.registerFonts()
+    let suite = "rove-parallel-preview-\(UUID())"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let preferences = AppPreferences(defaults: defaults, preferredLanguages: ["en-US"])
+    let engine = root.appendingPathComponent("target/release/rove")
+    let matrix = root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
+    let report = try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine)
+    let workspace = Workspace(executable: engine, preferences: preferences)
+    workspace.report = report
+    workspace.file = matrix
+    workspace.outgroup = "T20"
+    workspace.page = .model
+    workspace.settings.chains = 4
+    workspace.settings.steps = 200_000
+    workspace.settings.sampleEvery = 100
+    let session = output.appendingPathComponent("session-\(UUID())")
+    let request = RunRequest(
+      id: UUID(), executable: engine, directory: session,
+      draft: AnalysisDraft(
+        matrix: matrix, report: report, settings: workspace.settings, outgroup: "T20"))
+    let result = await RunProcess().execute(request) { _ in }
+    #expect(result.status == .completed)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      for kind in ["setup", "comparison"] {
+        let content =
+          kind == "setup"
+          ? AnyView(RootView(workspace: workspace))
+          : AnyView(
+            ScrollView {
+              ChainResultsView(
+                workspace: workspace, directory: session, settings: workspace.settings,
+                completed: true
+              )
+              .padding(28)
+            }.background(Lab.background).foregroundStyle(Lab.ink))
+        let view = NSHostingView(rootView: content)
+        let window = NSWindow(
+          contentRect: NSRect(x: 0, y: 0, width: 1240, height: kind == "setup" ? 1650 : 950),
+          styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.contentView = view
+        window.orderBack(nil)
+        try await capture(
+          view, to: output.appendingPathComponent("\(kind)-\(language.rawValue).png"))
+        window.close()
+      }
+    }
+  }
+
   @MainActor private func capture(_ view: NSView, to url: URL) async throws {
     try await Task.sleep(for: .milliseconds(350))
     view.layoutSubtreeIfNeeded()
