@@ -59,8 +59,8 @@ jobs:
         run: cargo clippy --locked --all-targets -- -D warnings
       - name: Run tests
         run: cargo test --locked
-      - name: Run the equality tests in an optimized build
-        run: cargo test --locked --release --test equality
+      - name: Run numerical and rate-model tests in an optimized build
+        run: cargo test --locked --release --test equality --test rates
 
   msrv:
     name: Rust 1.85 (minimum supported)

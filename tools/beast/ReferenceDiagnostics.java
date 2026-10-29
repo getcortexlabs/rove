@@ -2,8 +2,12 @@ package rove.reference;
 
 import beast.base.core.BEASTInterface;
 import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.branchratemodel.UCRelaxedClockModel;
 import beast.base.evolution.likelihood.TreeLikelihood;
 import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.substitutionmodel.JukesCantor;
+import beast.base.inference.distribution.Gamma;
+import beast.base.inference.distribution.LogNormalDistributionModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeParser;
@@ -248,17 +252,76 @@ public final class ReferenceDiagnostics {
         System.out.println("Clade extraction and NEXUS translation checks passed");
     }
 
+    /** Numerical checks for the rate model, independent of a chain's state. */
+    private static JSONObject rateModel() throws Exception {
+        JSONArray categories = new JSONArray();
+        // Include both support boundaries, small-shape underflow, and the two
+        // archived states. JukesCantor is only required to initialize SiteModel;
+        // the substitution model does not enter the gamma category calculation.
+        double[] shapes = {0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5,
+                0.810814173511043, 1, 2, 3.006475849547493, 5, 10, 20, 50, 100, 500, 1000};
+        for (double shape : shapes) {
+            SiteModel model = new SiteModel();
+            RealParameter parameter = new RealParameter();
+            parameter.initByName("value", Double.toString(shape));
+            model.initByName("substModel", new JukesCantor(), "gammaCategoryCount", 4,
+                    "shape", parameter);
+            categories.put(new JSONObject().put("shape", shape)
+                    .put("lower", parameter.getLower()).put("upper", parameter.getUpper())
+                    .put("rates", new JSONArray(model.getCategoryRates(null)))
+                    .put("weights", new JSONArray(model.getCategoryProportions(null))));
+        }
+        JSONArray priors = new JSONArray();
+        for (double sigma : new double[]{0.01, 0.2, 0.5142003313329568, 1, 5, 20}) {
+            LogNormalDistributionModel lognormal = new LogNormalDistributionModel();
+            lognormal.initByName("M", new RealParameter("1"), "S",
+                    new RealParameter(Double.toString(sigma)), "meanInRealSpace", true);
+            Gamma gamma = new Gamma();
+            gamma.initByName("alpha", new RealParameter("5"), "beta", new RealParameter("0.2"));
+            JSONArray densities = new JSONArray();
+            for (double rate : new double[]{1e-100, 0.25, 0.5, 1, 2, 10}) {
+                densities.put(new JSONObject().put("rate", rate).put("log_density", lognormal.logDensity(rate)));
+            }
+            priors.put(new JSONObject().put("sigma", sigma).put("sigma_log_density", gamma.logDensity(sigma))
+                    .put("rate_densities", densities));
+        }
+        JSONArray mappings = new JSONArray();
+        for (int rootIndex : new int[]{3, 4}) {
+            Tree tree = new TreeParser("((A:1,B:1):1,C:2);");
+            Node root = tree.getRoot();
+            Node other = tree.getNode(rootIndex);
+            other.setNr(root.getNr());
+            root.setNr(rootIndex);
+            tree.initArrays();
+            RealParameter rates = new RealParameter();
+            rates.initByName("value", "0.25 0.5 1.5 2", "lower", 1e-100);
+            LogNormalDistributionModel distribution = new LogNormalDistributionModel();
+            distribution.initByName("M", new RealParameter("1"), "S", new RealParameter("0.2"), "meanInRealSpace", true);
+            UCRelaxedClockModel clock = new UCRelaxedClockModel();
+            clock.initByName("tree", tree, "rates", rates, "distr", distribution);
+            JSONArray branches = new JSONArray();
+            for (Node node : tree.getNodesAsArray()) {
+                branches.put(clock.getRateForBranch(node));
+            }
+            mappings.put(new JSONObject().put("root", rootIndex).put("parameters", new JSONArray(rates.getValues()))
+                    .put("branch_rates", branches).put("lower_after_init", rates.getLower()));
+        }
+        return new JSONObject().put("gamma_categories", categories).put("clock_priors", priors)
+                .put("branch_mapping", mappings);
+    }
+
     public static void main(String[] args) throws Exception {
         PackageManager.loadExternalJars();
         JSONObject result;
         switch (args[0]) {
             case "summary" -> result = summarize(args[1], args[2], args[3], Integer.parseInt(args[4]));
             case "snapshot" -> result = snapshot(args[1], args[2]);
+            case "rate-model" -> result = rateModel();
             case "self-test" -> {
                 selfTest();
                 return;
             }
-            default -> throw new IllegalArgumentException("Expected summary, snapshot, or self-test");
+            default -> throw new IllegalArgumentException("Expected summary, snapshot, rate-model, or self-test");
         }
         Files.writeString(Path.of(args[args.length - 1]), result.toString(2) + "\n");
     }

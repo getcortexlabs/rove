@@ -9,7 +9,7 @@ Rove is a phylogenetic inference project written in Rust. It starts with a likel
 The name comes from exploring, wandering and discovering paths.
 
 ::: info Project status
-Early. The likelihood core with its direct Mk path and a NEON kernel for it, the Mkv correction, the NEXUS reader, pattern compression, numerical tests and a minimal standalone sampler are implemented. A BEAST 2.7.8 reference experiment is recorded. The relaxed-clock model of that experiment, an AVX2 code path and controlled cross-engine benchmarks remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
+Early. The likelihood core with its direct Mk path and a NEON kernel for it, the Mkv correction, the NEXUS reader, pattern compression, numerical tests and a minimal standalone sampler are implemented. A BEAST 2.7.8 reference experiment is recorded. The relaxed-clock [reference model](./reference-model) is implemented and checked at fixed states. Complete posterior validation, an AVX2 code path and controlled cross-engine benchmarks remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Why another kernel
@@ -31,7 +31,8 @@ The repository is one Rust crate with no runtime dependencies.
 - `model::Mk`: the Mk model with its closed-form transition matrix, for uniform or custom state frequencies, which are validated.
 - `ascertainment::VariableCharacters`: the Mkv correction for matrices of variable characters, checked against two fixed BEAST 2.7.8 states.
 - `reference::Problem`: a plain recursive implementation kept as the reference in tests.
-- `mcmc::Sampler` and the `rove sample` command: a Metropolis–Hastings sampler for binary characters under Mk or Mkv, a strict clock and a birth–death tree prior, with monophyly constraints. See [Sampling trees](./sampler).
+- `rates::GammaRates`, `rates::RelaxedClock`: [Mk + gamma, lognormal](./reference-model).
+- `mcmc::Sampler` and the `rove sample` command: a Metropolis–Hastings sampler for binary characters under Mk or Mkv, a strict or lognormal relaxed clock and a birth–death tree prior, with monophyly constraints. See [Sampling trees](./sampler).
 - `nexus::parse` and `data::Matrix::compress`: morphological input, preserved observations, explicit partitions and weighted site patterns. See [Reading NEXUS](./nexus).
 - Property tests that compare both kinds of core against the reference on random trees with 2 to 10 tips, 2 to 6 states and 1 to 4 rate categories, including branch lengths from 10⁻⁹ to 100 and sequences of accepted and rejected changes.
 - A synthetic positive-control matrix of 20 taxa and 50 binary characters, with the script that generates it and degraded variants.
@@ -40,7 +41,7 @@ The [likelihood core](./kernel) page shows how to call it. The [synthetic matric
 
 ## What does not exist yet
 
-- The rest of the reference model: gamma rate variation and the relaxed clock, as well as multiple partitions.
+- Multiple partitions, tip dates, calibrations and additional tree priors.
 - An AVX2 code path. Targets other than aarch64 run the portable code.
 - Controlled performance benchmarks against BEAST or BEAGLE.
 - A user interface and the optional BEAST 2 or BEAGLE adapters.

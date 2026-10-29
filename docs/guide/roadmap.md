@@ -18,8 +18,8 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Direct Mk pruning | Done |
 | Minimal standalone MCMC | Done |
 | NEON vectorisation | Done |
-| Relaxed-clock reference model | Next, #16 |
-| Complete inference validation | Planned, #12 |
+| Relaxed-clock reference model | Done, #16 |
+| Complete inference validation | Next, #12 |
 | Evaluation of repeats within subtrees | Planned, #17 |
 | Optional BEAST 2 JNI and BEAGLE C ABI adapters | Possible, #6 and #7 |
 
@@ -37,7 +37,7 @@ The direct Mk path replaces the generic matrix product for Mk models. On Apple M
 
 ## Standalone inference
 
-The [minimal sampler](./sampler) supports binary Mk or Mkv, a strict clock and the birth–death prior. With the same moves and fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the reference matrix met criteria fixed before the runs ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). The relaxed-clock configuration of the reference analysis comes next. Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
+The [minimal sampler](./sampler) supports binary Mk or Mkv, a strict clock and the birth–death prior. With the same moves and fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the reference matrix met criteria fixed before the runs ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). The [reference model](./reference-model), with gamma categories and the lognormal relaxed clock, now reproduces both archived states component by component. Complete posterior comparisons for it come next. Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
 
 The intended product is a native macOS application. Application UI work has not started. BEAST and BEAGLE adapters are optional compatibility paths, not dependencies of the Rust engine.
 

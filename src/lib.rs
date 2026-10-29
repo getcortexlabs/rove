@@ -6,6 +6,7 @@ pub mod mcmc;
 pub mod model;
 pub mod nexus;
 pub mod random;
+pub mod rates;
 pub mod reference;
 pub mod speciation;
 pub mod tree;

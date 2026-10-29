@@ -9,7 +9,7 @@ O Rove é um projeto de inferência filogenética escrito em Rust. Ele começa c
 O nome vem de explorar, vagar e descobrir caminhos.
 
 ::: info Status do projeto
-Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON para ele, a correção Mkv, o leitor de NEXUS, a compressão de padrões, os testes numéricos e um amostrador independente mínimo estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. O modelo de relógio relaxado desse experimento, um caminho de código AVX2 e benchmarks controlados entre motores continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
+Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON para ele, a correção Mkv, o leitor de NEXUS, a compressão de padrões, os testes numéricos e um amostrador independente mínimo estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. O [modelo de referência](./reference-model) com relógio relaxado está implementado e conferido em estados fixos. A validação completa da posterior, um caminho AVX2 e benchmarks controlados entre motores continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Por que outro kernel
@@ -31,7 +31,8 @@ O repositório é uma única crate Rust, sem dependências em tempo de execuçã
 - `model::Mk`: o modelo Mk com sua matriz de transição em forma fechada, para frequências de estados uniformes ou personalizadas, que são validadas.
 - `ascertainment::VariableCharacters`: a correção Mkv para matrizes de caracteres variáveis, verificada contra dois estados fixos do BEAST 2.7.8.
 - `reference::Problem`: uma implementação recursiva simples, mantida como referência nos testes.
-- `mcmc::Sampler` e o comando `rove sample`: um amostrador de Metropolis–Hastings para caracteres binários sob Mk ou Mkv, relógio estrito e um prior de nascimento–morte para a árvore, com restrições de monofilia. Veja [Amostrando árvores](./sampler).
+- `rates::GammaRates`, `rates::RelaxedClock`: [Mk + gama, lognormal](./reference-model).
+- `mcmc::Sampler` e o comando `rove sample`: um amostrador de Metropolis–Hastings para caracteres binários sob Mk ou Mkv, relógio estrito ou relaxado lognormal e um prior de nascimento–morte para a árvore, com restrições de monofilia. Veja [Amostrando árvores](./sampler).
 - `nexus::parse` e `data::Matrix::compress`: entrada morfológica, observações preservadas, partições explícitas e padrões de sítio ponderados. Veja [Lendo NEXUS](./nexus).
 - Testes de propriedade que comparam os dois tipos de núcleo com a referência em árvores aleatórias com 2 a 10 terminais, 2 a 6 estados e 1 a 4 categorias de taxa, incluindo comprimentos de ramo de 10⁻⁹ a 100 e sequências de mudanças aceitas e rejeitadas.
 - Uma matriz sintética de controle positivo com 20 táxons e 50 caracteres binários, com o script que a gera e variantes degradadas.
@@ -40,7 +41,7 @@ A página do [núcleo de verossimilhança](./kernel) mostra como chamá-lo. A p�
 
 ## O que ainda não existe
 
-- O restante do modelo de referência: variação de taxas gama e o relógio relaxado, além de múltiplas partições.
+- Múltiplas partições, datas de terminais, calibrações e outros priors de árvore.
 - Um caminho de código AVX2. Alvos que não são aarch64 rodam o código portátil.
 - Benchmarks controlados de desempenho contra o BEAST ou o BEAGLE.
 - Uma interface de usuário e os adaptadores opcionais para BEAST 2 ou BEAGLE.

@@ -1,9 +1,10 @@
 //! A Metropolis–Hastings sampler for binary morphological characters on a
 //! time tree.
 //!
-//! The model is Mk with one rate category, optionally conditioned on variable
-//! characters (Mkv), under a strict clock with rate 1, so node heights are in
-//! expected changes per character. The tree prior is the birth–death prior in
+//! The model is Mk, optionally conditioned on variable characters (Mkv),
+//! with one rate or four gamma categories, and a strict or lognormal relaxed
+//! clock. The clock-rate and mutation-rate multipliers are fixed at one.
+//! The tree prior is the birth–death prior in
 //! `speciation`, with Uniform(0, `birth_difference_upper`) on λ − μ and
 //! Uniform(0, 1) on μ / λ. Monophyly constraints restrict the topology.
 
@@ -16,6 +17,7 @@ use crate::ascertainment::{self, VariableCharacters};
 use crate::data::Patterns;
 use crate::model::Mk;
 use crate::random::Random;
+use crate::rates::{self, GammaRates, RateVariation, RelaxedClock};
 use crate::speciation::BirthDeath;
 use crate::tree::Tree;
 use crate::{Backend, LikelihoodCore, Scaling};
@@ -41,11 +43,16 @@ pub enum Error {
     InitialState,
     /// The likelihood backend is not part of this build.
     Backend(Backend),
+    Rates(rates::Error),
+    /// A rate move is selected without its corresponding model component.
+    RateMove(Move),
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::Rates(error) => error.fmt(f),
+            Self::RateMove(kind) => write!(f, "{} needs its rate model to be enabled", kind.name()),
             Self::TooFewTaxa(taxa) => write!(f, "a tree needs at least two taxa, not {taxa}"),
             Self::States(states) => write!(
                 f,
@@ -80,6 +87,7 @@ impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
             Self::Ascertainment(error) => Some(error),
+            Self::Rates(error) => Some(error),
             _ => None,
         }
     }
@@ -96,6 +104,11 @@ pub enum Conditioning {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Settings {
     pub conditioning: Conditioning,
+    /// Four midpoint gamma categories, starting at this shape; None uses one rate.
+    pub gamma_shape: Option<f64>,
+    /// Explicit lognormal branch rates, starting at 0.5 with this sigma.
+    /// None uses a strict clock. Both clock-rate multipliers are fixed at one.
+    pub clock_sigma: Option<f64>,
     /// Ignore the data: the chain samples the prior.
     pub sample_from_prior: bool,
     /// Tip sets that must stay monophyletic.
@@ -120,6 +133,8 @@ impl Default for Settings {
     fn default() -> Self {
         Self {
             conditioning: Conditioning::Variable,
+            gamma_shape: None,
+            clock_sigma: None,
             sample_from_prior: false,
             monophyly: Vec::new(),
             birth_difference_upper: 1000.0,
@@ -146,17 +161,42 @@ impl Default for Settings {
     }
 }
 
+impl Settings {
+    /// The reference model, with classical tree moves and three scale moves
+    /// instead of ORC's adaptive mixtures. Monophyly must be set explicitly.
+    pub fn reference() -> Self {
+        let mut settings = Self {
+            gamma_shape: Some(1.0),
+            clock_sigma: Some(0.2),
+            ..Self::default()
+        };
+        settings.weights.extend([
+            (Move::GammaShapeScale, 0.1),
+            (Move::ClockSigmaScale, 3.0),
+            (Move::BranchRateScale, 20.0),
+        ]);
+        settings
+    }
+}
+
 /// Log density components of a state.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Posterior {
     pub likelihood: f64,
     pub tree_prior: f64,
     pub parameter_prior: f64,
+    pub gamma_prior: f64,
+    pub clock_rate_prior: f64,
+    pub clock_sigma_prior: f64,
 }
 
 impl Posterior {
     pub fn prior(&self) -> f64 {
-        self.tree_prior + self.parameter_prior
+        self.tree_prior
+            + self.parameter_prior
+            + self.gamma_prior
+            + self.clock_rate_prior
+            + self.clock_sigma_prior
     }
 
     pub fn total(&self) -> f64 {
@@ -194,6 +234,7 @@ impl Likelihood {
         conditioning: Conditioning,
         backend: Backend,
         tree: &Tree,
+        rates: &RateVariation,
     ) -> Result<Self, Error> {
         let model = Mk::uniform(2);
         let variable = match conditioning {
@@ -205,8 +246,13 @@ impl Likelihood {
         let tips = variable
             .as_ref()
             .map_or(patterns.tip_partials(), VariableCharacters::tip_partials);
-        let mut core =
-            LikelihoodCore::mk(&model, tips[0].len() / 2, 1, tree.nodes(), Scaling::Always);
+        let mut core = LikelihoodCore::mk(
+            &model,
+            tips[0].len() / 2,
+            rates.category_rates().len(),
+            tree.nodes(),
+            Scaling::Always,
+        );
         core.set_backend(backend);
         for (tip, partials) in tips.iter().enumerate() {
             core.set_tip_partials(tip, partials);
@@ -220,9 +266,14 @@ impl Likelihood {
             order: Vec::with_capacity(tree.nodes()),
         };
         for node in tree.postorder() {
-            likelihood
-                .core
-                .set_node_distance(node, 0, tree.branch_length(node));
+            let distance = tree.branch_length(node) * rates.branch_rate(node, tree.root());
+            for (category, &rate) in rates.category_rates().iter().enumerate() {
+                likelihood.core.set_node_distance(
+                    node,
+                    category,
+                    category_distance(distance, rate),
+                );
+            }
             if let Some((a, b)) = tree.children(node) {
                 likelihood.core.calculate_partials(a, b, node);
             }
@@ -232,19 +283,26 @@ impl Likelihood {
 
     /// Recomputes the branches that differ from `before`, and the partials of
     /// their ancestors.
-    fn update(&mut self, tree: &Tree, before: &Tree) -> f64 {
+    fn update(&mut self, tree: &Tree, before: &Tree, rates: &RateVariation) -> f64 {
         let dirty = &mut self.dirty;
         dirty.fill(false);
         for node in 0..tree.nodes() {
-            if node == tree.root()
-                || (tree.parent(node) == before.parent(node)
-                    && tree.branch_length(node) == before.branch_length(node))
-            {
+            if node == tree.root() {
+                continue;
+            }
+            let distance = tree.branch_length(node) * rates.branch_rate(node, tree.root());
+            let unchanged =
+                rates.category_rates().iter().enumerate().all(|(c, r)| {
+                    self.core.node_distance(node, c) == category_distance(distance, *r)
+                });
+            if tree.parent(node) == before.parent(node) && unchanged {
                 continue;
             }
             self.core.set_node_matrix_for_update(node);
-            self.core
-                .set_node_distance(node, 0, tree.branch_length(node));
+            for (category, &rate) in rates.category_rates().iter().enumerate() {
+                self.core
+                    .set_node_distance(node, category, category_distance(distance, rate));
+            }
             let mut above = tree.parent(node);
             while let Some(p) = above.filter(|&p| !dirty[p]) {
                 dirty[p] = true;
@@ -258,20 +316,23 @@ impl Likelihood {
                 self.core.calculate_partials(a, b, node);
             }
         }
-        self.evaluate(tree.root())
+        self.evaluate(tree.root(), rates)
     }
 
     /// −∞ when the value is not a number or the Mkv correction is undefined.
-    fn evaluate(&mut self, root: usize) -> f64 {
+    fn evaluate(&mut self, root: usize, rates: &RateVariation) -> f64 {
         let value = match &self.variable {
             Some(variable) => {
-                self.core.integrate_partials(root, &[1.0]);
+                self.core.integrate_partials(root, rates.category_weights());
                 let lls = self.core.calculate_log_likelihoods(&self.frequencies);
                 variable.log_likelihood(lls).unwrap_or(f64::NEG_INFINITY)
             }
-            None => self
-                .core
-                .log_likelihood(root, &[1.0], &self.frequencies, &self.weights),
+            None => self.core.log_likelihood(
+                root,
+                rates.category_weights(),
+                &self.frequencies,
+                &self.weights,
+            ),
         };
         if value.is_nan() {
             f64::NEG_INFINITY
@@ -281,8 +342,16 @@ impl Likelihood {
     }
 }
 
+// A zero-rate category stays constant even when the product of a finite
+// branch length and a finite clock rate overflows to infinity.
+fn category_distance(distance: f64, rate: f64) -> f64 {
+    if rate == 0.0 { 0.0 } else { distance * rate }
+}
+
 pub struct Sampler {
     tree: Tree,
+    rates: RateVariation,
+    stored_rates: RateVariation,
     birth_death: BirthDeath,
     stored_tree: Tree,
     likelihood: Option<Likelihood>,
@@ -315,7 +384,7 @@ impl Sampler {
             &check_constraints(&settings.monophyly, tips)?,
             &mut random,
         );
-        Self::from_tree(patterns, settings, tree, random)
+        Self::from_tree(patterns, settings, tree, None, random)
     }
 
     /// A chain that starts from `tree`, whose tips must be at height zero.
@@ -325,13 +394,26 @@ impl Sampler {
         tree: Tree,
         seed: u64,
     ) -> Result<Self, Error> {
-        Self::from_tree(patterns, settings, tree, Random::new(seed))
+        Self::from_tree(patterns, settings, tree, None, Random::new(seed))
+    }
+
+    /// A fixed rate state, for resuming model calculations and numerical
+    /// comparisons. Rate-component presence must match the settings.
+    pub fn with_rates(
+        patterns: &Patterns,
+        settings: &Settings,
+        tree: Tree,
+        rates: RateVariation,
+        seed: u64,
+    ) -> Result<Self, Error> {
+        Self::from_tree(patterns, settings, tree, Some(rates), Random::new(seed))
     }
 
     fn from_tree(
         patterns: &Patterns,
         settings: &Settings,
         tree: Tree,
+        given_rates: Option<RateVariation>,
         random: Random,
     ) -> Result<Self, Error> {
         let states = patterns.symbols().len();
@@ -344,6 +426,41 @@ impl Sampler {
             (0..tips).all(|t| tree.height(t) == 0.0),
             "tips must be at height zero"
         );
+        let rates = match given_rates {
+            Some(rates) => rates,
+            None => RateVariation {
+                gamma: settings
+                    .gamma_shape
+                    .map(GammaRates::new)
+                    .transpose()
+                    .map_err(Error::Rates)?,
+                clock: settings
+                    .clock_sigma
+                    .map(|sigma| RelaxedClock::new(sigma, vec![0.5; tree.nodes() - 1]))
+                    .transpose()
+                    .map_err(Error::Rates)?,
+            },
+        };
+        if rates.gamma.is_some() != settings.gamma_shape.is_some() {
+            return Err(Error::Rates(rates::Error::Shape));
+        }
+        if rates.clock.is_some() != settings.clock_sigma.is_some()
+            || rates
+                .clock
+                .as_ref()
+                .is_some_and(|c| c.rates().len() != tree.nodes() - 1)
+        {
+            return Err(Error::Rates(rates::Error::BranchRates));
+        }
+        for &(kind, weight) in &settings.weights {
+            if weight > 0.0
+                && ((kind == Move::GammaShapeScale && rates.gamma.is_none())
+                    || (matches!(kind, Move::ClockSigmaScale | Move::BranchRateScale)
+                        && rates.clock.is_none()))
+            {
+                return Err(Error::RateMove(kind));
+            }
+        }
         let constraints = check_constraints(&settings.monophyly, tips)?
             .iter()
             .map(|clade| (0..tips).map(|t| clade.contains(&t)).collect())
@@ -394,10 +511,13 @@ impl Sampler {
                 settings.conditioning,
                 settings.backend,
                 &tree,
+                &rates,
             )?)
         };
         let mut sampler = Self {
             stored_tree: tree.clone(),
+            stored_rates: rates.clone(),
+            rates,
             tree,
             birth_death: settings.initial,
             likelihood,
@@ -408,6 +528,9 @@ impl Sampler {
                 likelihood: 0.0,
                 tree_prior: 0.0,
                 parameter_prior: 0.0,
+                gamma_prior: 0.0,
+                clock_rate_prior: 0.0,
+                clock_sigma_prior: 0.0,
             },
             operators,
             constraints,
@@ -421,10 +544,14 @@ impl Sampler {
             steps: 0,
         };
         sampler.posterior = sampler.recompute()?;
-        if sampler.posterior.total() == f64::NEG_INFINITY || !sampler.satisfies_constraints() {
+        if !sampler.posterior.total().is_finite() || !sampler.satisfies_constraints() {
             return Err(Error::InitialState);
         }
         Ok(sampler)
+    }
+
+    pub fn rates(&self) -> &RateVariation {
+        &self.rates
     }
 
     pub fn tree(&self) -> &Tree {
@@ -447,7 +574,7 @@ impl Sampler {
         self.steps
     }
 
-    fn priors(&self) -> (f64, f64) {
+    fn priors(&self) -> Posterior {
         let BirthDeath {
             birth_difference: r,
             relative_death: a,
@@ -458,7 +585,22 @@ impl Sampler {
         } else {
             f64::NEG_INFINITY
         };
-        (self.birth_death.log_density(&self.tree), parameters)
+        Posterior {
+            likelihood: 0.0,
+            tree_prior: self.birth_death.log_density(&self.tree),
+            parameter_prior: parameters,
+            gamma_prior: self.rates.gamma.as_ref().map_or(0.0, GammaRates::log_prior),
+            clock_rate_prior: self
+                .rates
+                .clock
+                .as_ref()
+                .map_or(0.0, RelaxedClock::log_rate_prior),
+            clock_sigma_prior: self
+                .rates
+                .clock
+                .as_ref()
+                .map_or(0.0, RelaxedClock::log_sigma_prior),
+        }
     }
 
     fn satisfies_constraints(&mut self) -> bool {
@@ -474,19 +616,19 @@ impl Sampler {
 
     /// Every posterior component evaluated from scratch, with a new core.
     pub fn recompute(&self) -> Result<Posterior, Error> {
-        let (tree_prior, parameter_prior) = self.priors();
-        let likelihood = match &self.likelihood {
+        let mut posterior = self.priors();
+        posterior.likelihood = match &self.likelihood {
             None => 0.0,
-            Some(_) => {
-                Likelihood::new(&self.patterns, self.conditioning, self.backend, &self.tree)?
-                    .evaluate(self.tree.root())
-            }
+            Some(_) => Likelihood::new(
+                &self.patterns,
+                self.conditioning,
+                self.backend,
+                &self.tree,
+                &self.rates,
+            )?
+            .evaluate(self.tree.root(), &self.rates),
         };
-        Ok(Posterior {
-            likelihood,
-            tree_prior,
-            parameter_prior,
-        })
+        Ok(posterior)
     }
 
     /// One Metropolis–Hastings step. Returns the move and whether it was accepted.
@@ -496,12 +638,14 @@ impl Sampler {
         let kind = self.operators[index].kind;
         let stored_birth_death = self.birth_death;
         self.stored_tree.clone_from(&self.tree);
+        self.stored_rates.clone_from(&self.rates);
         if let Some(likelihood) = &mut self.likelihood {
             likelihood.core.store();
         }
         let proposal = kind.propose(
             &mut self.tree,
             &mut self.birth_death,
+            &mut self.rates,
             self.birth_difference_upper,
             self.operators[index].tuning,
             &mut self.random,
@@ -513,19 +657,14 @@ impl Sampler {
         let mut log_alpha = f64::NEG_INFINITY;
         let mut accepted = false;
         if let Some(log_hastings) = valid {
-            let (tree_prior, parameter_prior) = self.priors();
-            let likelihood = match &mut self.likelihood {
-                _ if !kind.changes_tree() => self.posterior.likelihood,
-                Some(l) if tree_prior + parameter_prior > f64::NEG_INFINITY => {
-                    l.update(&self.tree, &self.stored_tree)
+            let mut proposed = self.priors();
+            proposed.likelihood = match &mut self.likelihood {
+                _ if !kind.changes_likelihood() => self.posterior.likelihood,
+                Some(l) if proposed.prior().is_finite() => {
+                    l.update(&self.tree, &self.stored_tree, &self.rates)
                 }
                 Some(_) => f64::NEG_INFINITY,
                 None => 0.0,
-            };
-            let proposed = Posterior {
-                likelihood,
-                tree_prior,
-                parameter_prior,
             };
             log_alpha = proposed.total() - self.posterior.total() + log_hastings;
             accepted = log_alpha >= 0.0
@@ -543,6 +682,7 @@ impl Sampler {
         if !accepted {
             std::mem::swap(&mut self.tree, &mut self.stored_tree);
             self.birth_death = stored_birth_death;
+            std::mem::swap(&mut self.rates, &mut self.stored_rates);
             if let Some(likelihood) = &mut self.likelihood {
                 likelihood.core.restore();
             }

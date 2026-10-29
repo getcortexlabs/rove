@@ -7,7 +7,7 @@ description: "O que o núcleo de verossimilhança do Rove calcula hoje e como ch
 `LikelihoodCore` calcula a log-verossimilhança de uma árvore binária enraizada para uma matriz de padrões de sítio. Cada ramo é informado por categoria de taxa, como uma distância sob o modelo Mk ou como uma matriz de transição. Esta página descreve a API como ela existe no repositório. Ainda não há crate no crates.io; para experimentar, use o repositório como dependência Git.
 
 ::: info Escopo
-O núcleo recebe distâncias de ramo ou matrizes de transição, além dos dados de terminais, e devolve verossimilhanças. O [leitor de NEXUS](./nexus), que é separado, prepara observações e pesos de padrões, e a [correção Mkv](#condicionando-a-caracteres-variaveis) condiciona a verossimilhança a caracteres variáveis. O cálculo de taxas gama continua como trabalho futuro; as propostas de árvore fazem parte do [amostrador](./sampler). Veja o [roadmap](./roadmap).
+O núcleo recebe distâncias de ramo ou matrizes de transição, além dos dados de terminais, e devolve verossimilhanças. O [leitor de NEXUS](./nexus), que é separado, prepara observações e pesos de padrões, e a [correção Mkv](#condicionando-a-caracteres-variaveis) condiciona a verossimilhança a caracteres variáveis. O [modelo de referência](./reference-model) gera quatro categorias de taxas gama; as propostas de árvore fazem parte do [amostrador](./sampler). Veja o [roadmap](./roadmap).
 :::
 
 ## Nós e buffers

@@ -4,9 +4,9 @@ description: "如何在二态形态学矩阵上运行 Rove 的第一个独立采
 
 # 树的采样
 
-`rove sample` 在二态形态学矩阵上运行马尔可夫链蒙特卡罗分析，不依赖 BEAST。模型有意保持很小。gamma 速率变异、松弛时钟以及参考分析的其他组成部分都在[路线图](./roadmap)上。
+`rove sample` 无需 BEAST 即可对二态形态学矩阵运行马尔可夫链蒙特卡罗分析。默认配置使用严格时钟和一个速率类别。`--model reference` 启用[参考模型](./reference-model)，包含四个 gamma 类别和显式对数正态分枝速率。
 
-## 模型
+## 默认模型
 
 - **性状。** 一个由二态性状组成的分区，采用频率相等、只有一个速率类别的 Mk 模型。默认情况下，似然通过 [Mkv 校正](./kernel#以可变性状为条件)以可变性状为条件；`--conditioning none` 使用不加条件的 Mk。
 - **时钟。** 严格时钟，速率固定为 1。因此节点高度的单位是每个性状的期望变化次数，这也是参考分析的约定，该分析没有校准点。所有末端节点都在高度零处。
@@ -30,6 +30,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-every <n>` | 两次采样之间的步数，必须整除 `--steps`。初始状态是第 0 个样本。必需。 |
 | `--monophyly <分类单元>` | 以逗号分隔的、必须构成一个支系的分类单元名称；与矩阵中一样，`_` 表示空格。可以重复。 |
 | `--gaps reject\|missing` | 拒绝含缺口的矩阵（默认），或把缺口当作缺失数据读取。 |
+| `--model strict\|reference` | 单类别严格时钟（默认），或带 gamma 与松弛时钟的参考模型。 |
 | `--conditioning variable\|none` | Mkv（默认）或 Mk。 |
 | `--sample-from-prior` | 忽略性状，从先验中采样。 |
 | `--no-tuning` | 保持所有滑动步长和缩放因子固定不变。 |
@@ -42,6 +43,8 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 在同一平台上使用相同的可执行文件、输入、设置和种子，一次运行会产生相同的样本，与后端无关。对数和指数来自平台的数学库，因此在另一平台上，最后几位数字可能不同，随后链会分叉。
 
 ## 输出文件
+
+以下文件说明默认配置。[参考配置](./reference-model#提议与输出)在轨迹中增加速率参数和先验，并在树中标注分枝速率。
 
 - **`trace.log`** 以制表符分隔，前面是以 `#` 开头的行，记录版本、命令，以及输入和可执行文件的 SHA-256。列依次为 `Sample`、`posterior`、`likelihood`、`prior`、`birth_death`（树先验的对数密度）、`birth_difference_rate`、`relative_death_rate`、`tree_height` 和 `tree_length`。它的格式与 BEAST 的轨迹文件相同，BEAST 的 LogAnalyser 可以读取。
 - **`trees.nexus`** 是带有翻译表的 NEXUS 树块，每个样本一棵树，BEAST 的 NexusParser 可以读取。分类单元名称中的空格写作 `_`。枝长的单位是每个性状的期望变化次数。
@@ -86,13 +89,13 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 
 ## 与 BEAST 的比较
 
-Rove 和 BEAST 2.7.8 在这个模型下对参考矩阵进行了采样，分别使用和不使用 Mkv 校正，采用相同的移动、权重和固定步长，每个引擎各四条链。每个后验均值与 BEAST 的差都不超过四个合并的蒙特卡罗标准误，每个支系频率的差都不超过 0.05，这些标准都是在运行之前确定的。接受率不在这些标准之内；在每个引擎 36 条 Mkv 链上，没有任何移动的接受率相差超过 1.7 个标准误。
+Rove 和 BEAST 2.7.8 在单类别严格时钟模型下对参考矩阵进行了采样，分别使用和不使用 Mkv 校正，采用相同的移动、权重和固定步长，每个引擎各四条链。每个后验均值与 BEAST 的差都不超过四个合并的蒙特卡罗标准误，每个支系频率的差都不超过 0.05，这些标准都是在运行之前确定的。接受率不在这些标准之内；在每个引擎 36 条 Mkv 链上，没有任何移动的接受率相差超过 1.7 个标准误。
 
 该矩阵没有同塑性，因此在 Mkv 下，似然不会惩罚很短的树：后验树高约为每个性状 0.003 次期望变化，λ − μ 的后验被其先验上限 1000 截断，拓扑几乎不变。在 Mk 下，参考拓扑在两个引擎每条链中的后验频率都在 0.82 到 0.83 之间。[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)给出了具体数字、运行时间和命令。
 
 ## 局限
 
-- 只支持一个二态性状分区。gamma 速率变异、松弛时钟、末端日期、校准和其他树先验尚未实现；参考分析的组成部分在 [#16](https://github.com/getcortexlabs/rove/issues/16) 中跟踪。
+- 只支持一个二态性状分区。末端日期、校准、其他时钟分布和其他树先验尚未实现。参考模型的完整后验验证由 [#12](https://github.com/getcortexlabs/rove/issues/12) 跟踪。
 - 初始树是随机的，节点时间类似于溯祖过程，并满足各项约束。
 - 单条链，单线程。运行无法从检查点恢复。
 - 该命令不计算收敛诊断。代码仓库中 `tools/beast` 下的脚本可以根据它的输出计算这些诊断。

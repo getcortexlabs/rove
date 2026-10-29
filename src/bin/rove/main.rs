@@ -16,7 +16,7 @@ use rove::{Backend, nexus};
 const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
-                   [--conditioning variable|none] [--sample-from-prior]
+                   [--model strict|reference] [--conditioning variable|none] [--sample-from-prior]
                    [--no-tuning] [--tuning <move>=<value>]... [--backend portable|neon]
                    [--print-every <n>]";
 
@@ -32,6 +32,7 @@ struct Options {
     monophyly: Vec<Vec<String>>,
     gaps: GapTreatment,
     conditioning: Conditioning,
+    reference_model: bool,
     sample_from_prior: bool,
     tuning: bool,
     tuning_values: Vec<(Move, f64)>,
@@ -49,6 +50,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut monophyly = Vec::new();
     let mut gaps = GapTreatment::Reject;
     let mut conditioning = Conditioning::Variable;
+    let mut reference_model = false;
     let mut sample_from_prior = false;
     let mut tuning = true;
     let mut tuning_values = Vec::new();
@@ -105,6 +107,17 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                     }
                 }
             }
+            "--model" => {
+                reference_model = match value("--model")?.as_str() {
+                    "strict" => false,
+                    "reference" => true,
+                    other => {
+                        return Err(format!(
+                            "--model must be strict or reference, not {other:?}"
+                        ));
+                    }
+                };
+            }
             "--backend" => {
                 let name = value("--backend")?;
                 backend = Backend::ALL
@@ -146,6 +159,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         monophyly,
         gaps,
         conditioning,
+        reference_model,
         sample_from_prior,
         tuning,
         tuning_values,
@@ -283,7 +297,11 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
         tuning: options.tuning,
         tuning_values: options.tuning_values.clone(),
         backend: options.backend,
-        ..Settings::default()
+        ..if options.reference_model {
+            Settings::reference()
+        } else {
+            Settings::default()
+        }
     };
     let mut sampler = Sampler::new(&patterns, &settings, options.seed)?;
 
@@ -320,9 +338,10 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
             executable.as_deref().unwrap_or("unknown")
         ),
     ];
-    let mut trace = TraceWriter::new(
+    let mut trace = TraceWriter::with_rates(
         BufWriter::new(File::create(options.output.join("trace.log"))?),
         &comments,
+        sampler.rates(),
     )?;
     let mut trees = TreeWriter::new(
         BufWriter::new(File::create(options.output.join("trees.nexus"))?),
@@ -422,14 +441,68 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
             Json::Object(vec![
                 (
                     "substitution",
-                    Json::text("Mk, two states, equal frequencies, one rate category"),
+                    Json::text(if options.reference_model {
+                        "Mk, two states, equal frequencies, four midpoint gamma categories normalized to mean one"
+                    } else {
+                        "Mk, two states, equal frequencies, one rate category"
+                    }),
+                ),
+                (
+                    "preset",
+                    Json::text(if options.reference_model {
+                        "reference"
+                    } else {
+                        "strict"
+                    }),
                 ),
                 ("conditioning", Json::text(conditioning)),
+                ("mutation_rate", Json::Number(1.0)),
+                ("clock_multiplier", Json::Number(1.0)),
+                (
+                    "gamma_shape_prior",
+                    if options.reference_model {
+                        Json::text(
+                            "Exponential(mean=1), parameter bounds [0.001, 1000], density without truncation normalization",
+                        )
+                    } else {
+                        Json::Null
+                    },
+                ),
+                (
+                    "clock_sigma_prior",
+                    if options.reference_model {
+                        Json::text("Gamma(shape=5, scale=0.2)")
+                    } else {
+                        Json::Null
+                    },
+                ),
+                (
+                    "branch_rate_prior",
+                    if options.reference_model {
+                        Json::text(
+                            "independent LogNormal(mu=-sigma^2/2, sigma), positive rates; BEAST clock initialization sets lower bound to zero",
+                        )
+                    } else {
+                        Json::Null
+                    },
+                ),
+                (
+                    "rate_mapping",
+                    if options.reference_model {
+                        Json::text(
+                            "node index; last node uses the root index when it is not the root; root has no branch rate",
+                        )
+                    } else {
+                        Json::Null
+                    },
+                ),
                 (
                     "clock",
-                    Json::text(
-                        "strict, rate fixed at 1; heights in expected changes per character",
-                    ),
+                    Json::text(if options.reference_model {
+                        "lognormal explicit branch rates; real-space distribution mean 1; no realized-mean normalization; fixed clock multiplier 1"
+                    } else {
+                        "strict, rate fixed at 1; heights in expected changes per character"
+                    }),
                 ),
                 (
                     "tree_prior",
@@ -453,6 +526,16 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
             "settings",
             Json::Object(vec![
                 ("seed", Json::Integer(options.seed)),
+                ("initial_gamma_shape", optional(settings.gamma_shape)),
+                ("initial_clock_sigma", optional(settings.clock_sigma)),
+                (
+                    "initial_branch_rate",
+                    if options.reference_model {
+                        Json::Number(0.5)
+                    } else {
+                        Json::Null
+                    },
+                ),
                 ("steps", Json::Integer(options.steps)),
                 ("sample_every", Json::Integer(options.sample_every)),
                 (
@@ -481,6 +564,52 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
                 ("posterior", Json::Number(posterior.total())),
                 ("likelihood", Json::Number(posterior.likelihood)),
                 ("tree_prior", Json::Number(posterior.tree_prior)),
+                ("parameter_prior", Json::Number(posterior.parameter_prior)),
+                ("gamma_prior", Json::Number(posterior.gamma_prior)),
+                ("clock_rate_prior", Json::Number(posterior.clock_rate_prior)),
+                (
+                    "clock_sigma_prior",
+                    Json::Number(posterior.clock_sigma_prior),
+                ),
+                (
+                    "gamma_shape",
+                    optional(sampler.rates().gamma.as_ref().map(|g| g.shape())),
+                ),
+                (
+                    "category_rates",
+                    Json::List(
+                        sampler
+                            .rates()
+                            .category_rates()
+                            .iter()
+                            .copied()
+                            .map(Json::Number)
+                            .collect(),
+                    ),
+                ),
+                (
+                    "category_weights",
+                    Json::List(
+                        sampler
+                            .rates()
+                            .category_weights()
+                            .iter()
+                            .copied()
+                            .map(Json::Number)
+                            .collect(),
+                    ),
+                ),
+                (
+                    "clock_sigma",
+                    optional(sampler.rates().clock.as_ref().map(|c| c.sigma())),
+                ),
+                (
+                    "branch_rate_parameters",
+                    sampler.rates().clock.as_ref().map_or(Json::Null, |c| {
+                        Json::List(c.rates().iter().copied().map(Json::Number).collect())
+                    }),
+                ),
+                ("root_node", Json::Integer(sampler.tree().root() as u64)),
             ]),
         ),
         ("started_unix_seconds", Json::Integer(started)),

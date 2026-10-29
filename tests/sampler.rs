@@ -334,7 +334,7 @@ fn cached_calculations_match_a_fresh_evaluation_and_rejections_restore_the_state
                 "{kind:?}: {fresh:?} != {current:?}"
             );
         }
-        for kind in Move::ALL {
+        for kind in Settings::default().weights.iter().map(|&(kind, _)| kind) {
             let (yes, no) = accepted.get(&kind).copied().unwrap_or_default();
             assert!(yes > 0 && no > 0, "{kind:?} accepted {yes}, rejected {no}");
         }

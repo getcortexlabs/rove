@@ -18,8 +18,8 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Poda directa de Mk | Hecho |
 | MCMC independiente mínimo | Hecho |
 | Vectorización NEON | Hecho |
-| Modelo de referencia con reloj relajado | Siguiente, #16 |
-| Validación de la inferencia completa | Planificado, #12 |
+| Modelo de referencia con reloj relajado | Hecho, #16 |
+| Validación de inferencia completa | Siguiente, #12 |
 | Evaluación de repeticiones dentro de subárboles | Planificado, #17 |
 | Adaptadores opcionales de JNI para BEAST 2 y de C ABI para BEAGLE | Posible, #6 y #7 |
 
@@ -37,7 +37,7 @@ La ruta directa de Mk sustituye el producto genérico de matrices en los modelos
 
 ## Inferencia independiente
 
-El [muestreador mínimo](./sampler) admite Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). La configuración con reloj relajado del análisis de referencia es el siguiente paso. La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
+El [muestreador mínimo](./sampler) admite Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). El [modelo de referencia](./reference-model), con categorías gamma y reloj relajado lognormal, ya reproduce ambos estados archivados componente por componente. Las comparaciones completas de posteriores vienen después. La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
 
 El producto previsto es una aplicación nativa para macOS. El trabajo en la interfaz de la aplicación no ha comenzado. Los adaptadores de BEAST y BEAGLE son rutas de compatibilidad opcionales, no dependencias del motor en Rust.
 

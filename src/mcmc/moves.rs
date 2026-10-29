@@ -3,6 +3,7 @@
 //! Each returns the log Hastings ratio, or `None` when the move is invalid.
 
 use crate::random::Random;
+use crate::rates::{GammaRates, RateVariation};
 use crate::speciation::BirthDeath;
 use crate::tree::Tree;
 
@@ -27,10 +28,13 @@ pub enum Move {
     BirthDifferenceScale,
     /// `ScaleOperator` on μ / λ.
     RelativeDeathScale,
+    GammaShapeScale,
+    ClockSigmaScale,
+    BranchRateScale,
 }
 
 impl Move {
-    pub const ALL: [Move; 9] = [
+    pub const ALL: [Move; 12] = [
         Move::NodeHeight,
         Move::SubtreeSlide,
         Move::NarrowExchange,
@@ -40,6 +44,9 @@ impl Move {
         Move::TreeScale,
         Move::BirthDifferenceScale,
         Move::RelativeDeathScale,
+        Move::GammaShapeScale,
+        Move::ClockSigmaScale,
+        Move::BranchRateScale,
     ];
 
     pub fn name(self) -> &'static str {
@@ -53,6 +60,9 @@ impl Move {
             Self::TreeScale => "tree_scale",
             Self::BirthDifferenceScale => "birth_difference_scale",
             Self::RelativeDeathScale => "relative_death_scale",
+            Self::GammaShapeScale => "gamma_shape_scale",
+            Self::ClockSigmaScale => "clock_sigma_scale",
+            Self::BranchRateScale => "branch_rate_scale",
         }
     }
 
@@ -64,12 +74,26 @@ impl Move {
             | Self::TreeScale
             | Self::BirthDifferenceScale
             | Self::RelativeDeathScale => Some(0.75),
+            Self::GammaShapeScale | Self::ClockSigmaScale | Self::BranchRateScale => Some(0.5),
             _ => None,
         }
     }
 
     pub fn changes_tree(self) -> bool {
-        !matches!(self, Self::BirthDifferenceScale | Self::RelativeDeathScale)
+        matches!(
+            self,
+            Self::NodeHeight
+                | Self::SubtreeSlide
+                | Self::NarrowExchange
+                | Self::WideExchange
+                | Self::WilsonBalding
+                | Self::RootScale
+                | Self::TreeScale
+        )
+    }
+
+    pub fn changes_likelihood(self) -> bool {
+        self.changes_tree() || matches!(self, Self::GammaShapeScale | Self::BranchRateScale)
     }
 
     pub fn changes_topology(self) -> bool {
@@ -91,6 +115,7 @@ impl Move {
         self,
         tree: &mut Tree,
         birth_death: &mut BirthDeath,
+        rates: &mut RateVariation,
         upper: f64,
         tuning: Option<f64>,
         random: &mut Random,
@@ -108,6 +133,27 @@ impl Move {
                 scale(&mut birth_death.birth_difference, upper, tuning, random)
             }
             Self::RelativeDeathScale => scale(&mut birth_death.relative_death, 1.0, tuning, random),
+            Self::GammaShapeScale => {
+                let shape = rates.gamma.as_ref()?.shape();
+                let factor = scaler(tuning, random);
+                rates.gamma = Some(GammaRates::new(shape * factor).ok()?);
+                Some(-factor.ln())
+            }
+            Self::ClockSigmaScale => {
+                let clock = rates.clock.as_mut()?;
+                let factor = scaler(tuning, random);
+                clock
+                    .set_sigma(clock.sigma() * factor)
+                    .then(|| -factor.ln())
+            }
+            Self::BranchRateScale => {
+                let clock = rates.clock.as_mut()?;
+                let index = random.below(clock.rates().len());
+                let factor = scaler(tuning, random);
+                clock
+                    .set_rate(index, clock.rates()[index] * factor)
+                    .then(|| -factor.ln())
+            }
         }
     }
 }
@@ -364,6 +410,7 @@ mod tests {
 
     use super::{Move, scale};
     use crate::random::Random;
+    use crate::rates::RateVariation;
     use crate::speciation::BirthDeath;
     use crate::tree::Tree;
 
@@ -460,9 +507,14 @@ mod tests {
             };
             proposal.clone_from(&tree);
             let tuning = chosen.initial_tuning().map(|t| t.min(0.3));
-            if let Some(log_hastings) =
-                chosen.propose(&mut proposal, &mut birth_death, 1.0, tuning, &mut random)
-            {
+            if let Some(log_hastings) = chosen.propose(
+                &mut proposal,
+                &mut birth_death,
+                &mut RateVariation::default(),
+                1.0,
+                tuning,
+                &mut random,
+            ) {
                 let next = log_target(&proposal);
                 let log_alpha = next - current + log_hastings;
                 if log_alpha >= 0.0 || random.uniform() < log_alpha.exp() {

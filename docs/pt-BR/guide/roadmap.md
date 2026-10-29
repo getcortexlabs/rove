@@ -18,8 +18,8 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Poda direta do Mk | Concluído |
 | MCMC independente mínimo | Concluído |
 | Vetorização NEON | Concluído |
-| Modelo de referência com relógio relaxado | Próximo, #16 |
-| Validação completa da inferência | Planejado, #12 |
+| Modelo de referência com relógio relaxado | Concluído, #16 |
+| Validação da inferência completa | Próximo, #12 |
 | Avaliação de repetições dentro de subárvores | Planejado, #17 |
 | Adaptadores opcionais BEAST 2 JNI e BEAGLE C ABI | Possível, #6 e #7 |
 
@@ -37,7 +37,7 @@ O caminho direto do Mk substitui o produto genérico de matrizes nos modelos Mk.
 
 ## Inferência independente
 
-O [amostrador mínimo](./sampler) suporta Mk ou Mkv binário, um relógio estrito e o prior de nascimento–morte. Com os mesmos movimentos e passos fixos do BEAST 2.7.8, as suas médias posteriores e frequências de clados na matriz de referência atenderam a critérios fixados antes das execuções ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). A configuração com relógio relaxado da análise de referência vem a seguir. A validação avança das verossimilhanças em estados fixos até execuções completas em matrizes conhecidas. A qualidade da amostragem, incluindo ESS por tempo e diagnósticos de árvore, conta junto com o tempo de execução.
+O [amostrador mínimo](./sampler) suporta Mk ou Mkv binário, um relógio estrito e o prior de nascimento–morte. Com os mesmos movimentos e passos fixos do BEAST 2.7.8, as suas médias posteriores e frequências de clados na matriz de referência atenderam a critérios fixados antes das execuções ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). O [modelo de referência](./reference-model), com categorias gama e relógio relaxado lognormal, agora reproduz os dois estados arquivados componente por componente. A comparação completa das posteriores vem a seguir. A validação avança das verossimilhanças em estados fixos até execuções completas em matrizes conhecidas. A qualidade da amostragem, incluindo ESS por tempo e diagnósticos de árvore, conta junto com o tempo de execução.
 
 O produto pretendido é um aplicativo nativo para macOS. O trabalho na interface do aplicativo não começou. Os adaptadores BEAST e BEAGLE são caminhos de compatibilidade opcionais, não dependências da engine em Rust.
 

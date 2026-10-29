@@ -44,22 +44,24 @@ fn steps_do_not_allocate() {
         .compress(std::slice::from_ref(&sites), GapTreatment::Reject)
         .unwrap()
         .remove(0);
-    for conditioning in [Conditioning::Variable, Conditioning::None] {
-        let settings = Settings {
-            conditioning,
-            monophyly: vec![(0..19).collect(), vec![0, 1]],
-            tuning_delay: 100,
-            ..Settings::default()
-        };
-        let mut sampler = Sampler::new(&patterns, &settings, 11).unwrap();
-        for _ in 0..1000 {
-            sampler.step();
+    for base in [Settings::default(), Settings::reference()] {
+        for conditioning in [Conditioning::Variable, Conditioning::None] {
+            let settings = Settings {
+                conditioning,
+                monophyly: vec![(0..19).collect(), vec![0, 1]],
+                tuning_delay: 100,
+                ..base.clone()
+            };
+            let mut sampler = Sampler::new(&patterns, &settings, 11).unwrap();
+            for _ in 0..1000 {
+                sampler.step();
+            }
+            COUNTING.store(true, Ordering::Relaxed);
+            for _ in 0..20_000 {
+                sampler.step();
+            }
+            COUNTING.store(false, Ordering::Relaxed);
+            assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "{conditioning:?}");
         }
-        COUNTING.store(true, Ordering::Relaxed);
-        for _ in 0..20_000 {
-            sampler.step();
-        }
-        COUNTING.store(false, Ordering::Relaxed);
-        assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "{conditioning:?}");
     }
 }

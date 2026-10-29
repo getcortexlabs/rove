@@ -4,9 +4,9 @@ description: "Como executar o primeiro amostrador independente do Rove numa matr
 
 # Amostrando árvores
 
-`rove sample` executa uma análise de Monte Carlo via cadeias de Markov numa matriz morfológica binária, sem o BEAST. O modelo é pequeno de propósito. A variação de taxas gama, o relógio relaxado e os outros componentes da análise de referência estão no [roadmap](./roadmap).
+`rove sample` executa uma análise de Monte Carlo via cadeias de Markov numa matriz morfológica binária, sem o BEAST. A configuração padrão usa relógio estrito e uma categoria de taxa. `--model reference` ativa o [modelo de referência](./reference-model), com quatro categorias gama e taxas lognormais explícitas nos ramos.
 
-## O modelo
+## O modelo padrão
 
 - **Caracteres.** Uma partição de caracteres binários sob Mk com frequências iguais e uma categoria de taxa. Por padrão, a verossimilhança é condicionada a caracteres variáveis com a [correção Mkv](./kernel#condicionando-a-caracteres-variaveis); `--conditioning none` usa o Mk simples.
 - **Relógio.** Estrito, com a taxa fixa em 1. As alturas dos nós ficam, portanto, em mudanças esperadas por caractere, a convenção da análise de referência, que não tem calibrações. Todos os terminais estão na altura zero.
@@ -30,6 +30,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-every <n>` | Passos entre amostras; precisa dividir `--steps`. O estado inicial é a amostra 0. Opção obrigatória. |
 | `--monophyly <táxons>` | Nomes de táxons, separados por vírgula, que precisam formar um clado; como na matriz, `_` representa um espaço. Pode ser repetida. |
 | `--gaps reject\|missing` | Rejeitar matrizes com gaps (o padrão) ou ler os gaps como dados faltantes. |
+| `--model strict\|reference` | Relógio estrito com uma categoria (padrão) ou o modelo de referência com gama e relógio relaxado. |
 | `--conditioning variable\|none` | Mkv (o padrão) ou Mk. |
 | `--sample-from-prior` | Ignorar os caracteres e amostrar o prior. |
 | `--no-tuning` | Manter fixos todos os tamanhos de deslocamento e fatores de escala. |
@@ -42,6 +43,8 @@ O comando se encerra com uma mensagem quando recebe algo que não suporta: carac
 Com o mesmo executável, a mesma entrada, as mesmas configurações e a mesma semente, na mesma plataforma, uma execução produz as mesmas amostras, qualquer que seja o backend. Os logaritmos e as exponenciais vêm da biblioteca matemática da plataforma, então outra plataforma pode diferir nos últimos dígitos e, a partir daí, divergir.
 
 ## Arquivos de saída
+
+Os arquivos abaixo descrevem a configuração padrão. A [configuração de referência](./reference-model#propostas-e-saida) acrescenta parâmetros e priors de taxas ao traço e anota as taxas dos ramos nas árvores.
 
 - **`trace.log`** é separado por tabulações, depois de linhas iniciadas por `#` que registram a versão, o comando e o SHA-256 da entrada e do executável. Suas colunas são `Sample`, `posterior`, `likelihood`, `prior`, `birth_death` (a log-densidade do prior da árvore), `birth_difference_rate`, `relative_death_rate`, `tree_height` e `tree_length`. O formato é o de um traço do BEAST, e o LogAnalyser do BEAST consegue lê-lo.
 - **`trees.nexus`** é um bloco de árvores NEXUS com uma tabela de tradução e uma árvore por amostra, que o NexusParser do BEAST consegue ler. Os espaços nos nomes dos táxons são escritos como `_`. Os comprimentos de ramo estão em mudanças esperadas por caractere.
@@ -86,13 +89,13 @@ Antes de cada passo, o amostrador guarda a árvore e os parâmetros de taxa, e r
 
 ## Comparação com o BEAST
 
-O Rove e o BEAST 2.7.8 amostraram a matriz de referência sob este modelo, com e sem a correção Mkv, usando os mesmos movimentos, pesos e tamanhos de passo fixos, com quatro cadeias cada. Toda média posterior ficou a no máximo quatro erros-padrão de Monte Carlo combinados da média do BEAST, e toda frequência de clado a no máximo 0,05, os critérios fixados antes das execuções. As taxas de aceitação não faziam parte dos critérios; com 36 cadeias Mkv por motor, nenhum movimento diferiu em mais de 1,7 erro-padrão.
+O Rove e o BEAST 2.7.8 amostraram a matriz de referência sob o modelo de relógio estrito com uma categoria, com e sem a correção Mkv, usando os mesmos movimentos, pesos e tamanhos de passo fixos, com quatro cadeias cada. Toda média posterior ficou a no máximo quatro erros-padrão de Monte Carlo combinados da média do BEAST, e toda frequência de clado a no máximo 0,05, os critérios fixados antes das execuções. As taxas de aceitação não faziam parte dos critérios; com 36 cadeias Mkv por motor, nenhum movimento diferiu em mais de 1,7 erro-padrão.
 
 A matriz não tem homoplasia, então sob Mkv a verossimilhança não penaliza árvores curtas: a altura posterior da árvore fica em cerca de 0,003 mudanças esperadas por caractere, a posterior de λ − μ é cortada pelo limite superior do seu prior, 1000, e a topologia quase não se move. Sob Mk, a topologia de referência tem frequência posterior entre 0,82 e 0,83 em todas as cadeias dos dois motores. O [relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md) traz os números, os tempos de execução e os comandos.
 
 ## Limitações
 
-- Uma partição de caracteres binários. Variação de taxas gama, relógios relaxados, datas de terminais, calibrações e outros priors de árvore não estão implementados; os componentes da análise de referência são acompanhados na [#16](https://github.com/getcortexlabs/rove/issues/16).
+- Uma partição de caracteres binários. Datas de terminais, calibrações, outras distribuições de relógio e outros priors de árvore não estão implementados. A validação completa da posterior do modelo de referência está na [#12](https://github.com/getcortexlabs/rove/issues/12).
 - A árvore inicial é aleatória, com tempos de nós parecidos com os de um coalescente, e satisfaz as restrições.
 - Uma cadeia, numa thread. Uma execução não pode ser retomada de um checkpoint.
 - O comando não calcula diagnósticos de convergência. Os scripts do repositório em `tools/beast` os calculam a partir da saída dele.

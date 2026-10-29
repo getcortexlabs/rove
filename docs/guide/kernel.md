@@ -7,7 +7,7 @@ description: "What the Rove likelihood core computes today, and how to call it f
 `LikelihoodCore` computes the log likelihood of a rooted binary tree for a matrix of site patterns. Each branch is given per rate category, either as a distance under the Mk model or as a transition matrix. This page describes the API as it exists in the repository. There is no crate on crates.io yet; use the repository as a Git dependency to try it.
 
 ::: info Scope
-The core takes branch distances or transition matrices and tip data, and returns likelihoods. The separate [NEXUS reader](./nexus) prepares observations and pattern weights, and the [Mkv correction](#conditioning-on-variable-characters) conditions the likelihood on variable characters. Gamma-rate computation remains future work; tree proposals are part of the [sampler](./sampler). See the [roadmap](./roadmap).
+The core takes branch distances or transition matrices and tip data, and returns likelihoods. The separate [NEXUS reader](./nexus) prepares observations and pattern weights, and the [Mkv correction](#conditioning-on-variable-characters) conditions the likelihood on variable characters. The [reference model](./reference-model) generates four gamma rate categories; tree proposals are part of the [sampler](./sampler). See the [roadmap](./roadmap).
 :::
 
 ## Nodes and buffers

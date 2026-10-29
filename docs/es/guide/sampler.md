@@ -4,9 +4,9 @@ description: "Cómo ejecutar el primer muestreador independiente de Rove sobre u
 
 # Muestreo de árboles
 
-`rove sample` ejecuta un análisis de Monte Carlo por cadenas de Markov sobre una matriz morfológica binaria, sin BEAST. El modelo es pequeño a propósito. La variación de tasas gamma, el reloj relajado y los demás componentes del análisis de referencia están en el [roadmap](./roadmap).
+`rove sample` ejecuta un análisis de Monte Carlo mediante cadenas de Markov sobre una matriz morfológica binaria, sin BEAST. La configuración predeterminada usa reloj estricto y una categoría de tasa. `--model reference` activa el [modelo de referencia](./reference-model), con cuatro categorías gamma y tasas lognormales explícitas por rama.
 
-## El modelo
+## El modelo predeterminado
 
 - **Caracteres.** Una partición de caracteres binarios bajo Mk con frecuencias iguales y una categoría de tasa. Por defecto, la verosimilitud se condiciona a caracteres variables con la [corrección Mkv](./kernel#condicionar-a-caracteres-variables); `--conditioning none` usa Mk sin condicionar.
 - **Reloj.** Estricto, con la tasa fija en 1. Por eso las alturas de los nodos están en cambios esperados por carácter, la convención del análisis de referencia, que no tiene calibraciones. Todos los terminales están a altura cero.
@@ -30,6 +30,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-every <n>` | Pasos entre muestras; debe dividir a `--steps`. El estado inicial es la muestra 0. Opción obligatoria. |
 | `--monophyly <taxones>` | Nombres de taxones, separados por comas, que deben formar un clado; como en la matriz, `_` equivale a un espacio. Se puede repetir. |
 | `--gaps reject\|missing` | Rechazar las matrices con gaps (por defecto) o leer los gaps como datos faltantes. |
+| `--model strict\|reference` | Reloj estricto con una categoría (predeterminado), o el modelo de referencia con gamma y reloj relajado. |
 | `--conditioning variable\|none` | Mkv (por defecto) o Mk. |
 | `--sample-from-prior` | Ignorar los caracteres y muestrear el prior. |
 | `--no-tuning` | Mantener fijos todos los tamaños de desplazamiento y factores de escala. |
@@ -42,6 +43,8 @@ El comando se detiene con un mensaje ante entradas que no admite: caracteres con
 Con el mismo ejecutable, la misma entrada, la misma configuración y la misma semilla, en la misma plataforma, una ejecución produce las mismas muestras, sea cual sea el backend. Los logaritmos y las exponenciales vienen de la biblioteca matemática de la plataforma, así que otra plataforma puede diferir en los últimos dígitos y, a partir de ahí, divergir.
 
 ## Archivos de salida
+
+Los archivos siguientes describen la configuración predeterminada. La [configuración de referencia](./reference-model#propuestas-y-salida) añade parámetros y priors de tasas al trazado y anota tasas de ramas en los árboles.
 
 - **`trace.log`** está separado por tabuladores, después de líneas que empiezan por `#` y registran la versión, el comando y el SHA-256 de la entrada y del ejecutable. Sus columnas son `Sample`, `posterior`, `likelihood`, `prior`, `birth_death` (la log-densidad del prior del árbol), `birth_difference_rate`, `relative_death_rate`, `tree_height` y `tree_length`. Tiene el formato de una traza de BEAST, y el LogAnalyser de BEAST la lee.
 - **`trees.nexus`** es un bloque de árboles NEXUS con una tabla de traducción y un árbol por muestra, que el NexusParser de BEAST lee. Los espacios de los nombres de taxones se escriben como `_`. Las longitudes de rama están en cambios esperados por carácter.
@@ -92,7 +95,7 @@ La matriz no tiene homoplasia, así que con Mkv la verosimilitud no penaliza los
 
 ## Limitaciones
 
-- Una partición de caracteres binarios. La variación de tasas gamma, los relojes relajados, las fechas de los terminales, las calibraciones y otros priors de árbol no están implementados; los componentes del análisis de referencia se siguen en [#16](https://github.com/getcortexlabs/rove/issues/16).
+- Una partición de caracteres binarios. Fechas de terminales, calibraciones, otras distribuciones de reloj y otros priors de árbol no están implementados. La validación completa de la posterior del modelo de referencia sigue en [#12](https://github.com/getcortexlabs/rove/issues/12).
 - El árbol inicial es aleatorio, con tiempos de nodo parecidos a los de un coalescente, y cumple las restricciones.
 - Una cadena en un hilo. Una ejecución no se puede reanudar desde un checkpoint.
 - El comando no calcula diagnósticos de convergencia. Los scripts del repositorio en `tools/beast` los calculan a partir de su salida.

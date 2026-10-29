@@ -21,8 +21,10 @@ integration remains a possible compatibility path.
 
 Early. The likelihood core with its direct Mk path and a NEON kernel for it,
 the Mkv correction, the morphological NEXUS reader, pattern compression,
-numerical tests and a minimal standalone sampler are implemented. The relaxed-clock model of the reference
-analysis and the integrations are not. Work is tracked in the
+numerical tests and a standalone binary-character sampler are implemented.
+The supplied reference model runs with four gamma categories and a lognormal
+relaxed clock. Complete posterior validation for it and the integrations
+remain pending. Work is tracked in the
 [issues](https://github.com/getcortexlabs/rove/issues).
 
 ## Why
@@ -91,9 +93,9 @@ other when reproducing a result.
 4. Add direct Mk pruning, measuring the change. Done.
 5. Build a minimal standalone MCMC. Done.
 6. Add NEON where profiles of complete runs show kernel time. Done.
-7. Add the relaxed-clock reference model, validate complete inference and
-   evaluate subtree repeats.
-8. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
+7. Add the relaxed-clock reference model and check its components. Done.
+8. Validate complete inference and evaluate subtree repeats.
+9. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 
 ## Sampling trees
 
@@ -103,10 +105,13 @@ cargo run --release --bin rove -- sample fixtures/reference/20x50/matrix.nex \
   --monophyly T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19
 ```
 
-The first sampler supports one partition of binary characters under Mk or Mkv,
-a strict clock with rate 1 and the birth–death tree prior of the reference
-analysis, with monophyly constraints. The [sampling guide](docs/guide/sampler.md)
-describes the model, the output files and the checks. With the same moves and
+The sampler supports one partition of binary characters under Mk or Mkv,
+a strict clock with rate 1 and the birth–death tree prior, with monophyly
+constraints. Add `--model reference` for the supplied XML's four gamma categories
+and explicit lognormal relaxed clock. Its [model guide](docs/guide/reference-model.md)
+records every parameter, the numerical checks and the differences from ORC's
+sampling proposals. The [sampling guide](docs/guide/sampler.md)
+describes the model, the output files and the checks. With the strict-clock model, the same moves and
 fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the
 reference matrix met criteria fixed before the runs
 ([report](benchmarks/strict-clock/2026-10-28/README.md)).

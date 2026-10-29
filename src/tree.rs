@@ -261,23 +261,44 @@ impl Tree {
     /// Newick with branch lengths, naming each tip with `label`.
     pub fn to_newick(&self, label: impl Fn(usize) -> String) -> String {
         let mut text = String::new();
-        self.write_newick(self.root, &label, &mut text);
+        self.write_newick(self.root, &label, &|_| None, &mut text);
         text.push(';');
         text
     }
 
-    fn write_newick(&self, node: usize, label: &impl Fn(usize) -> String, text: &mut String) {
+    /// Time lengths with a rate annotation on every non-root branch.
+    pub fn to_newick_with_rates(
+        &self,
+        label: impl Fn(usize) -> String,
+        rate: impl Fn(usize) -> f64,
+    ) -> String {
+        let mut text = String::new();
+        self.write_newick(self.root, &label, &|node| Some(rate(node)), &mut text);
+        text.push(';');
+        text
+    }
+
+    fn write_newick(
+        &self,
+        node: usize,
+        label: &impl Fn(usize) -> String,
+        rate: &impl Fn(usize) -> Option<f64>,
+        text: &mut String,
+    ) {
         match self.children[node] {
             None => text.push_str(&label(node)),
             Some((a, b)) => {
                 text.push('(');
-                self.write_newick(a, label, text);
+                self.write_newick(a, label, rate, text);
                 text.push(',');
-                self.write_newick(b, label, text);
+                self.write_newick(b, label, rate, text);
                 text.push(')');
             }
         }
         if node != self.root {
+            if let Some(rate) = rate(node) {
+                text.push_str(&format!("[&rate={rate}]"));
+            }
             text.push(':');
             text.push_str(&self.branch_length(node).to_string());
         }

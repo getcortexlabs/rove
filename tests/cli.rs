@@ -129,6 +129,75 @@ fn a_run_writes_matching_traces_trees_and_metadata() {
 }
 
 #[test]
+fn reference_model_writes_rate_parameters_priors_and_annotated_branches() {
+    let directory = scratch("reference-model");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let output = directory.join("out");
+    let result = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--model",
+        "reference",
+        "--output",
+        output.to_str().unwrap(),
+        "--seed",
+        "3",
+        "--steps",
+        "2000",
+        "--sample-every",
+        "100",
+        "--gaps",
+        "missing",
+        "--monophyly",
+        "A,B",
+    ]);
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    let trace = fs::read_to_string(output.join("trace.log")).unwrap();
+    let rows: Vec<_> = trace.lines().filter(|l| !l.starts_with('#')).collect();
+    let columns: Vec<_> = rows[0].split('\t').collect();
+    assert_eq!(rows.len(), 22);
+    assert_eq!(columns.len(), 15);
+    let index = |name| columns.iter().position(|&c| c == name).unwrap();
+    for row in &rows[1..] {
+        let values: Vec<f64> = row.split('\t').map(|v| v.parse().unwrap()).collect();
+        assert_eq!(values.len(), columns.len());
+        assert!(values.iter().all(|v| v.is_finite()));
+        let prior = values[index("birth_death")] - 1000.0f64.ln()
+            + values[index("gamma_prior")]
+            + values[index("clock_rate_prior")]
+            + values[index("clock_sigma_prior")];
+        assert!((prior - values[index("prior")]).abs() < 1e-11);
+        assert!(
+            (values[index("prior")] + values[index("likelihood")] - values[index("posterior")])
+                .abs()
+                < 1e-11
+        );
+    }
+    let trees = fs::read_to_string(output.join("trees.nexus")).unwrap();
+    for line in trees.lines().filter(|l| l.starts_with("tree STATE_")) {
+        assert_eq!(line.matches("[&rate=").count(), 8);
+    }
+    let metadata = fs::read_to_string(output.join("run.json")).unwrap();
+    for field in [
+        "\"preset\": \"reference\"",
+        "\"gamma_shape_prior\"",
+        "\"clock_sigma_prior\"",
+        "\"branch_rate_parameters\"",
+        "\"rate_mapping\"",
+        "\"gamma_shape_scale\"",
+        "\"clock_sigma_scale\"",
+        "\"branch_rate_scale\"",
+    ] {
+        assert!(metadata.contains(field), "missing {field}");
+    }
+}
+
+#[test]
 fn unsupported_inputs_and_settings_are_rejected() {
     let directory = scratch("errors");
     let matrix = directory.join("matrix.nex");

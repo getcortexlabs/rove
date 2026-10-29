@@ -4,9 +4,9 @@ description: "How to run Rove's first standalone sampler on a binary morphologic
 
 # Sampling trees
 
-`rove sample` runs a Markov chain Monte Carlo analysis of a binary morphological matrix without BEAST. The model is deliberately small. Gamma rate variation, the relaxed clock and the other components of the reference analysis are on the [roadmap](./roadmap).
+`rove sample` runs a Markov chain Monte Carlo analysis of a binary morphological matrix without BEAST. The default preset uses a strict clock and one rate category. `--model reference` enables the [reference model](./reference-model), with four gamma categories and explicit lognormal branch rates.
 
-## The model
+## The default model
 
 - **Characters.** One partition of binary characters under Mk with equal frequencies and one rate category. By default the likelihood is conditioned on variable characters with the [Mkv correction](./kernel#conditioning-on-variable-characters); `--conditioning none` uses plain Mk.
 - **Clock.** Strict, with the rate fixed at 1. Node heights are therefore in expected changes per character, the convention of the reference analysis, which has no calibrations. All tips are at height zero.
@@ -30,6 +30,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-every <n>` | Steps between samples; it must divide `--steps`. The initial state is sample 0. Required. |
 | `--monophyly <taxa>` | Comma-separated names of taxa that must form a clade; as in the matrix, `_` stands for a space. Can be repeated. |
 | `--gaps reject\|missing` | Reject matrices with gaps (the default), or read gaps as missing data. |
+| `--model strict\|reference` | Strict clock with one category (default), or the gamma and relaxed-clock reference model. |
 | `--conditioning variable\|none` | Mkv (the default) or Mk. |
 | `--sample-from-prior` | Ignore the characters and sample the prior. |
 | `--no-tuning` | Keep every slide size and scale factor fixed. |
@@ -42,6 +43,8 @@ The command stops with a message on input it does not support: characters with m
 Given the same executable, input, settings and seed on the same platform, a run produces the same samples, whichever the backend. The logarithms and exponentials come from the platform's math library, so another platform can differ in the last digits and then diverge.
 
 ## Output files
+
+The files below describe the default preset. The [reference preset](./reference-model#proposals-and-output) adds rate parameters and priors to the trace and annotates branch rates in the trees.
 
 - **`trace.log`** is tab-separated, after lines starting with `#` that record the version, the command and the SHA-256 of the input and of the executable. Its columns are `Sample`, `posterior`, `likelihood`, `prior`, `birth_death` (the log density of the tree prior), `birth_difference_rate`, `relative_death_rate`, `tree_height` and `tree_length`. The layout is that of a BEAST trace, and BEAST's LogAnalyser reads it.
 - **`trees.nexus`** is a NEXUS trees block with a translate table and one tree per sample, which BEAST's NexusParser reads. Spaces in taxon labels are written as `_`. Branch lengths are in expected changes per character.
@@ -86,13 +89,13 @@ Before each step the sampler saves the tree and the rate parameters, and stores 
 
 ## Comparison with BEAST
 
-Rove and BEAST 2.7.8 sampled the reference matrix under this model, with and without the Mkv correction, using the same moves, weights and fixed step sizes and four chains each. Every posterior mean was within four combined Monte Carlo standard errors of BEAST's and every clade frequency within 0.05, the criteria fixed before the runs. Acceptance rates were not part of the criteria; with 36 Mkv chains per engine, no move's rate differed by more than 1.7 standard errors.
+Rove and BEAST 2.7.8 sampled the reference matrix under the strict-clock model with one category, with and without the Mkv correction, using the same moves, weights and fixed step sizes and four chains each. Every posterior mean was within four combined Monte Carlo standard errors of BEAST's and every clade frequency within 0.05, the criteria fixed before the runs. Acceptance rates were not part of the criteria; with 36 Mkv chains per engine, no move's rate differed by more than 1.7 standard errors.
 
 The matrix has no homoplasy, so under Mkv the likelihood does not penalize short trees: the posterior tree height is about 0.003 expected changes per character, the posterior of λ − μ is cut off by its prior's upper bound of 1000, and the topology barely moves. Under Mk, the reference topology has a posterior frequency of 0.82 to 0.83 in every chain of both engines. The [report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md) gives the numbers, the run times and the commands.
 
 ## Limitations
 
-- One partition of binary characters. Gamma rate variation, relaxed clocks, tip dates, calibrations and other tree priors are not implemented; the components of the reference analysis are tracked in [#16](https://github.com/getcortexlabs/rove/issues/16).
+- One partition of binary characters. Tip dates, calibrations, other clock distributions and other tree priors are not implemented. Full posterior validation of the reference model is tracked in [#12](https://github.com/getcortexlabs/rove/issues/12).
 - The starting tree is random, with coalescent-like node times, and satisfies the constraints.
 - One chain on one thread. A run cannot be resumed from a checkpoint.
 - The command does not compute convergence diagnostics. The repository's scripts in `tools/beast` compute them from its output.
