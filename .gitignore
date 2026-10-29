@@ -13,4 +13,5 @@ beast/*.jar
 __pycache__/
 /apps/macos/.build/
 /apps/macos/.swiftpm/
+/.build/
 /build/
