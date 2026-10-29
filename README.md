@@ -95,8 +95,16 @@ other when reproducing a result.
 5. Build a minimal standalone MCMC. Done.
 6. Add NEON where profiles of complete runs show kernel time. Done.
 7. Add the relaxed-clock reference model and check its components. Done.
-8. Validate complete inference and evaluate subtree repeats.
-9. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
+8. Validate complete inference on known matrices. Done for six 20-taxon cases.
+9. Improve relaxed-clock sampling efficiency.
+10. Run parallel chains with convergence reports, add checkpoints and rescale
+    by powers of two.
+11. Partition characters by number of states, condition on
+    parsimony-informative characters and support ordered characters.
+12. Add marginal likelihoods, the fossilized birth–death prior with tip dates
+    and posterior predictive checks.
+13. Evaluate subtree repeats.
+14. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 
 ## Sampling trees
 

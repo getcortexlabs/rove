@@ -21,7 +21,15 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Relaxed-clock reference model | Done, #16 |
 | Complete inference validation | Done for six 20-taxon cases, #12 |
 | Relaxed-clock sampling efficiency | Next, #27 |
+| Parallel chains and convergence reports | Planned, #23 |
 | Power-of-two rescaling | Planned, #18 |
+| Checkpoints and resumed runs | Planned, #22 |
+| Partitions by number of states | Planned, #19 |
+| Conditioning on parsimony-informative characters | Planned, #20 |
+| Ordered characters | Planned, #21 |
+| Marginal likelihoods for model comparison | Planned, #24 |
+| Fossilized birth–death prior with tip dates | Planned, #25 |
+| Posterior predictive checks | Planned, #26 |
 | Evaluation of repeats within subtrees | Planned, #17 |
 | Optional BEAST 2 JNI and BEAGLE C ABI adapters | Possible, #6 and #7 |
 
@@ -40,6 +48,8 @@ The direct Mk path replaces the generic matrix product for Mk models. On Apple M
 ## Standalone inference
 
 The [minimal sampler](./sampler) supports binary Mk or Mkv, a strict clock and the birth–death prior. With the same moves and fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the reference matrix met criteria fixed before the runs ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). The [reference model](./reference-model), with gamma categories and the lognormal relaxed clock, now reproduces both archived states component by component. Its posterior summaries and clade frequencies met the predeclared criteria in six constructed 20-taxon cases ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)). Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
+
+After sampling efficiency (#27), the planned features follow what morphological analyses need: parallel chains with convergence reports (#23), checkpoints (#22), partitions by number of states (#19), conditioning on parsimony-informative characters (#20), ordered characters (#21), marginal likelihoods for model comparison (#24), the fossilized birth–death prior with tip dates (#25) and posterior predictive checks (#26). RevBayes documents each of these for morphological data and can serve as a second reference where BEAST has no matching feature.
 
 The intended product is a native macOS application. Application UI work has not started. BEAST and BEAGLE adapters are optional compatibility paths, not dependencies of the Rust engine.
 
