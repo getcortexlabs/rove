@@ -1,0 +1,242 @@
+{
+  "source_commit": "0dfdfb2f13890adcd3d4a4cbef0957c6de69cd87",
+  "build": "cargo build --release --locked: opt-level 3, fat LTO, one codegen unit, default target CPU",
+  "executable_sha256": "79bed635b4c6480dc0bf8ee21fa4bd8a21ecd8ea651f6073d846903021bc64a9",
+  "script": "tools/benchmarks/sampler_backends.py",
+  "script_sha256": "55b4ba8f943731aee840f5bfc27a668cde38555f88c002d5bf23837e07558aaf",
+  "configurations": "benchmarks/strict-clock/2026-10-28/beast-mkv.xml and beast-mk.xml: chain length, constraint, conditioning, moves and fixed steps",
+  "steps": 10000000,
+  "seeds": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "order": "one chain at a time; the two backends of a seed back to back, the first alternating between seeds",
+  "load_average_before": [
+    11.13,
+    10.09,
+    11.6
+  ],
+  "load_average_after": [
+    8.43,
+    9.29,
+    10.97
+  ],
+  "power": "AC adapter",
+  "samples_sha256": "SHA-256 of trace.log without its # lines and of trees.nexus without its [command] line",
+  "results": {
+    "mkv": {
+      "runs": [
+        {
+          "seed": 1,
+          "order": [
+            "portable",
+            "neon"
+          ],
+          "portable": {
+            "wall_seconds": 12.531507375,
+            "chain_seconds": 11.777034167,
+            "samples_sha256": [
+              "e3793fa6750eaeba9e2ed148dae951d21e4b22b74179589e29d21511e613f0c1",
+              "a1998e75ff8b071712384fd7131227b679d6460938c855a036e75a85e99e699e"
+            ]
+          },
+          "neon": {
+            "wall_seconds": 10.782548541999999,
+            "chain_seconds": 10.776204875,
+            "samples_sha256": [
+              "e3793fa6750eaeba9e2ed148dae951d21e4b22b74179589e29d21511e613f0c1",
+              "a1998e75ff8b071712384fd7131227b679d6460938c855a036e75a85e99e699e"
+            ]
+          },
+          "identical": true,
+          "ratio": 1.092874003752643
+        },
+        {
+          "seed": 2,
+          "order": [
+            "neon",
+            "portable"
+          ],
+          "neon": {
+            "wall_seconds": 10.743478125,
+            "chain_seconds": 10.737041708,
+            "samples_sha256": [
+              "37785910427f54bbb788d6b8478ce6af1ec2731fe0934852f743973e1ce4aa92",
+              "28b93d471d928ddd856669aef651abaeed0824504643c3c0b729ca3f763e381e"
+            ]
+          },
+          "portable": {
+            "wall_seconds": 11.698904625000004,
+            "chain_seconds": 11.691667125,
+            "samples_sha256": [
+              "37785910427f54bbb788d6b8478ce6af1ec2731fe0934852f743973e1ce4aa92",
+              "28b93d471d928ddd856669aef651abaeed0824504643c3c0b729ca3f763e381e"
+            ]
+          },
+          "identical": true,
+          "ratio": 1.088909537930613
+        },
+        {
+          "seed": 3,
+          "order": [
+            "portable",
+            "neon"
+          ],
+          "portable": {
+            "wall_seconds": 11.771319375000004,
+            "chain_seconds": 11.764875875,
+            "samples_sha256": [
+              "061416e6aea0e2ee58969309b90db3ade7d7952f3cec1c6f8e42328fd1de21a8",
+              "441f5c7e9e7c2e8e6dd528dcbbc5e52bec89a13e802b41dc2dcadff8dcf34ee8"
+            ]
+          },
+          "neon": {
+            "wall_seconds": 10.819395041,
+            "chain_seconds": 10.813390958,
+            "samples_sha256": [
+              "061416e6aea0e2ee58969309b90db3ade7d7952f3cec1c6f8e42328fd1de21a8",
+              "441f5c7e9e7c2e8e6dd528dcbbc5e52bec89a13e802b41dc2dcadff8dcf34ee8"
+            ]
+          },
+          "identical": true,
+          "ratio": 1.0879913544877493
+        },
+        {
+          "seed": 4,
+          "order": [
+            "neon",
+            "portable"
+          ],
+          "neon": {
+            "wall_seconds": 10.81538049999999,
+            "chain_seconds": 10.80926875,
+            "samples_sha256": [
+              "d40c3f73401b270cd125736660165f72bb322b512e2edf0e0aa799cfe0066aca",
+              "9c46a3d19f2106275288c6a2c3a265cbf8102f7540d2eaa2f973b54f72054b1d"
+            ]
+          },
+          "portable": {
+            "wall_seconds": 11.96823225,
+            "chain_seconds": 11.962032583,
+            "samples_sha256": [
+              "d40c3f73401b270cd125736660165f72bb322b512e2edf0e0aa799cfe0066aca",
+              "9c46a3d19f2106275288c6a2c3a265cbf8102f7540d2eaa2f973b54f72054b1d"
+            ]
+          },
+          "identical": true,
+          "ratio": 1.1066458665855634
+        }
+      ],
+      "median_ratio": 1.090891770841628,
+      "all_identical": true
+    },
+    "mk": {
+      "runs": [
+        {
+          "seed": 1,
+          "order": [
+            "portable",
+            "neon"
+          ],
+          "portable": {
+            "wall_seconds": 11.391195124999996,
+            "chain_seconds": 11.384905334,
+            "samples_sha256": [
+              "3a2757f4901f932f95514e695a0bbaf2773acee0047a447d7a940dbab5d3a2f6",
+              "5637d74e215371b58536bcd730b9d2a667bf0be413f9cdcb7c68a8a655929e69"
+            ]
+          },
+          "neon": {
+            "wall_seconds": 10.454641082999999,
+            "chain_seconds": 10.444759791,
+            "samples_sha256": [
+              "3a2757f4901f932f95514e695a0bbaf2773acee0047a447d7a940dbab5d3a2f6",
+              "5637d74e215371b58536bcd730b9d2a667bf0be413f9cdcb7c68a8a655929e69"
+            ]
+          },
+          "identical": true,
+          "ratio": 1.0900112172814258
+        },
+        {
+          "seed": 2,
+          "order": [
+            "neon",
+            "portable"
+          ],
+          "neon": {
+            "wall_seconds": 10.375485249999997,
+            "chain_seconds": 10.369507208,
+            "samples_sha256": [
+              "8f0805345d8930854be9a8347ffadf2a899b21ed1967f811624189b2c840e761",
+              "ebd35b9c4e611c450ca7f3ac657d3e8b1129b2f2d5616a86f8c6dd2b93b82190"
+            ]
+          },
+          "portable": {
+            "wall_seconds": 11.429616332999984,
+            "chain_seconds": 11.422669291,
+            "samples_sha256": [
+              "8f0805345d8930854be9a8347ffadf2a899b21ed1967f811624189b2c840e761",
+              "ebd35b9c4e611c450ca7f3ac657d3e8b1129b2f2d5616a86f8c6dd2b93b82190"
+            ]
+          },
+          "identical": true,
+          "ratio": 1.1015633686225217
+        },
+        {
+          "seed": 3,
+          "order": [
+            "portable",
+            "neon"
+          ],
+          "portable": {
+            "wall_seconds": 11.445576541999998,
+            "chain_seconds": 11.438926625,
+            "samples_sha256": [
+              "2e6821a7b260009ff89c8dd0f3a950c43a04d73a93e490a1939c24ba74db4926",
+              "d329ab9861b76ca053ab4f9b273deec6004bf7987b157833d8e3fa8cacd7ce54"
+            ]
+          },
+          "neon": {
+            "wall_seconds": 10.425228791999984,
+            "chain_seconds": 10.418463166,
+            "samples_sha256": [
+              "2e6821a7b260009ff89c8dd0f3a950c43a04d73a93e490a1939c24ba74db4926",
+              "d329ab9861b76ca053ab4f9b273deec6004bf7987b157833d8e3fa8cacd7ce54"
+            ]
+          },
+          "identical": true,
+          "ratio": 1.097947599635445
+        },
+        {
+          "seed": 4,
+          "order": [
+            "neon",
+            "portable"
+          ],
+          "neon": {
+            "wall_seconds": 10.482448667,
+            "chain_seconds": 10.475766625,
+            "samples_sha256": [
+              "173008596f4329477a077b20ffcc802673f8f259caebda8e4f95f9728f070b5c",
+              "5fa5a811965f1f052f244c363e55d5e6046f688ebf3c9bea2b8d888e90d538ac"
+            ]
+          },
+          "portable": {
+            "wall_seconds": 11.372573125000002,
+            "chain_seconds": 11.361901458,
+            "samples_sha256": [
+              "173008596f4329477a077b20ffcc802673f8f259caebda8e4f95f9728f070b5c",
+              "5fa5a811965f1f052f244c363e55d5e6046f688ebf3c9bea2b8d888e90d538ac"
+            ]
+          },
+          "identical": true,
+          "ratio": 1.0845890200422443
+        }
+      ],
+      "median_ratio": 1.0939794084584356,
+      "all_identical": true
+    }
+  }
+}

@@ -17,8 +17,8 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Correção de ascertainment Mkv | Concluído |
 | Poda direta do Mk | Concluído |
 | MCMC independente mínimo | Concluído |
-| Vetorização NEON | Próximo, #5 |
-| Modelo de referência com relógio relaxado | Planejado, #16 |
+| Vetorização NEON | Concluído |
+| Modelo de referência com relógio relaxado | Próximo, #16 |
 | Validação completa da inferência | Planejado, #12 |
 | Avaliação de repetições dentro de subárvores | Planejado, #17 |
 | Adaptadores opcionais BEAST 2 JNI e BEAGLE C ABI | Possível, #6 e #7 |
@@ -33,11 +33,11 @@ O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/ben
 
 O Mkv condiciona a verossimilhança ao processo de observação em matrizes só com caracteres variáveis. Ele reproduz os dois estados arquivados do BEAST, e seus padrões constantes ficam separados dos pesos dos padrões observados.
 
-O caminho direto do Mk substitui o produto genérico de matrizes nos modelos Mk. Num Apple M4 Max, o caminho de matrizes levou 1,25 vez o tempo do caminho Mk numa avaliação completa da matriz de referência, e 2,66 vezes com oito estados ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). O NEON em Apple silicon vem a seguir, para que perfis de execuções completas do amostrador mostrem onde o tempo do kernel pesa. A implementação escalar continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
+O caminho direto do Mk substitui o produto genérico de matrizes nos modelos Mk. Num Apple M4 Max, o caminho de matrizes levou 1,25 vez o tempo do caminho Mk numa avaliação completa da matriz de referência, e 2,66 vezes com oito estados ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). Depois, o backend NEON fundiu a atualização de nó do Mk numa única passada por blocos de oito padrões. Na mesma máquina, o código portátil levou 1,48 vez o tempo do NEON numa avaliação completa da matriz de referência, de 1,10 a 1,32 vez nos casos 90 × 250 com 250 padrões e de 1,08 a 1,11 vez numa execução do amostrador ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)). O logaritmo do reescalonamento, uma chamada escalar por padrão e por nó, passou a ocupar cerca de dois quintos do tempo das atualizações de nó numa execução do amostrador. A implementação portátil continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
 
 ## Inferência independente
 
-O [amostrador mínimo](./sampler) suporta Mk ou Mkv binário, um relógio estrito e o prior de nascimento–morte. Com os mesmos movimentos e passos fixos do BEAST 2.7.8, as suas médias posteriores e frequências de clados na matriz de referência atenderam a critérios fixados antes das execuções ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). A configuração com relógio relaxado da análise de referência vem depois do NEON. A validação avança das verossimilhanças em estados fixos até execuções completas em matrizes conhecidas. A qualidade da amostragem, incluindo ESS por tempo e diagnósticos de árvore, conta junto com o tempo de execução.
+O [amostrador mínimo](./sampler) suporta Mk ou Mkv binário, um relógio estrito e o prior de nascimento–morte. Com os mesmos movimentos e passos fixos do BEAST 2.7.8, as suas médias posteriores e frequências de clados na matriz de referência atenderam a critérios fixados antes das execuções ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). A configuração com relógio relaxado da análise de referência vem a seguir. A validação avança das verossimilhanças em estados fixos até execuções completas em matrizes conhecidas. A qualidade da amostragem, incluindo ESS por tempo e diagnósticos de árvore, conta junto com o tempo de execução.
 
 O produto pretendido é um aplicativo nativo para macOS. O trabalho na interface do aplicativo não começou. Os adaptadores BEAST e BEAGLE são caminhos de compatibilidade opcionais, não dependências da engine em Rust.
 

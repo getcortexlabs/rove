@@ -17,8 +17,8 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Corrección de ascertainment de Mkv | Hecho |
 | Poda directa de Mk | Hecho |
 | MCMC independiente mínimo | Hecho |
-| Vectorización NEON | Siguiente, #5 |
-| Modelo de referencia con reloj relajado | Planificado, #16 |
+| Vectorización NEON | Hecho |
+| Modelo de referencia con reloj relajado | Siguiente, #16 |
 | Validación de la inferencia completa | Planificado, #12 |
 | Evaluación de repeticiones dentro de subárboles | Planificado, #17 |
 | Adaptadores opcionales de JNI para BEAST 2 y de C ABI para BEAGLE | Posible, #6 y #7 |
@@ -33,11 +33,11 @@ La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main
 
 Mkv condiciona la verosimilitud al proceso de observación para matrices con solo caracteres variables. Reproduce los dos estados archivados de BEAST, y sus patrones constantes se mantienen separados de los pesos de los patrones observados.
 
-La ruta directa de Mk sustituye el producto genérico de matrices en los modelos Mk. En un Apple M4 Max, la ruta de matrices tardó 1,25 veces lo que la ruta Mk en una evaluación completa de la matriz de referencia, y 2,66 veces con ocho estados ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). NEON en Apple silicon es el siguiente paso, para que los perfiles de ejecuciones completas del muestreador muestren dónde pesa el tiempo del kernel. La implementación escalar sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
+La ruta directa de Mk sustituye el producto genérico de matrices en los modelos Mk. En un Apple M4 Max, la ruta de matrices tardó 1,25 veces lo que la ruta Mk en una evaluación completa de la matriz de referencia, y 2,66 veces con ocho estados ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). Después, el backend NEON fusionó la actualización de nodo de Mk en una sola pasada por bloques de ocho patrones. En la misma máquina, el código portable tardó 1,48 veces lo que NEON en una evaluación completa de la matriz de referencia, entre 1,10 y 1,32 veces en los casos 90 × 250 con 250 patrones y entre 1,08 y 1,11 veces en una ejecución del muestreador ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)). El logaritmo del reescalado, una llamada escalar por patrón y nodo, ocupa ahora cerca de dos quintos del tiempo de las actualizaciones de nodo en una ejecución del muestreador. La implementación portable sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
 
 ## Inferencia independiente
 
-El [muestreador mínimo](./sampler) admite Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). La configuración con reloj relajado del análisis de referencia viene después de NEON. La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
+El [muestreador mínimo](./sampler) admite Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). La configuración con reloj relajado del análisis de referencia es el siguiente paso. La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
 
 El producto previsto es una aplicación nativa para macOS. El trabajo en la interfaz de la aplicación no ha comenzado. Los adaptadores de BEAST y BEAGLE son rutas de compatibilidad opcionales, no dependencias del motor en Rust.
 

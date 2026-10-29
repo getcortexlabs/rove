@@ -1,0 +1,175 @@
+{
+  "source_commit": "0dfdfb2f13890adcd3d4a4cbef0957c6de69cd87",
+  "started_utc": "2026-10-28T23:37:06.591588+00:00",
+  "hardware": {
+    "architecture": "arm64",
+    "system": "Darwin",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+    "machdep.cpu.brand_string": "Apple M4 Max",
+    "hw.memsize": "68719476736",
+    "hw.physicalcpu": "16",
+    "hw.logicalcpu": "16",
+    "hw.perflevel0.physicalcpu": "12",
+    "hw.perflevel1.physicalcpu": "4",
+    "system_profiler": {
+      "machine_name": "MacBook Pro",
+      "machine_model": "Mac16,6",
+      "chip_type": "Apple M4 Max",
+      "number_processors": "proc 16:12:4:0",
+      "physical_memory": "64 GB"
+    }
+  },
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "python": "3.9.6",
+  "build_command": [
+    "cargo",
+    "bench",
+    "--locked",
+    "--bench",
+    "likelihood",
+    "--no-run",
+    "--target",
+    "aarch64-apple-darwin",
+    "--message-format=json"
+  ],
+  "build_environment": {
+    "RUSTFLAGS": "-C target-cpu=native",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_BENCH_OPT_LEVEL": "3",
+    "CARGO_PROFILE_BENCH_LTO": "fat",
+    "CARGO_PROFILE_BENCH_CODEGEN_UNITS": "1",
+    "CARGO_PROFILE_BENCH_DEBUG": "false",
+    "CARGO_PROFILE_BENCH_DEBUG_ASSERTIONS": "false",
+    "CARGO_PROFILE_BENCH_OVERFLOW_CHECKS": "false"
+  },
+  "native_cpu": "native          - Select the CPU of the current host (currently apple-m4).",
+  "executable_sha256": "0931b0179e7ffedca74d3238d5bab5868b75ecce80fdb27572cdf6758d1da2e2",
+  "benchmark_arguments": [
+    "--samples",
+    "15",
+    "--sample-ms",
+    "20",
+    "--warmup-ms",
+    "100"
+  ],
+  "repetitions": 4,
+  "samples_per_metric_per_process": 15,
+  "source_sha256": {
+    "Cargo.lock": "a6305c68c383286d9a3db29344c1f17c8313632e44f8920f37f384040c078e15",
+    "Cargo.toml": "31fddc341243ba197b3eb88c92216cae3aeddc61cbbd49dc161f378353866910",
+    "benches/likelihood.rs": "8354f20ddca1e8922ae185ad72ead2cc471238f8ba8d97d80b564145befeb234",
+    "benches/support/allocations.rs": "3d31f77929bc9256543737089018bb8f68ebdc8edd0953c3ac8c805869110df6",
+    "benches/support/reference_state.rs": "55438327d2620f4095928e5912dddac18cac75a39191eada4648c47253e0582d",
+    "benches/support/timing.rs": "b3b97ccceee347c40f5a29fb8f21e384efc5f97d3e8003b2b95895a5b9d4029f",
+    "benches/support/workload.rs": "a3bfb74c82b6e887d4a20f5d935ae9791e130225913d169e68e6256a0939c04a",
+    "benchmarks/beast-2.7.8/2026-10-25/snapshot-20261025.json": "8aa417dc25552de1e4ffd5c1a69812efbc2b9eeb7a1130264afaa95d427c9976",
+    "fixtures/benchmarks/README.md": "a61fdcb68971dcf88e02e22f7cb5e3c2438b3aa7d3d39f653adfe2466b7c59c0",
+    "fixtures/benchmarks/morphology_90x250.nex": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+    "fixtures/reference/20x50/matrix.nex": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+    "src/ascertainment.rs": "e72da5c4578a51371ab1c1564bb6386dc4a2cbaef65fe3b77a3b1db310a414e9",
+    "src/bin/rove/main.rs": "272995ecf31c88a3c9c1453875c64d7f3a99e06c122e99244f1da2310de4a00a",
+    "src/bin/rove/sha256.rs": "0bba92e6a2ac52a6c5348cb02e3091c22cb7bee0c627b2825adbce20937076c9",
+    "src/data.rs": "4f0615769ffd08551670af515014b09832263dbae0d6c69907fa49e6d16c0c71",
+    "src/kernel/mod.rs": "52aa2038b0221e35e310af117cca440444617effa737012f345fc598d9964a14",
+    "src/kernel/neon.rs": "65b9440a9bbfad17b30f0670c46356b27ade59f722801fb33d34e0032875086d",
+    "src/layout.rs": "009082f02bfa33458086bb29f70d47422019ddcd9cc8b475dfddb2051c91b48b",
+    "src/lib.rs": "354ae7532f343bd3aff315b7a276e5dbd32907574e9a8a95c3092fea28d5165d",
+    "src/mcmc/mod.rs": "55bc53332d600677246d001ae4465a93dd8dc70df9c7fae93b4796aa03fce730",
+    "src/mcmc/moves.rs": "8006641a674ed1f5ead7072121a42015f1a71138d6b81c1cc62256781bbed687",
+    "src/mcmc/output.rs": "202180a00491493f611ede2461d9eebde01a64bcf2fffc6c168a79264b96f665",
+    "src/model.rs": "48ff38fce6f2a6f199b382f662e711797ceabcc168e208ff5ccba40508544ec1",
+    "src/nexus/lexer.rs": "78bb00518e17f637312438d5822a18c4d3844d781b2df93a7e9c1b1d2be25d1a",
+    "src/nexus/matrix.rs": "73795ca85e3b02ea7ad9e489ba6a8cf953dbf1c60e686ff7c770acc21d3076a9",
+    "src/nexus/mod.rs": "acc9974bd2ae85439b16685ffa2dd9a523b8048c4afff348f03e695510174549",
+    "src/random.rs": "db2b14a77037e3dba7ff3f4daacbad7fea6efaabbc3dc214d6d099b43f95d214",
+    "src/reference.rs": "b94952ebfd6be28bfacecbf5d977ce6025448add45cabc36cef421a20d608def",
+    "src/speciation.rs": "ac0f12a586d18bf6f3b1e643c2b63c5777d9786a2da86981170672cd3cee9388",
+    "src/tree.rs": "f9736fa08c002b18e9933a2b06829a969746c5b96ac81f7191448fc0a80a7a53",
+    "tools/benchmarks/prepare.py": "012901488c44c29e098b23c65def1bdbd7d01832ebd7c6a998970b2a36228a32",
+    "tools/benchmarks/run.py": "f618b660d89d1bc890a85085bc4ea79d80da0879778da492ea2e2579fa6316d7",
+    "tools/benchmarks/test_results.py": "174d130dfe0dee648f12d203cac64ccab1e89253f69849cd3d86a6063734bd05"
+  },
+  "threads": 1,
+  "processes_run_in_parallel": 1,
+  "cpu_affinity": null,
+  "background_load_controlled": false,
+  "scaling": "Always",
+  "model": "Mk on observed patterns; reference_20x50_mkv also conditions on variable characters; no priors",
+  "variants": "each metric on every combination of transition path and backend back to back, in reverse order on alternate metrics and alternate processes",
+  "power_before": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t100%; finishing charge; 0:00 remaining present: true",
+    "therm": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+  },
+  "load_average_before": [
+    27.73193359375,
+    23.357421875,
+    19.35546875
+  ],
+  "runs": [
+    {
+      "file": "run-1.tsv",
+      "sha256": "5716dfaa615c5ec073aa0424d54f9477edf3ba118f8ff74aa8f0adfbbaf7ab23",
+      "wall_seconds": 310.133688791,
+      "arguments": [
+        "--samples",
+        "15",
+        "--sample-ms",
+        "20",
+        "--warmup-ms",
+        "100"
+      ]
+    },
+    {
+      "file": "run-2.tsv",
+      "sha256": "6852d5b576e4dc08753c9ba5ee4c81ff4381980de76bbe0bed2727ce22ce2b8e",
+      "wall_seconds": 308.945973875,
+      "arguments": [
+        "--samples",
+        "15",
+        "--sample-ms",
+        "20",
+        "--warmup-ms",
+        "100",
+        "--reverse"
+      ]
+    },
+    {
+      "file": "run-3.tsv",
+      "sha256": "292233992006e80a1ec76c26a1cb2926a195ffbc7d704fd60f17aee3b73f9efb",
+      "wall_seconds": 311.826493667,
+      "arguments": [
+        "--samples",
+        "15",
+        "--sample-ms",
+        "20",
+        "--warmup-ms",
+        "100"
+      ]
+    },
+    {
+      "file": "run-4.tsv",
+      "sha256": "0d5ba9e42581380bf62217e34acf0277d2a0351a53f4a3f06731c4aed4c31db2",
+      "wall_seconds": 308.8165566659999,
+      "arguments": [
+        "--samples",
+        "15",
+        "--sample-ms",
+        "20",
+        "--warmup-ms",
+        "100",
+        "--reverse"
+      ]
+    }
+  ],
+  "power_after": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t100%; charged; 0:00 remaining present: true",
+    "therm": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+  },
+  "load_average_after": [
+    10.35205078125,
+    9.8310546875,
+    11.5859375
+  ],
+  "finished_utc": "2026-10-28T23:57:46.749196+00:00"
+}

@@ -46,7 +46,10 @@ proposal bookkeeping. It includes raw samples and the variation between runs.
 The [direct Mk comparison](benchmarks/rove/2026-10-28/README.md) measures both
 pruning paths in the same processes: the matrix path took 1.25 times as long as
 the closed form for a full evaluation of the reference dataset, and 2.66 times
-as long with eight states.
+as long with eight states. The [NEON comparison](benchmarks/neon/2026-10-28/README.md)
+measures both backends the same way: the portable code took 1.48 times as long
+as the NEON kernel for a full evaluation of the reference dataset, and sampler
+runs with the portable code took 1.08 to 1.11 times as long as with NEON.
 
 With the [Mkv correction](docs/guide/kernel.md#conditioning-on-variable-characters),
 Rove reproduces the likelihood of both archived BEAST states for the reference
@@ -87,7 +90,7 @@ other when reproducing a result.
 3. Record the Rust kernel baseline and add the Mkv correction. Done.
 4. Add direct Mk pruning, measuring the change. Done.
 5. Build a minimal standalone MCMC. Done.
-6. Add NEON where profiles of complete runs show kernel time.
+6. Add NEON where profiles of complete runs show kernel time. Done.
 7. Add the relaxed-clock reference model, validate complete inference and
    evaluate subtree repeats.
 8. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
