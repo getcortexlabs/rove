@@ -16,7 +16,7 @@ final class AnalysisRun {
 
   init(request: RunRequest) { self.request = request }
 
-  func start() {
+  func start(afterFinish: (@MainActor () async -> Void)? = nil) {
     guard task == nil else { return }
     began = Date()
     let (stream, continuation) = AsyncStream<RunEvent>.makeStream(
@@ -34,6 +34,7 @@ final class AnalysisRun {
       self.result = result
       status = result.status
       ended = Date()
+      await afterFinish?()
     }
   }
 

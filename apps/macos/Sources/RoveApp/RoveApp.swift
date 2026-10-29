@@ -36,11 +36,19 @@ struct RoveApp: App {
           workspace.isRunning)
         Divider()
         Button(strings("Save Setup…"), action: workspace.saveDraft).keyboardShortcut("s")
-          .disabled(workspace.report == nil || workspace.issue != nil || workspace.isRunning)
+          .disabled(
+            workspace.report == nil || workspace.issue != nil || workspace.isRunning
+              || workspace.showingHistory)
         Divider()
         Button(strings("Start analysis"), action: workspace.startRun).keyboardShortcut(
           .return, modifiers: .command
         ).disabled(!workspace.canStartRun)
+        Divider()
+        Button(strings("History"), action: workspace.openHistory).keyboardShortcut(
+          "h", modifiers: [.command, .shift])
+        Button(strings("Back to workspace"), action: workspace.returnToWorkspace).keyboardShortcut(
+          "r", modifiers: [.command, .shift]
+        ).disabled(!workspace.showingHistory)
       }
       CommandGroup(replacing: .help) {
         Button(strings("Rove Field Guide")) {

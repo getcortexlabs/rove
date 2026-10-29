@@ -34,21 +34,27 @@ final class Workspace {
     }
   }
   var run: AnalysisRun?
+  var showingHistory = false
+  var selectedHistoryID: String?
+  let history: RunHistory
   var outputParent = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(
     "Rove Runs")
   var isRunning: Bool { run?.isActive == true }
   var canStartRun: Bool {
-    page == .review && report != nil && issue == nil && !loading && run == nil
+    page == .review && report != nil && issue == nil && !loading && run == nil && !showingHistory
   }
   private var importID = UUID()
   private let executable: URL
   let preferences: AppPreferences
   var strings: AppStrings { preferences.strings }
 
-  init(executable: URL = MatrixInspector.executable, preferences: AppPreferences = AppPreferences())
-  {
+  init(
+    executable: URL = MatrixInspector.executable, preferences: AppPreferences = AppPreferences(),
+    history: RunHistory = RunHistory()
+  ) {
     self.executable = executable
     self.preferences = preferences
+    self.history = history
   }
 
   var title: String {
@@ -118,6 +124,7 @@ final class Workspace {
           monophyly = []
         }
         run = nil
+        showingHistory = false
         report = imported
         file = url
         isExample = example
@@ -150,6 +157,7 @@ final class Workspace {
   func reset() {
     guard !isRunning else { return }
     run = nil
+    showingHistory = false
     monophyly = []
     importID = UUID()
     report = nil
@@ -213,7 +221,14 @@ final class Workspace {
     if panel.runModal() == .OK, let url = panel.url { loadSetup(url) }
   }
 
-  func loadSetup(_ url: URL) {
+  func loadSetup(_ url: URL) { restoreSetup(url: url, stored: nil) }
+
+  func reuseSetup(_ entry: HistoryEntry) {
+    guard let draft = entry.draft, !isRunning, !loading else { return }
+    restoreSetup(url: nil, stored: draft)
+  }
+
+  private func restoreSetup(url: URL?, stored: AnalysisDraft?) {
     guard !isRunning else { return }
     let id = UUID()
     importID = id
@@ -223,7 +238,14 @@ final class Workspace {
     notice = nil
     Task {
       do {
-        let draft = try await Task.detached { try AnalysisDraft.read(url) }.value
+        let draft = try await Task.detached {
+          if let stored {
+            try stored.validate()
+            return stored
+          }
+          guard let url else { throw ImportError.message("The setup could not be opened.") }
+          return try AnalysisDraft.read(url)
+        }.value
         let matrix = URL(fileURLWithPath: draft.matrixPath)
         guard FileManager.default.isReadableFile(atPath: matrix.path) else {
           throw ImportError.message(
@@ -248,6 +270,7 @@ final class Workspace {
         file = matrix
         isExample = false
         page = .review
+        showingHistory = false
         savedURL = url
         notice = "Setup reopened. Review it before starting a new analysis."
       } catch {
@@ -271,7 +294,10 @@ final class Workspace {
     panel.canCreateDirectories = true
     panel.allowsMultipleSelection = false
     panel.directoryURL = outputParent
-    if panel.runModal() == .OK, let url = panel.url { outputParent = url }
+    if panel.runModal() == .OK, let url = panel.url {
+      outputParent = url
+      history.rememberLocation(url)
+    }
   }
 
   func startRun() {
@@ -285,12 +311,15 @@ final class Workspace {
     run = analysis
     error = nil
     notice = nil
-    analysis.start()
+    history.rememberLocation(outputParent)
+    history.rememberRun(request.directory)
+    analysis.start { [history] in await history.reload() }
   }
 
   func dismissRun() {
     guard !isRunning else { return }
     run = nil
+    showingHistory = false
     page = .review
   }
 
@@ -298,6 +327,35 @@ final class Workspace {
     guard let run, run.isActive else { return }
     run.cancel()
     await run.waitForExit()
+  }
+
+  func openHistory() {
+    showingHistory = true
+    selectedHistoryID = nil
+    Task { await history.reload() }
+  }
+
+  func returnToWorkspace() { showingHistory = false }
+
+  func addHistoryFolder() {
+    let panel = NSOpenPanel()
+    panel.title = strings("Add a run folder")
+    panel.message = strings("Choose the output folder of an earlier Rove analysis.")
+    panel.canChooseDirectories = true
+    panel.canChooseFiles = false
+    panel.allowsMultipleSelection = false
+    guard panel.runModal() == .OK, let url = panel.url else { return }
+    guard
+      ["session.json", "setup.rove.json"].contains(where: {
+        FileManager.default.fileExists(atPath: url.appendingPathComponent($0).path)
+      })
+    else {
+      error = "This folder does not contain a saved Rove run."
+      errorDetails = nil
+      return
+    }
+    history.rememberRun(url)
+    Task { await history.reload() }
   }
 
 }

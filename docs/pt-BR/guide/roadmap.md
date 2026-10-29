@@ -23,6 +23,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Eficiência da amostragem com relógio relaxado | Próximo, #27 |
 | Prévia nativa para importar e preparar análises | Implementado, #28 |
 | Execução e progresso no aplicativo | Implementado, #29 |
+| Histórico de execuções e reutilização de configurações | Implementado, #30 |
 | Cadeias paralelas e relatórios de convergência | Planejado, #23 |
 | Reescalonamento por potências de dois | Planejado, #18 |
 | Checkpoints e retomada de execuções | Planejado, #22 |

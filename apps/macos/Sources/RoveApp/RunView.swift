@@ -129,6 +129,9 @@ struct RunView: View {
           }.buttonStyle(LabButtonStyle(prominent: true))
         }
         Spacer()
+        Button(action: workspace.openHistory) {
+          Label(strings("History"), systemImage: "clock.arrow.circlepath")
+        }.buttonStyle(LabButtonStyle(compact: true))
       }
     }
     .confirmationDialog(

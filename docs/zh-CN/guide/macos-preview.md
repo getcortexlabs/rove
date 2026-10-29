@@ -83,6 +83,31 @@ open build/macos/Rove.app
 [协议与进程说明](https://github.com/getcortexlabs/rove/blob/main/apps/macos/README.md#cli-event-protocol-version-1)
 定义字段、验证规则和退出码。
 
+## 浏览历史运行
+
+![Rove 历史记录中的已完成、已取消和失败的运行](/images/macos-history.png)
+
+从侧边栏打开 **History**，或按 **Command-Shift-H**。运行按时间从新到旧排列，
+显示矩阵、日期、记录的状态、已用时间、模型和种子。可按矩阵名或种子搜索，
+也可按状态筛选。选择一条运行可查看已完成与请求的步数、设置、明确选择的
+分组及原始输入指纹。文件按钮可在 Finder 中显示现存的输出。
+
+应用会自动发现 `~/Rove Runs` 中以前的应用运行，并在本机记住通过应用选择的
+其他输出位置。**Add run folder** 可添加保存在别处的应用运行；请选择包含
+`session.json` 或 `setup.rove.json` 的文件夹。**Refresh** 重新检查文件。
+应用只读取小型元数据文件，不读取轨迹或树的内容，并在界面线程之外完成读取。
+
+缺失的文件夹、无法读取的记录和不完整的输出会明确标注。没有确认结束的运行
+标记为 **Interrupted**，即使已有输出文件。旧记录仍可读取；没有记录的测量值
+显示为横线，不作估算。新的尝试在检查输入前保存会话，因此立即取消或启动失败
+也能留在历史中；指纹不符时不会产生科学分析输出。
+
+**Use this setup** 会检查原始矩阵并打开保存的设置供核对，不会自动启动分析或
+恢复中断的链。运行期间可以浏览 History，再通过 **Current analysis** 返回；
+在当前分析结束或取消前，不能复用配置。**Back to workspace**
+（**Command-Shift-R**）保留已打开的矩阵和设置。历史功能不会删除输出文件，
+也不能证明收敛。
+
 ## 从命令行检查
 
 ```sh

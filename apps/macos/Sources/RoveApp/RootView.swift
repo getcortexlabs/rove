@@ -28,7 +28,9 @@ struct RootView: View {
                 .buttonStyle(.plain).padding(.top, 14).help(strings("Dismiss error"))
               }
             }
-            if let run = workspace.run {
+            if workspace.showingHistory {
+              HistoryView(workspace: workspace)
+            } else if let run = workspace.run {
               RunView(workspace: workspace, run: run)
             } else if let report = workspace.report {
               switch workspace.page {
@@ -43,8 +45,11 @@ struct RootView: View {
           .frame(maxWidth: 980).padding(.horizontal, 36).padding(.top, 12).padding(.bottom, 28)
           .frame(maxWidth: .infinity)
         }
-        .id("\(workspace.page.rawValue):\(workspace.report?.inputSha256 ?? "welcome")")
-        if workspace.report != nil && workspace.run == nil { footer }
+        .id(
+          workspace.showingHistory
+            ? "history:\(workspace.selectedHistoryID ?? "list")"
+            : "\(workspace.page.rawValue):\(workspace.report?.inputSha256 ?? "welcome")")
+        if workspace.report != nil && workspace.run == nil && !workspace.showingHistory { footer }
       }
     }
     .background { WorkspaceBackdrop() }.foregroundStyle(Lab.ink)
@@ -61,6 +66,7 @@ struct RootView: View {
       reduceMotion || workspace.preferences.reduceMotion ? nil : .easeInOut(duration: 0.2),
       value: workspace.page
     )
+    .task { await workspace.history.reload() }
     .overlay {
       if workspace.loading {
         ZStack {
@@ -80,7 +86,9 @@ struct RootView: View {
       Image(systemName: "square.stack.3d.up").foregroundStyle(Lab.muted)
       Text(strings("Workspace")).foregroundStyle(Lab.muted)
       Text("/").foregroundStyle(Lab.border)
-      Text(workspace.title).foregroundStyle(Lab.secondary).lineLimit(1)
+      Text(workspace.showingHistory ? strings("History") : workspace.title).foregroundStyle(
+        Lab.secondary
+      ).lineLimit(1)
       Spacer()
       if workspace.report != nil {
         Button(action: workspace.chooseFile) { Image(systemName: "folder.badge.plus") }

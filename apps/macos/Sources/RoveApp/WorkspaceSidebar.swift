@@ -8,36 +8,69 @@ struct WorkspaceSidebar: View {
     VStack(alignment: .leading, spacing: 0) {
       identity.padding(.horizontal, 19).padding(.top, 43).padding(.bottom, 27)
 
-      Button(action: workspace.reset) {
-        HStack(spacing: 9) {
-          Image(systemName: "plus").font(.system(size: 11, weight: .semibold))
-          Text(strings("New analysis")).font(.system(size: 12, weight: .medium))
-          Spacer()
-          Text("⌘N").font(.system(size: 10)).foregroundStyle(Lab.muted)
-        }.padding(.horizontal, 13).padding(.vertical, 12)
-      }.buttonStyle(SidebarButtonStyle(outlined: true)).padding(.horizontal, 13).disabled(
-        workspace.isRunning)
+      ScrollView {
+        VStack(alignment: .leading, spacing: 0) {
+          Button(action: workspace.reset) {
+            HStack(spacing: 9) {
+              Image(systemName: "plus").font(.system(size: 11, weight: .semibold))
+              Text(strings("New analysis")).font(.system(size: 12, weight: .medium))
+              Spacer()
+              Text("⌘N").font(.system(size: 10)).foregroundStyle(Lab.muted)
+            }.padding(.horizontal, 13).padding(.vertical, 12)
+          }.buttonStyle(SidebarButtonStyle(outlined: true)).padding(.horizontal, 13).disabled(
+            workspace.isRunning)
 
-      sectionLabel("WORKSPACE").padding(.top, 29)
-      VStack(spacing: 5) {
-        ForEach(WorkspacePage.allCases, id: \.self) { page in
-          navigationItem(page)
-        }
-      }.padding(.horizontal, 12)
+          sectionLabel("WORKSPACE").padding(.top, 29)
+          VStack(spacing: 5) {
+            ForEach(WorkspacePage.allCases, id: \.self) { page in
+              navigationItem(page)
+            }
+          }.padding(.horizontal, 12)
 
-      sectionLabel("EXPLORE").padding(.top, 28)
-      Button(action: workspace.loadExample) {
-        HStack(spacing: 11) {
-          Image(systemName: "sparkles").font(.system(size: 15))
-            .foregroundStyle(Lab.ice).frame(width: 25)
-          VStack(alignment: .leading, spacing: 5) {
-            Text(strings("Example matrix")).font(.system(size: 12, weight: .medium))
-            Text(strings("20 taxa · 50 characters")).font(.system(size: 10)).foregroundStyle(
-              Lab.muted)
+          Button(action: workspace.openHistory) {
+            HStack(spacing: 10) {
+              Image(systemName: "clock.arrow.circlepath").frame(width: 25).foregroundStyle(Lab.ice)
+              Text(strings("History")).font(.system(size: 12, weight: .medium))
+              Spacer()
+              if !workspace.history.entries.isEmpty {
+                Text(strings.number(workspace.history.entries.count)).font(
+                  .system(size: 10, design: .monospaced)
+                ).foregroundStyle(Lab.muted)
+              }
+            }.padding(.horizontal, 12).padding(.vertical, 13)
+          }.buttonStyle(SidebarButtonStyle(selected: workspace.showingHistory)).padding(
+            .horizontal, 12
+          ).padding(.top, 5)
+            .accessibilityAddTraits(workspace.showingHistory ? .isSelected : [])
+
+          if workspace.run != nil {
+            Button(action: workspace.returnToWorkspace) {
+              HStack(spacing: 10) {
+                Image(systemName: "waveform.path").frame(width: 25).foregroundStyle(Lab.accent)
+                Text(strings("Current analysis")).font(.system(size: 12, weight: .medium))
+                Spacer()
+              }.padding(.horizontal, 12).padding(.vertical, 13)
+            }.buttonStyle(SidebarButtonStyle(selected: !workspace.showingHistory)).padding(
+              .horizontal, 12
+            ).padding(.top, 5)
           }
-          Spacer(minLength: 0)
-        }.padding(.horizontal, 12).padding(.vertical, 12)
-      }.buttonStyle(SidebarButtonStyle()).padding(.horizontal, 12).disabled(workspace.isRunning)
+
+          sectionLabel("EXPLORE").padding(.top, 28)
+          Button(action: workspace.loadExample) {
+            HStack(spacing: 11) {
+              Image(systemName: "sparkles").font(.system(size: 15))
+                .foregroundStyle(Lab.ice).frame(width: 25)
+              VStack(alignment: .leading, spacing: 5) {
+                Text(strings("Example matrix")).font(.system(size: 12, weight: .medium))
+                Text(strings("20 taxa · 50 characters")).font(.system(size: 10)).foregroundStyle(
+                  Lab.muted)
+              }
+              Spacer(minLength: 0)
+            }.padding(.horizontal, 12).padding(.vertical, 12)
+          }.buttonStyle(SidebarButtonStyle()).padding(.horizontal, 12).disabled(workspace.isRunning)
+
+        }
+      }.scrollIndicators(.hidden)
 
       Spacer(minLength: 16)
 
@@ -111,7 +144,7 @@ struct WorkspaceSidebar: View {
   }
 
   private func navigationItem(_ page: WorkspacePage) -> some View {
-    let selected = workspace.run == nil && workspace.page == page
+    let selected = !workspace.showingHistory && workspace.run == nil && workspace.page == page
     return Button {
       if workspace.canOpen(page) {
         workspace.dismissRun()

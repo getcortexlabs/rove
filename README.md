@@ -46,6 +46,8 @@ Requires macOS 14+, Xcode with Swift 6, and Rust. This builds a local app; a
 notarized release and DMG are future work. Review the model and explicit group
 constraints, start the bundled Rust engine, and inspect trace and tree files.
 Saved setups can be reopened after their matrix fingerprint is checked.
+History keeps previous runs accessible across launches, with their settings,
+outcomes and output files, and can prepare a new run from a saved configuration.
 Completion does not establish convergence; resumed runs remain future work.
 See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/README.md).
 

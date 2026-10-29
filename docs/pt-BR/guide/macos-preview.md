@@ -103,6 +103,40 @@ os eventos `started`, `progress`, `completed`, `cancelled` ou `failed`.
 o canal de entrada. O app usa essas opções. As [notas do protocolo e processo](https://github.com/getcortexlabs/rove/blob/main/apps/macos/README.md#cli-event-protocol-version-1)
 definem campos, validação e códigos de saída.
 
+## Consultar execuções anteriores
+
+![Histórico do Rove com execuções concluídas, canceladas e com falha](/images/macos-history.png)
+
+Abra **Histórico** na barra lateral ou use **Command-Shift-H**. As execuções
+aparecem da mais recente para a mais antiga, com matriz, data, situação registrada,
+tempo decorrido, modelo e semente. Busque pelo nome da matriz ou pela semente,
+ou filtre por situação. Selecione uma execução para ver passos concluídos e
+solicitados, configurações, grupos explícitos e impressão digital da entrada
+original. Os botões dos arquivos mostram as saídas disponíveis no Finder.
+
+As execuções anteriores do app em `~/Rove Runs` são encontradas automaticamente.
+Outros locais escolhidos para salvar resultados ficam lembrados neste Mac.
+**Adicionar pasta** inclui uma execução do app salva em outro lugar; escolha a
+pasta que contém `session.json` ou `setup.rove.json`. **Atualizar** confere os
+arquivos novamente. O app lê apenas metadados pequenos, sem carregar o conteúdo
+dos traços ou das árvores, e faz essa leitura fora da thread da interface.
+
+Pastas ausentes, registros ilegíveis e resultados incompletos são identificados.
+Uma execução sem término confirmado aparece como **Interrompida**, mesmo que
+existam arquivos de saída. Registros antigos continuam legíveis; medidas não
+disponíveis aparecem como um traço, sem estimativas. Novas tentativas salvam uma
+sessão antes de conferir a entrada, para que cancelamentos imediatos e falhas
+ao iniciar também apareçam; uma impressão digital diferente impede a geração
+de resultados científicos.
+
+**Usar esta configuração** confere a matriz original e abre os ajustes salvos
+para revisão. Não inicia uma análise automaticamente nem retoma uma cadeia.
+Durante uma execução, você pode navegar pelo Histórico e voltar por **Análise
+atual**; reutilizar uma configuração fica desabilitado até a análise terminar
+ou ser cancelada. **Voltar à área de trabalho** (**Command-Shift-R**) preserva
+a matriz e os ajustes abertos. O histórico não apaga arquivos nem comprova
+convergência.
+
 ## Inspecionar pelo terminal
 
 ```sh

@@ -19,8 +19,11 @@ struct PreviewTests {
     let defaults = try #require(UserDefaults(suiteName: suite))
     defer { defaults.removePersistentDomain(forName: suite) }
     let preferences = AppPreferences(defaults: defaults, preferredLanguages: ["en-US"])
+    let historyRoot = directory.appendingPathComponent("history-\(UUID().uuidString)")
+    let history = RunHistory(defaults: defaults, defaultRoot: historyRoot)
     let workspace = Workspace(
-      executable: root.appendingPathComponent("target/release/rove"), preferences: preferences)
+      executable: root.appendingPathComponent("target/release/rove"), preferences: preferences,
+      history: history)
     let report = try await MatrixInspector.inspect(
       root.appendingPathComponent("fixtures/reference/20x50/matrix.nex"), gapsAsMissing: false,
       executable: root.appendingPathComponent("target/release/rove"))
@@ -28,8 +31,10 @@ struct PreviewTests {
       ("welcome", nil, 1240, 850), ("matrix", .matrix, 1240, 850),
       ("model", .model, 1240, 850), ("review", .review, 1240, 850),
       ("welcome-compact", nil, 1080, 700), ("model-compact", .model, 1080, 700),
+      ("history-empty", nil, 1240, 850), ("history-empty-compact", nil, 1080, 700),
     ]
     for (name, page, width, height) in states {
+      workspace.showingHistory = name.hasPrefix("history")
       workspace.report = page == nil ? nil : report
       workspace.file =
         page == nil ? nil : root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
@@ -50,11 +55,12 @@ struct PreviewTests {
       }
       window.close()
     }
+    workspace.showingHistory = false
     workspace.report = report
     workspace.file = root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
     workspace.page = .review
     workspace.settings.steps = 1_000_000
-    workspace.outputParent = directory.appendingPathComponent("runs")
+    workspace.outputParent = historyRoot
     workspace.monophyly = [Array(report.allTaxa.prefix(19))]
     workspace.startRun()
     let run = try #require(workspace.run)
@@ -79,6 +85,49 @@ struct PreviewTests {
         runView, to: directory.appendingPathComponent("completed-\(language.rawValue).png"))
     }
     runWindow.close()
+    for (name, seed, cancelled) in [("failed", "43", false), ("cancelled", "44", true)] {
+      var configuration = workspace.settings
+      configuration.seed = seed
+      configuration.steps = 100_000_000
+      let request = RunRequest(
+        id: UUID(),
+        executable: cancelled
+          ? root.appendingPathComponent("target/release/rove")
+          : historyRoot.appendingPathComponent("missing-engine"),
+        directory: historyRoot.appendingPathComponent(name),
+        draft: AnalysisDraft(
+          matrix: workspace.file!, report: report, settings: configuration,
+          monophyly: workspace.monophyly))
+      let worker = RunProcess()
+      _ = await Task.detached {
+        worker.execute(request) { event in
+          if cancelled && event.event == "started" { worker.cancel() }
+        }
+      }.value
+    }
+    await history.reload()
+    workspace.showingHistory = true
+    for (name, selected, width, height) in [
+      ("history", false, 1240.0, 850.0), ("history-compact", false, 1080.0, 700.0),
+      ("history-detail", true, 1240.0, 850.0), ("history-detail-compact", true, 1080.0, 700.0),
+    ] {
+      workspace.selectedHistoryID = selected ? run.request.directory.path : nil
+      let view = NSHostingView(rootView: RootView(workspace: workspace))
+      let window = NSWindow(
+        contentRect: NSRect(x: 0, y: 0, width: width, height: height),
+        styleMask: [.borderless], backing: .buffered, defer: false)
+      window.isReleasedWhenClosed = false
+      window.appearance = NSAppearance(named: .darkAqua)
+      window.contentView = view
+      window.orderBack(nil)
+      for language in [AppLanguage.english, .portuguese] {
+        preferences.language = language
+        try await capture(
+          view, to: directory.appendingPathComponent("\(name)-\(language.rawValue).png"))
+      }
+      window.close()
+    }
+    workspace.showingHistory = false
     let settings = NSHostingView(rootView: SettingsView(preferences: preferences))
     let settingsWindow = NSWindow(
       contentRect: NSRect(x: 0, y: 0, width: 560, height: 590),

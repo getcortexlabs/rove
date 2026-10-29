@@ -102,6 +102,38 @@ con eventos `started`, `progress`, `completed`, `cancelled` o `failed`.
 su canal de entrada. La aplicación usa estas opciones. Las [notas del protocolo y proceso](https://github.com/getcortexlabs/rove/blob/main/apps/macos/README.md#cli-event-protocol-version-1)
 definen los campos, la validación y los códigos de salida.
 
+## Consultar ejecuciones anteriores
+
+![Historial de Rove con ejecuciones completadas, canceladas y fallidas](/images/macos-history.png)
+
+Abre **History** en la barra lateral o pulsa **Command-Shift-H**. Las ejecuciones
+aparecen de la más reciente a la más antigua, con matriz, fecha, estado registrado,
+tiempo transcurrido, modelo y semilla. Busca por matriz o semilla, o filtra por
+estado. Selecciona una ejecución para ver pasos completados y solicitados,
+ajustes, grupos explícitos y la huella de entrada original. Los botones de
+archivos muestran las salidas disponibles en Finder.
+
+Las ejecuciones anteriores de la aplicación en `~/Rove Runs` se descubren
+automáticamente. Otras ubicaciones de salida elegidas en la aplicación se
+recuerdan en este Mac. **Add run folder** añade una ejecución guardada en otro
+lugar; elige la carpeta que contiene `session.json` o `setup.rove.json`.
+**Refresh** vuelve a comprobar los archivos. La aplicación lee metadatos pequeños,
+no el contenido de los trazados ni de los árboles, fuera del hilo de la interfaz.
+
+Se identifican carpetas ausentes, registros ilegibles y salidas incompletas.
+Una ejecución sin final confirmado aparece como **Interrupted**, aunque existan
+archivos. Los registros antiguos siguen siendo legibles; los valores no disponibles
+se muestran con una raya, sin estimaciones. Los nuevos intentos guardan una sesión
+antes de comprobar la entrada para conservar cancelaciones inmediatas y fallos
+al iniciar; una huella distinta impide generar resultados científicos.
+
+**Use this setup** comprueba la matriz original y abre los ajustes guardados
+para revisión. No inicia un análisis automáticamente ni reanuda una cadena.
+Durante una ejecución puedes navegar por History y volver mediante **Current
+analysis**; reutilizar ajustes queda deshabilitado hasta que termine o se cancele.
+**Back to workspace** (**Command-Shift-R**) conserva la matriz y los ajustes
+abiertos. El historial no elimina archivos ni demuestra convergencia.
+
 ## Inspeccionar desde el terminal
 
 ```sh

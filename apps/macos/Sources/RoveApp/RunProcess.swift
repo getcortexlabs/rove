@@ -30,33 +30,10 @@ struct RunResult: Sendable {
   let details: String?
 }
 
-private struct SessionRecord: Encodable {
-  let formatVersion = 1
-  let id: UUID
-  let status: String
-  let setup: AnalysisDraft
-  let exitCode: Int32?
-  let error: String?
-}
-
-private struct EngineRecord: Decodable {
-  struct Input: Decodable { let sha256: String }
-  struct Settings: Decodable {
-    let steps: UInt64
-    let sampleEvery: UInt64
-    let seed: UInt64
-  }
-  struct Model: Decodable { let monophyly: [[String]] }
-  let status: String
-  let completedSteps: UInt64
-  let input: Input
-  let settings: Settings
-  let model: Model
-}
-
 // The worker owns all blocking I/O. The lock only protects process ownership
 // and cancellation shared with the UI; it is never held while waiting for exit.
 final class RunProcess: @unchecked Sendable {
+  private enum Control: Error { case cancelled }
   private let lock = NSLock()
   private var process: Process?
   private var input: FileHandle?
@@ -95,11 +72,21 @@ final class RunProcess: @unchecked Sendable {
     var result: RunResult
     var launched: Process?
     var ownsDirectory = false
+    let began = Date()
+    var lastStep: UInt64?
     do {
+      try request.draft.validate()
+      try FileManager.default.createDirectory(
+        at: request.directory.deletingLastPathComponent(), withIntermediateDirectories: true)
+      try FileManager.default.createDirectory(
+        at: request.directory, withIntermediateDirectories: false)
+      ownsDirectory = true
+      try request.draft.write(to: request.directory.appendingPathComponent("setup.rove.json"))
+      try writeRecord(request, status: "partial", result: nil, began: began, step: nil)
       if cancellationRequested {
-        return RunResult(status: .cancelled, exitCode: nil, error: nil, details: nil)
+        lastStep = 0
+        throw Control.cancelled
       }
-      if let issue = request.draft.settings.validationError { throw ImportError.message(issue) }
       let matrix = URL(fileURLWithPath: request.draft.matrixPath)
       let values = try matrix.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey])
       guard values.isRegularFile == true, (values.fileSize ?? 0) <= 32 * 1024 * 1024 else {
@@ -109,13 +96,6 @@ final class RunProcess: @unchecked Sendable {
         String(format: "%02x", $0)
       }.joined()
       guard fingerprint == request.draft.matrixSHA256 else { throw RunFailure.changedInput }
-      try FileManager.default.createDirectory(
-        at: request.directory.deletingLastPathComponent(), withIntermediateDirectories: true)
-      try FileManager.default.createDirectory(
-        at: request.directory, withIntermediateDirectories: false)
-      ownsDirectory = true
-      try request.draft.write(to: request.directory.appendingPathComponent("setup.rove.json"))
-      try writeRecord(request, status: "partial", result: nil)
       let errors = request.directory.appendingPathComponent("engine.stderr.log")
       let events = request.directory.appendingPathComponent("events.jsonl")
       FileManager.default.createFile(atPath: errors.path, contents: nil)
@@ -166,7 +146,10 @@ final class RunProcess: @unchecked Sendable {
         if count == 0 { break }
         let bytes = Data(buffer.prefix(count))
         try eventLog.write(contentsOf: bytes)
-        for event in try reader.append(bytes) { onEvent(event) }
+        for event in try reader.append(bytes) {
+          lastStep = event.step ?? lastStep
+          onEvent(event)
+        }
       }
       child.waitUntilExit()
       if cancellationRequested && child.terminationReason == .uncaughtSignal {
@@ -194,11 +177,15 @@ final class RunProcess: @unchecked Sendable {
     } catch {
       cancel()
       launched?.waitUntilExit()
-      result = RunResult(
-        status: .failed, exitCode: launched?.terminationStatus,
-        error: (error as? RunFailure)?.errorDescription
-          ?? "The analysis could not be started or saved.",
-        details: error is RunFailure ? nil : error.localizedDescription)
+      if error is Control {
+        result = RunResult(status: .cancelled, exitCode: nil, error: nil, details: nil)
+      } else {
+        result = RunResult(
+          status: .failed, exitCode: launched?.terminationStatus,
+          error: (error as? RunFailure)?.errorDescription
+            ?? "The analysis could not be started or saved.",
+          details: error is RunFailure ? nil : error.localizedDescription)
+      }
     }
     lock.lock()
     process = nil
@@ -206,7 +193,10 @@ final class RunProcess: @unchecked Sendable {
     input = nil
     lock.unlock()
     if ownsDirectory {
-      do { try writeRecord(request, status: result.status.rawValue, result: result) } catch {
+      do {
+        try writeRecord(
+          request, status: result.status.rawValue, result: result, began: began, step: lastStep)
+      } catch {
         return RunResult(
           status: .failed, exitCode: result.exitCode,
           error: "The run record could not be saved. Inspect the output folder.",
@@ -217,16 +207,8 @@ final class RunProcess: @unchecked Sendable {
   }
 
   private func verifyRecord(_ request: RunRequest, status: String, step: UInt64) throws {
-    let decoder = JSONDecoder()
-    decoder.keyDecodingStrategy = .convertFromSnakeCase
-    let record = try decoder.decode(
-      EngineRecord.self, from: Data(contentsOf: request.output.appendingPathComponent("run.json")))
-    guard record.status == status, record.completedSteps == step,
-      record.input.sha256 == request.draft.matrixSHA256,
-      record.settings.steps == UInt64(request.draft.settings.steps),
-      record.settings.sampleEvery == UInt64(request.draft.settings.sampleEvery),
-      record.settings.seed == UInt64(request.draft.settings.seed),
-      record.model.monophyly == request.draft.monophyly
+    let record = try EngineRecord.read(request.output.appendingPathComponent("run.json"))
+    guard record.status == status, record.completedSteps == step, record.matches(request.draft)
     else { throw RunFailure.invalidCompletion }
     for name in ["trace.log", "trees.nexus"] {
       let values = try request.output.appendingPathComponent(name).resourceValues(forKeys: [
@@ -238,10 +220,14 @@ final class RunProcess: @unchecked Sendable {
     }
   }
 
-  private func writeRecord(_ request: RunRequest, status: String, result: RunResult?) throws {
+  private func writeRecord(
+    _ request: RunRequest, status: String, result: RunResult?, began: Date, step: UInt64?
+  ) throws {
     let record = SessionRecord(
-      id: request.id, status: status, setup: request.draft,
-      exitCode: result?.exitCode, error: result?.error)
+      formatVersion: 1, id: request.id, status: status, setup: request.draft,
+      exitCode: result?.exitCode, error: result?.error, startedAt: began,
+      finishedAt: result == nil ? nil : Date(),
+      elapsedSeconds: result == nil ? nil : Date().timeIntervalSince(began), completedSteps: step)
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     encoder.dateEncodingStrategy = .iso8601

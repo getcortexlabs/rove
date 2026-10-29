@@ -155,14 +155,16 @@ struct AnalysisDraft: Codable, Sendable {
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
     let draft = try decoder.decode(Self.self, from: Data(contentsOf: url))
-    guard draft.formatVersion == 1, (draft.matrixPath as NSString).isAbsolutePath,
-      draft.matrixSHA256.count == 64,
-      draft.matrixSHA256.utf8.allSatisfy({
-        (48...57).contains($0) || (97...102).contains($0)
-      })
-    else { throw ImportError.message("This setup has an unsupported or invalid format.") }
-    if let issue = draft.settings.validationError { throw ImportError.message(issue) }
+    try draft.validate()
     return draft
+  }
+
+  func validate() throws {
+    guard formatVersion == 1, (matrixPath as NSString).isAbsolutePath,
+      matrixSHA256.count == 64,
+      matrixSHA256.utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) })
+    else { throw ImportError.message("This setup has an unsupported or invalid format.") }
+    if let issue = settings.validationError { throw ImportError.message(issue) }
   }
 
   func write(to url: URL) throws {

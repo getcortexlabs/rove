@@ -100,6 +100,37 @@ For automation, `rove sample ... --events-json` emits versioned JSON lines with
 The app uses these options. The [protocol and process notes](https://github.com/getcortexlabs/rove/blob/main/apps/macos/README.md#cli-event-protocol-version-1)
 define fields, validation and exit codes.
 
+## Browse past runs
+
+![Rove History with completed, cancelled and failed runs](/images/macos-history.png)
+
+Open **History** in the sidebar or press **Command-Shift-H**. Runs are listed
+newest first, with the matrix, date, recorded outcome, elapsed time, model and
+seed. Search by matrix name or seed, or filter by status. Select a run to see
+its completed/requested steps, settings, explicit groups and original input
+fingerprint. The file buttons reveal available outputs in Finder.
+
+Existing app runs in `~/Rove Runs` are discovered automatically. Other output
+locations selected in the app are remembered on this Mac. **Add run folder**
+adds an existing app run saved elsewhere; choose the folder containing
+`session.json` or `setup.rove.json`. **Refresh** checks the files again. The app
+reads small metadata files, not the trace or tree contents, and keeps this work
+away from the interface thread.
+
+Missing folders, unreadable records and incomplete output are identified.
+A run without a confirmed finish is marked **Interrupted**, even if some
+output exists. Older records remain readable; unavailable measurements display
+an em dash rather than an estimate. New attempts save a session before checking
+input so an early cancellation or failed start remains visible; no scientific
+output is produced when the input fingerprint fails.
+
+**Use this setup** checks the original matrix and opens the saved configuration
+for review. It does not start an analysis automatically or resume a chain.
+While a run is active, you can browse History and return through **Current
+analysis**; reusing a setup stays disabled until it finishes or is cancelled.
+**Back to workspace** (**Command-Shift-R**) preserves the matrix and settings
+already open. History does not delete output files or establish convergence.
+
 ## Inspect from the command line
 
 ```sh

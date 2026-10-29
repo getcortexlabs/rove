@@ -161,7 +161,10 @@ struct RunTests {
       directory: directory.appendingPathComponent("changed"), draft: draft)
     #expect(
       RunProcess().execute(changed) { _ in }.error == RunFailure.changedInput.errorDescription)
-    #expect(!FileManager.default.fileExists(atPath: changed.directory.path))
+    #expect(!FileManager.default.fileExists(atPath: changed.output.path))
+    #expect(
+      try SessionRecord.read(changed.directory.appendingPathComponent("session.json")).status
+        == "failed")
   }
 
   @Test @MainActor func reopeningChecksInputsAndPreservesExplicitGroups() async throws {

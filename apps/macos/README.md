@@ -84,6 +84,37 @@ Closing the main window or quitting asks whether to stop, then waits for the own
 process. EOF also stops sampling if the app dies. A stalled child gets SIGTERM after
 two seconds and SIGKILL two seconds later; this fallback may leave incomplete files.
 
+## History
+
+History (Command-Shift-H) lists recorded runs newest first, with search by
+matrix or seed and an outcome filter. Details retain the model, explicit groups,
+input fingerprint, requested/completed steps, elapsed time and file locations.
+Use this setup passes the recorded draft through the existing fingerprint-checked
+review flow; it neither runs automatically nor resumes a chain. Browsing preserves
+the current workspace and owned process. Return with Command-Shift-R; an active
+analysis also remains reachable from the sidebar.
+
+`RunHistory` remembers output roots and discovered run paths in UserDefaults
+(`historyFolders`, `historyRuns`). It discovers immediate child app-run folders
+in `~/Rove Runs` and explicitly selected output locations. Add run folder registers
+an individual app-run directory. No recursive home-directory search, database or
+network service is involved. The session and engine records remain the source of
+truth; the index only stores locations. Tests inject isolated defaults and roots.
+
+Scanning runs off the main actor and rejects stale scan results. It reads bounded
+metadata (2 MiB per record), never trace or tree contents. Missing locations remain
+visible as unavailable. A completed session also needs matching engine metadata
+and nonempty trace/tree files; otherwise it reports incomplete files. A `partial`
+session remains interrupted even when an engine file claims completion. History
+cannot establish convergence and never deletes any run files.
+
+Session format 1 now optionally records `startedAt`, `finishedAt`, `elapsedSeconds`
+and `completedSteps`. Older records fall back to recorded engine timing and steps,
+or show an unavailable value. The app creates its session record before input
+validation so early cancellation and failed starts remain discoverable; the engine
+still checks the input hash before creating scientific output. If the run folder
+itself cannot be written, History reports its unavailability.
+
 ## CLI event protocol (version 1)
 
 `rove sample ... --events-json` emits one JSON object per stdout line and flushes
@@ -121,7 +152,10 @@ recorder to check shell quoting. Preference tests cover language resolution,
 persistence, localized formatting and analysis preservation during switching.
 Run tests also compare app and CLI samples with the same binary and seed, reopen
 setups, reject changed input, cancel a live child, and handle malformed events,
-launch failures, output collisions and stale progress.
+launch failures, output collisions and stale progress. History tests cover real
+completed/cancelled/failed runs, cancellation before launch, legacy metadata,
+missing and corrupt files, persistent custom locations, duplicate paths and
+configuration reuse while preserving an active run.
 Set `ROVE_TEST_ENGINE` to test another Rust
 executable; otherwise tests use `target/release/rove`.
 
