@@ -178,6 +178,7 @@ backend over NEON on each path.
 files, keeping machine identifiers and unrelated local logs out of the commit.
 
 The [strict-clock comparison](strict-clock/2026-10-28/README.md) records
-runtime, ESS per time and tree diagnostics for the minimal sampler; for the
-complete reference model they wait for #16. Issue #8 stays open for those
-measurements and equivalent cross-engine comparisons.
+runtime, ESS per time and tree diagnostics for the minimal sampler. The
+[full-model comparison](inference/2026-10-29/README.md) adds the supplied
+relaxed-clock configuration, a separate known-tree control and three degraded
+matrices. Issue #8 remains open for broader workloads and backend comparisons.

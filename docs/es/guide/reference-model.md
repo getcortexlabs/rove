@@ -96,7 +96,19 @@ aportan verificaciones numéricas independientes.
 Otras pruebas comprueban los hiperpriors muestreando sin datos, el mapeo con
 distintas raíces, cálculos almacenados frente a evaluaciones nuevas en cada
 paso, restauración tras rechazo, muestras idénticas entre backends y ausencia
-de asignaciones durante los pasos probados. Las comparaciones completas de
-posterior entre cadenas independientes y ESS por tiempo siguen en
-[#12](https://github.com/getcortexlabs/rove/issues/12) y
-[#8](https://github.com/getcortexlabs/rove/issues/8).
+de asignaciones durante los pasos probados.
+
+Los resúmenes de posterior y las frecuencias de clados cumplieron los criterios fijados
+antes de las ejecuciones en seis casos construidos con 20 taxones, incluidos homoplasia,
+datos ausentes y señal reducida. El
+[informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)
+registra todos los lotes, incluida la extensión de Mkv exigida por el criterio de ESS,
+tiempos y ESS por segundo. Rove terminó los cinco casos de Mk sin corrección en menos
+tiempo, pero BEAST obtuvo más ESS por segundo para la densidad log-posterior y el sigma
+del reloj. Las mejoras de las propuestas se siguen en
+[#27](https://github.com/getcortexlabs/rove/issues/27).
+
+Seis estados fijos adicionales cubren estos casos. Con tasas de categoría importadas, la
+diferencia máxima de verosimilitud fue 1,14e-13; al generar las categorías de forma
+independiente, llegó a 8,16e-8, por la misma diferencia de aproximación de cuantiles
+descrita arriba.

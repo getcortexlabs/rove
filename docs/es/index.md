@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Etapa inicial
-El núcleo de verosimilitud con la ruta directa de Mk y un kernel NEON, la corrección Mkv, las pruebas de igualdad y un muestreador independiente mínimo están implementados. El modelo de referencia con reloj relajado está implementado y comprobado en estados fijos. La validación completa de la posterior, una ruta AVX2 y benchmarks controlados entre motores siguen pendientes. [Ver lo que existe hoy →](/es/guide/#lo-que-existe-hoy)
+El núcleo de verosimilitud con la ruta directa de Mk y un kernel NEON, la corrección Mkv, las pruebas de igualdad y un muestreador independiente mínimo están implementados. El modelo de referencia con reloj relajado está implementado y comprobado en estados fijos. Las comparaciones de posterior cubren seis casos construidos con 20 taxones. Una ruta AVX2 y cargas mayores para comparar motores siguen pendientes. [Ver lo que existe hoy →](/es/guide/#lo-que-existe-hoy)
 :::
 
 </div>

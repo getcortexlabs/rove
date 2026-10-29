@@ -78,6 +78,7 @@ Rove 使用 gamma 分布的[正项级数](https://dlmf.nist.gov/8.7.E1)，
 
 其他测试通过无数据采样检查超先验，并检查不同根的速率映射、每步缓存计算与
 重新计算的一致性、拒绝后的恢复、两种后端产生相同样本，以及测试步中没有内存分配。
-独立链间完整后验比较和单位时间 ESS 仍由
-[#12](https://github.com/getcortexlabs/rove/issues/12) 与
-[#8](https://github.com/getcortexlabs/rove/issues/8) 跟踪。
+
+六个含 20 个分类单元的构造案例中，后验汇总和支系频率满足了预先确定的标准，包括同形性、缺失数据和信号减少的案例。[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)记录了所有批次、ESS 标准要求的 Mkv 延长批次、运行时间和每秒 ESS。Rove 完成五个未校正 Mk 案例所需时间更少，但 BEAST 的对数后验密度和时钟 sigma 每秒 ESS 更高。提议机制的改进由 [#27](https://github.com/getcortexlabs/rove/issues/27) 跟踪。
+
+另有六个固定状态覆盖这些案例。导入相同类别速率时，最大似然差为 1.14e-13；独立生成类别时为 8.16e-8，来自上文所述的分位数近似差异。

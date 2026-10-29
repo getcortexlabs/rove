@@ -13,13 +13,15 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Reproducible BEAST 2.7.8 reference analysis | Done |
 | Morphological NEXUS and observed-pattern compression | Done |
 | Rust kernel benchmark baseline | Done, #8 |
-| Full-inference and cross-engine benchmarks | Pending, #8 |
+| Full-inference and cross-engine benchmarks | 20-taxon comparison recorded; broader work pending, #8 |
 | Mkv ascertainment correction | Done |
 | Direct Mk pruning | Done |
 | Minimal standalone MCMC | Done |
 | NEON vectorisation | Done |
 | Relaxed-clock reference model | Done, #16 |
-| Complete inference validation | Next, #12 |
+| Complete inference validation | Done for six 20-taxon cases, #12 |
+| Relaxed-clock sampling efficiency | Next, #27 |
+| Power-of-two rescaling | Planned, #18 |
 | Evaluation of repeats within subtrees | Planned, #17 |
 | Optional BEAST 2 JNI and BEAGLE C ABI adapters | Possible, #6 and #7 |
 
@@ -27,7 +29,7 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 
 The [core](./kernel) is checked against an independent scalar implementation. The [NEXUS reader](./nexus) supplies weighted observations without BEAST. The [reference experiment](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) records exact inputs, model settings, two completed BEAST runs and fixed numerical states.
 
-The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) records 11 Rust workloads, separating setup, full evaluations, partial updates and proposal bookkeeping. Raw samples, allocation observations and variation across three processes are included. Full-inference and cross-engine benchmarks remain pending. The strict-clock comparison below records wall times for both engines on one small configuration, but it is not a controlled benchmark.
+The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) records 11 Rust workloads, separating setup, full evaluations, partial updates and proposal bookkeeping. Raw samples, allocation observations and variation across three processes are included. A [full-model comparison](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md) now records wall time and ESS per second on six 20-taxon cases; broader workloads remain pending. The strict-clock comparison below records wall times for both engines on one small configuration, but it is not a controlled benchmark.
 
 ## Correctness before optimization
 
@@ -37,7 +39,7 @@ The direct Mk path replaces the generic matrix product for Mk models. On Apple M
 
 ## Standalone inference
 
-The [minimal sampler](./sampler) supports binary Mk or Mkv, a strict clock and the birth–death prior. With the same moves and fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the reference matrix met criteria fixed before the runs ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). The [reference model](./reference-model), with gamma categories and the lognormal relaxed clock, now reproduces both archived states component by component. Complete posterior comparisons for it come next. Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
+The [minimal sampler](./sampler) supports binary Mk or Mkv, a strict clock and the birth–death prior. With the same moves and fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the reference matrix met criteria fixed before the runs ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). The [reference model](./reference-model), with gamma categories and the lognormal relaxed clock, now reproduces both archived states component by component. Its posterior summaries and clade frequencies met the predeclared criteria in six constructed 20-taxon cases ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)). Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
 
 The intended product is a native macOS application. Application UI work has not started. BEAST and BEAGLE adapters are optional compatibility paths, not dependencies of the Rust engine.
 

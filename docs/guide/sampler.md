@@ -95,7 +95,7 @@ The matrix has no homoplasy, so under Mkv the likelihood does not penalize short
 
 ## Limitations
 
-- One partition of binary characters. Tip dates, calibrations, other clock distributions and other tree priors are not implemented. Full posterior validation of the reference model is tracked in [#12](https://github.com/getcortexlabs/rove/issues/12).
+- One partition of binary characters. Tip dates, calibrations, other clock distributions and other tree priors are not implemented.
 - The starting tree is random, with coalescent-like node times, and satisfies the constraints.
 - One chain on one thread. A run cannot be resumed from a checkpoint.
 - The command does not compute convergence diagnostics. The repository's scripts in `tools/beast` compute them from its output.

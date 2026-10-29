@@ -1,0 +1,369 @@
+{
+  "case": "reference-mkv",
+  "fixture": {
+    "source": "reference",
+    "conditioning": "variable",
+    "generation_command": null,
+    "taxa": 20,
+    "characters": 50,
+    "patterns": 23,
+    "missing_cells": 0,
+    "sha256": {
+      "beast.xml": "19cf04afba11b9c4d7e446b1df5e9f3d76a8f973787c6525b15102558b7400ab",
+      "matrix.nex": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "truth.newick": "5f2e291e6c295cfe4b78bea60790a3b856a96107e552a454bbdfe24134925990"
+    }
+  },
+  "steps": 40000000,
+  "log_every": 1000,
+  "seeds": [
+    20261210,
+    20261211,
+    20261212,
+    20261213
+  ],
+  "burnin_percent": 10,
+  "smoke_only": false,
+  "source_commit": "9f779b0ce5ec707e9a4fb5a8bc9d4994d4e2b0b8",
+  "source_dirty": false,
+  "executable_sha256": "9aeb23edbf500233dbad853bd18d46fa655ad5602b56e546d09a290e8fa6b30e",
+  "exporter_sha256": "bc369ae1ff6b1dad6be6cc3cc2cdc86dd67c8a424c967b39798bbf7a689778fc",
+  "protocol_sha256": "227b385c7f7768e0eef1a4f6a8ee0290d651676943b60735bb549ea0bbb0b4a9",
+  "packages": {
+    "BEAST.base": "2.7.8",
+    "BEASTLabs": "2.0.3",
+    "BEAST.app": "2.7.8",
+    "MM": "1.2.1",
+    "ORC": "1.2.1"
+  },
+  "jars": {
+    "launcher.jar": "7d51654fd80dd4c32f64e02b02ca90aa6387c2c9837761befe665ff730a5dc01",
+    "BEAST.app.jar": "45949db1372c6dc874256754489b374c03f205c07af1d3513026664b20db32d2",
+    "BEAST.base.jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+    "BEASTlabs.v2.0.3.jar": "feea1bccaee3fe88868d2c60ffe72410f680f5e1301300b918517603e51aa259",
+    "MM.addon.jar": "78f02140b79f8061cbfacfe73600d6ecc2660af00d852a125bda2c683c595a68",
+    "ORC.addon.jar": "2fa7390b9313e769388ba5863f58807cf7bcc7a54b0cd22e2d72f9a618bbdb3e"
+  },
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "build_command": [
+    "cargo",
+    "build",
+    "--locked",
+    "--release",
+    "--bin",
+    "rove"
+  ],
+  "build_environment": {
+    "RUSTFLAGS": "-C target-cpu=native",
+    "CARGO_TARGET_DIR": "<repository>/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_RELEASE_OPT_LEVEL": "3",
+    "CARGO_PROFILE_RELEASE_LTO": "fat",
+    "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "1",
+    "CARGO_PROFILE_RELEASE_DEBUG": "false",
+    "CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS": "false",
+    "CARGO_PROFILE_RELEASE_OVERFLOW_CHECKS": "false"
+  },
+  "java_version": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Temurin-17.0.15+6 (build 17.0.15+6)\nOpenJDK 64-Bit Server VM Temurin-17.0.15+6 (build 17.0.15+6, mixed mode, sharing)\n",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "hardware": {
+    "architecture": "arm64",
+    "system": "Darwin",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+    "machdep.cpu.brand_string": null,
+    "hw.memsize": null,
+    "hw.physicalcpu": null,
+    "hw.logicalcpu": null,
+    "hw.perflevel0.physicalcpu": null,
+    "hw.perflevel1.physicalcpu": null,
+    "system_profiler": {
+      "machine_name": "MacBook Pro",
+      "machine_model": "Mac16,6",
+      "chip_type": "Apple M4 Max",
+      "number_processors": "proc 16:12:4:0",
+      "physical_memory": "64 GB"
+    }
+  },
+  "power_before": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t93%; AC attached; not charging present: true",
+    "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+  },
+  "load_before": [
+    3.67236328125,
+    3.4609375,
+    4.546875
+  ],
+  "threads": 1,
+  "concurrent_chains": 1,
+  "timing": "process start to exit, including I/O, startup, JVM warm-up and adaptive tuning; diagnostics excluded",
+  "started_at": "2026-10-29T11:24:14.955019+00:00",
+  "runs": [
+    {
+      "engine": "beast",
+      "seed": 20261210,
+      "command": [
+        "java",
+        "-Xms256m",
+        "-Xmx2g",
+        "-Xss8m",
+        "-Djava.awt.headless=true",
+        "-Duser.language=en",
+        "-Djava.only=true",
+        "-Dbeast.user.package.dir=<repository>/.local/beast-reference-20261025/packages",
+        "-cp",
+        "<repository>/.local/beast-reference-20261025/tools/launcher.jar:<repository>/.local/beast-reference-20261025/packages/BEAST.app/lib/BEAST.app.jar:<repository>/.local/beast-reference-20261025/packages/BEAST.base/lib/BEAST.base.jar:<repository>/.local/beast-reference-20261025/packages/BEASTLabs/lib/BEASTlabs.v2.0.3.jar:<repository>/.local/beast-reference-20261025/packages/MM/lib/MM.addon.jar:<repository>/.local/beast-reference-20261025/packages/ORC/lib/ORC.addon.jar",
+        "beastfx.app.beast.BeastMCMC",
+        "-batch",
+        "-seed",
+        "20261210",
+        "-threads",
+        "1",
+        "analysis.xml"
+      ],
+      "wall_seconds": 211.06230775,
+      "beast_calculation_seconds": 210.9,
+      "sha256": {
+        "analysis.log": "a8a794057ac418fc343176ab9b24f850dadcd32e6476cfd9d1d43d52ab6a65d9",
+        "analysis.xml": "745306da8c52ad891e1497e1736fa11100de3b6513c194e8960d86107c1f661e",
+        "analysis.xml.state": "41298ad78174c8c5265f550336db7f877b056cc829c248300c56569121014167",
+        "console.log": "3c6a00d08b529230003a392d3e6c990494b260336f603c65e0fa8e95fbd0ae2a",
+        "trees.nexus": "5efeb3b76036a0ee66675e42db8913d23136ac8578a8947fe8c28f78868dbf24"
+      }
+    },
+    {
+      "engine": "rove",
+      "seed": 20261210,
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue12/extension-40m/reference-mkv/rove/20261210",
+        "--seed",
+        "20261210",
+        "--steps",
+        "40000000",
+        "--sample-every",
+        "1000",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 68.33832058299998,
+      "beast_calculation_seconds": null,
+      "sha256": {
+        "run.json": "d2b91c8d5fdc91d0cc4ff7388f6dda31d992ef59c446539ca1b43b9da0323833",
+        "trace.log": "2c7dce2c0f33ab00c1f46714248dd15076bdd4204413b34c2948a3c2a8750a97",
+        "trees.nexus": "dc31343d92aeeec437c0a0584ab172f1a080891d3ace8e5b82cb012bf351dff2"
+      }
+    },
+    {
+      "engine": "rove",
+      "seed": 20261211,
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue12/extension-40m/reference-mkv/rove/20261211",
+        "--seed",
+        "20261211",
+        "--steps",
+        "40000000",
+        "--sample-every",
+        "1000",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 68.11433699999998,
+      "beast_calculation_seconds": null,
+      "sha256": {
+        "run.json": "c9afacf59a6508ae89cc624f7042d3a8d8885c5550ebf7aec4ab97eff9649e65",
+        "trace.log": "ff6efb5712723b4c1c9e2c5368b6e2311bff40e444171a73b9defe19b90443d0",
+        "trees.nexus": "284cf18953d9df4032ff41943e39dfd61788c8e4e697d8b144d0f73246c092f0"
+      }
+    },
+    {
+      "engine": "beast",
+      "seed": 20261211,
+      "command": [
+        "java",
+        "-Xms256m",
+        "-Xmx2g",
+        "-Xss8m",
+        "-Djava.awt.headless=true",
+        "-Duser.language=en",
+        "-Djava.only=true",
+        "-Dbeast.user.package.dir=<repository>/.local/beast-reference-20261025/packages",
+        "-cp",
+        "<repository>/.local/beast-reference-20261025/tools/launcher.jar:<repository>/.local/beast-reference-20261025/packages/BEAST.app/lib/BEAST.app.jar:<repository>/.local/beast-reference-20261025/packages/BEAST.base/lib/BEAST.base.jar:<repository>/.local/beast-reference-20261025/packages/BEASTLabs/lib/BEASTlabs.v2.0.3.jar:<repository>/.local/beast-reference-20261025/packages/MM/lib/MM.addon.jar:<repository>/.local/beast-reference-20261025/packages/ORC/lib/ORC.addon.jar",
+        "beastfx.app.beast.BeastMCMC",
+        "-batch",
+        "-seed",
+        "20261211",
+        "-threads",
+        "1",
+        "analysis.xml"
+      ],
+      "wall_seconds": 211.72508475000006,
+      "beast_calculation_seconds": 211.476,
+      "sha256": {
+        "analysis.log": "5f776d5b29bcbe94e6f2a9e736f321a0c14f07bd68338e191b272f28b2925a43",
+        "analysis.xml": "745306da8c52ad891e1497e1736fa11100de3b6513c194e8960d86107c1f661e",
+        "analysis.xml.state": "d01bab705270bd6651ef67d0efd5d9043811d8a9a745f39b5d8d8c5522fab50a",
+        "console.log": "137c0daba4fc610ba3fca5c46e7e351df1ba0d122db0d9d21fa3a28353c941b6",
+        "trees.nexus": "ef7ce89b8b2f4f742e4baa23a0164820df4879408df4609694c4a95cbe1984fc"
+      }
+    },
+    {
+      "engine": "beast",
+      "seed": 20261212,
+      "command": [
+        "java",
+        "-Xms256m",
+        "-Xmx2g",
+        "-Xss8m",
+        "-Djava.awt.headless=true",
+        "-Duser.language=en",
+        "-Djava.only=true",
+        "-Dbeast.user.package.dir=<repository>/.local/beast-reference-20261025/packages",
+        "-cp",
+        "<repository>/.local/beast-reference-20261025/tools/launcher.jar:<repository>/.local/beast-reference-20261025/packages/BEAST.app/lib/BEAST.app.jar:<repository>/.local/beast-reference-20261025/packages/BEAST.base/lib/BEAST.base.jar:<repository>/.local/beast-reference-20261025/packages/BEASTLabs/lib/BEASTlabs.v2.0.3.jar:<repository>/.local/beast-reference-20261025/packages/MM/lib/MM.addon.jar:<repository>/.local/beast-reference-20261025/packages/ORC/lib/ORC.addon.jar",
+        "beastfx.app.beast.BeastMCMC",
+        "-batch",
+        "-seed",
+        "20261212",
+        "-threads",
+        "1",
+        "analysis.xml"
+      ],
+      "wall_seconds": 215.28046087500002,
+      "beast_calculation_seconds": 215.069,
+      "sha256": {
+        "analysis.log": "be97bef43f71b414907925fd61a9275403ffaf0e23ff04794d961c148be987d5",
+        "analysis.xml": "745306da8c52ad891e1497e1736fa11100de3b6513c194e8960d86107c1f661e",
+        "analysis.xml.state": "63a137a67eb9a5dd30064cd2280cdb1a5c620652b887a4a65cf6be5647a688bf",
+        "console.log": "c861d50e2c5932a12b31b738d105b7c20fed0e2e3216a42173ec35a19e437d5d",
+        "trees.nexus": "1febbaab19b41c0fe7414c4ff327902b6475aca0315c89789fe1c1301a9a2c15"
+      }
+    },
+    {
+      "engine": "rove",
+      "seed": 20261212,
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue12/extension-40m/reference-mkv/rove/20261212",
+        "--seed",
+        "20261212",
+        "--steps",
+        "40000000",
+        "--sample-every",
+        "1000",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 68.15388845799998,
+      "beast_calculation_seconds": null,
+      "sha256": {
+        "run.json": "7a641ad3d4dffeb11cea57c1a5507cb9ac58d808a47f417b0ce8a48b59cf9e0d",
+        "trace.log": "6e3ddc58c518853b23865a6a295e5292f57ed67b8a8ae1acb84492914a102771",
+        "trees.nexus": "be4c3d25d71e5cd657375c3d950768c42d6b233d3f102fffffe2805fd533ede1"
+      }
+    },
+    {
+      "engine": "rove",
+      "seed": 20261213,
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue12/extension-40m/reference-mkv/rove/20261213",
+        "--seed",
+        "20261213",
+        "--steps",
+        "40000000",
+        "--sample-every",
+        "1000",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 67.77653887500003,
+      "beast_calculation_seconds": null,
+      "sha256": {
+        "run.json": "98213f655a09b6c96644a4101650c72483940d538a6bfe9a64ea169ffb2ca93c",
+        "trace.log": "5d93952d876b04d32ff5575b17d71605a9cef5fc53eb3fe3e81a173ced588497",
+        "trees.nexus": "b56731879aba00691753e0ba25f87d2a215994dc08e2cc781b34a5c47643d533"
+      }
+    },
+    {
+      "engine": "beast",
+      "seed": 20261213,
+      "command": [
+        "java",
+        "-Xms256m",
+        "-Xmx2g",
+        "-Xss8m",
+        "-Djava.awt.headless=true",
+        "-Duser.language=en",
+        "-Djava.only=true",
+        "-Dbeast.user.package.dir=<repository>/.local/beast-reference-20261025/packages",
+        "-cp",
+        "<repository>/.local/beast-reference-20261025/tools/launcher.jar:<repository>/.local/beast-reference-20261025/packages/BEAST.app/lib/BEAST.app.jar:<repository>/.local/beast-reference-20261025/packages/BEAST.base/lib/BEAST.base.jar:<repository>/.local/beast-reference-20261025/packages/BEASTLabs/lib/BEASTlabs.v2.0.3.jar:<repository>/.local/beast-reference-20261025/packages/MM/lib/MM.addon.jar:<repository>/.local/beast-reference-20261025/packages/ORC/lib/ORC.addon.jar",
+        "beastfx.app.beast.BeastMCMC",
+        "-batch",
+        "-seed",
+        "20261213",
+        "-threads",
+        "1",
+        "analysis.xml"
+      ],
+      "wall_seconds": 215.06663012500007,
+      "beast_calculation_seconds": 228.972,
+      "sha256": {
+        "analysis.log": "b9b9d4a54defc96be31202979d7fe9221d3f1c46c62b18485f58d002322cbcf1",
+        "analysis.xml": "745306da8c52ad891e1497e1736fa11100de3b6513c194e8960d86107c1f661e",
+        "analysis.xml.state": "c8fe5d18b85115d995d37ed2df649f17e280addef36ae621873507cd270f2483",
+        "console.log": "921cc9e334294c3df1f5b1a2b135ae6bdcf2a560140e4565fc0c863c2fa81172",
+        "trees.nexus": "870426cfbe049d28d23cf09e1e232be188fbc112ba6ce740f9110715b4819733"
+      }
+    }
+  ],
+  "load_after": [
+    10.7451171875,
+    5.96044921875,
+    4.86865234375
+  ],
+  "power_after": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t87%; discharging; 2:32 remaining present: true",
+    "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+  }
+}

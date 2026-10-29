@@ -95,7 +95,19 @@ Erlang fornecem verificações numéricas separadas.
 Outros testes conferem os hiperpriors por amostragem sem dados, o mapeamento
 com raízes diferentes, cálculos guardados contra avaliações do zero a cada
 passo, restauração após rejeição, amostras idênticas nos dois backends e ausência
-de alocações durante os passos testados. Comparações completas de posterior
-entre cadeias independentes e ESS por tempo seguem na
-[#12](https://github.com/getcortexlabs/rove/issues/12) e na
-[#8](https://github.com/getcortexlabs/rove/issues/8).
+de alocações durante os passos testados.
+
+Os resumos de posterior e as frequências de clados atenderam aos critérios definidos
+antes das corridas em seis casos construídos com 20 táxons, incluindo homoplasia, dados
+ausentes e sinal reduzido. O
+[relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)
+registra todas as baterias, inclusive a extensão do Mkv exigida pelo critério de ESS, os
+tempos e o ESS por segundo. O Rove terminou os cinco casos de Mk sem correção em menos
+tempo, mas o BEAST entregou mais ESS por segundo para a densidade log-posterior e o
+sigma do relógio. Melhorias nas propostas estão na
+[#27](https://github.com/getcortexlabs/rove/issues/27).
+
+Seis estados fixos adicionais cobrem esses casos. Com as taxas de categoria importadas,
+a diferença máxima de verossimilhança foi 1,14e-13; gerando as categorias de forma
+independente, chegou a 8,16e-8, pela mesma diferença de aproximação dos quantis descrita
+acima.

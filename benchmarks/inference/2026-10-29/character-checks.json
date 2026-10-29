@@ -1,0 +1,32 @@
+{
+  "reference-mkv": {
+    "minimum_changes_on_known_tree": 50,
+    "columns_requiring_multiple_changes": 0,
+    "columns_compatible_with_constant": 0
+  },
+  "reference-mk": {
+    "minimum_changes_on_known_tree": 50,
+    "columns_requiring_multiple_changes": 0,
+    "columns_compatible_with_constant": 0
+  },
+  "control": {
+    "minimum_changes_on_known_tree": 50,
+    "columns_requiring_multiple_changes": 0,
+    "columns_compatible_with_constant": 0
+  },
+  "homoplasy": {
+    "minimum_changes_on_known_tree": 60,
+    "columns_requiring_multiple_changes": 10,
+    "columns_compatible_with_constant": 0
+  },
+  "missing": {
+    "minimum_changes_on_known_tree": 48,
+    "columns_requiring_multiple_changes": 0,
+    "columns_compatible_with_constant": 2
+  },
+  "reduced": {
+    "minimum_changes_on_known_tree": 47,
+    "columns_requiring_multiple_changes": 0,
+    "columns_compatible_with_constant": 0
+  }
+}

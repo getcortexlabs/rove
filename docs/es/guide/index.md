@@ -9,7 +9,7 @@ Rove es un proyecto de inferencia filogenética escrito en Rust. Empieza con un 
 El nombre viene de explorar, recorrer y descubrir caminos.
 
 ::: info Estado del proyecto
-Etapa inicial. El núcleo de verosimilitud con la ruta directa de Mk y un kernel NEON para ella, la corrección Mkv, el lector de NEXUS, la compresión de patrones, las pruebas numéricas y un muestreador independiente mínimo están implementados. Hay un experimento de referencia con BEAST 2.7.8 documentado. El [modelo de referencia](./reference-model) con reloj relajado está implementado y comprobado en estados fijos. La validación completa de la posterior, una ruta AVX2 y benchmarks controlados entre motores siguen pendientes. El trabajo se sigue en los [issues](https://github.com/getcortexlabs/rove/issues).
+Etapa inicial. El núcleo de verosimilitud con la ruta directa de Mk y un kernel NEON para ella, la corrección Mkv, el lector de NEXUS, la compresión de patrones, las pruebas numéricas y un muestreador independiente mínimo están implementados. Hay un experimento de referencia con BEAST 2.7.8 documentado. El [modelo de referencia](./reference-model) con reloj relajado está implementado y comprobado en estados fijos. Las comparaciones de posterior cubren seis casos construidos con 20 taxones. Una ruta AVX2 y cargas mayores para comparar motores siguen pendientes. El trabajo se sigue en los [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Por qué otro kernel

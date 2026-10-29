@@ -95,7 +95,7 @@ La matriz no tiene homoplasia, así que con Mkv la verosimilitud no penaliza los
 
 ## Limitaciones
 
-- Una partición de caracteres binarios. Fechas de terminales, calibraciones, otras distribuciones de reloj y otros priors de árbol no están implementados. La validación completa de la posterior del modelo de referencia sigue en [#12](https://github.com/getcortexlabs/rove/issues/12).
+- Una partición de caracteres binarios. Fechas de terminales, calibraciones, otras distribuciones de reloj y otros priors de árbol no están implementados.
 - El árbol inicial es aleatorio, con tiempos de nodo parecidos a los de un coalescente, y cumple las restricciones.
 - Una cadena en un hilo. Una ejecución no se puede reanudar desde un checkpoint.
 - El comando no calcula diagnósticos de convergencia. Los scripts del repositorio en `tools/beast` los calculan a partir de su salida.

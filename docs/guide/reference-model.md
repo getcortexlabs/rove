@@ -92,6 +92,16 @@ closed forms provide separate numerical checks.
 Other tests check the hyperpriors by sampling without data, rate mapping at
 different roots, cached versus fresh evaluations after every step, restoration
 after rejection, identical samples on both backends and no allocations during
-the sampled steps. Full posterior comparisons across independent chains and
-ESS per time remain tracked in [#12](https://github.com/getcortexlabs/rove/issues/12)
-and [#8](https://github.com/getcortexlabs/rove/issues/8).
+the sampled steps.
+
+Posterior summaries and clade frequencies met predeclared criteria in six constructed
+20-taxon cases, including homoplasy, missing data and reduced signal. The
+[report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)
+records every batch, including a longer Mkv batch required by the ESS gate, runtime and
+ESS per second. Rove completed the five unconditioned Mk cases in less time, but BEAST
+delivered more ESS per second for log-posterior density and clock sigma. Improving the
+proposal schedule is tracked in [#27](https://github.com/getcortexlabs/rove/issues/27).
+
+Six additional fixed states cover those cases. With imported category rates, likelihood
+differences were at most 1.14e-13; generating the categories independently increased the
+maximum to 8.16e-8, from the same quantile approximation difference described above.

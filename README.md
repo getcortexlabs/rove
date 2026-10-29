@@ -12,8 +12,8 @@ Rove is an ARM-first phylogenetic inference project written in Rust, starting
 with a likelihood kernel for morphological data. The name comes from exploring,
 wandering, and discovering paths.
 
-The goal is standalone inference. The current crate computes tree likelihoods
-without depending on BEAST. A complete inference engine is still future work;
+The crate computes tree likelihoods and samples trees under binary morphological
+models without depending on BEAST. Broader model support remains future work.
 BEAST is a reference for validation and benchmarking. Optional BEAST 2 and BEAGLE
 integration remains a possible compatibility path.
 
@@ -23,7 +23,8 @@ Early. The likelihood core with its direct Mk path and a NEON kernel for it,
 the Mkv correction, the morphological NEXUS reader, pattern compression,
 numerical tests and a standalone binary-character sampler are implemented.
 The supplied reference model runs with four gamma categories and a lognormal
-relaxed clock. Complete posterior validation for it and the integrations
+relaxed clock. Posterior summaries and clade frequencies agree with BEAST 2.7.8
+under predeclared criteria in six constructed 20-taxon cases. Optional integrations
 remain pending. Work is tracked in the
 [issues](https://github.com/getcortexlabs/rove/issues).
 
@@ -114,7 +115,11 @@ sampling proposals. The [sampling guide](docs/guide/sampler.md)
 describes the model, the output files and the checks. With the strict-clock model, the same moves and
 fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the
 reference matrix met criteria fixed before the runs
-([report](benchmarks/strict-clock/2026-10-28/README.md)).
+([report](benchmarks/strict-clock/2026-10-28/README.md)). The
+[full-model comparison](benchmarks/inference/2026-10-29/README.md) covers the supplied
+matrix, a separate known-tree control and three degradation cases. It records
+concordance, convergence, runtime and ESS per second with the original ORC
+proposals in BEAST and the current Rove moves.
 
 ## Reading a matrix
 

@@ -42,4 +42,5 @@ steps and constrains T1–T19. The output directory must not exist. The model
 uses the XML's four gamma midpoint categories, explicit lognormal branch
 rates and priors. The [model guide](../../../docs/guide/reference-model.md)
 accounts for the parameters and for proposal differences from ORC. This
-command does not use BEAST; complete posterior validation is tracked in #12.
+command does not use BEAST. The [full-model comparison](../../../benchmarks/inference/2026-10-29/README.md)
+records posterior validation and sampling efficiency.

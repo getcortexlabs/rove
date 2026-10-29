@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Estágio inicial
-O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON, a correção Mkv, os testes de igualdade e um amostrador independente mínimo estão implementados. O modelo de referência com relógio relaxado está implementado e conferido em estados fixos. A validação completa da posterior, um caminho AVX2 e benchmarks controlados entre motores continuam pendentes. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
+O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON, a correção Mkv, os testes de igualdade e um amostrador independente mínimo estão implementados. O modelo de referência com relógio relaxado está implementado e conferido em estados fixos. Comparações de posterior cobrem seis casos construídos com 20 táxons. Um caminho AVX2 e cenários maiores de comparação entre motores continuam como trabalho futuro. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
 :::
 
 </div>

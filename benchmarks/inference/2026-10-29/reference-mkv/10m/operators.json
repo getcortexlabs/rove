@@ -1,0 +1,1854 @@
+{
+  "rove": {
+    "20261110": {
+      "settings": {
+        "seed": 20261110,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 10000000,
+        "sample_every": 1000,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 1312043,
+          "rejected": 1654053,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0007953483252421308,
+          "accepted": 346655,
+          "rejected": 536222,
+          "failed": 600591
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 111,
+          "rejected": 1336290,
+          "failed": 148301
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 6,
+          "rejected": 129591,
+          "failed": 166903
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 10,
+          "rejected": 225112,
+          "failed": 70788
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6676921430472306,
+          "accepted": 69660,
+          "rejected": 142832,
+          "failed": 85287
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2428677656032127,
+          "accepted": 69840,
+          "rejected": 227221,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.27659885660277683,
+          "accepted": 69724,
+          "rejected": 74745,
+          "failed": 152413
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2909910388403794,
+          "accepted": 69943,
+          "rejected": 71628,
+          "failed": 155774
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.15216118813647814,
+          "accepted": 2336,
+          "rejected": 7608,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.49218935667556873,
+          "accepted": 69628,
+          "rejected": 227563,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.18969342191135405,
+          "accepted": 464492,
+          "rejected": 1512630,
+          "failed": 0
+        }
+      ]
+    },
+    "20261111": {
+      "settings": {
+        "seed": 20261111,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 10000000,
+        "sample_every": 1000,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 1311635,
+          "rejected": 1655428,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0005326014757030593,
+          "accepted": 346239,
+          "rejected": 536175,
+          "failed": 601227
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 142,
+          "rejected": 1335250,
+          "failed": 148959
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 3,
+          "rejected": 129576,
+          "failed": 166913
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 7,
+          "rejected": 227456,
+          "failed": 70392
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6944201280985985,
+          "accepted": 69386,
+          "rejected": 142937,
+          "failed": 84384
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.23183868711957048,
+          "accepted": 69491,
+          "rejected": 226479,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.28206755837277314,
+          "accepted": 69975,
+          "rejected": 75089,
+          "failed": 152416
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2890153870484196,
+          "accepted": 69611,
+          "rejected": 72788,
+          "failed": 154479
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.14344190993152126,
+          "accepted": 2294,
+          "rejected": 7518,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.49822742554325605,
+          "accepted": 69226,
+          "rejected": 226803,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.19084951048308768,
+          "accepted": 464342,
+          "rejected": 1513380,
+          "failed": 0
+        }
+      ]
+    },
+    "20261112": {
+      "settings": {
+        "seed": 20261112,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 10000000,
+        "sample_every": 1000,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 1315302,
+          "rejected": 1651998,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0005935314380125323,
+          "accepted": 346744,
+          "rejected": 537082,
+          "failed": 601496
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 175,
+          "rejected": 1335467,
+          "failed": 148669
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 4,
+          "rejected": 128815,
+          "failed": 167464
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 10,
+          "rejected": 226020,
+          "failed": 69930
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.665301767343859,
+          "accepted": 69486,
+          "rejected": 143009,
+          "failed": 84045
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2325516114246708,
+          "accepted": 69821,
+          "rejected": 227103,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.28844552367326176,
+          "accepted": 69751,
+          "rejected": 73260,
+          "failed": 153458
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.30969745671794524,
+          "accepted": 69527,
+          "rejected": 72715,
+          "failed": 154268
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.12617238239505943,
+          "accepted": 2325,
+          "rejected": 7581,
+          "failed": 2
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.51822851471065,
+          "accepted": 69226,
+          "rejected": 227493,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.17912962359807622,
+          "accepted": 464218,
+          "rejected": 1513536,
+          "failed": 0
+        }
+      ]
+    },
+    "20261113": {
+      "settings": {
+        "seed": 20261113,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 10000000,
+        "sample_every": 1000,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 1314481,
+          "rejected": 1652631,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0006504967096377276,
+          "accepted": 346121,
+          "rejected": 549531,
+          "failed": 587566
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 92,
+          "rejected": 1335557,
+          "failed": 148418
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 3,
+          "rejected": 129259,
+          "failed": 167669
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 7,
+          "rejected": 226159,
+          "failed": 69861
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6607856991137457,
+          "accepted": 69543,
+          "rejected": 142730,
+          "failed": 84897
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2380829096531612,
+          "accepted": 69727,
+          "rejected": 227204,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2817616483962323,
+          "accepted": 69993,
+          "rejected": 72681,
+          "failed": 154259
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.27571534884484117,
+          "accepted": 69817,
+          "rejected": 69758,
+          "failed": 157458
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.14207253655128715,
+          "accepted": 2372,
+          "rejected": 7681,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5082396120760732,
+          "accepted": 69430,
+          "rejected": 227719,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.17687855014714646,
+          "accepted": 464128,
+          "rejected": 1513248,
+          "failed": 0
+        }
+      ]
+    }
+  },
+  "beast": {
+    "20261110": {
+      "operators": [
+        {
+          "id": "FixMeanMutationRatesOperator",
+          "p": 2553.4958970099556,
+          "accept": 169986,
+          "reject": 0,
+          "acceptFC": 169668,
+          "rejectFC": 0,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "gammaShapeScaler.s:matriz_20x502",
+          "p": 0.1759718354847518,
+          "accept": 2708,
+          "reject": 5639,
+          "acceptFC": 2700,
+          "rejectFC": 5635,
+          "rejectIv": 1,
+          "rejectOp": 1
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_sigma.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 70617,
+          "reject": 185478,
+          "acceptFC": 70502,
+          "rejectFC": 185148,
+          "rejectIv": 200,
+          "rejectOp": 200,
+          "nProposals": 256095,
+          "param_mean_sum": "[0.475092206179695]",
+          "param_mean_SS": "[0.2571885203208068]",
+          "numAccepts": "[6236, 28197, 33319, 2865]",
+          "numProposals": "[20209, 96931, 110420, 27536]",
+          "operator_mean_runtimes": "[0.09892765599483562, 0.002319206445825488, 0.002411374750952946, 0.003938662115050755]",
+          "mean_SS": "[[0.05804328109347845], [0.010034498374526642], [0.011134358995011839], [0.010478437945917879]]",
+          "weights": "[0.05821918866489736, 0.404731586555083, 0.4480385231853688, 0.08901070159465085]",
+          "operators": [
+            {
+              "id": "ORCucldStdevScaler.c:matriz_20x50",
+              "p": 0.6405637205243349,
+              "accept": 6236,
+              "reject": 14211,
+              "acceptFC": 6217,
+              "rejectFC": 14131,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCUcldStdevRandomWalk.c:matriz_20x50",
+              "p": 0.11688963740683773,
+              "accept": 28197,
+              "reject": 68992,
+              "acceptFC": 28132,
+              "rejectFC": 68944,
+              "rejectIv": 200,
+              "rejectOp": 200
+            },
+            {
+              "id": "ORCUcldStdevScale.c:matriz_20x50",
+              "p": 0.25658886406685494,
+              "accept": 33319,
+              "reject": 77343,
+              "acceptFC": 33311,
+              "rejectFC": 77237,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCSampleFromPriorOperator_sigma.c:matriz_20x50",
+              "p": 0.35109869319362835,
+              "accept": 2865,
+              "reject": 24932,
+              "acceptFC": 2842,
+              "rejectFC": 24836,
+              "rejectIv": 0,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_rates_root.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 7262,
+          "reject": 77711,
+          "acceptFC": 7141,
+          "rejectFC": 77675,
+          "rejectIv": 25403,
+          "rejectOp": 12524,
+          "nProposals": 84973,
+          "param_mean_sum": "[0.9826370702290427, 3.5873233217869813E-4]",
+          "param_mean_SS": "[0.9732924178446831, 2.3550161891530958E-7]",
+          "numAccepts": "[618, 6644]",
+          "numProposals": "[25652, 58322]",
+          "operator_mean_runtimes": "[0.002713550600342484, 0.002849936559105453]",
+          "mean_SS": "[[1.2577203227943574, 8.882440106223692E-7], [0.4393632548793132, 0.0]]",
+          "weights": "[0.40056986730592953, 0.5994301326940705]",
+          "operators": [
+            {
+              "id": "ORCRootOperator1.c:matriz_20x50",
+              "p": 0.0011927454919914335,
+              "accept": 618,
+              "reject": 25518,
+              "acceptFC": 558,
+              "rejectFC": 25505,
+              "rejectIv": 12524,
+              "rejectOp": 12524
+            },
+            {
+              "id": "ORCRootOperator2.c:matriz_20x50",
+              "p": 0.0021188809596202015,
+              "accept": 6644,
+              "reject": 52193,
+              "acceptFC": 6583,
+              "rejectFC": 52170,
+              "rejectIv": 12879,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_rates_internal.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 480327,
+          "reject": 1226621,
+          "acceptFC": 478212,
+          "rejectFC": 1225541,
+          "rejectIv": 66458,
+          "rejectOp": 66457,
+          "nProposals": 1706948,
+          "param_mean_sum": "[0.9820357367528696, 3.862652294317949E-4]",
+          "param_mean_SS": "[0.9722224957399332, 8.321774120583142E-7]",
+          "numAccepts": "[111510, 92259, 122685, 153873]",
+          "numProposals": "[440490, 338770, 413647, 513042]",
+          "operator_mean_runtimes": "[0.005991711503128642, 0.0042614871446522515, 0.005035636666029791, 0.02809541519034355]",
+          "mean_SS": "[[0.9647407640924568, 2.5130641475544963E-7], [0.5024205567462039, 0.0], [0.6924976162771205, 0.0], [4.725781283712382, 0.0]]",
+          "weights": "[0.24893819179547044, 0.19551013794281208, 0.24836177187614628, 0.3071898983855714]",
+          "operators": [
+            {
+              "id": "ORCInternalnodesOperator.c:matriz_20x50",
+              "p": 0.005304863250684416,
+              "accept": 111510,
+              "reject": 329211,
+              "acceptFC": 110498,
+              "rejectFC": 328679,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCRatesRandomWalk.c:matriz_20x50",
+              "p": 0.8517463393419131,
+              "accept": 92259,
+              "reject": 246776,
+              "acceptFC": 91952,
+              "rejectFC": 246690,
+              "rejectIv": 66457,
+              "rejectOp": 66457
+            },
+            {
+              "id": "ORCRatesScale.c:matriz_20x50",
+              "p": 0.9389213939976484,
+              "accept": 122685,
+              "reject": 291215,
+              "acceptFC": 122264,
+              "rejectFC": 291057,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCSampleFromPriorOperator.rates.c:matriz_20x50",
+              "p": 16.429710065526255,
+              "accept": 153873,
+              "reject": 359419,
+              "acceptFC": 153498,
+              "rejectFC": 359115,
+              "rejectIv": 1,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_NER.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 190,
+          "reject": 854988,
+          "acceptFC": 16,
+          "rejectFC": 853632,
+          "rejectIv": 287202,
+          "rejectOp": 202679,
+          "nProposals": 855178,
+          "param_mean_sum": "[0.0]",
+          "param_mean_SS": "[0.0]",
+          "numAccepts": "[87, 103]",
+          "numProposals": "[190423, 663756]",
+          "operator_mean_runtimes": "[0.005947180750206941, 0.004439087556315863]",
+          "mean_SS": "[[0.10344827586206896], [1.1262135922330094]]",
+          "weights": "[0.16795822685295791, 0.8320417731470421]",
+          "operators": [
+            {
+              "id": "ORCNER_null.c:matriz_20x50",
+              "p": 0,
+              "accept": 87,
+              "reject": 190834,
+              "acceptFC": 4,
+              "rejectFC": 190288,
+              "rejectIv": 19089,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCNER_dAE_dBE_dCE.c:matriz_20x50",
+              "p": 0,
+              "accept": 103,
+              "reject": 664154,
+              "acceptFC": 12,
+              "rejectFC": 663344,
+              "rejectIv": 268113,
+              "rejectOp": 202679
+            }
+          ]
+        },
+        {
+          "id": "BirthDeathBICEPSEpochTop.t:matriz_20x50",
+          "p": 0.5407636505743946,
+          "accept": 67680,
+          "reject": 102997,
+          "acceptFC": 67443,
+          "rejectFC": 102923,
+          "rejectIv": 17872,
+          "rejectOp": 17872
+        },
+        {
+          "id": "BirthDeathBICEPSEpochAll.t:matriz_20x50",
+          "p": 0.5361496933573562,
+          "accept": 68388,
+          "reject": 102895,
+          "acceptFC": 68186,
+          "rejectFC": 102812,
+          "rejectIv": 18047,
+          "rejectOp": 18047
+        },
+        {
+          "id": "BirthDeathBICEPSTreeFlex.t:matriz_20x50",
+          "p": 0.4922684683014938,
+          "accept": 85931,
+          "reject": 85744,
+          "acceptFC": 85655,
+          "rejectFC": 85728,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathTreeRootScaler.t:matriz_20x50",
+          "p": 0.182145537953265,
+          "accept": 58492,
+          "reject": 197768,
+          "acceptFC": 58248,
+          "rejectFC": 197543,
+          "rejectIv": 99136,
+          "rejectOp": 99136
+        },
+        {
+          "id": "BirthDeathUniformOperator.t:matriz_20x50",
+          "p": 2.118282271325102,
+          "accept": 794958,
+          "reject": 1767041,
+          "acceptFC": 790527,
+          "rejectFC": 1766820,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathSubtreeSlide.t:matriz_20x50",
+          "p": 0.25597698694400983,
+          "accept": 25,
+          "reject": 1281324,
+          "acceptFC": 23,
+          "rejectFC": 1279055,
+          "rejectIv": 1247573,
+          "rejectOp": 640197
+        },
+        {
+          "id": "BirthDeathNarrow.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 291,
+          "reject": 1280940,
+          "acceptFC": 21,
+          "rejectFC": 1278860,
+          "rejectIv": 128245,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathWide.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 7,
+          "reject": 256156,
+          "acceptFC": 0,
+          "rejectFC": 255687,
+          "rejectIv": 144506,
+          "rejectOp": 131437
+        },
+        {
+          "id": "BirthDeathWilsonBalding.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 11,
+          "reject": 256053,
+          "acceptFC": 0,
+          "rejectFC": 255608,
+          "rejectIv": 60731,
+          "rejectOp": 48852
+        },
+        {
+          "id": "BirthRateScaler.t:matriz_20x50",
+          "p": 0.5203059426404533,
+          "accept": 78007,
+          "reject": 177768,
+          "acceptFC": 77921,
+          "rejectFC": 177396,
+          "rejectIv": 67927,
+          "rejectOp": 0
+        },
+        {
+          "id": "DeathRateScaler.t:matriz_20x50",
+          "p": 0.7078639537654703,
+          "accept": 40325,
+          "reject": 215673,
+          "acceptFC": 40134,
+          "rejectFC": 215404,
+          "rejectIv": 97713,
+          "rejectOp": 97713
+        }
+      ]
+    },
+    "20261111": {
+      "operators": [
+        {
+          "id": "FixMeanMutationRatesOperator",
+          "p": 2562.066728279585,
+          "accept": 170942,
+          "reject": 0,
+          "acceptFC": 170623,
+          "rejectFC": 0,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "gammaShapeScaler.s:matriz_20x502",
+          "p": 0.17386664245640973,
+          "accept": 2587,
+          "reject": 5872,
+          "acceptFC": 2584,
+          "rejectFC": 5860,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_sigma.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 70375,
+          "reject": 185694,
+          "acceptFC": 70293,
+          "rejectFC": 185335,
+          "rejectIv": 260,
+          "rejectOp": 260,
+          "nProposals": 256069,
+          "param_mean_sum": "[0.4786696692362383]",
+          "param_mean_SS": "[0.26087377497080944]",
+          "numAccepts": "[6360, 31249, 29943, 2823]",
+          "numProposals": "[20681, 105803, 102042, 26544]",
+          "operator_mean_runtimes": "[0.09379440065758958, 0.0022652382257623035, 0.002448932792383111, 0.0039732142857153594]",
+          "mean_SS": "[[0.05900492113161233], [0.009916953379330913], [0.011551821073730604], [0.010268033859196541]]",
+          "weights": "[0.061504695448900276, 0.41106821913370684, 0.44004926989294724, 0.08737781552444568]",
+          "operators": [
+            {
+              "id": "ORCucldStdevScaler.c:matriz_20x50",
+              "p": 0.6393160217660796,
+              "accept": 6360,
+              "reject": 14577,
+              "acceptFC": 6353,
+              "rejectFC": 14475,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCUcldStdevRandomWalk.c:matriz_20x50",
+              "p": 0.11631498016254227,
+              "accept": 31249,
+              "reject": 74802,
+              "acceptFC": 31186,
+              "rejectFC": 74760,
+              "rejectIv": 260,
+              "rejectOp": 260
+            },
+            {
+              "id": "ORCUcldStdevScale.c:matriz_20x50",
+              "p": 0.2585671514447309,
+              "accept": 29943,
+              "reject": 72334,
+              "acceptFC": 29940,
+              "rejectFC": 72225,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCSampleFromPriorOperator_sigma.c:matriz_20x50",
+              "p": 0.3331643153857738,
+              "accept": 2823,
+              "reject": 23981,
+              "acceptFC": 2814,
+              "rejectFC": 23875,
+              "rejectIv": 0,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_rates_root.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 7275,
+          "reject": 77493,
+          "acceptFC": 7164,
+          "rejectFC": 77477,
+          "rejectIv": 22798,
+          "rejectOp": 12697,
+          "nProposals": 84768,
+          "param_mean_sum": "[0.9812071364345822, 3.4179696205479434E-4]",
+          "param_mean_SS": "[0.9708392743675668, 2.202077089096017E-7]",
+          "numAccepts": "[320, 6955]",
+          "numProposals": "[25647, 58122]",
+          "operator_mean_runtimes": "[0.002635980816469515, 0.0025641065345334965]",
+          "mean_SS": "[[1.4569290286306011, 1.4482639713848859E-6], [0.42797549884446673, 0.0]]",
+          "weights": "[0.2711779762785337, 0.7288220237214663]",
+          "operators": [
+            {
+              "id": "ORCRootOperator1.c:matriz_20x50",
+              "p": 0.0016869794571291992,
+              "accept": 320,
+              "reject": 25807,
+              "acceptFC": 268,
+              "rejectFC": 25806,
+              "rejectIv": 12697,
+              "rejectOp": 12697
+            },
+            {
+              "id": "ORCRootOperator2.c:matriz_20x50",
+              "p": 0.0013416872752603788,
+              "accept": 6955,
+              "reject": 51686,
+              "acceptFC": 6896,
+              "rejectFC": 51671,
+              "rejectIv": 10101,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_rates_internal.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 487606,
+          "reject": 1219981,
+          "acceptFC": 485267,
+          "rejectFC": 1219147,
+          "rejectIv": 61939,
+          "rejectOp": 61939,
+          "nProposals": 1707587,
+          "param_mean_sum": "[0.980580196682239, 4.1070192699984946E-4]",
+          "param_mean_SS": "[0.9702995911339958, 4.529749454694954E-6]",
+          "numAccepts": "[112735, 94270, 128452, 152149]",
+          "numProposals": "[443195, 331158, 418359, 513876]",
+          "operator_mean_runtimes": "[0.00576288541163712, 0.004469189933487267, 0.004940037145113034, 0.028129241295730092]",
+          "mean_SS": "[[0.9381835371181699, 3.5320536627937836E-7], [0.48001861073190205, 0.0], [0.6722064927162587, 0.0], [4.766896275653914, 0.0]]",
+          "weights": "[0.25273833322171196, 0.1864655124830335, 0.25479754671462995, 0.3059986075806246]",
+          "operators": [
+            {
+              "id": "ORCInternalnodesOperator.c:matriz_20x50",
+              "p": 0.005286273823276043,
+              "accept": 112735,
+              "reject": 330717,
+              "acceptFC": 111237,
+              "rejectFC": 330527,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCRatesRandomWalk.c:matriz_20x50",
+              "p": 0.8350685206902029,
+              "accept": 94270,
+              "reject": 237140,
+              "acceptFC": 94065,
+              "rejectFC": 236954,
+              "rejectIv": 61939,
+              "rejectOp": 61939
+            },
+            {
+              "id": "ORCRatesScale.c:matriz_20x50",
+              "p": 0.9291029086539929,
+              "accept": 128452,
+              "reject": 290126,
+              "acceptFC": 128067,
+              "rejectFC": 289992,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCSampleFromPriorOperator.rates.c:matriz_20x50",
+              "p": 16.272272715242337,
+              "accept": 152149,
+              "reject": 361998,
+              "acceptFC": 151898,
+              "rejectFC": 361674,
+              "rejectIv": 0,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_NER.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 116,
+          "reject": 853039,
+          "acceptFC": 12,
+          "rejectFC": 851527,
+          "rejectIv": 270204,
+          "rejectOp": 185965,
+          "nProposals": 853155,
+          "param_mean_sum": "[0.0]",
+          "param_mean_SS": "[0.0]",
+          "numAccepts": "[51, 65]",
+          "numProposals": "[247837, 604319]",
+          "operator_mean_runtimes": "[0.005857204533605974, 0.004301241562844801]",
+          "mean_SS": "[[0.2549019607843137], [0.7846153846153846]]",
+          "weights": "[0.31339084992997673, 0.6866091500700233]",
+          "operators": [
+            {
+              "id": "ORCNER_null.c:matriz_20x50",
+              "p": 0,
+              "accept": 51,
+              "reject": 248295,
+              "acceptFC": 4,
+              "rejectFC": 247654,
+              "rejectIv": 24774,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCNER_dAE_dBE_dCE.c:matriz_20x50",
+              "p": 0,
+              "accept": 65,
+              "reject": 604744,
+              "acceptFC": 8,
+              "rejectFC": 603873,
+              "rejectIv": 245430,
+              "rejectOp": 185965
+            }
+          ]
+        },
+        {
+          "id": "BirthDeathBICEPSEpochTop.t:matriz_20x50",
+          "p": 0.5476444959535682,
+          "accept": 67250,
+          "reject": 104138,
+          "acceptFC": 66995,
+          "rejectFC": 104050,
+          "rejectIv": 17955,
+          "rejectOp": 17955
+        },
+        {
+          "id": "BirthDeathBICEPSEpochAll.t:matriz_20x50",
+          "p": 0.5439307943503894,
+          "accept": 66767,
+          "reject": 104323,
+          "acceptFC": 66529,
+          "rejectFC": 104249,
+          "rejectIv": 17946,
+          "rejectOp": 17946
+        },
+        {
+          "id": "BirthDeathBICEPSTreeFlex.t:matriz_20x50",
+          "p": 0.5128278381269675,
+          "accept": 82741,
+          "reject": 88350,
+          "acceptFC": 82461,
+          "rejectFC": 88339,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathTreeRootScaler.t:matriz_20x50",
+          "p": 0.1849739784215681,
+          "accept": 57778,
+          "reject": 198482,
+          "acceptFC": 57559,
+          "rejectFC": 198253,
+          "rejectIv": 99219,
+          "rejectOp": 99219
+        },
+        {
+          "id": "BirthDeathUniformOperator.t:matriz_20x50",
+          "p": 2.1167332372491634,
+          "accept": 796375,
+          "reject": 1765809,
+          "acceptFC": 791978,
+          "rejectFC": 1765549,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathSubtreeSlide.t:matriz_20x50",
+          "p": 1.0442697224836184,
+          "accept": 24,
+          "reject": 1280416,
+          "acceptFC": 3,
+          "rejectFC": 1278115,
+          "rejectIv": 1246467,
+          "rejectOp": 640685
+        },
+        {
+          "id": "BirthDeathNarrow.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 160,
+          "reject": 1281271,
+          "acceptFC": 24,
+          "rejectFC": 1279040,
+          "rejectIv": 128811,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathWide.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 3,
+          "reject": 255979,
+          "acceptFC": 0,
+          "rejectFC": 255511,
+          "rejectIv": 144555,
+          "rejectOp": 131330
+        },
+        {
+          "id": "BirthDeathWilsonBalding.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 10,
+          "reject": 256657,
+          "acceptFC": 1,
+          "rejectFC": 256228,
+          "rejectIv": 60991,
+          "rejectOp": 48900
+        },
+        {
+          "id": "BirthRateScaler.t:matriz_20x50",
+          "p": 0.5365258238764711,
+          "accept": 75182,
+          "reject": 181601,
+          "acceptFC": 75077,
+          "rejectFC": 181283,
+          "rejectIv": 70017,
+          "rejectOp": 0
+        },
+        {
+          "id": "DeathRateScaler.t:matriz_20x50",
+          "p": 0.6130976630345629,
+          "accept": 46778,
+          "reject": 208927,
+          "acceptFC": 46529,
+          "rejectFC": 208724,
+          "rejectIv": 92170,
+          "rejectOp": 92170
+        }
+      ]
+    },
+    "20261112": {
+      "operators": [
+        {
+          "id": "FixMeanMutationRatesOperator",
+          "p": 2560.97288382334,
+          "accept": 170687,
+          "reject": 0,
+          "acceptFC": 170359,
+          "rejectFC": 0,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "gammaShapeScaler.s:matriz_20x502",
+          "p": 0.18952062339587192,
+          "accept": 2898,
+          "reject": 5828,
+          "acceptFC": 2882,
+          "rejectFC": 5820,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_sigma.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 67849,
+          "reject": 187921,
+          "acceptFC": 67745,
+          "rejectFC": 187575,
+          "rejectIv": 323,
+          "rejectOp": 323,
+          "nProposals": 255770,
+          "param_mean_sum": "[0.47438344483265815]",
+          "param_mean_SS": "[0.25565491994714823]",
+          "numAccepts": "[6814, 27269, 30854, 2912]",
+          "numProposals": "[20499, 102532, 103532, 28208]",
+          "operator_mean_runtimes": "[0.09573915800768909, 0.0024322650489635024, 0.002505273731795649, 0.0042936401021003755]",
+          "mean_SS": "[[0.054371112962721985], [0.01102068172176361], [0.011064017834293694], [0.01064268277869806]]",
+          "weights": "[0.06365039509492655, 0.406312679019232, 0.4437594193335192, 0.08627750655232247]",
+          "operators": [
+            {
+              "id": "ORCucldStdevScaler.c:matriz_20x50",
+              "p": 0.6175161160851667,
+              "accept": 6814,
+              "reject": 13946,
+              "acceptFC": 6799,
+              "rejectFC": 13842,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCUcldStdevRandomWalk.c:matriz_20x50",
+              "p": 0.12150224841761677,
+              "accept": 27269,
+              "reject": 75508,
+              "acceptFC": 27186,
+              "rejectFC": 75481,
+              "rejectIv": 323,
+              "rejectOp": 323
+            },
+            {
+              "id": "ORCUcldStdevScale.c:matriz_20x50",
+              "p": 0.25711642579502186,
+              "accept": 30854,
+              "reject": 72915,
+              "acceptFC": 30853,
+              "rejectFC": 72806,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCSampleFromPriorOperator_sigma.c:matriz_20x50",
+              "p": 0.3388775869882894,
+              "accept": 2912,
+              "reject": 25552,
+              "acceptFC": 2907,
+              "rejectFC": 25446,
+              "rejectIv": 0,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_rates_root.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 8835,
+          "reject": 76907,
+          "acceptFC": 8708,
+          "rejectFC": 76877,
+          "rejectIv": 18524,
+          "rejectOp": 2418,
+          "nProposals": 85742,
+          "param_mean_sum": "[0.9814486508073588, 3.682202353076356E-4]",
+          "param_mean_SS": "[0.9710130070844296, 2.2897347274199243E-7]",
+          "numAccepts": "[73, 8762]",
+          "numProposals": "[4482, 80261]",
+          "operator_mean_runtimes": "[0.003228915662650396, 0.002879480694238079]",
+          "mean_SS": "[[0.001238423983868592, 9.358329446360103E-9], [0.41416804230473975, 0.0]]",
+          "weights": "[6.47594267861314E-4, 0.9993524057321387]",
+          "operators": [
+            {
+              "id": "ORCRootOperator1.c:matriz_20x50",
+              "p": 0.005327392810463428,
+              "accept": 73,
+              "reject": 4892,
+              "acceptFC": 13,
+              "rejectFC": 4884,
+              "rejectIv": 2418,
+              "rejectOp": 2418
+            },
+            {
+              "id": "ORCRootOperator2.c:matriz_20x50",
+              "p": 0.001805203277299332,
+              "accept": 8762,
+              "reject": 72015,
+              "acceptFC": 8695,
+              "rejectFC": 71993,
+              "rejectIv": 16106,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_rates_internal.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 496856,
+          "reject": 1208514,
+          "acceptFC": 494519,
+          "rejectFC": 1207687,
+          "rejectIv": 65447,
+          "rejectOp": 65447,
+          "nProposals": 1705370,
+          "param_mean_sum": "[0.9800012538527064, 4.3993943526494884E-4]",
+          "param_mean_SS": "[0.9692195057711248, 4.569920526973244E-6]",
+          "numAccepts": "[109728, 90396, 116192, 180540]",
+          "numProposals": "[426583, 332013, 400345, 545430]",
+          "operator_mean_runtimes": "[0.00594601988360945, 0.0041172393851862405, 0.005044958723081104, 0.02603224061765778]",
+          "mean_SS": "[[0.9152254131938824, 8.556123322149786E-7], [0.5027845057985411, 0.0], [0.7047403756253858, 0.0], [4.288506542451473, 0.0]]",
+          "weights": "[0.23613242802361148, 0.19792136710192584, 0.24134379920369053, 0.32460240567077203]",
+          "operators": [
+            {
+              "id": "ORCInternalnodesOperator.c:matriz_20x50",
+              "p": 0.03325120363895992,
+              "accept": 109728,
+              "reject": 317101,
+              "acceptFC": 108117,
+              "rejectFC": 316929,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCRatesRandomWalk.c:matriz_20x50",
+              "p": 0.8516486193538734,
+              "accept": 90396,
+              "reject": 241886,
+              "acceptFC": 90185,
+              "rejectFC": 241594,
+              "rejectIv": 65447,
+              "rejectOp": 65447
+            },
+            {
+              "id": "ORCRatesScale.c:matriz_20x50",
+              "p": 0.9492161086598851,
+              "accept": 116192,
+              "reject": 284391,
+              "acceptFC": 115851,
+              "rejectFC": 284278,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCSampleFromPriorOperator.rates.c:matriz_20x50",
+              "p": 14.909281008535512,
+              "accept": 180540,
+              "reject": 365136,
+              "acceptFC": 180366,
+              "rejectFC": 364886,
+              "rejectIv": 0,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_NER.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 84,
+          "reject": 854556,
+          "acceptFC": 20,
+          "rejectFC": 853148,
+          "rejectIv": 121436,
+          "rejectOp": 35962,
+          "nProposals": 854640,
+          "param_mean_sum": "[0.0]",
+          "param_mean_SS": "[0.0]",
+          "numAccepts": "[54, 30]",
+          "numProposals": "[737100, 116541]",
+          "operator_mean_runtimes": "[0.0060376936644602214, 0.004557417561191336]",
+          "mean_SS": "[[4.777777777777778], [0.36666666666666664]]",
+          "weights": "[0.7367836409244698, 0.2632163590755302]",
+          "operators": [
+            {
+              "id": "ORCNER_null.c:matriz_20x50",
+              "p": 0,
+              "accept": 54,
+              "reject": 737559,
+              "acceptFC": 17,
+              "rejectFC": 736708,
+              "rejectIv": 73941,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCNER_dAE_dBE_dCE.c:matriz_20x50",
+              "p": 0,
+              "accept": 30,
+              "reject": 116997,
+              "acceptFC": 3,
+              "rejectFC": 116440,
+              "rejectIv": 47495,
+              "rejectOp": 35962
+            }
+          ]
+        },
+        {
+          "id": "BirthDeathBICEPSEpochTop.t:matriz_20x50",
+          "p": 0.5392743359323073,
+          "accept": 67139,
+          "reject": 103212,
+          "acceptFC": 66919,
+          "rejectFC": 103134,
+          "rejectIv": 18080,
+          "rejectOp": 18080
+        },
+        {
+          "id": "BirthDeathBICEPSEpochAll.t:matriz_20x50",
+          "p": 0.5399625907056907,
+          "accept": 67445,
+          "reject": 103224,
+          "acceptFC": 67176,
+          "rejectFC": 103160,
+          "rejectIv": 18046,
+          "rejectOp": 18046
+        },
+        {
+          "id": "BirthDeathBICEPSTreeFlex.t:matriz_20x50",
+          "p": 0.5048365374519441,
+          "accept": 81929,
+          "reject": 88946,
+          "acceptFC": 81611,
+          "rejectFC": 88937,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathTreeRootScaler.t:matriz_20x50",
+          "p": 0.19363138975035732,
+          "accept": 51034,
+          "reject": 204646,
+          "acceptFC": 50779,
+          "rejectFC": 204409,
+          "rejectIv": 102025,
+          "rejectOp": 102025
+        },
+        {
+          "id": "BirthDeathUniformOperator.t:matriz_20x50",
+          "p": 2.10879369393773,
+          "accept": 804177,
+          "reject": 1760679,
+          "acceptFC": 799773,
+          "rejectFC": 1760440,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathSubtreeSlide.t:matriz_20x50",
+          "p": 0.29572326422565026,
+          "accept": 21,
+          "reject": 1281111,
+          "acceptFC": 9,
+          "rejectFC": 1278828,
+          "rejectIv": 1247144,
+          "rejectOp": 640190
+        },
+        {
+          "id": "BirthDeathNarrow.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 151,
+          "reject": 1281414,
+          "acceptFC": 17,
+          "rejectFC": 1279160,
+          "rejectIv": 128096,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathWide.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 5,
+          "reject": 255794,
+          "acceptFC": 0,
+          "rejectFC": 255309,
+          "rejectIv": 144483,
+          "rejectOp": 131352
+        },
+        {
+          "id": "BirthDeathWilsonBalding.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 6,
+          "reject": 255714,
+          "acceptFC": 0,
+          "rejectFC": 255207,
+          "rejectIv": 60123,
+          "rejectOp": 48564
+        },
+        {
+          "id": "BirthRateScaler.t:matriz_20x50",
+          "p": 0.5313691584273192,
+          "accept": 73379,
+          "reject": 183033,
+          "acceptFC": 73281,
+          "rejectFC": 182681,
+          "rejectIv": 70269,
+          "rejectOp": 0
+        },
+        {
+          "id": "DeathRateScaler.t:matriz_20x50",
+          "p": 0.6707480734771669,
+          "accept": 45960,
+          "reject": 210047,
+          "acceptFC": 45762,
+          "rejectFC": 209822,
+          "rejectIv": 93007,
+          "rejectOp": 93007
+        }
+      ]
+    },
+    "20261113": {
+      "operators": [
+        {
+          "id": "FixMeanMutationRatesOperator",
+          "p": 2560.830056963294,
+          "accept": 170867,
+          "reject": 0,
+          "acceptFC": 170565,
+          "rejectFC": 0,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "gammaShapeScaler.s:matriz_20x502",
+          "p": 0.16496461657203373,
+          "accept": 2531,
+          "reject": 6027,
+          "acceptFC": 2519,
+          "rejectFC": 6021,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_sigma.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 70818,
+          "reject": 185530,
+          "acceptFC": 70712,
+          "rejectFC": 185156,
+          "rejectIv": 324,
+          "rejectOp": 324,
+          "nProposals": 256348,
+          "param_mean_sum": "[0.47697703064886565]",
+          "param_mean_SS": "[0.25938889359728506]",
+          "numAccepts": "[6117, 29638, 32476, 2587]",
+          "numProposals": "[20024, 101229, 109233, 24863]",
+          "operator_mean_runtimes": "[0.09763718537752843, 0.0022730640429159273, 0.0024358572958745194, 0.0038929734947525402]",
+          "mean_SS": "[[0.059112397709903466], [0.009991086663019106], [0.011355557783570858], [0.010705491641090468]]",
+          "weights": "[0.05882608839337172, 0.40932097905589604, 0.4408433605943856, 0.09100957195634685]",
+          "operators": [
+            {
+              "id": "ORCucldStdevScaler.c:matriz_20x50",
+              "p": 0.6414050207651527,
+              "accept": 6117,
+              "reject": 14167,
+              "acceptFC": 6094,
+              "rejectFC": 14069,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCUcldStdevRandomWalk.c:matriz_20x50",
+              "p": 0.11688839892673297,
+              "accept": 29638,
+              "reject": 71848,
+              "acceptFC": 29578,
+              "rejectFC": 71775,
+              "rejectIv": 324,
+              "rejectOp": 324
+            },
+            {
+              "id": "ORCUcldStdevScale.c:matriz_20x50",
+              "p": 0.2571826739474062,
+              "accept": 32476,
+              "reject": 77004,
+              "acceptFC": 32472,
+              "rejectFC": 76892,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCSampleFromPriorOperator_sigma.c:matriz_20x50",
+              "p": 0.3409466229752872,
+              "accept": 2587,
+              "reject": 22511,
+              "acceptFC": 2568,
+              "rejectFC": 22420,
+              "rejectIv": 0,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_rates_root.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 9119,
+          "reject": 76052,
+          "acceptFC": 9027,
+          "rejectFC": 75999,
+          "rejectIv": 15334,
+          "rejectOp": 9049,
+          "nProposals": 85171,
+          "param_mean_sum": "[0.980675475681783, 3.71766502586435E-4]",
+          "param_mean_SS": "[0.9695940273903754, 2.4656082942815996E-7]",
+          "numAccepts": "[305, 8814]",
+          "numProposals": "[18044, 66128]",
+          "operator_mean_runtimes": "[0.002827033917090948, 0.002903490200825628]",
+          "mean_SS": "[[1.3475712886989786, 1.3814388021521853E-6], [0.5000893522886569, 0.0]]",
+          "weights": "[0.27383872032578077, 0.7261612796742192]",
+          "operators": [
+            {
+              "id": "ORCRootOperator1.c:matriz_20x50",
+              "p": 0.0015117637180812032,
+              "accept": 305,
+              "reject": 18232,
+              "acceptFC": 261,
+              "rejectFC": 18199,
+              "rejectIv": 9049,
+              "rejectOp": 9049
+            },
+            {
+              "id": "ORCRootOperator2.c:matriz_20x50",
+              "p": 0.0007340416742651864,
+              "accept": 8814,
+              "reject": 57820,
+              "acceptFC": 8766,
+              "rejectFC": 57800,
+              "rejectIv": 6285,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_rates_internal.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 473209,
+          "reject": 1233386,
+          "acceptFC": 471190,
+          "rejectFC": 1232283,
+          "rejectIv": 64848,
+          "rejectOp": 64848,
+          "nProposals": 1706595,
+          "param_mean_sum": "[0.9799578324636098, 3.936828652775857E-4]",
+          "param_mean_SS": "[0.9682701072809243, 6.842907304482134E-7]",
+          "numAccepts": "[106676, 89045, 124134, 153354]",
+          "numProposals": "[427849, 329257, 422528, 525962]",
+          "operator_mean_runtimes": "[0.005889355824157928, 0.004264695966961348, 0.005066665404411086, 0.02827505409152583]",
+          "mean_SS": "[[0.9565400184195219, 1.5202267149773314E-7], [0.5060919697269093, 0.0], [0.7031212023674885, 0.0], [4.82281820732011, 0.0]]",
+          "weights": "[0.2487468990174114, 0.19666460240553232, 0.24983514473206703, 0.30475335384498925]",
+          "operators": [
+            {
+              "id": "ORCInternalnodesOperator.c:matriz_20x50",
+              "p": 0.002469585276711742,
+              "accept": 106676,
+              "reject": 321436,
+              "acceptFC": 106090,
+              "rejectFC": 321006,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCRatesRandomWalk.c:matriz_20x50",
+              "p": 0.8512844879328662,
+              "accept": 89045,
+              "reject": 240443,
+              "acceptFC": 88745,
+              "rejectFC": 240342,
+              "rejectIv": 64848,
+              "rejectOp": 64848
+            },
+            {
+              "id": "ORCRatesScale.c:matriz_20x50",
+              "p": 0.9481806814651762,
+              "accept": 124134,
+              "reject": 298646,
+              "acceptFC": 123344,
+              "rejectFC": 298265,
+              "rejectIv": 0,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCSampleFromPriorOperator.rates.c:matriz_20x50",
+              "p": 16.749400297794587,
+              "accept": 153354,
+              "reject": 372861,
+              "acceptFC": 153011,
+              "rejectFC": 372670,
+              "rejectIv": 0,
+              "rejectOp": 0
+            }
+          ]
+        },
+        {
+          "id": "ORCAdaptableOperatorSampler_NER.c:matriz_20x50",
+          "p": "NaN",
+          "accept": 124,
+          "reject": 854322,
+          "acceptFC": 3,
+          "rejectFC": 852845,
+          "rejectIv": 232021,
+          "rejectOp": 147652,
+          "nProposals": 854446,
+          "param_mean_sum": "[0.0]",
+          "param_mean_SS": "[0.0]",
+          "numAccepts": "[63, 61]",
+          "numProposals": "[369617, 483830]",
+          "operator_mean_runtimes": "[0.005851521980852593, 0.00441926709793725]",
+          "mean_SS": "[[0.23809523809523808], [0.3442622950819672]]",
+          "weights": "[0.41388353606922457, 0.5861164639307754]",
+          "operators": [
+            {
+              "id": "ORCNER_null.c:matriz_20x50",
+              "p": 0,
+              "accept": 63,
+              "reject": 370051,
+              "acceptFC": 0,
+              "rejectFC": 369295,
+              "rejectIv": 36756,
+              "rejectOp": 0
+            },
+            {
+              "id": "ORCNER_dAE_dBE_dCE.c:matriz_20x50",
+              "p": 0,
+              "accept": 61,
+              "reject": 484271,
+              "acceptFC": 3,
+              "rejectFC": 483550,
+              "rejectIv": 195265,
+              "rejectOp": 147652
+            }
+          ]
+        },
+        {
+          "id": "BirthDeathBICEPSEpochTop.t:matriz_20x50",
+          "p": 0.5440436885941822,
+          "accept": 66932,
+          "reject": 104509,
+          "acceptFC": 66683,
+          "rejectFC": 104429,
+          "rejectIv": 17966,
+          "rejectOp": 17966
+        },
+        {
+          "id": "BirthDeathBICEPSEpochAll.t:matriz_20x50",
+          "p": 0.5476292518644804,
+          "accept": 66327,
+          "reject": 103975,
+          "acceptFC": 66124,
+          "rejectFC": 103902,
+          "rejectIv": 17946,
+          "rejectOp": 17946
+        },
+        {
+          "id": "BirthDeathBICEPSTreeFlex.t:matriz_20x50",
+          "p": 0.4996939895627822,
+          "accept": 82592,
+          "reject": 88110,
+          "acceptFC": 82286,
+          "rejectFC": 88091,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathTreeRootScaler.t:matriz_20x50",
+          "p": 0.19313422365384847,
+          "accept": 52143,
+          "reject": 203538,
+          "acceptFC": 52002,
+          "rejectFC": 203245,
+          "rejectIv": 101559,
+          "rejectOp": 101559
+        },
+        {
+          "id": "BirthDeathUniformOperator.t:matriz_20x50",
+          "p": 2.1100110335770363,
+          "accept": 803311,
+          "reject": 1758589,
+          "acceptFC": 798900,
+          "rejectFC": 1758343,
+          "rejectIv": 0,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathSubtreeSlide.t:matriz_20x50",
+          "p": 0.4906144822649201,
+          "accept": 15,
+          "reject": 1280030,
+          "acceptFC": 11,
+          "rejectFC": 1277697,
+          "rejectIv": 1246193,
+          "rejectOp": 639797
+        },
+        {
+          "id": "BirthDeathNarrow.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 170,
+          "reject": 1280851,
+          "acceptFC": 16,
+          "rejectFC": 1278708,
+          "rejectIv": 128539,
+          "rejectOp": 0
+        },
+        {
+          "id": "BirthDeathWide.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 5,
+          "reject": 257045,
+          "acceptFC": 0,
+          "rejectFC": 256611,
+          "rejectIv": 144710,
+          "rejectOp": 131658
+        },
+        {
+          "id": "BirthDeathWilsonBalding.t:matriz_20x50",
+          "p": "NaN",
+          "accept": 8,
+          "reject": 256831,
+          "acceptFC": 0,
+          "rejectFC": 256390,
+          "rejectIv": 61011,
+          "rejectOp": 48987
+        },
+        {
+          "id": "BirthRateScaler.t:matriz_20x50",
+          "p": 0.5305237323008964,
+          "accept": 73626,
+          "reject": 182969,
+          "acceptFC": 73507,
+          "rejectFC": 182617,
+          "rejectIv": 70577,
+          "rejectOp": 0
+        },
+        {
+          "id": "DeathRateScaler.t:matriz_20x50",
+          "p": 0.6346069881320822,
+          "accept": 49474,
+          "reject": 206966,
+          "acceptFC": 49336,
+          "rejectFC": 206656,
+          "rejectIv": 90489,
+          "rejectOp": 90489
+        }
+      ]
+    }
+  }
+}

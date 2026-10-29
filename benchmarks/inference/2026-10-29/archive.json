@@ -1,0 +1,14 @@
+{
+  "protocol_sha256": "227b385c7f7768e0eef1a4f6a8ee0290d651676943b60735bb549ea0bbb0b4a9",
+  "analysis_python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "report_script_sha256": "b26ed74a615c25d90afcf9d77c4cffe34dd8c2aaabe4be8f781eabda694be06e",
+  "selected_steps": {
+    "reference-mkv": 40000000,
+    "reference-mk": 10000000,
+    "control": 10000000,
+    "homoplasy": 10000000,
+    "missing": 10000000,
+    "reduced": 10000000
+  },
+  "all_selected_cases_pass": true
+}

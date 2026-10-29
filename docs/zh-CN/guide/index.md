@@ -9,7 +9,7 @@ Rove 是一个用 Rust 编写的系统发育推断项目。它从一个面向形
 这个名字来自探索、漫游与发现路径。
 
 ::: info 项目状态
-早期。带直接 Mk 路径及其 NEON 内核的似然核心、Mkv 校正、NEXUS 读取器、模式压缩、数值测试和一个最小的独立采样器已经实现。已记录一次 BEAST 2.7.8 参考实验。[松弛时钟参考模型](./reference-model)已实现并通过固定状态检查。完整后验验证、AVX2 代码路径和受控跨引擎基准测试仍待完成。工作进展在 [issues](https://github.com/getcortexlabs/rove/issues) 中跟踪。
+早期。带直接 Mk 路径及其 NEON 内核的似然核心、Mkv 校正、NEXUS 读取器、模式压缩、数值测试和一个最小的独立采样器已经实现。已记录一次 BEAST 2.7.8 参考实验。[松弛时钟参考模型](./reference-model)已实现并通过固定状态检查。后验比较已覆盖六个含 20 个分类单元的构造案例。AVX2 路径和更大规模的跨引擎工作负载仍待完成。工作进展在 [issues](https://github.com/getcortexlabs/rove/issues) 中跟踪。
 :::
 
 ## 为什么还要一个内核

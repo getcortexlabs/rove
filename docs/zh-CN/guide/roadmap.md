@@ -13,13 +13,15 @@ Rove 处于早期。没有发布版本，没有发布的 crate，也没有日期
 | 可复现的 BEAST 2.7.8 参考分析 | 已完成 |
 | 形态学 NEXUS 与观测模式压缩 | 已完成 |
 | Rust 内核基准测试基线 | 已完成，#8 |
-| 完整推断和跨引擎基准测试 | 待完成，#8 |
+| 完整推断和跨引擎基准测试 | 已记录 20 分类单元比较；更大规模待完成，#8 |
 | Mkv 确认偏差校正 | 已完成 |
 | 直接 Mk 剪枝 | 已完成 |
 | 最小的独立 MCMC | 已完成 |
 | NEON 向量化 | 已完成 |
 | 松弛时钟参考模型 | 已完成，#16 |
-| 完整推断验证 | 下一步，#12 |
+| 完整推断验证 | 已完成六个 20 分类单元案例，#12 |
+| 松弛时钟采样效率 | 下一步，#27 |
+| 二次幂缩放 | 计划中，#18 |
 | 子树内重复的评估 | 计划中，#17 |
 | 可选的 BEAST 2 JNI 与 BEAGLE C ABI 适配器 | 可能，#6 和 #7 |
 
@@ -27,7 +29,7 @@ Rove 处于早期。没有发布版本，没有发布的 crate，也没有日期
 
 [核心](./kernel)已与一个独立的标量实现核对。[NEXUS 读取器](./nexus)在不依赖 BEAST 的情况下提供带权重的观测。[参考实验](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md)记录了确切的输入、模型设置、两次完成的 BEAST 运行和固定的数值状态。
 
-[Apple M4 Max 基线](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md)记录了 11 个 Rust 工作负载，分别测量初始化、整树计算、局部更新和提议状态管理。报告包含原始样本、内存分配观测以及三个独立进程之间的变动。完整推断和跨引擎基准测试仍待完成。下文的严格时钟比较记录了两个引擎在一个小型配置上的运行时间，但它不是受控的基准测试。
+[Apple M4 Max 基线](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md)记录了 11 个 Rust 工作负载，分别测量初始化、整树计算、局部更新和提议状态管理。报告包含原始样本、内存分配观测以及三个独立进程之间的变动。[完整模型比较](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)现已记录六个 20 分类单元案例的运行时间和每秒 ESS；更大规模的工作负载仍待完成。下文的严格时钟比较记录了两个引擎在一个小型配置上的运行时间，但它不是受控的基准测试。
 
 ## 先正确，再优化
 
@@ -37,7 +39,7 @@ Mkv 把似然条件化于仅含可变性状的矩阵的观测过程。它重现�
 
 ## 独立推断
 
-[最小采样器](./sampler)支持二态 Mk 或 Mkv、严格时钟和生灭先验。在与 BEAST 2.7.8 使用相同移动和固定步长的情况下，它在参考矩阵上的后验均值和支系频率满足了运行前确定的标准（[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)）。[参考模型](./reference-model)已包含 gamma 类别和对数正态松弛时钟，逐项重现了两个归档状态。下一步是其完整后验比较。验证从固定状态的似然推进到已知矩阵上的完整运行。采样质量，包括单位时间的 ESS 和树诊断，与运行时间一同计入。
+[最小采样器](./sampler)支持二态 Mk 或 Mkv、严格时钟和生灭先验。在与 BEAST 2.7.8 使用相同移动和固定步长的情况下，它在参考矩阵上的后验均值和支系频率满足了运行前确定的标准（[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)）。[参考模型](./reference-model)已包含 gamma 类别和对数正态松弛时钟，逐项重现了两个归档状态。六个含 20 个分类单元的构造案例中，后验汇总和支系频率满足了运行前确定的标准（[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)）。验证从固定状态的似然推进到已知矩阵上的完整运行。采样质量，包括单位时间的 ESS 和树诊断，与运行时间一同计入。
 
 预期的产品是一个原生 macOS 应用程序。应用程序 UI 的工作尚未开始。BEAST 和 BEAGLE 适配器是可选的兼容路径，不是 Rust 引擎的依赖。
 

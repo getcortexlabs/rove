@@ -13,13 +13,15 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Análisis de referencia reproducible con BEAST 2.7.8 | Hecho |
 | NEXUS morfológico y compresión de patrones observados | Hecho |
 | Línea base del núcleo Rust | Hecho, #8 |
-| Benchmarks de inferencia completa y entre motores | Pendiente, #8 |
+| Benchmarks de inferencia completa y entre motores | Comparación con 20 taxones registrada; ampliación pendiente, #8 |
 | Corrección de ascertainment de Mkv | Hecho |
 | Poda directa de Mk | Hecho |
 | MCMC independiente mínimo | Hecho |
 | Vectorización NEON | Hecho |
 | Modelo de referencia con reloj relajado | Hecho, #16 |
-| Validación de inferencia completa | Siguiente, #12 |
+| Validación de inferencia completa | Hecho en seis casos de 20 taxones, #12 |
+| Eficiencia del muestreo con reloj relajado | Siguiente, #27 |
+| Reescalado por potencias de dos | Planificado, #18 |
 | Evaluación de repeticiones dentro de subárboles | Planificado, #17 |
 | Adaptadores opcionales de JNI para BEAST 2 y de C ABI para BEAGLE | Posible, #6 y #7 |
 
@@ -27,7 +29,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 
 El [núcleo](./kernel) se comprueba contra una implementación escalar independiente. El [lector de NEXUS](./nexus) suministra observaciones ponderadas sin BEAST. El [experimento de referencia](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) registra las entradas exactas, la configuración del modelo, dos ejecuciones completas de BEAST y estados numéricos fijos.
 
-La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 casos en Rust, separando preparación, evaluaciones completas, actualizaciones parciales y gestión del estado de las propuestas. Incluye muestras originales, observaciones de asignación de memoria y variación entre tres procesos. Los benchmarks de inferencia completa y entre motores siguen pendientes. La comparación con reloj estricto, más abajo, registra el tiempo transcurrido de ambos motores en una configuración pequeña, pero no es un benchmark controlado.
+La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 casos en Rust, separando preparación, evaluaciones completas, actualizaciones parciales y gestión del estado de las propuestas. Incluye muestras originales, observaciones de asignación de memoria y variación entre tres procesos. Una [comparación del modelo completo](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md) ya registra tiempo y ESS por segundo en seis casos de 20 taxones; las cargas mayores siguen pendientes. La comparación con reloj estricto, más abajo, registra el tiempo transcurrido de ambos motores en una configuración pequeña, pero no es un benchmark controlado.
 
 ## Corrección antes que optimización
 
@@ -37,7 +39,7 @@ La ruta directa de Mk sustituye el producto genérico de matrices en los modelos
 
 ## Inferencia independiente
 
-El [muestreador mínimo](./sampler) admite Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). El [modelo de referencia](./reference-model), con categorías gamma y reloj relajado lognormal, ya reproduce ambos estados archivados componente por componente. Las comparaciones completas de posteriores vienen después. La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
+El [muestreador mínimo](./sampler) admite Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). El [modelo de referencia](./reference-model), con categorías gamma y reloj relajado lognormal, ya reproduce ambos estados archivados componente por componente. Los resúmenes de posterior y las frecuencias de clados cumplieron los criterios fijados antes de las ejecuciones en seis casos construidos con 20 taxones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)). La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
 
 El producto previsto es una aplicación nativa para macOS. El trabajo en la interfaz de la aplicación no ha comenzado. Los adaptadores de BEAST y BEAGLE son rutas de compatibilidad opcionales, no dependencias del motor en Rust.
 

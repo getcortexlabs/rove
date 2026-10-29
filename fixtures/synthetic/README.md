@@ -9,8 +9,10 @@ constructed. Posterior support depends on the model, rooting assumptions,
 priors, and sampling; the construction alone does not guarantee a threshold.
 
 This generated control is distinct from the supplied
-[reference dataset](../reference/20x50/README.md). The measured BEAST 2 results
-use that dataset and its XML, not this fixture or the example settings below.
+[reference dataset](../reference/20x50/README.md). The original reference
+experiment uses that dataset and its XML. The
+[full-model comparison](../../benchmarks/inference/2026-10-29/README.md) also
+evaluates this control and the three degradation cases below.
 
 `control_20x50.tre` is the true tree in Newick, also repeated as a comment at
 the end of the NEXUS. `control_20x50.legend.txt` maps each character to the
@@ -25,6 +27,7 @@ Regenerate or degrade it with `tools/synth_matrix.py`:
 
 Degradations are listed at the end of the legend file.
 
-In BEAUti: install the MorphModels package, import the NEXUS, choose the Lewis
-Mk model with the ascertainment correction for variable characters, a strict
-clock and a Yule tree prior.
+The matched standalone and BEAST configurations are in
+[fixtures/validation](../validation/README.md). They use the reference model
+with unconditioned Mk for these controls, including columns whose only observed
+change is hidden by missing data.

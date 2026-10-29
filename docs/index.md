@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Early
-The likelihood core with its direct Mk path and a NEON kernel, the Mkv correction, the equality tests and a minimal standalone sampler are implemented. The relaxed-clock reference model is implemented and checked at fixed states. Full posterior validation, an AVX2 path and controlled cross-engine benchmarks remain pending. [See what exists today →](/guide/#what-exists-today)
+The likelihood core with its direct Mk path and a NEON kernel, the Mkv correction, the equality tests and a minimal standalone sampler are implemented. The relaxed-clock reference model is implemented and checked at fixed states. Posterior comparisons cover six constructed 20-taxon cases. An AVX2 path and broader cross-engine workloads remain future work. [See what exists today →](/guide/#what-exists-today)
 :::
 
 </div>
