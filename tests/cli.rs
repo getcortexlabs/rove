@@ -37,6 +37,76 @@ fn error(output: &Output) -> String {
 }
 
 #[test]
+fn inspection_preserves_observations_and_requires_an_explicit_gap_policy() {
+    let directory = scratch("inspect-gaps");
+    let matrix = directory.join("matrix with spaces.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let result = rove(&["inspect", matrix.to_str().unwrap()]);
+    assert!(result.status.success());
+    let report = String::from_utf8(result.stdout).unwrap();
+    assert!(report.contains("\"missing_count\": 1"));
+    assert!(report.contains("\"gap_count\": 1"));
+    assert!(report.contains("\"pattern_count\": null"));
+    assert!(report.contains("choose an explicit gap treatment"));
+    assert!(report.contains("\"-\""));
+    let accepted = rove(&["inspect", matrix.to_str().unwrap(), "--gaps", "missing"]);
+    assert!(accepted.status.success());
+    let report = String::from_utf8(accepted.stdout).unwrap();
+    assert!(report.contains("\"sampler_error\": null"));
+    assert!(!report.contains("\"pattern_count\": null"));
+    assert!(
+        report.contains("\"-\""),
+        "preview must preserve a gap's original meaning"
+    );
+    assert_eq!(
+        fs::read_dir(directory).unwrap().count(),
+        1,
+        "inspection writes no run files"
+    );
+}
+
+#[test]
+fn inspection_separates_import_support_from_sampler_support() {
+    let directory = scratch("inspect-states");
+    let matrix = directory.join("multistate.nex");
+    fs::write(&matrix, "#NEXUS\nBEGIN DATA; DIMENSIONS NTAX=3 NCHAR=2; FORMAT DATATYPE=STANDARD SYMBOLS=\"012\"; MATRIX\nA 01\nB 12\nC 20\n; END;").unwrap();
+    let result = rove(&["inspect", matrix.to_str().unwrap()]);
+    assert!(result.status.success());
+    let report = String::from_utf8(result.stdout).unwrap();
+    assert!(report.contains("\"taxon_count\": 3"));
+    assert!(report.contains("\"pattern_count\": 2"));
+    assert!(!report.contains("\"sampler_error\": null"));
+    fs::write(&matrix, "#NEXUS\nBEGIN DATA; DIMENSIONS NTAX=3 NCHAR=2; FORMAT DATATYPE=STANDARD SYMBOLS=\"01\"; MATRIX\nA 00\nB 01\nC 01\n; END;").unwrap();
+    let result = rove(&["inspect", matrix.to_str().unwrap()]);
+    let report = String::from_utf8(result.stdout).unwrap();
+    assert!(report.contains("\"sampler_error\": null"));
+    assert!(
+        !report.contains("\"variable_error\": null"),
+        "constant columns cannot use Mkv"
+    );
+}
+
+#[test]
+fn inspection_refuses_bad_input_without_emitting_partial_json() {
+    let directory = scratch("inspect-errors");
+    let matrix = directory.join("broken.nex");
+    fs::write(&matrix, "#NEXUS BEGIN DATA; DIMENSIONS NTAX=5 NCHAR=6;").unwrap();
+    let result = rove(&["inspect", matrix.to_str().unwrap()]);
+    assert!(error(&result).contains("unterminated"));
+    assert!(result.stdout.is_empty());
+    assert!(error(&rove(&["inspect"])).contains("usage:"));
+    assert!(
+        error(&rove(&[
+            "inspect",
+            matrix.to_str().unwrap(),
+            "--gaps",
+            "ignore"
+        ]))
+        .contains("usage:")
+    );
+}
+
+#[test]
 fn a_run_writes_matching_traces_trees_and_metadata() {
     let directory = scratch("run");
     let matrix = directory.join("matrix.nex");

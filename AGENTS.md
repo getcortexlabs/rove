@@ -4,8 +4,8 @@
 
 Rove is an independent phylogenetic inference project with a Rust engine,
 focused first on morphological data and ARM CPUs. The intended product is a
-native macOS application distributed as a DMG. SwiftUI and AppKit are the
-proposed interface tools; application UI work requires an explicit request.
+native macOS application distributed as a DMG. The macOS preview uses SwiftUI and AppKit around the Rust CLI; further
+application UI work requires an explicit request.
 
 BEAST is a validation and benchmarking reference. Optional BEAST or BEAGLE
 adapters must not become dependencies of the standalone Rust engine.

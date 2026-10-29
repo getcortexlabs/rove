@@ -1,3 +1,4 @@
+mod inspect;
 mod sha256;
 
 use std::collections::HashSet;
@@ -18,7 +19,8 @@ const USAGE: &str =
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|none] [--sample-from-prior]
                    [--no-tuning] [--tuning <move>=<value>]... [--backend portable|neon]
-                   [--print-every <n>]";
+                   [--print-every <n>]
+       rove inspect <matrix.nex> [--gaps reject|missing]";
 
 const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero";
 
@@ -629,7 +631,12 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
 
 fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    if let Err(error) = run(&arguments) {
+    let result = if arguments.first().is_some_and(|a| a == "inspect") {
+        inspect::run(&arguments[1..])
+    } else {
+        run(&arguments)
+    };
+    if let Err(error) = result {
         progress(format_args!("rove: {error}"));
         std::process::exit(2);
     }

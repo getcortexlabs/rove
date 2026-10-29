@@ -24,7 +24,8 @@ Rove starts from the data instead: a layout that vectorises across site patterns
 
 ## What exists today
 
-The repository is one Rust crate with no runtime dependencies.
+The engine is one Rust crate with no runtime dependencies. A separate Swift package
+provides the [native Mac preview](./macos-preview) for matrix import and analysis setup.
 
 - `LikelihoodCore`: Felsenstein pruning over a pattern-major layout, with rate categories, optional per-node rescaling and store/restore of node state for a sampler. `LikelihoodCore::mk` prunes with the Mk closed form; `LikelihoodCore::new` multiplies a transition matrix per branch.
 - `Backend`: portable code for any target and, on aarch64, a NEON kernel for the Mk node update that gives the same results. See [Backends](./kernel#backends).
@@ -44,7 +45,7 @@ The [likelihood core](./kernel) page shows how to call it. The [synthetic matric
 - Multiple partitions, tip dates, calibrations and additional tree priors.
 - An AVX2 code path. Targets other than aarch64 run the portable code.
 - Controlled performance benchmarks against BEAST or BEAGLE.
-- A user interface and the optional BEAST 2 or BEAGLE adapters.
+- Running and monitoring analyses inside the Mac app, and the optional BEAST 2 or BEAGLE adapters.
 
 Nothing on this list is documented as available anywhere on this site. The [roadmap](./roadmap) gives the order.
 

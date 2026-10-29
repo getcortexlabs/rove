@@ -116,3 +116,20 @@ jobs:
         run: python3 tools/benchmarks/prepare.py --check
       - name: Test benchmark summaries
         run: python3 -m unittest discover -s tools/benchmarks -p 'test_*.py'
+
+  macos-app:
+    name: Native macOS preview
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the app and bundled engine
+        run: scripts/build-macos.sh release
+      - name: Test imports and analysis preparation
+        run: swift test --package-path apps/macos
+      - name: Verify the bundle and example
+        run: |
+          codesign --verify --deep --strict build/macos/Rove.app
+          cmp fixtures/reference/20x50/matrix.nex apps/macos/Sources/RoveApp/Resources/Example.nex

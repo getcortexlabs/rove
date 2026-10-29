@@ -28,6 +28,24 @@ under predeclared criteria in six constructed 20-taxon cases. Optional integrati
 remain pending. Work is tracked in the
 [issues](https://github.com/getcortexlabs/rove/issues).
 
+## Native Mac preview
+
+The first SwiftUI/AppKit workspace imports matrices through Rust, displays their
+characters and prepares analysis settings. It follows the Cortex Labs palette
+and typography, with keyboard shortcuts and reduced-motion support.
+
+![The native Rove workspace](docs/public/images/macos-preview.png)
+
+```sh
+scripts/build-macos.sh
+open build/macos/Rove.app
+```
+
+Requires macOS 14+, Xcode with Swift 6, and Rust. This builds a local app; a
+notarized release and DMG are future work. The preview can save a setup record
+or copy a CLI command. Running and monitoring MCMC inside the window comes next.
+See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/README.md).
+
 ## Why
 
 - Small state spaces and short morphological alignments are worth measuring

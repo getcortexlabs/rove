@@ -21,6 +21,7 @@ const locales = {
       project: 'The project',
       code: 'The code',
       what: 'What is Rove?',
+      macPreview: 'Mac preview',
       design: 'Design',
       kernel: 'The likelihood core',
       sampler: 'Sampling trees',
@@ -46,6 +47,7 @@ const locales = {
       project: 'O projeto',
       code: 'O código',
       what: 'O que é o Rove?',
+      macPreview: 'Prévia para Mac',
       design: 'Design',
       kernel: 'O núcleo de verossimilhança',
       sampler: 'Amostrando árvores',
@@ -88,6 +90,7 @@ const locales = {
       project: 'El proyecto',
       code: 'El código',
       what: '¿Qué es Rove?',
+      macPreview: 'Vista previa para Mac',
       design: 'Diseño',
       kernel: 'El núcleo de verosimilitud',
       sampler: 'Muestreo de árboles',
@@ -130,6 +133,7 @@ const locales = {
       project: '项目',
       code: '代码',
       what: 'Rove 是什么？',
+      macPreview: 'Mac 预览版',
       design: '设计',
       kernel: '似然核心',
       sampler: '树的采样',
@@ -164,7 +168,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, design, kernel, sampler, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -176,6 +180,7 @@ function themeFor(locale) {
           text: project,
           items: [
             { text: what, link: `${prefix}/guide/` },
+            { text: macPreview, link: `${prefix}/guide/macos-preview` },
             { text: design, link: `${prefix}/guide/design` },
             { text: roadmap, link: `${prefix}/guide/roadmap` }
           ]
