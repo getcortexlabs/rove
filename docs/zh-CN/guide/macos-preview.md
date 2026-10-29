@@ -196,3 +196,36 @@ target/release/rove summarize /path/to/results/trees.nexus \
 
 [验证与 Apple silicon 测量](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
 记录了与固定版本 TreeAnnotator 和外部 NEXUS 读取器的比较。
+
+## 查看带注释的树
+
+![原生 MCC 树查看器](/images/macos-tree.png)
+
+在已完成的结果或 History 中打开 **Summarize trees**，然后在已保存的汇总中选择
+**View tree**。独立的原生窗口显示 MCC 结果，不浏览原始样本，也不会把 `STATE_0`
+当作最终结果。窗口顶部标明来源运行及保留、丢弃的样本数。**About this summary**
+提供 burn-in、节点高度策略、所选来源样本及强制约束的分组。
+
+点击节点或末端可查看支持度、分支长度、高度及可用的速率范围。
+展开 **Descendant taxa** 可进入子分支或选择末端。缺失注释显示为 **Unavailable**。
+菱形表示受约束的分组，其支持度不是独立证据。经过核验的外群标记为末端，而非根节点。
+末端的上下顺序不决定树根位置。
+
+滚动或拖动可平移，捏合手势或缩放按钮可放大，**Fit width** 恢复 100%。
+较高的树保持可滚动，以保证标签可读。搜索能找到折叠支系内的分类单元，选择后会展开其祖先。
+**Rotate**、**Collapse clade** 和 **Reset display** 仅改变绘图。
+画布获得焦点后，上下键遍历可见节点，左键选择父节点，右键进入子节点，空格折叠或展开。
+检查器还提供原生导航按钮。这些操作不使用动画。
+
+**Support** 控制支持度标签。短分支或拥挤行上的部分标签会隐藏以避免重叠，但检查器仍提供全部可用值。
+长名称在绘图中缩写，在搜索与检查器中完整显示。比例尺和分支使用源数据的时间单位。
+速率是单独的乘数；观测范围不是 HPD 区间。
+
+**Export SVG** 导出完整的当前布局，包括旋转及折叠的支系，并附带比例尺、图例和来源信息。
+缩放与滚动仅选择屏幕上的可见区域，不裁剪导出的图。SVG 是矢量图；`mcc.tree`、原始样本及运行文件保持不变。
+此查看器不包含 PNG 导出、外部树导入或重新定根。
+
+内置命令 `rove inspect-tree /path/to/summary-directory` 在输出版本化显示 JSON 前核验保存的记录及树文件指纹。
+读取、布局、搜索和 SVG 生成均在界面线程之外运行。查看器接受单棵 Rove MCC 树，文件不超过 16 MiB，
+最多 4,096 个分类单元及 512 层嵌套；上文原始样本读取器的限制保持不变。
+汇总依然不能证明收敛。

@@ -132,16 +132,17 @@ pub fn summarize(
     let mut interval = None;
     let mut regular = true;
     let taxa = visit(path, 0, cancel, |tree| {
+        let state = tree.state.expect("sample reader returns sample states");
         if total == 0 {
-            first_state = tree.state;
+            first_state = state;
         } else {
-            let gap = tree.state - last_state;
+            let gap = state - last_state;
             if interval.is_some_and(|value| value != gap) {
                 regular = false;
             }
             interval.get_or_insert(gap);
         }
-        last_state = tree.state;
+        last_state = state;
         total += 1;
         Ok(())
     })?;
@@ -150,7 +151,8 @@ pub fn summarize(
     let mut counts: HashMap<Clade, usize> = HashMap::new();
     let mut first_retained_state = None;
     visit(path, skip, cancel, |tree| {
-        first_retained_state.get_or_insert(tree.state);
+        first_retained_state
+            .get_or_insert(tree.state.expect("sample reader returns sample states"));
         for (node, clade) in tree.nodes.iter().zip(tree.clades()) {
             if node.children.is_some() {
                 *counts.entry(clade).or_default() += 1;

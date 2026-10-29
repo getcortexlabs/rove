@@ -247,3 +247,49 @@ contagens e estatísticas da árvore escolhida, não todas as árvores na memór
 
 [A validação e as medições em Apple silicon](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
 registram comparações com TreeAnnotator e leitores NEXUS externos em versões fixas.
+
+## Explorar uma árvore anotada
+
+![Explorador nativo da árvore MCC](/images/macos-tree.png)
+
+Em um resultado concluído ou no Histórico, abra **Resumir árvores** e escolha
+**Ver árvore** em um resumo salvo. Uma janela nativa separada abre o resultado
+MCC; ela não navega pelas amostras brutas nem apresenta `STATE_0` como resultado
+final. O cabeçalho identifica a execução e as quantidades retidas e descartadas.
+**Sobre este resumo** mostra burn-in, política de alturas, amostra de origem e
+grupos impostos.
+
+Clique em um nó ou ponta para consultar suporte, comprimento do ramo, alturas
+e intervalos de taxas disponíveis. Expanda **Táxons descendentes** para navegar
+pelos filhos ou selecionar uma ponta. Anotações ausentes aparecem como
+**Indisponível**. Losangos marcam grupos impostos; seu suporte não é evidência
+independente. Um grupo externo verificado é identificado como ponta, não como
+nó da raiz. A ordem vertical das pontas não determina o enraizamento.
+
+Role ou arraste para mover, use pinça ou os botões de zoom para ampliar e
+**Ajustar largura** para voltar a 100%. Árvores altas continuam roláveis para
+manter os rótulos legíveis. A busca encontra táxons em clados recolhidos e
+expande seus ancestrais ao selecioná-los. **Girar**, **Recolher clado** e
+**Restaurar visualização** mudam somente o desenho. Com o desenho em foco, use
+Cima/Baixo para percorrer nós visíveis, Esquerda para o ancestral, Direita para
+um filho e Espaço para recolher ou expandir. O painel também oferece botões
+nativos de navegação. Essas operações não têm animação.
+
+**Suporte** controla os rótulos; ramos curtos e linhas próximas omitem alguns
+para evitar sobreposição, mas os valores continuam disponíveis no painel.
+Nomes longos são abreviados no desenho e aparecem completos na busca e no painel.
+A escala e os ramos usam unidades de tempo da origem. As taxas são multiplicadores
+separados; os intervalos observados não são intervalos HPD.
+
+**Exportar SVG** salva toda a disposição exibida, incluindo giros e clados
+recolhidos, com escala, legenda e origem do resumo. Zoom e rolagem escolhem a área
+visível, não um recorte da figura exportada. SVG é uma imagem vetorial; `mcc.tree`,
+as árvores brutas e os arquivos da execução permanecem intactos. Esse visualizador
+não inclui PNG, importação de árvores externas ou reenraizamento.
+
+O comando incluído `rove inspect-tree /caminho/do/resumo` valida o registro salvo
+e a impressão digital da árvore antes de emitir JSON versionado para exibição.
+Leitura, disposição, busca e geração de SVG acontecem fora da thread da interface.
+O visualizador aceita uma árvore MCC do Rove, até 16 MiB, 4.096 táxons e 512 níveis
+de aninhamento; os limites do leitor de amostras brutas acima continuam iguais.
+Um resumo continua sem comprovar convergência.

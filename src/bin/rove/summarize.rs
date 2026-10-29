@@ -25,7 +25,7 @@ impl Drop for Output {
     }
 }
 
-fn record(path: &Path) -> Result<Value, Box<dyn Error>> {
+pub(super) fn record(path: &Path) -> Result<Value, Box<dyn Error>> {
     let metadata = fs::metadata(path)?;
     if !metadata.is_file() || metadata.len() > 2 * 1024 * 1024 {
         return Err("invalid or oversized source record".into());

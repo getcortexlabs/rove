@@ -3,6 +3,7 @@ import SwiftUI
 struct TreeSummaryView: View {
   @Bindable var model: TreeSummaryModel
   let strings: AppStrings
+  var onOpen: (URL) -> Void
   @Environment(\.dismiss) private var dismiss
 
   var body: some View {
@@ -75,6 +76,12 @@ struct TreeSummaryView: View {
                   "MCC · \(strings(summary.record.heightPolicy == "ca" ? "Common ancestor mean" : "Keep selected tree")) · STATE_\(String(summary.record.selectedState))"
                 )
                 .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+                Button {
+                  onOpen(summary.directory)
+                  dismiss()
+                } label: {
+                  Label(strings("View tree"), systemImage: "point.3.connected.trianglepath.dotted")
+                }.buttonStyle(LabButtonStyle(compact: true)).disabled(model.busy)
                 HStack(spacing: 10) {
                   file("Annotated tree", "mcc.tree", summary.directory)
                   file("Raw trees (.trees)", "samples.trees", summary.directory)

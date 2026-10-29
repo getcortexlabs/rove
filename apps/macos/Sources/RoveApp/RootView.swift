@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RootView: View {
+  @Environment(\.openWindow) private var openWindow
   @Bindable var workspace: Workspace
   private var strings: AppStrings { workspace.strings }
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -67,7 +68,10 @@ struct RootView: View {
       value: workspace.page
     )
     .sheet(item: $workspace.treeSummary) { summary in
-      TreeSummaryView(model: summary, strings: workspace.strings)
+      TreeSummaryView(model: summary, strings: workspace.strings) { directory in
+        workspace.openTree(directory, run: summary.directory)
+        openWindow(id: "tree-explorer")
+      }
     }
     .task { await workspace.history.reload() }
     .overlay {

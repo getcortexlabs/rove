@@ -116,7 +116,7 @@ struct PreviewTests {
     for language in [AppLanguage.english, .portuguese] {
       preferences.language = language
       let view = NSHostingView(
-        rootView: TreeSummaryView(model: summary, strings: workspace.strings))
+        rootView: TreeSummaryView(model: summary, strings: workspace.strings, onOpen: { _ in }))
       let window = NSWindow(
         contentRect: NSRect(x: 0, y: 0, width: 620, height: 650), styleMask: [.borderless],
         backing: .buffered, defer: false)
@@ -128,6 +128,65 @@ struct PreviewTests {
         view, to: directory.appendingPathComponent("summary-\(language.rawValue).png"))
       window.close()
     }
+
+    let saved = try #require(summary.summaries.first)
+    let explorer = TreeExplorer(
+      directory: saved.directory, runDirectory: run.request.directory,
+      executable: root.appendingPathComponent("target/release/rove"))
+    await explorer.load()
+    #expect(explorer.error == nil)
+    explorer.selected = explorer.document?.nodes.first { $0.children != nil }?.id
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      for size in [NSSize(width: 1100, height: 780), NSSize(width: 880, height: 640)] {
+        let view = NSHostingView(
+          rootView: TreeExplorerView(model: explorer, preferences: preferences))
+        let window = NSWindow(
+          contentRect: NSRect(origin: .zero, size: size), styleMask: [.borderless],
+          backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.contentView = view
+        window.appearance = NSAppearance(named: .darkAqua)
+        window.orderBack(nil)
+        try await capture(
+          view,
+          to: directory.appendingPathComponent("tree-\(language.rawValue)-\(Int(size.width)).png"))
+        window.close()
+      }
+    }
+    let drawing = TreeDrawing()
+    drawing.model = explorer
+    let tree = try #require(explorer.document)
+    drawing.figure = TreeFigure(
+      tree: tree, layout: try #require(explorer.layout),
+      viewport: CGSize(width: 760, height: 600), collapsed: [], selected: tree.root,
+      showSupport: true, strings: preferences.strings)
+    explorer.selected = tree.root
+    for (key, expected) in [
+      (UInt16(124), tree.nodes[tree.root].children![0]), (UInt16(123), tree.root),
+    ] {
+      let event = try #require(
+        NSEvent.keyEvent(
+          with: .keyDown, location: .zero, modifierFlags: [],
+          timestamp: 0, windowNumber: 0, context: nil, characters: "",
+          charactersIgnoringModifiers: "",
+          isARepeat: false, keyCode: key))
+      drawing.keyDown(with: event)
+      #expect(explorer.selected == expected)
+    }
+    #expect(drawing.accessibilityLabel() == preferences.strings("Phylogenetic tree"))
+    explorer.selected = tree.nodes.first { $0.children != nil }?.id
+    explorer.toggleCollapse()
+    await explorer.waitForLayout()
+    explorer.rotate()
+    await explorer.waitForLayout()
+    let figure = TreeFigure(
+      tree: try #require(explorer.document), layout: try #require(explorer.layout),
+      viewport: CGSize(width: 760, height: 600), collapsed: explorer.collapsed,
+      selected: explorer.selected, showSupport: true, strings: preferences.strings)
+    try figure.write(
+      to: directory.appendingPathComponent("tree-collapsed.svg"), runName: "Preview",
+      protectedFiles: [])
 
     for (name, seed, cancelled) in [("failed", "43", false), ("cancelled", "44", true)] {
       var configuration = workspace.settings

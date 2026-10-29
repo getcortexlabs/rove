@@ -1,5 +1,6 @@
 mod events;
 mod inspect;
+mod inspect_tree;
 mod sha256;
 mod summarize;
 
@@ -24,6 +25,7 @@ const USAGE: &str =
                    [--print-every <n>] [--events-json] [--cancel-on-stdin-close]
                    [--expect-input-sha256 <hash>]
        rove inspect <matrix.nex> [--gaps reject|missing]
+       rove inspect-tree <summary-directory>
        rove summarize <trees.nexus> --output <directory> --burnin-percent <0..99> --heights keep|ca";
 
 const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero";
@@ -723,7 +725,9 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
 
 fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    let result = if arguments.first().is_some_and(|a| a == "summarize") {
+    let result = if arguments.first().is_some_and(|a| a == "inspect-tree") {
+        inspect_tree::run(&arguments[1..]).map(|_| true)
+    } else if arguments.first().is_some_and(|a| a == "summarize") {
         summarize::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "inspect") {
         inspect::run(&arguments[1..]).map(|_| true)

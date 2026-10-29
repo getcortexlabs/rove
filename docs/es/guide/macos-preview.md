@@ -245,3 +245,50 @@ conteos y estadísticas del árbol elegido, no todos los árboles en memoria.
 
 [Validación y mediciones en Apple silicon](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
 registran comparaciones con versiones fijas de TreeAnnotator y lectores NEXUS externos.
+
+## Explorar un árbol anotado
+
+![Explorador nativo del árbol MCC](/images/macos-tree.png)
+
+En un resultado terminado o en History, abre **Summarize trees** y elige
+**View tree** en un resumen guardado. Una ventana nativa independiente abre el
+resultado MCC; no recorre muestras sin procesar ni presenta `STATE_0` como
+resultado final. La cabecera identifica la ejecución y los recuentos retenidos
+y descartados. **About this summary** muestra burn-in, política de alturas,
+muestra de origen y grupos impuestos.
+
+Selecciona un nodo o una punta para consultar soporte, longitud de rama, alturas
+e intervalos de tasas disponibles. **Descendant taxa** permite navegar por los
+hijos o seleccionar una punta. Las anotaciones ausentes aparecen como
+**Unavailable**. Los rombos indican grupos impuestos; su soporte no constituye
+evidencia independiente. Un grupo externo verificado se identifica como punta,
+no como nodo raíz. El orden vertical de las puntas no determina el enraizamiento.
+
+Desplázate o arrastra para mover, usa el gesto de pinza o los botones de zoom y
+**Fit width** para volver al 100%. Los árboles altos siguen siendo desplazables
+para mantener legibles las etiquetas. La búsqueda encuentra taxones en clados
+contraídos y expande sus ancestros al seleccionarlos. **Rotate**, **Collapse
+clade** y **Reset display** cambian solo el dibujo. Con el lienzo enfocado,
+Arriba/Abajo recorren nodos visibles, Izquierda selecciona el padre, Derecha un
+hijo y Espacio contrae o expande. El inspector ofrece también botones nativos
+de navegación. Estas operaciones no tienen animación.
+
+**Support** controla las etiquetas; se omiten algunas en ramas cortas o filas
+cercanas para evitar superposiciones, pero sus valores siguen en el inspector.
+Los nombres largos se abrevian en el dibujo y aparecen completos en la búsqueda
+y el inspector. La escala y las ramas usan unidades de tiempo del origen.
+Las tasas son multiplicadores separados; los rangos observados no son HPD.
+
+**Export SVG** guarda la disposición completa, incluidas las rotaciones y los
+clados contraídos, con escala, leyenda y procedencia. El zoom y el desplazamiento
+seleccionan la zona visible, no un recorte de la figura exportada. SVG es una
+imagen vectorial; `mcc.tree`, las muestras originales y los archivos de ejecución
+permanecen intactos. Este visor no incluye PNG, importación de árboles externos
+ni reenraizamiento.
+
+El comando incluido `rove inspect-tree /ruta/al/resumen` valida el registro y
+la huella del árbol antes de emitir JSON versionado para la visualización.
+Lectura, disposición, búsqueda y generación de SVG se ejecutan fuera del hilo
+de interfaz. El visor admite un árbol MCC de Rove de hasta 16 MiB, 4.096 taxones
+y 512 niveles de anidamiento; los límites anteriores del lector de muestras
+no cambian. Un resumen sigue sin demostrar convergencia.

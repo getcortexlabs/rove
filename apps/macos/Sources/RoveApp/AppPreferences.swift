@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-enum AppLanguage: String, CaseIterable, Identifiable {
+enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
   case system
   case english = "en"
   case portuguese = "pt-BR"
@@ -50,7 +50,7 @@ final class AppPreferences {
   }
 }
 
-struct AppStrings {
+struct AppStrings: Sendable {
   let language: AppLanguage
   var locale: Locale { Locale(identifier: language == .portuguese ? "pt_BR" : "en_US") }
   var guideURL: URL {

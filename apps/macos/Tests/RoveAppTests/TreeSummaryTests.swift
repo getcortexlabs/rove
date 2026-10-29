@@ -65,6 +65,30 @@ struct TreeSummaryTests {
     for (file, original) in zip(files, originals) {
       #expect(try Data(contentsOf: directory.appendingPathComponent(file)) == original)
     }
+    let explorer = TreeExplorer(
+      directory: first.directory, runDirectory: directory, executable: engine)
+    await explorer.load()
+    #expect(explorer.error == nil && explorer.outgroup == "T20")
+    let tree = try #require(explorer.document)
+    #expect(tree.nodes.count == 39 && tree.summary.retainedSamples == 9)
+    let tip = try #require(tree.nodes.first { $0.taxon == "T20" })
+    explorer.selected = tree.root
+    explorer.toggleCollapse()
+    await explorer.waitForLayout()
+    #expect(explorer.layout?.rows == 1)
+    explorer.query = "T20"
+    await explorer.search()
+    #expect(explorer.matches == [tip.id])
+    explorer.reveal(tip.id)
+    await explorer.waitForLayout()
+    #expect(explorer.collapsed.isEmpty && explorer.layout?.rows == 20)
+    explorer.selected = tree.root
+    explorer.rotate()
+    await explorer.waitForLayout()
+    #expect(explorer.document?.nodes.map(\.children) == tree.nodes.map(\.children))
+    for (file, original) in zip(files, originals) {
+      #expect(try Data(contentsOf: directory.appendingPathComponent(file)) == original)
+    }
     try FileManager.default.removeItem(at: first.directory.appendingPathComponent("mcc.tree"))
     let reloaded = TreeSummaryModel(directory: request.directory, executable: engine)
     await reloaded.load()
@@ -98,4 +122,75 @@ struct TreeSummaryTests {
         directory: directory, executable: engine, burnin: 10, heights: "ca")
     }
   }
+
+  @Test @MainActor func largeSummaryLoadsWhileAnAnalysisContinues() async throws {
+    let folder = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "rove-large-viewer-\(UUID())")
+    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: false)
+    defer { try? FileManager.default.removeItem(at: folder) }
+    let engine = engine
+    let summary = folder.appendingPathComponent("summary")
+    try await Task.detached {
+      func subtree(_ start: Int, _ count: Int) -> String {
+        if count == 1 { return "\(start)[&rate=1]:1" }
+        return "(\(subtree(start, count / 2)),\(subtree(start + count / 2, count / 2)))[&rate=1]:1"
+      }
+      let tree = String(subtree(1, 4096).dropLast("[&rate=1]:1".count))
+      let translation = (1...4096).map { "\($0) T\($0)" }.joined(separator: ",")
+      let input = folder.appendingPathComponent("input.trees")
+      try
+        "#NEXUS\nBegin trees;Translate \(translation);tree STATE_0 = [&R] \(tree);tree STATE_100 = [&R] \(tree);End;"
+        .write(to: input, atomically: true, encoding: .utf8)
+      let process = Process()
+      process.executableURL = engine
+      process.arguments = [
+        "summarize", input.path, "--output", summary.path, "--burnin-percent", "0", "--heights",
+        "ca",
+      ]
+      process.standardOutput = FileHandle.nullDevice
+      process.standardError = FileHandle.nullDevice
+      try process.run()
+      process.waitUntilExit()
+      #expect(process.terminationStatus == 0)
+    }.value
+    let matrix = root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
+    let report = try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine)
+    var settings = AnalysisSettings()
+    settings.steps = 100_000_000
+    settings.sampleEvery = 1_000_000
+    let request = RunRequest(
+      id: UUID(), executable: engine, directory: folder.appendingPathComponent("active"),
+      draft: AnalysisDraft(
+        matrix: matrix, report: report, settings: settings, monophyly: [], outgroup: nil))
+    let suite = "rove-large-viewer-\(UUID())"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let workspace = Workspace(
+      executable: engine, preferences: AppPreferences(defaults: defaults),
+      history: RunHistory(defaults: defaults, defaultRoot: folder))
+    let run = AnalysisRun(request: request)
+    workspace.run = run
+    run.start()
+    workspace.openTree(summary, run: folder)
+    let explorer = try #require(workspace.treeExplorer)
+    var finished = false
+    let load = Task {
+      await explorer.load()
+      finished = true
+    }
+    var navigations = 0
+    while !finished {
+      workspace.openHistory()
+      workspace.returnToWorkspace()
+      navigations += 1
+      try await Task.sleep(for: .milliseconds(5))
+    }
+    await load.value
+    #expect(explorer.error == nil && explorer.document?.nodes.count == 8191)
+    #expect(navigations > 1 && run.isActive && run.progress != nil)
+    #expect(workspace.run?.id == run.id && !workspace.showingHistory)
+    await workspace.cancelAndWait()
+    #expect(run.status == .cancelled)
+  }
+
 }

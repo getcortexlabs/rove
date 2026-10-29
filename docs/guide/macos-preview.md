@@ -238,3 +238,46 @@ retain clade counts and target statistics, not all parsed trees.
 
 [Validation and Apple silicon measurements](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
 record comparisons with pinned TreeAnnotator and external NEXUS readers.
+
+## Explore an annotated tree
+
+![Native MCC tree explorer](/images/macos-tree.png)
+
+In a completed result or History entry, open **Summarize trees**, then choose
+**View tree** on a saved summary. A separate native window opens the MCC result;
+it does not browse raw samples or treat `STATE_0` as a final result. The header
+identifies the source run and retained/discarded counts. **About this summary**
+shows the burn-in, height policy, selected source sample and imposed groups.
+
+Click a node or tip to inspect support, branch length, heights and available
+rate ranges. Expand **Descendant taxa** to navigate its children or select a tip.
+Missing annotations display **Unavailable**. Diamonds mark constrained groups;
+their support is not independent evidence. A verified outgroup is identified
+as a tip, not the root node. Vertical tip order does not determine rooting.
+
+Scroll or drag to pan, pinch or use the zoom buttons to magnify, and choose
+**Fit width** to restore 100%. Taller trees remain scrollable so labels stay
+readable. Search finds taxa inside collapsed clades and expands their ancestors
+when selected. **Rotate**, **Collapse clade** and **Reset display** affect only
+the drawing. With the canvas focused, use Up/Down for visible nodes, Left for
+the parent, Right for a child and Space to collapse/expand. The inspector also
+provides native navigation buttons. These operations do not animate.
+
+**Support** toggles labels; short branches and crowded rows omit labels to avoid
+overlap, while the inspector retains every available value. Long tip labels
+are abbreviated in the drawing and shown in full in search and the inspector.
+Scale and branches use source time units. Rate ranges are separate multipliers;
+observed ranges are not HPD intervals.
+
+**Export SVG** saves the whole displayed arrangement, including rotations and
+collapsed clades, with a scale, legend and summary provenance. Zoom and scrolling
+choose the viewport, not a crop of the exported figure. SVG is a vector image;
+the original `mcc.tree`, raw trees and run files remain unchanged. No PNG export,
+external tree import or rerooting is included in this viewer.
+
+The bundled `rove inspect-tree /path/to/summary-directory` validates the saved
+record and annotated-tree fingerprint before emitting versioned display JSON.
+Reading, layout, search and SVG generation run outside the interface thread.
+The viewer accepts one Rove MCC tree, up to 16 MiB, 4,096 taxa and 512 nesting
+levels; raw sample reader limits above remain unchanged. A summary still does
+not establish convergence.

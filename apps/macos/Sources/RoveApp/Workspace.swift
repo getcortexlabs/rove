@@ -54,6 +54,7 @@ final class Workspace {
     page == .review && report != nil && issue == nil && !loading && run == nil && !showingHistory
   }
   private var importID = UUID()
+  var treeExplorer: TreeExplorer?
   private let executable: URL
   let preferences: AppPreferences
   var strings: AppStrings { preferences.strings }
@@ -353,6 +354,10 @@ final class Workspace {
     }
     monophyly = groups
     return true
+  }
+
+  func openTree(_ directory: URL, run: URL) {
+    treeExplorer = TreeExplorer(directory: directory, runDirectory: run, executable: executable)
   }
 
   func summarizeTrees(in directory: URL) {

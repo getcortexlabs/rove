@@ -68,6 +68,14 @@ struct RoveApp: App {
     .defaultPosition(.center)
     .commandsRemoved()
 
+    Window(strings("Tree explorer"), id: "tree-explorer") {
+      if let model = workspace.treeExplorer {
+        TreeExplorerView(model: model, preferences: workspace.preferences).id(model.id)
+      }
+    }
+    .defaultSize(width: 1100, height: 780)
+    .windowResizability(.contentMinSize)
+
     Settings {
       SettingsView(preferences: workspace.preferences)
     }.windowResizability(.contentSize)

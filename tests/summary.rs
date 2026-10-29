@@ -58,7 +58,7 @@ fn mcc_support_burnin_ties_and_common_ancestor_heights() {
         ),
         (0, 100, 300)
     );
-    assert_eq!(summary.target.state, 100);
+    assert_eq!(summary.target.state, Some(100));
     near(summary.log_credibility, 2.0 * (2.0f64 / 3.0).ln());
     let masks = summary.target.clades();
     let ab = masks.iter().position(|m| m == &[3]).unwrap();
@@ -73,11 +73,11 @@ fn mcc_support_burnin_ties_and_common_ancestor_heights() {
     assert!(annotated.contains("[&R]"));
     assert!(!annotated.contains("HPD"));
     let keep = summarize(&input, Burnin::Samples(1), Heights::Keep, &[], &|| false).unwrap();
-    assert_eq!(keep.target.state, 100);
+    assert_eq!(keep.target.state, Some(100));
     near(keep.target.nodes[ab].height, 1.0);
     let untrimmed = summarize(&input, Burnin::Percent(10), Heights::Keep, &[], &|| false).unwrap();
     assert_eq!(untrimmed.discarded, 0);
-    assert_eq!(untrimmed.target.state, 0);
+    assert_eq!(untrimmed.target.state, Some(0));
     assert!(summarize(&input, Burnin::Samples(4), Heights::Keep, &[], &|| false).is_err());
     assert!(summarize(&input, Burnin::Percent(100), Heights::Keep, &[], &|| false).is_err());
 }
@@ -271,7 +271,7 @@ fn translated_clades_span_multiple_mask_words() {
         &|| false,
     )
     .unwrap();
-    assert_eq!(summary.target.state, 0);
+    assert_eq!(summary.target.state, Some(0));
     assert_eq!(summary.sampling_interval, Some(100));
     assert_eq!(summary.target.tips.len(), 128);
     let marked: Vec<_> = summary.nodes.iter().filter(|n| n.constrained).collect();
@@ -338,4 +338,125 @@ fn source_record_checks_every_state_and_owner_exit_cancels_work() {
         }
         std::thread::sleep(Duration::from_millis(10));
     }
+}
+
+#[test]
+fn annotated_reader_preserves_statistics_and_rejects_raw_or_invalid_metadata() {
+    use rove::summary::nexus::Reader;
+    use std::io::Cursor;
+    let temp = Temp::new();
+    let summary = summarize(
+        &temp.input(&sample()),
+        Burnin::Percent(25),
+        Heights::CommonAncestor,
+        &[],
+        &|| false,
+    )
+    .unwrap();
+    let mut bytes = Vec::new();
+    summary.write_tree(&mut bytes).unwrap();
+    let text = String::from_utf8(bytes).unwrap();
+    let mut reader = Reader::annotated(Cursor::new(&text)).unwrap();
+    let tree = reader.next_tree().unwrap().unwrap();
+    assert_eq!(tree.state, None);
+    let ab = tree.clades().iter().position(|m| m == &[3]).unwrap();
+    near(tree.annotations[ab].posterior.unwrap(), 2.0 / 3.0);
+    near(tree.nodes[ab].height, 8.0 / 3.0);
+    near(tree.annotations[ab].height_mean.unwrap(), 1.5);
+    assert_eq!(tree.annotations[ab].height_range, Some([1.0, 2.0]));
+    assert_eq!(tree.annotations[ab].ancestor_range, Some([1.0, 5.0]));
+    assert!(tree.nodes[ab].rate.is_none());
+    assert!(reader.next_tree().unwrap().is_none());
+    for bad in [
+        sample(),
+        text.replace("MCC", "STATE_100"),
+        text.replace("[&R]", ""),
+        text.replace("posterior=0.6666666666666666", "posterior=1.1"),
+        text.replace("posterior=0.6666666666666666", "posterior=NaN"),
+        text.replace("height_range={1,2}", "height_range={2,1}"),
+        text.replace("height_mean=1.5", "height_mean=1.5,height_mean=2"),
+        text.replace("End;", ""),
+    ] {
+        assert_ne!(bad, text, "mutation did not match fixture");
+        let mut reader = Reader::annotated(Cursor::new(&bad)).unwrap();
+        assert!(
+            reader.next_tree().and_then(|_| reader.next_tree()).is_err(),
+            "accepted: {bad}"
+        );
+    }
+    let minimal = "#NEXUS\nBegin trees;Translate 1 A,2 B;tree MCC = [&R] (1:1,2:1);End;";
+    let mut reader = Reader::annotated(Cursor::new(minimal)).unwrap();
+    let tree = reader.next_tree().unwrap().unwrap();
+    assert!(
+        tree.annotations
+            .iter()
+            .all(|a| a.posterior.is_none() && a.ancestor_mean.is_none())
+    );
+    let duplicate = minimal.replace("End;", "tree MCC = [&R] (1:1,2:1);End;");
+    let mut reader = Reader::annotated(Cursor::new(duplicate)).unwrap();
+    assert!(reader.next_tree().unwrap().is_some());
+    assert!(reader.next_tree().is_err());
+}
+
+#[test]
+fn inspector_checks_provenance_and_never_changes_scientific_files() {
+    let temp = Temp::new();
+    let input = temp.input(&sample());
+    let output = temp.0.join("summary");
+    let summarize = Command::new(env!("CARGO_BIN_EXE_rove"))
+        .args([
+            "summarize",
+            input.to_str().unwrap(),
+            "--output",
+            output.to_str().unwrap(),
+            "--burnin-percent",
+            "25",
+            "--heights",
+            "ca",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        summarize.status.success(),
+        "{}",
+        String::from_utf8_lossy(&summarize.stderr)
+    );
+    let files = ["mcc.tree", "samples.trees", "summary.json"];
+    let original: Vec<_> = files
+        .iter()
+        .map(|f| fs::read(output.join(f)).unwrap())
+        .collect();
+    let inspect = || {
+        Command::new(env!("CARGO_BIN_EXE_rove"))
+            .args(["inspect-tree", output.to_str().unwrap()])
+            .output()
+            .unwrap()
+    };
+    let result = inspect();
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    let tree: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(tree["kind"], "posterior_summary");
+    assert_eq!(tree["summary"]["retained_samples"], 3);
+    assert_eq!(tree["summary"]["selected_state"], 100);
+    let root = tree["root"].as_u64().unwrap() as usize;
+    near(tree["nodes"][root]["height"].as_f64().unwrap(), 4.0);
+    assert!(tree["nodes"][0]["posterior"].is_null());
+    for (name, bytes) in files.iter().zip(&original) {
+        assert_eq!(fs::read(output.join(name)).unwrap(), *bytes);
+    }
+    fs::write(output.join("mcc.tree"), b"changed").unwrap();
+    assert!(String::from_utf8_lossy(&inspect().stderr).contains("fingerprint"));
+    fs::write(output.join("mcc.tree"), &original[0]).unwrap();
+    let mut record: serde_json::Value = serde_json::from_slice(&original[2]).unwrap();
+    record["retained_samples"] = 999.into();
+    fs::write(output.join("summary.json"), record.to_string()).unwrap();
+    assert!(!inspect().status.success());
+    record["retained_samples"] = 3.into();
+    record["source"]["constraints"] = serde_json::json!([["A", "C"]]);
+    fs::write(output.join("summary.json"), record.to_string()).unwrap();
+    assert!(String::from_utf8_lossy(&inspect().stderr).contains("absent"));
 }

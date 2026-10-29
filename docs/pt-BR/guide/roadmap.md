@@ -26,6 +26,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Histórico de execuções e reutilização de configurações | Implementado, #30 |
 | Escolha explícita do grupo externo e restrições aplicadas | Implementado, #31 |
 | Resumo MCC posterior e exportação anotada | Implementado, #32 |
+| Explorador nativo de árvores anotadas e figuras SVG | Implementado, #33 |
 | Cadeias paralelas e relatórios de convergência | Planejado, #23 |
 | Reescalonamento por potências de dois | Planejado, #18 |
 | Checkpoints e retomada de execuções | Planejado, #22 |

@@ -51,8 +51,9 @@ after their matrix fingerprint is checked.
 History keeps previous runs accessible across launches, with their settings,
 outcomes and output files, and can prepare a new run from a saved configuration.
 Completed runs can produce an annotated MCC tree for FigTree, with explicit
-burn-in and a choice of common ancestor or sampled heights. Original samples
-stay unchanged. Completion and node support do not establish convergence; resumed
+burn-in and a choice of common ancestor or sampled heights. Open saved summaries
+in the native tree explorer to inspect nodes, search taxa, rotate or collapse
+clades and export an SVG figure. Original samples stay unchanged. Completion and node support do not establish convergence; resumed
 runs remain future work.
 See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/README.md).
 

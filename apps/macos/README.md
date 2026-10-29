@@ -38,7 +38,7 @@ sandboxes build processes and cannot start SwiftPM's nested sandbox, set
   it does not copy the data. Copied commands read the file when executed.
 
 The window runs the bundled Rust sampler with live progress and cancellation.
-It does not edit matrices, resume chains or visualize inferred trees. Completion
+It does not edit matrices or resume chains. Saved MCC summaries open in a native tree explorer. Completion
 means the requested steps finished and output metadata was verified, not convergence.
 The setup format is a preview format, not a configuration accepted by the CLI.
 The app supports English and Brazilian Portuguese, with a dark appearance.
@@ -226,3 +226,33 @@ run is completed; the CLI independently validates source metadata, sampling
 intervals and tree content. Errors retain engine details without interpreting
 summary support as convergence. The [guide](../../docs/guide/macos-preview.md#summarize-posterior-trees)
 documents supported inputs, formulas, disk costs and remaining statistical limits.
+
+## Annotated-tree explorer
+
+Saved summary cards in completed results and History open a separate window.
+`rove inspect-tree <summary-directory>` verifies the summary record, tree SHA-256,
+translation, constraints and heights, then emits a version 1 display document.
+It accepts one rooted Rove MCC tree, not raw `STATE_` samples or arbitrary external
+files. Files are bounded at 16 MiB; metadata at 2 MiB; trees at 4,096 taxa and
+512 nesting levels. Optional annotations remain optional in the display document.
+
+`TreeExplorer` reads and lays out the document off the main actor. Display revisions
+prevent an older layout from replacing a newer collapse/rotation. `TreeLayout`
+keeps height-based horizontal positions independent of display order. `TreeCanvas`
+uses a magnifying AppKit scroll view and culls offscreen node labels. Search can
+reveal a tip through collapsed ancestors. The inspector and arrow/Space keys
+provide navigation; no display operation changes the scientific tree or reroots it.
+
+`TreeFigure` shares geometry between the canvas and SVG. Export includes the whole
+display arrangement, scale, summary settings and constraint legend. File writes
+reject scientific source paths, including symlink aliases. SVG generation happens
+on a worker task. Raw sample browsing, external tree import, PNG and HPD intervals
+are not implemented. See the [guide](../../docs/guide/macos-preview.md#explore-an-annotated-tree)
+for the distinction between clade-conditional ranges and common ancestor heights.
+
+Tests cover known topology and support, collapse/rotation invariants, provenance
+mismatches, missing metadata, outgroup context, search through collapsed clades,
+XML escaping and protected-file exports. A 4,096-tip synthetic document exercises
+background decoding, layout and SVG generation; its elapsed time is printed by
+`largeLayoutAndExportRemainBounded`, without a hardware-dependent pass threshold.
+Native preview captures cover both languages and compact windows.

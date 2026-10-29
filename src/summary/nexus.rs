@@ -18,10 +18,23 @@ pub struct Node {
 
 #[derive(Clone, Debug)]
 pub struct Tree {
-    pub state: u64,
+    pub state: Option<u64>,
+    pub annotations: Vec<NodeAnnotations>,
     pub nodes: Vec<Node>,
     pub root: usize,
     pub tips: Vec<usize>,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct NodeAnnotations {
+    pub posterior: Option<f64>,
+    pub constrained: Option<bool>,
+    pub height: Option<f64>,
+    pub height_mean: Option<f64>,
+    pub height_range: Option<[f64; 2]>,
+    pub ancestor_mean: Option<f64>,
+    pub ancestor_range: Option<[f64; 2]>,
+    pub rate_range: Option<[f64; 2]>,
 }
 
 pub type Clade = Vec<u64>;
@@ -62,6 +75,8 @@ pub struct Reader<R> {
     ended: bool,
     last_state: Option<u64>,
     rates: Option<bool>,
+    annotated: bool,
+    tree_count: usize,
 }
 
 impl<R: BufRead> Reader<R> {
@@ -81,11 +96,25 @@ impl<R: BufRead> Reader<R> {
             ended: false,
             last_state: None,
             rates: None,
+            annotated: false,
+            tree_count: 0,
         })
     }
 
+    /// Read a single Rove MCC tree, retaining its annotations. Raw samples are rejected.
+    pub fn annotated(input: R) -> Result<Self> {
+        let mut reader = Self::new(input)?;
+        reader.annotated = true;
+        Ok(reader)
+    }
+
     pub fn next_tree(&mut self) -> Result<Option<Tree>> {
-        while let Some(statement) = statement(&mut self.input)? {
+        let limit = if self.annotated {
+            16 * 1024 * 1024
+        } else {
+            MAX_STATEMENT
+        };
+        while let Some(statement) = statement(&mut self.input, limit)? {
             let mut p = Tokens::new(&statement);
             let command = p.word()?.to_ascii_lowercase();
             match command.as_str() {
@@ -142,7 +171,7 @@ impl<R: BufRead> Reader<R> {
                     }
                     check_taxa(&self.taxa)?;
                 }
-                "translate" if self.block == "trees" && self.last_state.is_none() => {
+                "translate" if self.block == "trees" && self.tree_count == 0 => {
                     if !self.translation.is_empty() {
                         return Err(Error("duplicate TRANSLATE table".into()));
                     }
@@ -175,22 +204,43 @@ impl<R: BufRead> Reader<R> {
                         return Err(Error("trees require a TRANSLATE table".into()));
                     }
                     let name = p.word()?;
-                    let state: u64 = name
-                        .strip_prefix("STATE_")
-                        .ok_or_else(|| Error("expected a STATE_<integer> sample name".into()))?
-                        .parse()
-                        .map_err(|_| Error("invalid sample state".into()))?;
-                    if self.last_state.is_some_and(|last| state <= last) {
-                        return Err(Error("sample states must increase strictly".into()));
-                    }
+                    let state = if self.annotated {
+                        if name != "MCC" || self.tree_count != 0 {
+                            return Err(Error("expected exactly one MCC summary tree".into()));
+                        }
+                        None
+                    } else {
+                        let value: u64 = name
+                            .strip_prefix("STATE_")
+                            .ok_or_else(|| Error("expected a STATE_<integer> sample name".into()))?
+                            .parse()
+                            .map_err(|_| Error("invalid sample state".into()))?;
+                        if self.last_state.is_some_and(|last| value <= last) {
+                            return Err(Error("sample states must increase strictly".into()));
+                        }
+                        Some(value)
+                    };
                     p.expect(b'=')?;
                     let prefix = p.annotations()?;
                     if prefix.iter().any(|a| a.trim().eq_ignore_ascii_case("&U")) {
                         return Err(Error("unrooted trees are not supported".into()));
                     }
+                    if self.annotated && !prefix.iter().any(|a| a.trim().eq_ignore_ascii_case("&R"))
+                    {
+                        return Err(Error(
+                            "summary requires an explicit rooted annotation".into(),
+                        ));
+                    }
+                    let mut annotations = self.annotated.then(Vec::new);
                     let mut nodes = Vec::new();
                     let mut tips = vec![usize::MAX; self.taxa.len()];
-                    let root = p.node(&self.translation, &mut nodes, &mut tips, 0)?;
+                    let root = p.node(
+                        &self.translation,
+                        &mut nodes,
+                        &mut tips,
+                        &mut annotations,
+                        0,
+                    )?;
                     if !p.done()? || tips.contains(&usize::MAX) {
                         return Err(Error("tree has missing taxa or trailing content".into()));
                     }
@@ -203,7 +253,7 @@ impl<R: BufRead> Reader<R> {
                         .filter(|(i, _)| *i != root)
                         .filter(|(_, n)| n.rate.is_some())
                         .count();
-                    if rated != 0 && rated != nodes.len() - 1 {
+                    if !self.annotated && rated != 0 && rated != nodes.len() - 1 {
                         return Err(Error(
                             "branch rate annotations must cover every non-root branch".into(),
                         ));
@@ -213,9 +263,11 @@ impl<R: BufRead> Reader<R> {
                         return Err(Error("mixed clock annotations in the tree sample".into()));
                     }
                     self.rates = Some(has_rates);
-                    self.last_state = Some(state);
+                    self.last_state = state;
+                    self.tree_count += 1;
                     return Ok(Some(Tree {
                         state,
+                        annotations: annotations.unwrap_or_default(),
                         nodes,
                         root,
                         tips,
@@ -229,7 +281,7 @@ impl<R: BufRead> Reader<R> {
                 }
             }
         }
-        if !self.ended || !self.block.is_empty() || self.last_state.is_none() {
+        if !self.ended || !self.block.is_empty() || self.tree_count == 0 {
             return Err(Error(
                 "incomplete tree file: missing trees or final END;".into(),
             ));
@@ -251,7 +303,7 @@ fn check_taxa(taxa: &[String]) -> Result<()> {
 }
 
 // Statements are bounded independently of file size; semicolons inside comments/labels do not end them.
-fn statement(input: &mut impl BufRead) -> Result<Option<String>> {
+fn statement(input: &mut impl BufRead, limit: usize) -> Result<Option<String>> {
     let mut out = Vec::new();
     let mut quote = false;
     let mut comment = 0usize;
@@ -284,8 +336,10 @@ fn statement(input: &mut impl BufRead) -> Result<Option<String>> {
                 .map_err(|_| Error("tree file must be UTF-8".into()));
         }
         out.push(c);
-        if out.len() > MAX_STATEMENT {
-            return Err(Error("NEXUS statement exceeds 2 MiB".into()));
+        if out.len() > limit {
+            return Err(Error(
+                "NEXUS statement exceeds the reader size limit".into(),
+            ));
         }
     }
 }
@@ -395,6 +449,7 @@ impl<'a> Tokens<'a> {
         names: &HashMap<String, usize>,
         nodes: &mut Vec<Node>,
         tips: &mut [usize],
+        metadata: &mut Option<Vec<NodeAnnotations>>,
         depth: usize,
     ) -> Result<usize> {
         if depth > 512 {
@@ -403,9 +458,9 @@ impl<'a> Tokens<'a> {
         self.whitespace();
         let (children, tip, height) = if self.bytes.get(self.offset) == Some(&b'(') {
             self.offset += 1;
-            let a = self.node(names, nodes, tips, depth + 1)?;
+            let a = self.node(names, nodes, tips, metadata, depth + 1)?;
             self.expect(b',')?;
-            let b = self.node(names, nodes, tips, depth + 1)?;
+            let b = self.node(names, nodes, tips, metadata, depth + 1)?;
             self.expect(b')')?;
             let x = nodes[a].height + nodes[a].length;
             let y = nodes[b].height + nodes[b].length;
@@ -427,7 +482,7 @@ impl<'a> Tokens<'a> {
         };
         let mut rate = None;
         let annotations = self.annotations()?;
-        for annotation in annotations {
+        for annotation in &annotations {
             if let Some(fields) = annotation.strip_prefix('&') {
                 for field in fields.split(',') {
                     if let Some(value) = field.trim().strip_prefix("rate=") {
@@ -466,6 +521,18 @@ impl<'a> Tokens<'a> {
         if !height.is_finite() {
             return Err(Error("non-finite tree height".into()));
         }
+        if let Some(values) = metadata {
+            let annotation = NodeAnnotations::parse(&annotations)?;
+            if annotation
+                .height
+                .is_some_and(|h| (h - height).abs() > 1e-9 * height.abs().max(1e-12))
+            {
+                return Err(Error(
+                    "annotated height disagrees with branch lengths".into(),
+                ));
+            }
+            values.push(annotation);
+        }
         let id = nodes.len();
         nodes.push(Node {
             children,
@@ -484,4 +551,99 @@ impl<'a> Tokens<'a> {
         }
         Ok(id)
     }
+}
+
+impl NodeAnnotations {
+    fn parse(annotations: &[String]) -> Result<Self> {
+        let mut result = Self::default();
+        let mut seen = std::collections::HashSet::new();
+        for annotation in annotations {
+            let Some(text) = annotation.strip_prefix('&') else {
+                continue;
+            };
+            let mut start = 0;
+            let mut depth = 0usize;
+            for (i, c) in text
+                .char_indices()
+                .chain(std::iter::once((text.len(), ',')))
+            {
+                match c {
+                    '{' => depth += 1,
+                    '}' => {
+                        depth = depth
+                            .checked_sub(1)
+                            .ok_or_else(|| Error("invalid annotation range".into()))?
+                    }
+                    ',' if depth == 0 => {
+                        let field = &text[start..i];
+                        if let Some((key, value)) = field.split_once('=') {
+                            let key = key.trim();
+                            let value = value.trim();
+                            if !seen.insert(key.to_owned()) {
+                                return Err(Error("duplicate node annotation".into()));
+                            }
+                            match key {
+                                "posterior" => {
+                                    let p = number(value)?;
+                                    if p > 1.0 {
+                                        return Err(Error(
+                                            "posterior support must be between zero and one".into(),
+                                        ));
+                                    }
+                                    result.posterior = Some(p);
+                                }
+                                "constrained" => {
+                                    result.constrained = Some(match value {
+                                        "true" => true,
+                                        "false" => false,
+                                        _ => {
+                                            return Err(Error(
+                                                "invalid constraint annotation".into(),
+                                            ));
+                                        }
+                                    })
+                                }
+                                "height" => result.height = Some(number(value)?),
+                                "height_mean" => result.height_mean = Some(number(value)?),
+                                "height_range" => result.height_range = Some(range(value)?),
+                                "CAheight_mean" => result.ancestor_mean = Some(number(value)?),
+                                "CAheight_range" => result.ancestor_range = Some(range(value)?),
+                                "rate_range" => result.rate_range = Some(range(value)?),
+                                _ => {}
+                            }
+                        }
+                        start = i + 1;
+                    }
+                    _ => {}
+                }
+            }
+            if depth != 0 {
+                return Err(Error("unterminated annotation range".into()));
+            }
+        }
+        Ok(result)
+    }
+}
+fn number(value: &str) -> Result<f64> {
+    let value: f64 = value
+        .parse()
+        .map_err(|_| Error("invalid numeric annotation".into()))?;
+    if !value.is_finite() || value < 0.0 {
+        return Err(Error("annotations must be finite and nonnegative".into()));
+    }
+    Ok(value)
+}
+fn range(value: &str) -> Result<[f64; 2]> {
+    let value = value
+        .strip_prefix('{')
+        .and_then(|s| s.strip_suffix('}'))
+        .ok_or_else(|| Error("expected an annotation range".into()))?;
+    let (a, b) = value
+        .split_once(',')
+        .ok_or_else(|| Error("expected two range endpoints".into()))?;
+    let values = [number(a.trim())?, number(b.trim())?];
+    if values[0] > values[1] {
+        return Err(Error("reversed annotation range".into()));
+    }
+    Ok(values)
 }
