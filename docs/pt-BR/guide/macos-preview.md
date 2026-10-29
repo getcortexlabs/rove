@@ -102,11 +102,9 @@ e os metadados da saída foram conferidos. Não significa convergência. Compare
 execuções independentes e avalie os diagnósticos de amostragem e árvores antes
 de interpretar os resultados; veja o [guia de amostragem](./sampler).
 
-**Cancelar análise** pede confirmação antes de parar. Os arquivos parciais
-continuam identificados; não são uma análise concluída nem um ponto de retomada.
-Fechar a janela principal ou sair durante uma análise pede confirmação e espera
-o motor encerrar. Se for necessário forçar a parada, os arquivos parciais podem
-estar incompletos. Ainda não é possível retomar uma cadeia.
+**Pausar análise** salva no próximo passo amostrado e encerra o motor. Em um grupo, todas as cadeias pausam juntas. No **Histórico**, selecione a execução e clique em **Retomar análise**; o cartão mostra o passo salvo. É preciso manter a mesma matriz, configurações e executável do Rove, além da pasta original da execução.
+
+**Cancelar análise** pede confirmação e mantém os arquivos parciais. Fechar o app também encerra o motor. Se ocorrer uma interrupção, o Histórico oferece recuperação quando existe um checkpoint; os passos posteriores ao último salvamento são refeitos. Execuções antigas sem checkpoint não podem ser retomadas. Uma configuração salva continua servindo para iniciar uma execução nova; retomar continua uma execução existente.
 
 ## Salvar e reabrir uma configuração
 

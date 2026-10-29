@@ -20,6 +20,14 @@ impl Random {
         }
     }
 
+    pub(crate) fn state(&self) -> [u64; 4] {
+        self.state
+    }
+
+    pub(crate) fn from_state(state: [u64; 4]) -> Option<Self> {
+        (state != [0; 4]).then_some(Self { state })
+    }
+
     pub fn next_u64(&mut self) -> u64 {
         let s = &mut self.state;
         let result = s[0].wrapping_add(s[3]).rotate_left(23).wrapping_add(s[0]);

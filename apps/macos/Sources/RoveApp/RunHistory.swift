@@ -3,6 +3,7 @@ import Observation
 
 enum HistoryStatus: String, CaseIterable, Sendable {
   case completed = "Completed"
+  case paused = "Paused"
   case cancelled = "Cancelled"
   case failed = "Failed"
   case interrupted = "Interrupted"
@@ -21,6 +22,10 @@ struct HistoryEntry: Identifiable, Sendable {
   let message: String?
   let files: Set<String>
   let folderAvailable: Bool
+  var checkpoint: RunCheckpoint? {
+    guard status != .completed, let draft else { return nil }
+    return try? RunCheckpoint.read(directory: directory, draft: draft)
+  }
   var id: String { directory.path }
   var name: String {
     draft.map { URL(fileURLWithPath: $0.matrixPath).lastPathComponent }
@@ -65,17 +70,42 @@ struct HistoryEntry: Identifiable, Sendable {
           message =
             "This run was recorded as completed, but its output files are missing or inconsistent."
         }
+      case "paused":
+        if let verified = try? EngineRecord.verify(directory: directory, draft: session.setup),
+          verified.status == "paused",
+          let checkpoint = try? RunCheckpoint.read(directory: directory, draft: session.setup),
+          checkpoint.step == verified.completedSteps
+        {
+          status = .paused
+        } else {
+          status = .incomplete
+          message = "The checkpoint does not match this analysis. Inspect the run folder."
+        }
       case "cancelled": status = .cancelled
       case "failed": status = .failed
       default:
-        status = .interrupted
-        message = "This run has no confirmed finish. Its files are partial and cannot be resumed."
+        // The engine can finish just before the app loses its final event.
+        // New runs have a matching final checkpoint as well as verified output.
+        if let verified = try? EngineRecord.verify(directory: directory, draft: session.setup),
+          verified.status == "completed",
+          let checkpoint = try? RunCheckpoint.read(directory: directory, draft: session.setup),
+          checkpoint.step == verified.completedSteps
+        {
+          status = .completed
+          message = nil
+        } else {
+          status = .interrupted
+          message =
+            "This run has no confirmed finish. If a saved checkpoint is available, you can resume from it."
+        }
       }
     } else {
       status = .unreadable
       message = "The run record is missing, damaged or from an unsupported version."
     }
-    let recordedSeconds = session?.elapsedSeconds ?? engine?.wallSeconds
+    let recoveredCompletion = status == .completed && session?.status != "completed"
+    let recordedSeconds =
+      recoveredCompletion ? engine?.wallSeconds : (session?.elapsedSeconds ?? engine?.wallSeconds)
     let seconds = recordedSeconds.flatMap { $0.isFinite && $0 >= 0 ? $0 : nil }
     let engineDate = engine?.startedUnixSeconds.flatMap {
       $0.isFinite && $0 >= 0 ? Date(timeIntervalSince1970: $0) : nil
@@ -83,7 +113,9 @@ struct HistoryEntry: Identifiable, Sendable {
     return Self(
       directory: directory, status: status, draft: draft,
       startedAt: session?.startedAt ?? engineDate ?? draft?.createdAt,
-      elapsedSeconds: seconds, completedSteps: session?.completedSteps ?? engine?.completedSteps,
+      elapsedSeconds: seconds,
+      completedSteps: recoveredCompletion
+        ? engine?.completedSteps : (session?.completedSteps ?? engine?.completedSteps),
       message: message, files: files, folderAvailable: folderAvailable)
   }
 }

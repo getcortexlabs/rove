@@ -12,6 +12,8 @@ struct RunView: View {
     switch run.status {
     case .preparing: "Preparing your exploration…"
     case .running: "Following the branches."
+    case .pausing: "Saving your place…"
+    case .paused: "Ready when you are."
     case .cancelling: "Closing this exploration…"
     case .completed: "The run is complete."
     case .cancelled: "Stopped along the way."
@@ -109,10 +111,20 @@ struct RunView: View {
           text: strings(
             "The requested steps finished and the output files were verified. Assess independent runs, sampling diagnostics and tree support before interpreting the result."
           ))
+      } else if run.status == .pausing {
+        InlineMessage(
+          text: strings(
+            "Saving at the next shared sampling point. Keep Rove open until the analysis is paused."
+          ))
+      } else if run.status == .paused {
+        InlineMessage(
+          text: strings(
+            "Your progress is saved. Resume this analysis from History with the same matrix and Rove build."
+          ))
       } else if run.status == .cancelled || run.status == .cancelling {
         InlineMessage(
           text: strings(
-            "Partial files are kept in the run folder. They are not a completed analysis or a checkpoint. A new run starts from the beginning."
+            "Partial files are kept in the run folder. History can resume from the latest saved checkpoint; later unsaved steps will be repeated."
           ))
       } else if run.status == .failed {
         InlineMessage(
@@ -153,6 +165,10 @@ struct RunView: View {
       }
       HStack {
         if run.isActive {
+          Button(action: run.pause) {
+            Label(strings("Pause analysis"), systemImage: "pause.circle")
+          }.buttonStyle(LabButtonStyle(prominent: true)).disabled(
+            run.status == .pausing || run.status == .cancelling)
           Button {
             confirmingCancellation = true
           } label: {
@@ -192,7 +208,7 @@ struct RunView: View {
     } message: {
       Text(
         strings(
-          "Rove will close the engine and keep partial output. Resuming a run is not available yet."
+          "Rove will stop the engine and keep partial output. Use Pause to save the current sampling point before stopping."
         ))
     }
   }

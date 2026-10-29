@@ -98,7 +98,7 @@ A matriz não tem homoplasia, então sob Mkv a verossimilhança não penaliza á
 
 - Uma partição de caracteres binários. Datas de terminais, calibrações, outras distribuições de relógio e outros priors de árvore não estão implementados.
 - A árvore inicial é aleatória, com tempos de nós parecidos com os de um coalescente, e satisfaz as restrições.
-- Cada cadeia independente usa uma thread. Checkpoint e retomada ainda não estão implementados.
+- Cada cadeia independente usa uma thread. Os checkpoints preservam todas as cadeias no mesmo passo amostrado.
 
 ## Cadeias independentes
 
@@ -110,4 +110,21 @@ Com várias cadeias, `--output` contém `chain-01/`, `chain-02/` etc., cada uma 
 
 A opção `--stop-when-converged` compara **todas as estatísticas escalares registradas** com `--min-ess` (200 por cadeia) e `--max-rhat` (1,01). Exige pelo menos 1.000 amostras mantidas por cadeia, duas verificações positivas seguidas e nenhum ESS indisponível ou limitado pela defasagem máxima. `--check-every` usa 1.000 intervalos de amostragem por padrão e precisa ser múltiplo positivo de `--sample-every`. As threads param no mesmo estado registrado durante cada verificação. O limite de passos continua valendo; `run.json` guarda as verificações, os passos concluídos e o motivo `diagnostic_thresholds` ou `step_limit`.
 
-A parada é desativada por padrão. Esses critérios escalares **não comprovam a convergência das topologias**. Avalie a concordância dos clados e os traces antes de interpretar os resultados. Cancelar o grupo encerra todas as threads e preserva arquivos parciais; não cria um checkpoint.
+A parada é desativada por padrão. Esses critérios escalares **não comprovam a convergência das topologias**. Avalie a concordância dos clados e os traces antes de interpretar os resultados. Cancelar o grupo encerra todas as threads e preserva arquivos parciais. A retomada usa o último checkpoint confirmado; pausar salva o próximo passo amostrado antes de parar.
+
+
+## Salvamento e retomada
+
+O motor salva um checkpoint no passo zero, aproximadamente a cada 30 segundos por padrão e no término. `--checkpoint-every <passos>` usa um intervalo fixo em passos, que precisa ser um múltiplo positivo de `--sample-every`.
+
+```sh
+rove sample --resume /caminho/da/execucao
+```
+
+Use a pasta da execução ou a pasta que reúne as cadeias independentes. Mantenha a pasta original, a matriz e o executável. A retomada recupera as configurações salvas; alterações na semente, modelo, limite de passos ou backend são recusadas. Uma execução concluída não pode ser retomada. Execuções antigas sem checkpoint não podem ganhar um retroativamente.
+
+O salvamento inclui árvore, taxas, estado do gerador de números aleatórios, ajustes e contadores dos movimentos, memória dos cálculos de verossimilhança e posições dos arquivos de amostras, com fingerprints SHA-256. Grupos salvam todos os membros juntos, inclusive o histórico de checagens dos diagnósticos. Os arquivos são sincronizados com o disco antes da troca atômica do manifesto: se essa gravação for interrompida, o checkpoint anterior continua utilizável. Um bloqueio impede duas execuções de escreverem na mesma pasta ao mesmo tempo.
+
+Antes de continuar, o motor verifica todos os membros. Trechos gravados depois das posições salvas são descartados e esses passos são refeitos. Os números e a ordem da amostragem são preservados exatamente; as amostras coincidem com uma execução contínua usando o mesmo executável e configurações. Isso verifica a reprodução da retomada, não a convergência. `run.json` continua sendo um relatório; para retomar, são necessários `checkpoint.json` e os arquivos binários que ele indica.
+
+Com `--cancel-on-stdin-close`, enviar `pause\n` pela entrada padrão salva no próximo passo amostrado comum e encerra com status `paused` (código 130). Fechar essa entrada cancela. Uma interrupção abrupta permite recuperar apenas o último checkpoint confirmado.

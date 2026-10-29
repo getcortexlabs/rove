@@ -53,8 +53,9 @@ outcomes and output files, and can prepare a new run from a saved configuration.
 Completed runs can produce an annotated MCC tree for FigTree, with explicit
 burn-in and a choice of common ancestor or sampled heights. Open saved summaries
 in the native tree explorer to inspect nodes, search taxa, rotate or collapse
-clades and export an SVG figure. Original samples stay unchanged. Completion and node support do not establish convergence; resumed
-runs remain future work. Diagnostics show recorded parameters, trace plots, ESS
+clades and export an SVG figure. Original samples stay unchanged. Completion and node support do not establish convergence. Pause a run and resume it
+from History, including independent-chain groups. Periodic checkpoints also allow
+recovery after an interruption, using the same executable, matrix and settings. Diagnostics show recorded parameters, trace plots, ESS
 and equal-tailed intervals with an adjustable burn-in; calculations stay in Rust.
 See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/README.md).
 
@@ -142,12 +143,13 @@ it does not certify topology convergence. See the [sampler guide](https://rove.g
 8. Validate complete inference on known matrices. Done for six 20-taxon cases.
 9. Evaluate relaxed-clock proposals. Done; classical defaults retained.
 10. Run independent chains in parallel and compare them. Done.
-11. Add checkpoints and rescale by powers of two.
-12. Partition characters by number of states, condition on
+11. Add checkpoints and resume in the engine and native app. Done.
+12. Rescale by powers of two.
+13. Partition characters by number of states, condition on
     parsimony-informative characters and support ordered characters.
-13. Add marginal likelihoods, the fossilized birth–death prior with tip dates
+14. Add marginal likelihoods, the fossilized birth–death prior with tip dates
     and posterior predictive checks.
-14. Evaluate subtree repeats.
+15. Evaluate subtree repeats.
 15. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 
 ## Sampling trees

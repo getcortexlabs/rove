@@ -102,11 +102,9 @@ solicitados terminaron y se verificaron los metadatos de salida. No demuestra
 convergencia. Compara ejecuciones independientes y evalúa los diagnósticos de
 muestreo y árboles; consulta la [guía de muestreo](./sampler).
 
-**Cancel analysis** pide confirmación antes de detenerse. Los archivos parciales
-quedan identificados; no son un análisis completo ni un punto de reanudación.
-Cerrar la ventana principal o salir durante un análisis pide confirmación y
-espera a que termine el motor. Una parada forzada puede dejar archivos
-incompletos. Todavía no es posible reanudar una cadena.
+**Pause analysis** guarda el siguiente paso muestreado y detiene el motor. Las cadenas de un grupo pausan juntas. En **History**, selecciona la ejecución y pulsa **Resume analysis**; la tarjeta muestra el paso guardado. Se requieren la misma matriz, configuración y ejecutable de Rove, y la carpeta original.
+
+**Cancel analysis** pide confirmación y conserva archivos parciales. Cerrar la aplicación también detiene el motor. Tras una interrupción, History ofrece recuperación si existe un checkpoint; se repiten los pasos posteriores al último guardado. Las ejecuciones antiguas sin checkpoints no se pueden reanudar. Una configuración guardada prepara una ejecución nueva; reanudar continúa una existente.
 
 ## Guardar y reabrir una configuración
 

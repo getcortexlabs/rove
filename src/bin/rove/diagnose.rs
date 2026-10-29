@@ -33,7 +33,7 @@ pub(super) fn source_record(
         .to_owned();
     if !matches!(
         status.as_str(),
-        "completed" | "cancelled" | "failed" | "partial"
+        "completed" | "cancelled" | "paused" | "failed" | "partial"
     ) {
         return Err("unsupported run status".into());
     }

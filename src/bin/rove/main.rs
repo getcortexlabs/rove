@@ -1,3 +1,4 @@
+mod checkpoint;
 mod compare;
 mod diagnose;
 mod events;
@@ -10,8 +11,8 @@ mod summarize;
 use std::collections::HashSet;
 use std::error::Error;
 use std::fmt::Display;
-use std::fs::{self, File};
-use std::io::{BufWriter, Write};
+use std::fs;
+use std::io::Write;
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
@@ -28,7 +29,8 @@ const USAGE: &str =
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
                    [--stop-when-converged] [--min-ess <n>] [--max-rhat <n>] [--check-every <n>]
                    [--print-every <n>] [--events-json] [--cancel-on-stdin-close]
-                   [--expect-input-sha256 <hash>]
+                   [--expect-input-sha256 <hash>] [--checkpoint-every <n>]
+       rove sample --resume <run-directory> [--events-json] [--cancel-on-stdin-close]
        rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
        rove inspect <matrix.nex> [--gaps reject|missing]
        rove inspect-tree <summary-directory>
@@ -39,6 +41,9 @@ const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, 
 
 #[derive(Clone)]
 struct Options {
+    executable_sha256: Option<String>,
+    checkpoint_every: Option<u64>,
+    resume: Option<std::sync::Arc<checkpoint::Resume>>,
     chains: usize,
     burnin: usize,
     stop_when_converged: bool,
@@ -70,6 +75,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     if arguments.next().map(String::as_str) != Some("sample") {
         return Err(USAGE.into());
     }
+    let mut checkpoint_every = None;
     let mut chains = 1;
     let mut burnin = 10;
     let mut stop_when_converged = false;
@@ -108,6 +114,9 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 .map_err(|_| format!("{name} needs a non-negative integer, not {text:?}"))
         };
         match argument.as_str() {
+            "--checkpoint-every" => {
+                checkpoint_every = Some(number("--checkpoint-every", value("--checkpoint-every")?)?)
+            }
             "--chains" => {
                 chains = value("--chains")?
                     .parse::<usize>()
@@ -222,6 +231,9 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         value.ok_or_else(|| format!("{name} is required\n{USAGE}"))
     };
     let options = Options {
+        executable_sha256: None,
+        checkpoint_every,
+        resume: None,
         chains,
         burnin,
         stop_when_converged,
@@ -253,6 +265,9 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
             "--steps and --sample-every must be positive, and --steps a multiple of --sample-every"
                 .into(),
         );
+    }
+    if checkpoint_every.is_some_and(|n| n == 0 || n % options.sample_every != 0) {
+        return Err("--checkpoint-every must be a positive multiple of --sample-every".into());
     }
     if options.print_every == Some(0) {
         return Err("--print-every must be positive".into());
@@ -386,7 +401,14 @@ impl Json {
 }
 
 fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
-    let options = parse_options(arguments)?;
+    let (command, mut options, _guard) = if arguments.iter().any(|a| a == "--resume") {
+        let (command, options, guard) = checkpoint::load(arguments)?;
+        (command, options, Some(guard))
+    } else {
+        (arguments.to_vec(), parse_options(arguments)?, None)
+    };
+    options.executable_sha256 = Some(sha256::file(&std::env::current_exe()?)?);
+    let arguments = &command;
     let cancellation = events::Cancellation::watch_stdin(options.cancel_on_stdin_close);
     if options.chains > 1 {
         return parallel::run(arguments, options, cancellation);
@@ -404,15 +426,12 @@ fn chain_progress(chain: Option<usize>, line: impl Display) {
 
 fn run_chain(
     arguments: &[String],
-    options: Options,
+    mut options: Options,
     cancellation: &events::Cancellation,
     mut worker: Option<parallel::Worker>,
 ) -> Result<bool, Box<dyn Error>> {
     let chain = worker.as_ref().map(|w| w.index);
-    let executable = std::env::current_exe()
-        .and_then(fs::read)
-        .map(|binary| sha256::hex(&binary))
-        .ok();
+    let executable = options.executable_sha256.clone();
     let bytes = fs::read(&options.matrix)
         .map_err(|e| format!("cannot read {}: {e}", options.matrix.display()))?;
     let input = sha256::hex(&bytes);
@@ -423,6 +442,7 @@ fn run_chain(
     {
         return Err("the matrix fingerprint changed; inspect and review the input again".into());
     }
+    options.expected_input = Some(input.clone());
     let data = nexus::parse(std::str::from_utf8(&bytes)?)?;
     let sites = 0..data.character_count();
     let patterns = data
@@ -469,7 +489,17 @@ fn run_chain(
             settings.weights.push((kind, weight));
         }
     }
-    let mut sampler = Sampler::new(&patterns, &settings, options.seed)?;
+    let resume = options.resume.as_ref();
+    let index = chain.unwrap_or(1) - 1;
+    let saved = resume.map(|r| &r.manifest["chains"][index]);
+    let mut sampler = if let Some(resume) = resume {
+        Sampler::resume(&patterns, &settings, &resume.states[index])?
+    } else {
+        Sampler::new(&patterns, &settings, options.seed)?
+    };
+    if saved.is_some_and(|s| s["step"].as_u64() != Some(sampler.steps())) {
+        return Err("checkpoint sampler step differs from its manifest".into());
+    }
 
     if let Some(parent) = options
         .output
@@ -478,12 +508,17 @@ fn run_chain(
     {
         fs::create_dir_all(parent)?;
     }
-    fs::create_dir(&options.output).map_err(|e| {
-        format!(
-            "cannot create {} (it must not exist yet): {e}",
-            options.output.display()
-        )
-    })?;
+    let _guard = if resume.is_none() {
+        fs::create_dir(&options.output).map_err(|e| {
+            format!(
+                "cannot create {} (it must not exist yet): {e}",
+                options.output.display()
+            )
+        })?;
+        Some(checkpoint::Lock::acquire(&options.output)?)
+    } else {
+        None
+    };
     let command: Vec<String> = std::iter::once("rove".to_string())
         .chain(arguments.iter().cloned())
         .collect();
@@ -504,28 +539,45 @@ fn run_chain(
             executable.as_deref().unwrap_or("unknown")
         ),
     ];
-    let mut trace = TraceWriter::with_rates(
-        BufWriter::new(File::create(options.output.join("trace.log"))?),
-        &comments,
-        sampler.rates(),
-    )?;
-    let mut trees = TreeWriter::new(
-        BufWriter::new(File::create(options.output.join("trees.nexus"))?),
-        taxa,
-        &comments,
-    )?;
+    let trace_path = options.output.join("trace.log");
+    let tree_path = options.output.join("trees.nexus");
+    let mut trace = if let Some(saved) = saved {
+        TraceWriter::resume(
+            checkpoint::Output::resume(&trace_path, &saved["trace"])?,
+            sampler.rates(),
+        )
+    } else {
+        TraceWriter::with_rates(
+            checkpoint::Output::create(&trace_path)?,
+            &comments,
+            sampler.rates(),
+        )?
+    };
+    let mut trees = if let Some(saved) = saved {
+        TreeWriter::resume(checkpoint::Output::resume(&tree_path, &saved["trees"])?)
+    } else {
+        TreeWriter::new(checkpoint::Output::create(&tree_path)?, taxa, &comments)?
+    };
 
-    let started = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
+    let started = saved
+        .and_then(|s| s["started_unix_seconds"].as_u64())
+        .unwrap_or(SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs());
+    let previous_seconds = saved
+        .and_then(|s| s["elapsed_seconds"].as_f64())
+        .unwrap_or(0.0);
     let clock = Instant::now();
+    let elapsed = || previous_seconds + clock.elapsed().as_secs_f64();
     let print_every = options.print_every.unwrap_or((options.steps / 20).max(1));
-    trace.write(0, &sampler)?;
-    trees.write(0, &sampler)?;
+    if resume.is_none() {
+        trace.write(0, &sampler)?;
+        trees.write(0, &sampler)?;
+    }
     if options.events_json {
         events::state(
             "started",
-            0,
+            sampler.steps(),
             options.steps,
-            0.0,
+            elapsed(),
             &input,
             &sampler,
             chain,
@@ -534,10 +586,51 @@ fn run_chain(
     } else {
         chain_progress(chain, "step\tposterior\tlikelihood\tprior\tseconds");
     }
-    let mut completed_steps = 0;
-    let mut stopped = false;
-    for step in 1..=options.steps {
-        if step % 1024 == 1 && cancellation.requested() {
+    let mut completed_steps = sampler.steps();
+    let mut saved_at = Instant::now();
+    let mut boundary = |sampler: &Sampler,
+                        trace: &mut TraceWriter<checkpoint::Output>,
+                        trees: &mut TreeWriter<checkpoint::Output>,
+                        worker: &mut Option<parallel::Worker>|
+     -> Result<bool, Box<dyn Error>> {
+        let step = sampler.steps();
+        if let Some(worker) = worker {
+            if !worker.should_wait(step, cancellation.paused())? {
+                return Ok(false);
+            }
+            trace.flush()?;
+            trees.flush()?;
+        }
+        let mut save = || {
+            checkpoint::save_chain(
+                &options.output,
+                step,
+                &sampler.checkpoint(&settings)?,
+                trace.inner_mut(),
+                trees.inner_mut(),
+                started,
+                elapsed(),
+            )
+        };
+        if let Some(worker) = worker {
+            worker.check(step, save)
+        } else {
+            if step == 0
+                || options
+                    .checkpoint_every
+                    .map_or_else(|| saved_at.elapsed().as_secs() >= 30, |n| step % n == 0)
+                || cancellation.paused()
+                || step == options.steps
+            {
+                checkpoint::commit(&options, arguments, vec![save()?], &[])?;
+                saved_at = Instant::now();
+            }
+            Ok(cancellation.paused() && step < options.steps)
+        }
+    };
+    let mut stopped = boundary(&sampler, &mut trace, &mut trees, &mut worker)?;
+    for step in (completed_steps..options.steps).map(|n| n + 1) {
+        if stopped || (step % 1024 == 1 && cancellation.requested()) {
             break;
         }
         sampler.step();
@@ -545,15 +638,9 @@ fn run_chain(
         if step % options.sample_every == 0 {
             trace.write(step, &sampler)?;
             trees.write(step, &sampler)?;
-            if let Some(worker) = worker.as_mut() {
-                if step < options.steps && worker.is_boundary(step) {
-                    trace.flush()?;
-                    trees.flush()?;
-                    if worker.check(step)? {
-                        stopped = !cancellation.requested();
-                        break;
-                    }
-                }
+            if boundary(&sampler, &mut trace, &mut trees, &mut worker)? {
+                stopped = !cancellation.requested();
+                break;
             }
         }
         if step % print_every == 0 {
@@ -562,7 +649,7 @@ fn run_chain(
                     "progress",
                     step,
                     options.steps,
-                    clock.elapsed().as_secs_f64(),
+                    elapsed(),
                     &input,
                     &sampler,
                     chain,
@@ -578,23 +665,33 @@ fn run_chain(
                     posterior.total(),
                     posterior.likelihood,
                     posterior.prior(),
-                    clock.elapsed().as_secs_f64()
+                    elapsed()
                 ),
             );
         }
     }
     trace.finish()?;
     trees.finish()?;
-    let seconds = clock.elapsed().as_secs_f64();
+    let seconds = elapsed();
+    let paused = cancellation.paused() && completed_steps < options.steps;
+    let stopped = stopped && !paused && !cancellation.requested();
     let completed = completed_steps == options.steps || stopped;
     let termination = if stopped {
         "diagnostic_thresholds"
     } else if completed {
         "step_limit"
+    } else if paused {
+        "paused"
     } else {
         "cancelled"
     };
-    let status = if completed { "completed" } else { "cancelled" };
+    let status = if completed {
+        "completed"
+    } else if paused {
+        "paused"
+    } else {
+        "cancelled"
+    };
 
     let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
     let posterior = sampler.posterior();
@@ -841,7 +938,7 @@ fn run_chain(
     let mut text = String::new();
     metadata.write(&mut text, 0);
     text.push('\n');
-    fs::write(options.output.join("run.json"), text)?;
+    checkpoint::atomic(&options.output.join("run.json"), text.as_bytes())?;
     if options.events_json {
         events::state(
             status,

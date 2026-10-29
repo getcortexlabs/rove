@@ -1,6 +1,7 @@
 use crate::layout::Layout;
 use crate::model::Mk;
 
+mod checkpoint;
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 mod neon;
 

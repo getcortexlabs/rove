@@ -7,9 +7,16 @@ struct RunRequest: Sendable {
   let executable: URL
   let directory: URL
   let draft: AnalysisDraft
+  var resume = false
   var output: URL { directory.appendingPathComponent("results") }
   var arguments: [String] {
-    draft.settings.arguments(
+    if resume {
+      return [
+        "sample", "--resume", output.path, "--events-json", "--cancel-on-stdin-close",
+        "--expect-input-sha256", draft.matrixSHA256,
+      ]
+    }
+    return draft.settings.arguments(
       matrix: URL(fileURLWithPath: draft.matrixPath), output: output,
       monophyly: draft.constraints) + [
         "--events-json", "--cancel-on-stdin-close", "--expect-input-sha256", draft.matrixSHA256,
@@ -19,8 +26,10 @@ struct RunRequest: Sendable {
 }
 
 enum RunStatus: String, Codable, Sendable {
-  case preparing, running, cancelling, completed, cancelled, failed
-  var isActive: Bool { self == .preparing || self == .running || self == .cancelling }
+  case preparing, running, pausing, cancelling, completed, paused, cancelled, failed
+  var isActive: Bool {
+    self == .preparing || self == .running || self == .pausing || self == .cancelling
+  }
 }
 
 struct RunResult: Sendable {
@@ -38,6 +47,14 @@ final class RunProcess: @unchecked Sendable {
   private var process: Process?
   private var input: FileHandle?
   private var requestedCancellation = false
+  private var requestedPause = false
+
+  func pause() {
+    lock.lock()
+    defer { lock.unlock() }
+    requestedPause = true
+    try? input?.write(contentsOf: Data("pause\n".utf8))
+  }
 
   func cancel() {
     lock.lock()
@@ -87,17 +104,36 @@ final class RunProcess: @unchecked Sendable {
     var result: RunResult
     var launched: Process?
     var ownsDirectory = false
+    let previous =
+      request.resume
+      ? try? SessionRecord.read(request.directory.appendingPathComponent("session.json")) : nil
     let began = Date()
+    var sessionLock: FileHandle?
+    defer { try? sessionLock?.close() }
+    var resumeStep: UInt64?
     var lastStep: UInt64?
     do {
       try request.draft.validate()
       try FileManager.default.createDirectory(
         at: request.directory.deletingLastPathComponent(), withIntermediateDirectories: true)
-      try FileManager.default.createDirectory(
-        at: request.directory, withIntermediateDirectories: false)
-      ownsDirectory = true
-      try request.draft.write(to: request.directory.appendingPathComponent("setup.rove.json"))
-      try writeRecord(request, status: "partial", result: nil, began: began, step: nil)
+      if request.resume {
+        let checkpoint = try RunCheckpoint.read(directory: request.directory, draft: request.draft)
+        resumeStep = checkpoint.step
+        lastStep = checkpoint.step
+      } else {
+        try FileManager.default.createDirectory(
+          at: request.directory, withIntermediateDirectories: false)
+        ownsDirectory = true
+      }
+      let lockPath = request.directory.appendingPathComponent(".session.lock")
+      let descriptor = Darwin.open(lockPath.path, O_CREAT | O_RDWR | O_CLOEXEC, S_IRUSR | S_IWUSR)
+      guard descriptor >= 0 else { throw RunFailure.runInUse }
+      sessionLock = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+      guard flock(descriptor, LOCK_EX | LOCK_NB) == 0 else { throw RunFailure.runInUse }
+      if !request.resume {
+        try request.draft.write(to: request.directory.appendingPathComponent("setup.rove.json"))
+        try writeRecord(request, status: "partial", result: nil, began: began, step: nil)
+      }
       if cancellationRequested {
         lastStep = 0
         throw Control.cancelled
@@ -113,10 +149,20 @@ final class RunProcess: @unchecked Sendable {
       guard fingerprint == request.draft.matrixSHA256 else { throw RunFailure.changedInput }
       let errors = request.directory.appendingPathComponent("engine.stderr.log")
       let events = request.directory.appendingPathComponent("events.jsonl")
-      FileManager.default.createFile(atPath: errors.path, contents: nil)
-      FileManager.default.createFile(atPath: events.path, contents: nil)
+      if !request.resume {
+        FileManager.default.createFile(atPath: errors.path, contents: nil)
+        FileManager.default.createFile(atPath: events.path, contents: nil)
+      } else {
+        for url in [errors, events] where !FileManager.default.fileExists(atPath: url.path) {
+          FileManager.default.createFile(atPath: url.path, contents: nil)
+        }
+      }
       let stderr = try FileHandle(forWritingTo: errors)
       let eventLog = try FileHandle(forWritingTo: events)
+      if request.resume {
+        try stderr.seekToEnd()
+        try eventLog.seekToEnd()
+      }
       defer {
         try? stderr.close()
         try? eventLog.close()
@@ -142,14 +188,15 @@ final class RunProcess: @unchecked Sendable {
       process = child
       input = owner.fileHandleForWriting
       let cancelledBeforeLaunch = requestedCancellation
+      let pausedBeforeLaunch = requestedPause
       lock.unlock()
       launched = child
       try? owner.fileHandleForReading.close()
       try? pipe.fileHandleForWriting.close()
-      if cancelledBeforeLaunch { cancel() }
+      if cancelledBeforeLaunch { cancel() } else if pausedBeforeLaunch { pause() }
       var reader = RunEventReader(
         steps: UInt64(request.draft.settings.steps), fingerprint: fingerprint,
-        chains: request.draft.settings.chains)
+        chains: request.draft.settings.chains, resumedStep: resumeStep)
       // FileHandle.read(upToCount:) may wait to fill the buffer. A pipe read
       // returns as soon as an event arrives, even when the engine stays alive.
       var buffer = [UInt8](repeating: 0, count: 16_384)
@@ -163,6 +210,12 @@ final class RunProcess: @unchecked Sendable {
         let bytes = Data(buffer.prefix(count))
         try eventLog.write(contentsOf: bytes)
         for event in try reader.append(bytes) {
+          if request.resume && !ownsDirectory && event.event == "started" {
+            ownsDirectory = true
+            try writeRecord(
+              request, status: "partial", result: nil, began: previous?.startedAt ?? began,
+              step: resumeStep)
+          }
           lastStep = event.step ?? lastStep
           onEvent(event)
         }
@@ -183,6 +236,14 @@ final class RunProcess: @unchecked Sendable {
         {
           try verifyRecord(request, status: "completed", step: reader.terminal?.step ?? 0)
           result = RunResult(status: .completed, exitCode: 0, error: nil, details: nil)
+        } else if ["paused", "group_paused"].contains(reader.terminal?.event ?? ""),
+          child.terminationStatus == 130, let step = reader.terminal?.step
+        {
+          try verifyRecord(request, status: "paused", step: step)
+          let checkpoint = try RunCheckpoint.read(
+            directory: request.directory, draft: request.draft)
+          guard checkpoint.step == step else { throw RunFailure.invalidCheckpoint }
+          result = RunResult(status: .paused, exitCode: 130, error: nil, details: nil)
         } else if ["cancelled", "group_cancelled"].contains(reader.terminal?.event ?? ""),
           child.terminationStatus == 130,
           let step = reader.terminal?.step
@@ -214,7 +275,9 @@ final class RunProcess: @unchecked Sendable {
     if ownsDirectory {
       do {
         try writeRecord(
-          request, status: result.status.rawValue, result: result, began: began, step: lastStep)
+          request, status: result.status.rawValue, result: result,
+          began: previous?.startedAt ?? began, step: lastStep,
+          elapsed: (previous?.elapsedSeconds ?? 0) + Date().timeIntervalSince(began))
       } catch {
         return RunResult(
           status: .failed, exitCode: result.exitCode,
@@ -233,13 +296,15 @@ final class RunProcess: @unchecked Sendable {
   }
 
   private func writeRecord(
-    _ request: RunRequest, status: String, result: RunResult?, began: Date, step: UInt64?
+    _ request: RunRequest, status: String, result: RunResult?, began: Date, step: UInt64?,
+    elapsed: Double? = nil
   ) throws {
     let record = SessionRecord(
       formatVersion: 1, id: request.id, status: status, setup: request.draft,
       exitCode: result?.exitCode, error: result?.error, startedAt: began,
       finishedAt: result == nil ? nil : Date(),
-      elapsedSeconds: result == nil ? nil : Date().timeIntervalSince(began), completedSteps: step)
+      elapsedSeconds: result == nil ? nil : (elapsed ?? Date().timeIntervalSince(began)),
+      completedSteps: step)
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     encoder.dateEncodingStrategy = .iso8601

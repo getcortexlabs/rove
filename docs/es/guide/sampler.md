@@ -98,7 +98,7 @@ La matriz no tiene homoplasia, así que con Mkv la verosimilitud no penaliza los
 
 - Una partición de caracteres binarios. Fechas de terminales, calibraciones, otras distribuciones de reloj y otros priors de árbol no están implementados.
 - El árbol inicial es aleatorio, con tiempos de nodo parecidos a los de un coalescente, y cumple las restricciones.
-- Cada cadena independiente usa un hilo. Los checkpoints y la reanudación no están implementados.
+- Cada cadena independiente usa un hilo. Los checkpoints conservan todas las cadenas en el mismo paso muestreado.
 
 ## Cadenas independientes
 
@@ -110,4 +110,21 @@ Con varias cadenas, `--output` contiene `chain-01/`, `chain-02/`, etc., cada una
 
 La opción `--stop-when-converged` comprueba **todas las estadísticas escalares registradas** frente a `--min-ess` (200 por cadena) y `--max-rhat` (1,01). Exige al menos 1.000 muestras retenidas por cadena, dos comprobaciones satisfactorias consecutivas y ningún ESS no disponible o limitado por el máximo retardo. `--check-every` usa 1.000 intervalos de muestreo por defecto y debe ser múltiplo positivo de `--sample-every`. Los hilos esperan en el mismo estado registrado durante cada comprobación. El límite de pasos sigue vigente; `run.json` registra las comprobaciones, los pasos completados y el motivo `diagnostic_thresholds` o `step_limit`.
 
-La parada está desactivada por defecto. Estos criterios escalares **no certifican la convergencia topológica**. Revisa los clados y los traces antes de interpretar los resultados. Cancelar el grupo cierra todos sus hilos y conserva archivos parciales; no crea un checkpoint.
+La parada está desactivada por defecto. Estos criterios escalares **no certifican la convergencia topológica**. Revisa los clados y los traces antes de interpretar los resultados. Cancelar el grupo cierra sus hilos y conserva archivos parciales. Reanudar usa el último checkpoint confirmado; pausar guarda el siguiente paso muestreado antes de detenerse.
+
+
+## Checkpoints y reanudación
+
+Se guarda un checkpoint en el estado cero, aproximadamente cada 30 segundos por defecto y al finalizar. `--checkpoint-every <pasos>` usa un intervalo fijo en pasos y debe ser un múltiplo positivo de `--sample-every`.
+
+```sh
+rove sample --resume /ruta/de/la/ejecucion
+```
+
+Usa la carpeta de ejecución o la carpeta principal del grupo de cadenas. Conserva la carpeta original, matriz y ejecutable. La reanudación recupera la configuración guardada; rechaza cambios de semilla, modelo, límite de pasos o backend. No se puede reanudar una ejecución completada ni crear retroactivamente checkpoints para ejecuciones antiguas.
+
+El checkpoint guarda el árbol, tasas, estado del generador aleatorio, ajustes y contadores de movimientos, buffers activos de verosimilitud y posiciones de los archivos de muestras con fingerprints SHA-256. Los grupos confirman todos sus miembros juntos y conservan el historial de comprobaciones diagnósticas. Los archivos se sincronizan antes de sustituir atómicamente el manifiesto; una interrupción durante el guardado deja utilizable el checkpoint anterior. Un bloqueo impide escritores simultáneos.
+
+Antes de continuar se verifican todos los miembros. Se descartan los datos posteriores a las posiciones guardadas y se repiten esos pasos. Los bits de los números y el orden del muestreo se conservan; las muestras coinciden con una ejecución continua del mismo ejecutable y configuración. Esto comprueba la reproducibilidad de la reanudación, no la convergencia. `run.json` sigue siendo un informe; reiniciar requiere `checkpoint.json` y sus archivos binarios.
+
+Con `--cancel-on-stdin-close`, enviar `pause\n` por la entrada estándar guarda el siguiente paso muestreado común y termina con estado `paused` (código 130). Cerrar la entrada cancela. Tras una terminación abrupta solo se recupera el último checkpoint confirmado.

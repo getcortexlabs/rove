@@ -26,7 +26,14 @@ struct ChainResultsView: View {
           Image(systemName: "point.3.connected.trianglepath.dotted")
             .font(.system(size: 32, weight: .light)).foregroundStyle(Lab.lilac)
         }
-        if let report {
+        if !completed {
+          Text(
+            strings(
+              "The chain comparison will be available when this group finishes. You can inspect each chain's partial samples below."
+            )
+          )
+          .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
+        } else if let report {
           Text(
             strings(
               "%@ samples per chain after %@%% burn-in.", strings.number(report.retainedPerChain),
@@ -148,7 +155,10 @@ struct ChainResultsView: View {
           }.buttonStyle(LabButtonStyle(compact: true)).disabled(report == nil)
         }
       }
-    }.task(id: directory) {
+    }.task(id: [directory.path, String(completed)]) {
+      report = nil
+      error = nil
+      guard completed else { return }
       let path = directory.appendingPathComponent("results/comparison.json")
       do {
         let value = try await Task.detached { try ChainComparison.read(path) }.value

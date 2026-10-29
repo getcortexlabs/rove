@@ -358,6 +358,65 @@ struct PreviewTests {
     }
   }
 
+  @Test @MainActor func renderPausedHistory() async throws {
+    guard ProcessInfo.processInfo.environment["CI"] == nil else { return }
+    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+      .deletingLastPathComponent()
+    let output = root.appendingPathComponent(".local/ui/checkpoint")
+    try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
+    _ = NSApplication.shared
+    NSApp.appearance = NSAppearance(named: .darkAqua)
+    Lab.registerFonts()
+    let suite = "rove-checkpoint-preview-\(UUID())"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let preferences = AppPreferences(defaults: defaults, preferredLanguages: ["en-US"])
+    let history = RunHistory(defaults: defaults, defaultRoot: output)
+    let engine = root.appendingPathComponent("target/release/rove")
+    let matrix = root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
+    let report = try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine)
+    let workspace = Workspace(executable: engine, preferences: preferences, history: history)
+    workspace.page = .review
+    workspace.report = report
+    workspace.file = matrix
+    workspace.outgroup = "T20"
+    workspace.settings.chains = 4
+    workspace.settings.steps = 10_000_000
+    workspace.settings.sampleEvery = 1_000
+    workspace.outputParent = output
+    workspace.startRun()
+    let run = try #require(workspace.run)
+    for _ in 0..<300 {
+      if run.completedSteps >= 100_000 || !run.isActive { break }
+      try await Task.sleep(for: .milliseconds(20))
+    }
+    run.pause()
+    await run.waitForExit()
+    #expect(run.status == .paused)
+    await history.reload()
+    workspace.showingHistory = true
+    workspace.selectedHistoryID = run.request.directory.path
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      let view = NSHostingView(rootView: RootView(workspace: workspace))
+      let window = NSWindow(
+        contentRect: NSRect(x: 0, y: 0, width: 1240, height: 1550),
+        styleMask: [.borderless], backing: .buffered, defer: false)
+      window.isReleasedWhenClosed = false
+      window.contentView = view
+      window.orderBack(nil)
+      try await capture(view, to: output.appendingPathComponent("paused-\(language.rawValue).png"))
+      window.close()
+    }
+    workspace.resumeRun(HistoryEntry.read(run.request.directory))
+    let resumed = try #require(workspace.run)
+    #expect(resumed.request.resume)
+    resumed.pause()
+    await resumed.waitForExit()
+    #expect(resumed.status == .paused)
+  }
+
   @MainActor private func capture(_ view: NSView, to url: URL) async throws {
     try await Task.sleep(for: .milliseconds(350))
     view.layoutSubtreeIfNeeded()

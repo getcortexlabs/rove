@@ -1,6 +1,6 @@
-use std::io::{self, Read, Write};
+use std::io::{self, BufRead, Write};
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicU8, Ordering};
 
 use rove::mcmc::Sampler;
 
@@ -47,11 +47,11 @@ pub(super) fn state(
 }
 
 #[derive(Clone)]
-pub(super) struct Cancellation(Arc<AtomicBool>);
+pub(super) struct Cancellation(Arc<AtomicU8>);
 
 impl Cancellation {
     pub(super) fn watch_stdin(enabled: bool) -> Self {
-        let requested = Arc::new(AtomicBool::new(false));
+        let requested = Arc::new(AtomicU8::new(0));
         if !enabled {
             return Self(requested);
         }
@@ -59,26 +59,31 @@ impl Cancellation {
         // EOF also arrives when the GUI exits unexpectedly, so its child cannot
         // continue sampling after losing its owner. No signal handler is needed.
         std::thread::spawn(move || {
-            let mut input = io::stdin().lock();
-            let mut buffer = [0; 64];
-            loop {
-                match input.read(&mut buffer) {
-                    Ok(0) => break,
+            let input = io::stdin().lock();
+            for line in input.lines() {
+                match line {
+                    Ok(line) if line.trim() == "pause" => {
+                        flag.store(2, Ordering::Relaxed);
+                        return;
+                    }
                     Ok(_) => {}
-                    Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
                     Err(_) => break,
                 }
             }
-            flag.store(true, Ordering::Relaxed);
+            flag.store(1, Ordering::Relaxed);
         });
         Self(requested)
     }
 
     pub(super) fn cancel(&self) {
-        self.0.store(true, Ordering::Relaxed);
+        self.0.store(1, Ordering::Relaxed);
+    }
+
+    pub(super) fn paused(&self) -> bool {
+        self.0.load(Ordering::Relaxed) == 2
     }
 
     pub(super) fn requested(&self) -> bool {
-        self.0.load(Ordering::Relaxed)
+        self.0.load(Ordering::Relaxed) == 1
     }
 }

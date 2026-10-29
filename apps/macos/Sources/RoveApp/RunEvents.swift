@@ -21,6 +21,7 @@ struct RunEventReader {
   let fingerprint: String
   private(set) var terminal: RunEvent?
   let chains: Int
+  let resumedStep: UInt64?
   private struct ChainState {
     var started = false
     var step: UInt64 = 0
@@ -30,10 +31,11 @@ struct RunEventReader {
   private var states: [ChainState]
   private var pending = Data()
 
-  init(steps: UInt64, fingerprint: String, chains: Int = 1) {
+  init(steps: UInt64, fingerprint: String, chains: Int = 1, resumedStep: UInt64? = nil) {
     self.steps = steps
     self.fingerprint = fingerprint
     self.chains = chains
+    self.resumedStep = resumedStep
     states = Array(repeating: ChainState(), count: chains)
   }
 
@@ -74,13 +76,18 @@ struct RunEventReader {
         value.step == states.map(\.step).min(),
         let seconds = value.elapsedSeconds, seconds.isFinite, seconds >= 0,
         states.allSatisfy({ $0.terminal != nil }),
-        ["group_completed", "group_cancelled"].contains(value.event)
+        ["group_completed", "group_cancelled", "group_paused"].contains(value.event)
       else { throw RunFailure.protocolError }
       if value.event == "group_completed" {
         guard states.allSatisfy({ $0.terminal?.event == "completed" }),
           states.allSatisfy({ $0.terminal?.terminationReason == value.terminationReason }),
           states.allSatisfy({ $0.step == value.step })
         else { throw RunFailure.protocolError }
+      }
+      if value.event == "group_paused" {
+        guard states.allSatisfy({ $0.terminal?.event == "paused" && $0.step == value.step }) else {
+          throw RunFailure.protocolError
+        }
       }
       terminal = value
       return
@@ -99,15 +106,15 @@ struct RunEventReader {
     else { throw RunFailure.protocolError }
     switch value.event {
     case "started":
-      guard !state.started, step == 0 else { throw RunFailure.protocolError }
+      guard !state.started, step == (resumedStep ?? 0) else { throw RunFailure.protocolError }
       state.started = true
     case "progress":
       guard state.started, step > state.step else { throw RunFailure.protocolError }
-    case "completed", "cancelled":
+    case "completed", "cancelled", "paused":
       guard state.started, step >= state.step,
         value.event != "completed" || step == steps
           || (chains > 1 && value.terminationReason == "diagnostic_thresholds"),
-        value.event != "cancelled" || step < steps
+        !["cancelled", "paused"].contains(value.event) || step < steps
       else { throw RunFailure.protocolError }
       state.terminal = value
       if chains == 1 { terminal = value }
@@ -120,11 +127,15 @@ struct RunEventReader {
 }
 
 enum RunFailure: LocalizedError {
+  case invalidCheckpoint
+  case runInUse
   case protocolError
   case changedInput
   case invalidCompletion
   var errorDescription: String? {
     switch self {
+    case .invalidCheckpoint: "The checkpoint does not match this analysis. Inspect the run folder."
+    case .runInUse: "This analysis is already open in another process."
     case .protocolError: "The engine returned invalid or incomplete progress events."
     case .changedInput:
       "The matrix changed after it was imported. Import it again and review the setup."

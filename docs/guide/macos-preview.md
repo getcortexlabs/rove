@@ -98,11 +98,9 @@ the Trace, Trees and Run record buttons reveal those files in Finder.
 It does not establish convergence. Compare independent runs and assess sampling
 and tree diagnostics before interpreting results; see the [sampling guide](./sampler).
 
-**Cancel analysis** asks before stopping. Partial files remain clearly marked;
-they are not a completed analysis or a checkpoint. Closing the main window or
-quitting while running asks whether to stop and waits for the engine to exit.
-If a process must be forcibly stopped, its partial files may be incomplete.
-Resuming a chain is not available yet.
+**Pause analysis** saves at the next sampled step and stops the engine. For a group, all chains pause together. In **History**, select the run and choose **Resume analysis**; the card shows the saved step. The same matrix, settings and Rove executable are required. Keep the original run folder.
+
+**Cancel analysis** asks before stopping and retains partial output. Closing the app also stops its engine. If interruption occurs, History offers recovery when a checkpoint exists; steps after the last save are repeated. Old runs without checkpoints cannot be resumed. A saved setup remains a configuration for a new run, separate from resuming an existing one.
 
 ## Save and reopen a setup
 

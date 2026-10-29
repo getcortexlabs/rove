@@ -523,3 +523,25 @@
 "Open chain folder" = "Abrir pasta da cadeia";
 "Comparison file" = "Arquivo de comparação";
 "Stopped at the recorded step after two successful diagnostic checks. Review tree agreement before interpreting the result." = "Parou no passo registrado após duas verificações seguidas dos critérios. Avalie a concordância entre as árvores antes de interpretar o resultado.";
+
+// Pause and resume
+"Saving your place…" = "Salvando onde você parou…";
+"Ready when you are." = "Pronto para continuar.";
+"Paused" = "Pausada";
+"Pausing" = "Pausando";
+"Pause analysis" = "Pausar análise";
+"Resume analysis" = "Retomar análise";
+"Your place is saved" = "Seu progresso está salvo";
+"Resume from step %@ with the original settings." = "Retome a partir do passo %@ com as configurações originais.";
+"Your progress is saved. Resume this analysis from History with the same matrix and Rove build." = "Seu progresso está salvo. Retome esta análise pelo Histórico com a mesma matriz e versão do Rove.";
+"Partial files are kept in the run folder. History can resume from the latest saved checkpoint; later unsaved steps will be repeated." = "Os arquivos parciais ficam na pasta da análise. Pelo Histórico, você pode retomar do último salvamento; os passos seguintes que não foram salvos serão repetidos.";
+"Rove will stop the engine and keep partial output. Use Pause to save the current sampling point before stopping." = "O Rove vai parar o motor e manter os arquivos parciais. Use Pausar para salvar o ponto atual da análise antes de parar.";
+"This run has no confirmed finish. If a saved checkpoint is available, you can resume from it." = "Esta análise não tem um término confirmado. Se houver um ponto salvo, você poderá retomar a partir dele.";
+"The checkpoint does not match this analysis. Inspect the run folder." = "O ponto salvo não corresponde a esta análise. Verifique a pasta da execução.";
+"This analysis is already open in another process." = "Esta análise já está aberta em outro processo.";
+
+"Closing Rove will stop the engine. History can recover the latest saved checkpoint. To save the current point, keep Rove open and pause the analysis first." = "Fechar o Rove vai parar o motor. O Histórico permite recuperar o último salvamento. Para salvar o ponto atual, mantenha o Rove aberto e pause a análise primeiro.";
+
+"Saving at the next shared sampling point. Keep Rove open until the analysis is paused." = "Salvando no próximo ponto de amostragem comum. Mantenha o Rove aberto até a análise ficar pausada.";
+
+"The chain comparison will be available when this group finishes. You can inspect each chain's partial samples below." = "A comparação ficará disponível quando este grupo terminar. Você pode consultar as amostras parciais de cada cadeia abaixo.";

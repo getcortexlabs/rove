@@ -26,6 +26,15 @@ pub struct TraceWriter<W: Write> {
 }
 
 impl<W: Write> TraceWriter<W> {
+    /// Continues after a verified checkpoint offset, without another header.
+    pub fn resume(out: W, rates: &RateVariation) -> Self {
+        Self {
+            out,
+            gamma: rates.gamma.is_some(),
+            clock: rates.clock.is_some(),
+        }
+    }
+
     pub fn new(out: W, comments: &[String]) -> io::Result<Self> {
         Self::with_rates(out, comments, &RateVariation::default())
     }
@@ -93,6 +102,10 @@ impl<W: Write> TraceWriter<W> {
         writeln!(self.out)
     }
 
+    pub fn inner_mut(&mut self) -> &mut W {
+        &mut self.out
+    }
+
     pub fn flush(&mut self) -> io::Result<()> {
         self.out.flush()
     }
@@ -109,6 +122,11 @@ pub struct TreeWriter<W: Write> {
 }
 
 impl<W: Write> TreeWriter<W> {
+    /// Continues inside a verified NEXUS trees block, before its closing End.
+    pub fn resume(out: W) -> Self {
+        Self { out }
+    }
+
     pub fn new(mut out: W, taxa: &[String], comments: &[String]) -> io::Result<Self> {
         writeln!(out, "#NEXUS")?;
         for comment in comments {
@@ -141,6 +159,10 @@ impl<W: Write> TreeWriter<W> {
             None => tree.to_newick(label),
         };
         writeln!(self.out, "tree STATE_{sample} = {newick}")
+    }
+
+    pub fn inner_mut(&mut self) -> &mut W {
+        &mut self.out
     }
 
     pub fn flush(&mut self) -> io::Result<()> {

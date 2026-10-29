@@ -98,7 +98,7 @@ The matrix has no homoplasy, so under Mkv the likelihood does not penalize short
 
 - One partition of binary characters. Tip dates, calibrations, other clock distributions and other tree priors are not implemented.
 - The starting tree is random, with coalescent-like node times, and satisfies the constraints.
-- Each independent chain uses one thread. Checkpoint and resume are not implemented.
+- Each independent chain uses one thread. Checkpoints preserve all chains at the same sampled step.
 
 ## Independent chains
 
@@ -110,4 +110,21 @@ For multiple chains, `--output` contains `chain-01/`, `chain-02/`, and so on, ea
 
 Optional `--stop-when-converged` checks **every traced scalar statistic** against `--min-ess` (200 per chain) and `--max-rhat` (1.01). It requires at least 1,000 retained samples per chain, two consecutive successful checks, and no unavailable or lag-limited ESS estimate. `--check-every` defaults to 1,000 sampling intervals and must be a positive multiple of `--sample-every`. Workers pause at the same recorded state for each check. The step limit still applies; `run.json` records the checks, actual completed steps and `diagnostic_thresholds` or `step_limit` as the reason.
 
-Stopping is disabled by default. These scalar thresholds **do not certify topology convergence**. Review clade agreement and the traces before interpreting results. Canceling a group closes all its workers and preserves partial files; it does not create a checkpoint.
+Stopping is disabled by default. These scalar thresholds **do not certify topology convergence**. Review clade agreement and the traces before interpreting results. Canceling a group closes all its workers and preserves partial files. Resume uses the last committed checkpoint; pause saves the next sampling boundary before stopping.
+
+
+## Checkpoints and resume
+
+Checkpoints are written at state zero, approximately every 30 seconds by default, and at completion. `--checkpoint-every <steps>` uses a fixed step interval instead; it must be a positive multiple of `--sample-every`.
+
+```sh
+rove sample --resume /path/to/run-directory
+```
+
+Use the single run directory or the parent of an independent-chain group. Keep the original directory, input and executable. Resume restores the saved settings; changing options such as seed, model, step limit or backend is refused. A completed run cannot be resumed, and old runs without checkpoints cannot acquire them retroactively.
+
+The checkpoint includes the tree, branch and category rates, RNG state, move tuning and counters, live likelihood buffers, and trace/tree offsets with SHA-256 fingerprints. A group commits all members together, including its diagnostic check history. Files are flushed and synchronized before an atomic manifest replacement; an interrupted save leaves the previous committed checkpoint usable. A process lock prevents simultaneous writers.
+
+Resume verifies every member before appending. Output after the saved offsets is discarded and those steps are repeated. Float bits and sampling order are preserved, so samples match an uninterrupted run with the same executable and settings. This is restart reproducibility, not a convergence test. `run.json` remains a report; `checkpoint.json` and its referenced binary files are needed to restart.
+
+For owners using `--cancel-on-stdin-close`, sending `pause\n` on standard input saves at the next common sampling boundary and exits with status `paused` (exit code 130). Closing standard input cancels; abrupt termination can recover only the most recent committed checkpoint.

@@ -523,3 +523,25 @@
 "Open chain folder" = "Open chain folder";
 "Comparison file" = "Comparison file";
 "Stopped at the recorded step after two successful diagnostic checks. Review tree agreement before interpreting the result." = "Stopped at the recorded step after two successful diagnostic checks. Review tree agreement before interpreting the result.";
+
+// Pause and resume
+"Saving your place…" = "Saving your place…";
+"Ready when you are." = "Ready when you are.";
+"Paused" = "Paused";
+"Pausing" = "Pausing";
+"Pause analysis" = "Pause analysis";
+"Resume analysis" = "Resume analysis";
+"Your place is saved" = "Your place is saved";
+"Resume from step %@ with the original settings." = "Resume from step %@ with the original settings.";
+"Your progress is saved. Resume this analysis from History with the same matrix and Rove build." = "Your progress is saved. Resume this analysis from History with the same matrix and Rove build.";
+"Partial files are kept in the run folder. History can resume from the latest saved checkpoint; later unsaved steps will be repeated." = "Partial files are kept in the run folder. History can resume from the latest saved checkpoint; later unsaved steps will be repeated.";
+"Rove will stop the engine and keep partial output. Use Pause to save the current sampling point before stopping." = "Rove will stop the engine and keep partial output. Use Pause to save the current sampling point before stopping.";
+"This run has no confirmed finish. If a saved checkpoint is available, you can resume from it." = "This run has no confirmed finish. If a saved checkpoint is available, you can resume from it.";
+"The checkpoint does not match this analysis. Inspect the run folder." = "The checkpoint does not match this analysis. Inspect the run folder.";
+"This analysis is already open in another process." = "This analysis is already open in another process.";
+
+"Closing Rove will stop the engine. History can recover the latest saved checkpoint. To save the current point, keep Rove open and pause the analysis first." = "Closing Rove will stop the engine. History can recover the latest saved checkpoint. To save the current point, keep Rove open and pause the analysis first.";
+
+"Saving at the next shared sampling point. Keep Rove open until the analysis is paused." = "Saving at the next shared sampling point. Keep Rove open until the analysis is paused.";
+
+"The chain comparison will be available when this group finishes. You can inspect each chain's partial samples below." = "The chain comparison will be available when this group finishes. You can inspect each chain's partial samples below.";

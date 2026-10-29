@@ -38,7 +38,9 @@ sandboxes build processes and cannot start SwiftPM's nested sandbox, set
   it does not copy the data. Copied commands read the file when executed.
 
 The window runs the bundled Rust sampler with live progress and cancellation.
-It does not edit matrices or resume chains. Saved MCC summaries open in a native tree explorer. Completion
+It does not edit matrices. Pause saves the current sampled state, and History can
+resume it using the same matrix, settings and engine. Interrupted runs can recover
+the last committed checkpoint. Saved MCC summaries open in a native tree explorer. Completion
 means the requested steps finished and output metadata was verified, not convergence.
 The setup format is a preview format, not a configuration accepted by the CLI.
 The app supports English and Brazilian Portuguese, with a dark appearance.

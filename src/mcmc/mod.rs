@@ -8,6 +8,7 @@
 //! `speciation`, with Uniform(0, `birth_difference_upper`) on λ − μ and
 //! Uniform(0, 1) on μ / λ. Monophyly constraints restrict the topology.
 
+mod checkpoint;
 mod coupled;
 mod moves;
 pub mod output;

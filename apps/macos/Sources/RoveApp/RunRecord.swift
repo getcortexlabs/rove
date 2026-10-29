@@ -18,7 +18,7 @@ struct SessionRecord: Codable, Sendable {
     decoder.dateDecodingStrategy = .iso8601
     let value = try decoder.decode(Self.self, from: RecordFile.read(url))
     guard value.formatVersion == 1,
-      ["partial", "completed", "cancelled", "failed"].contains(value.status),
+      ["partial", "completed", "paused", "cancelled", "failed"].contains(value.status),
       value.elapsedSeconds.map({ $0.isFinite && $0 >= 0 }) ?? true,
       value.completedSteps.map({ $0 <= UInt64(max(0, value.setup.settings.steps)) }) ?? true
     else { throw RunFailure.invalidCompletion }
@@ -86,7 +86,7 @@ struct EngineRecord: Decodable, Sendable {
   static func verify(directory: URL, draft: AnalysisDraft) throws -> Self {
     let output = directory.appendingPathComponent("results")
     let record = try read(output.appendingPathComponent("run.json"))
-    guard record.matches(draft), ["completed", "cancelled"].contains(record.status) else {
+    guard record.matches(draft), ["completed", "paused", "cancelled"].contains(record.status) else {
       throw RunFailure.invalidCompletion
     }
     func check(_ value: Self, at folder: URL) throws {
@@ -121,7 +121,7 @@ struct EngineRecord: Decodable, Sendable {
         let child = try read(folder.appendingPathComponent("run.json"))
         guard child.matches(draft, seed: member.seed), child.status == member.status,
           child.completedSteps == member.completedSteps,
-          ["completed", "cancelled"].contains(child.status),
+          ["completed", "paused", "cancelled"].contains(child.status),
           record.status != "completed"
             || (child.status == "completed"
               && child.completedSteps == record.completedSteps

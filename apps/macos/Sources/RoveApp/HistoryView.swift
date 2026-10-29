@@ -218,6 +218,30 @@ private struct HistoryDetail: View {
       if let message = entry.message {
         InlineMessage(text: strings(message), isError: entry.status != .interrupted)
       }
+      if let checkpoint = entry.checkpoint {
+        LabPanel {
+          HStack(spacing: 18) {
+            Image(systemName: "bookmark.circle.fill").font(.system(size: 28)).foregroundStyle(
+              Lab.lilac)
+            VStack(alignment: .leading, spacing: 6) {
+              Text(strings("Your place is saved")).font(.system(size: 14, weight: .medium))
+              Text(
+                strings(
+                  "Resume from step %@ with the original settings.",
+                  strings.number(Int(checkpoint.step)))
+              )
+              .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+            }
+            Spacer()
+            Button {
+              workspace.resumeRun(entry)
+            } label: {
+              Label(strings("Resume analysis"), systemImage: "play.fill")
+            }.buttonStyle(LabButtonStyle(prominent: true)).disabled(
+              workspace.isRunning || workspace.loading)
+          }
+        }
+      }
       LabPanel {
         VStack(alignment: .leading, spacing: 16) {
           HStack(spacing: 36) {

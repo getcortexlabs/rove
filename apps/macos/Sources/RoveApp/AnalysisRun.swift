@@ -50,6 +50,12 @@ final class AnalysisRun {
     if status == .preparing, event.event != "failed" { status = .running }
   }
 
+  func pause() {
+    guard status == .running || status == .preparing else { return }
+    status = .pausing
+    worker.pause()
+  }
+
   func cancel() {
     guard isActive else { return }
     status = .cancelling

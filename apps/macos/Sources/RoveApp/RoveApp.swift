@@ -186,7 +186,8 @@ struct WindowSetup: NSViewRepresentable {
   let alert = NSAlert()
   alert.messageText = strings("An analysis is still running.")
   alert.informativeText = strings(
-    "Closing Rove will stop the engine and keep partial files. This run cannot be resumed.")
+    "Closing Rove will stop the engine. History can recover the latest saved checkpoint. To save the current point, keep Rove open and pause the analysis first."
+  )
   alert.addButton(withTitle: strings("Keep running"))
   alert.addButton(withTitle: strings("Stop and close"))
   return alert.runModal() == .alertSecondButtonReturn

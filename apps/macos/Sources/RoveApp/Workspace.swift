@@ -331,6 +331,18 @@ final class Workspace {
     analysis.start { [history] in await history.reload() }
   }
 
+  func resumeRun(_ entry: HistoryEntry) {
+    guard !isRunning, !loading, let draft = entry.draft, entry.checkpoint != nil else { return }
+    let request = RunRequest(
+      id: UUID(), executable: executable, directory: entry.directory, draft: draft, resume: true)
+    let analysis = AnalysisRun(request: request)
+    run = analysis
+    error = nil
+    notice = nil
+    showingHistory = false
+    analysis.start { [history] in await history.reload() }
+  }
+
   func dismissRun() {
     guard !isRunning else { return }
     run = nil

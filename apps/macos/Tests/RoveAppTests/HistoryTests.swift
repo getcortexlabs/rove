@@ -88,6 +88,11 @@ struct HistoryTests {
     defer { try? FileManager.default.removeItem(at: directory) }
     let request = try await request(directory.appendingPathComponent("run"))
     #expect(await RunProcess().execute(request) { _ in }.status == .completed)
+    // Older sessions have no checkpoint to confirm a lost completion event.
+    let checkpoint = request.output.appendingPathComponent("checkpoint.json")
+    if FileManager.default.fileExists(atPath: checkpoint.path) {
+      try FileManager.default.removeItem(at: checkpoint)
+    }
     let file = request.directory.appendingPathComponent("session.json")
     var json = try #require(
       JSONSerialization.jsonObject(with: Data(contentsOf: file)) as? [String: Any])
