@@ -64,7 +64,7 @@ public final class ReferenceDiagnostics {
         return result;
     }
 
-    private static JSONObject summarize(String log, String trees, String truth, int burnin) throws Exception {
+    private static JSONObject summarize(String log, String trees, String truth, int burnin, boolean extended) throws Exception {
         if (burnin < 0 || burnin >= 100) {
             throw new IllegalArgumentException("Burn-in must be between 0 and 99 percent");
         }
@@ -91,6 +91,10 @@ public final class ReferenceDiagnostics {
         Map<String, Integer> counts = new TreeMap<>();
         Map<String, Integer> topologies = new HashMap<>();
         Map<String, List<Double>> indicators = new TreeMap<>();
+        Map<String, int[]> batches = new TreeMap<>();
+        int batchSize = retained / 20;
+        List<Double> distances = new ArrayList<>();
+        List<Double> exactTopologies = new ArrayList<>();
         for (String clade : expected) {
             indicators.put(clade, new ArrayList<>());
         }
@@ -103,16 +107,24 @@ public final class ReferenceDiagnostics {
             }
             for (String clade : observed) {
                 counts.merge(clade, 1, Integer::sum);
+                if (extended && batchSize > 0 && index - skip < 20 * batchSize) {
+                    batches.computeIfAbsent(clade, key -> new int[20])[(index - skip) / batchSize]++;
+                }
             }
             for (String clade : expected) {
                 indicators.get(clade).add(observed.contains(clade) ? 1.0 : 0.0);
             }
             Set<String> difference = new TreeSet<>(observed);
             difference.removeAll(expected);
-            totalDistance += difference.size();
+            int distance = difference.size();
             difference = new TreeSet<>(expected);
             difference.removeAll(observed);
-            totalDistance += difference.size();
+            distance += difference.size();
+            totalDistance += distance;
+            if (extended) {
+                distances.add((double) distance);
+                exactTopologies.add(distance == 0 ? 1.0 : 0.0);
+            }
             topologies.merge(String.join(";", observed), 1, Integer::sum);
         }
         JSONObject supports = new JSONObject();
@@ -128,7 +140,7 @@ public final class ReferenceDiagnostics {
         for (Map.Entry<String, Integer> entry : counts.entrySet()) {
             frequencies.put(entry.getKey(), entry.getValue() / (double) retained);
         }
-        return new JSONObject()
+        JSONObject result = new JSONObject()
                 .put("burnin_percent", burnin)
                 .put("discarded_samples", skip)
                 .put("retained_samples", retained)
@@ -138,6 +150,33 @@ public final class ReferenceDiagnostics {
                 .put("unique_topologies", topologies.size())
                 .put("reference_topology_posterior", topologies.getOrDefault(String.join(";", expected), 0) / (double) retained)
                 .put("mean_rooted_rf_distance_to_reference", totalDistance / retained);
+        if (extended) {
+            JSONObject batchFrequencies = new JSONObject();
+            for (Map.Entry<String, int[]> entry : batches.entrySet()) {
+                JSONArray values = new JSONArray();
+                for (int count : entry.getValue()) {
+                    values.put(count / (double) batchSize);
+                }
+                batchFrequencies.put(entry.getKey(), values);
+            }
+            result.put("clade_batch_frequencies", batchFrequencies)
+                    .put("clade_batch_size", batchSize)
+                    .put("clade_batch_omitted_samples", retained - 20 * batchSize)
+                    .put("tree_statistics", new JSONObject()
+                            .put("rooted_rf", moments(distances))
+                            .put("reference_topology", moments(exactTopologies)))
+                    .put("tree_traces", new JSONObject()
+                            .put("rooted_rf", new JSONArray(distances))
+                            .put("reference_topology", new JSONArray(exactTopologies)));
+        }
+        return result;
+    }
+
+    private static JSONObject moments(List<Double> values) throws Exception {
+        double mean = values.stream().mapToDouble(Double::doubleValue).average().orElseThrow();
+        double variance = values.stream().mapToDouble(x -> (x - mean) * (x - mean)).sum() / (values.size() - 1);
+        return new JSONObject().put("mean", mean).put("sd", Math.sqrt(variance))
+                .put("ess", variance == 0 ? JSONObject.NULL : finite(ESS.calcESS(values)));
     }
 
     private static void visit(BEASTInterface object, Set<BEASTInterface> seen, Map<String, BEASTInterface> objects) throws Exception {
@@ -204,8 +243,13 @@ public final class ReferenceDiagnostics {
         for (int index = 0; index < data.getPatternCount(); index++) {
             int weight = data.getPatternWeight(index);
             reconstructed += weight * (patternLogs[index] - correction);
+            JSONArray stateSets = new JSONArray();
+            for (int code : data.getPattern(index)) {
+                stateSets.put(new JSONArray(data.getStateSet(code)));
+            }
             patterns.put(new JSONObject()
                     .put("states", new JSONArray(data.getPattern(index)))
+                    .put("state_sets", stateSets)
                     .put("weight", weight)
                     .put("log_likelihood", patternLogs[index]));
         }
@@ -314,14 +358,15 @@ public final class ReferenceDiagnostics {
         PackageManager.loadExternalJars();
         JSONObject result;
         switch (args[0]) {
-            case "summary" -> result = summarize(args[1], args[2], args[3], Integer.parseInt(args[4]));
+            case "summary" -> result = summarize(args[1], args[2], args[3], Integer.parseInt(args[4]), false);
+            case "inference-summary" -> result = summarize(args[1], args[2], args[3], Integer.parseInt(args[4]), true);
             case "snapshot" -> result = snapshot(args[1], args[2]);
             case "rate-model" -> result = rateModel();
             case "self-test" -> {
                 selfTest();
                 return;
             }
-            default -> throw new IllegalArgumentException("Expected summary, snapshot, rate-model, or self-test");
+            default -> throw new IllegalArgumentException("Expected summary, inference-summary, snapshot, rate-model, or self-test");
         }
         Files.writeString(Path.of(args[args.length - 1]), result.toString(2) + "\n");
     }

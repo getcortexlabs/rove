@@ -1,0 +1,116 @@
+{
+  "reference-mkv": {
+    "source": "reference",
+    "conditioning": "variable",
+    "generation_command": null,
+    "taxa": 20,
+    "characters": 50,
+    "patterns": 23,
+    "missing_cells": 0,
+    "sha256": {
+      "beast.xml": "19cf04afba11b9c4d7e446b1df5e9f3d76a8f973787c6525b15102558b7400ab",
+      "matrix.nex": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "truth.newick": "5f2e291e6c295cfe4b78bea60790a3b856a96107e552a454bbdfe24134925990"
+    }
+  },
+  "reference-mk": {
+    "source": "reference",
+    "conditioning": "none",
+    "generation_command": null,
+    "taxa": 20,
+    "characters": 50,
+    "patterns": 23,
+    "missing_cells": 0,
+    "sha256": {
+      "beast.xml": "71914faf8ae4eb176d9d11d8ac1ae7add0fc2838f6b85578329ad415bf1085d1",
+      "matrix.nex": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "truth.newick": "5f2e291e6c295cfe4b78bea60790a3b856a96107e552a454bbdfe24134925990"
+    }
+  },
+  "control": {
+    "source": "control",
+    "conditioning": "none",
+    "generation_command": null,
+    "taxa": 20,
+    "characters": 50,
+    "patterns": 23,
+    "missing_cells": 0,
+    "sha256": {
+      "beast.xml": "a7848c32bbcca0504a4abf5f1ba80abe1867d9a5874891c924a8797645ab3df6",
+      "matrix.nex": "6aba9a30ae70dae11fd5ca1983819687770b5b6bcc918e95697ac0446def6ca7",
+      "truth.newick": "2337a29b04c1a1b7529aaf476df646d7236d137b43fe1252012c548b714d3b64"
+    }
+  },
+  "homoplasy": {
+    "source": "generated",
+    "conditioning": "none",
+    "generation_command": [
+      "python3",
+      "tools/synth_matrix.py",
+      "--homoplasy",
+      "10",
+      "--seed",
+      "7",
+      "--out",
+      "fixtures/validation/homoplasy/matrix"
+    ],
+    "taxa": 20,
+    "characters": 50,
+    "patterns": 33,
+    "missing_cells": 0,
+    "sha256": {
+      "beast.xml": "afabf26cd36fe5ef9c0375dfdff6d53113ae350ad62ef7e655b3cc39786d0a3d",
+      "matrix.legend.txt": "ed8c510e13ca44721c0373ed017133df57e8c94cb9aa3d681e3ea813b28bb16c",
+      "matrix.nex": "0fae4beef95793c06f0629a33ef9e167eb94a75c95743629de017d34356abdf5",
+      "truth.newick": "2337a29b04c1a1b7529aaf476df646d7236d137b43fe1252012c548b714d3b64"
+    }
+  },
+  "missing": {
+    "source": "generated",
+    "conditioning": "none",
+    "generation_command": [
+      "python3",
+      "tools/synth_matrix.py",
+      "--missing",
+      "0.2",
+      "--seed",
+      "1",
+      "--out",
+      "fixtures/validation/missing/matrix"
+    ],
+    "taxa": 20,
+    "characters": 50,
+    "patterns": 50,
+    "missing_cells": 180,
+    "sha256": {
+      "beast.xml": "96f171f2ace60a5fca859076638d1df7be68795a3fc6e1623516a8b9de0e0283",
+      "matrix.legend.txt": "db9ba4bc9d7af351628202489b23f6fc716170ffce4485d42fb3a1dc67fd552a",
+      "matrix.nex": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "truth.newick": "2337a29b04c1a1b7529aaf476df646d7236d137b43fe1252012c548b714d3b64"
+    }
+  },
+  "reduced": {
+    "source": "generated",
+    "conditioning": "none",
+    "generation_command": [
+      "python3",
+      "tools/synth_matrix.py",
+      "--drop",
+      "T1-T4",
+      "--seed",
+      "1",
+      "--out",
+      "fixtures/validation/reduced/matrix"
+    ],
+    "taxa": 20,
+    "characters": 47,
+    "patterns": 22,
+    "missing_cells": 0,
+    "sha256": {
+      "beast.xml": "211222cbbf9cae0d6da5dfe994c2cddc559ce5d56bbd63413762994c29bcc2d2",
+      "matrix.legend.txt": "c0260ec6167eaf92941ff9d366c9d476f5aae9ace6fd8101fc428ca7337c48d3",
+      "matrix.nex": "344d6c755ab2a1d1f2bda48e4ab885779b68b46a82984227854a87658866cdf3",
+      "truth.newick": "2337a29b04c1a1b7529aaf476df646d7236d137b43fe1252012c548b714d3b64"
+    }
+  }
+}

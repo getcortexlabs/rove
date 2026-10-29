@@ -1,0 +1,42 @@
+{
+  "source_commit": "72286accc0119d496587a773a54c1270a1ddee56",
+  "source_dirty": true,
+  "exporter_sha256": "bc369ae1ff6b1dad6be6cc3cc2cdc86dd67c8a424c967b39798bbf7a689778fc",
+  "packages": {
+    "BEAST.base": "2.7.8",
+    "BEASTLabs": "2.0.3",
+    "BEAST.app": "2.7.8",
+    "MM": "1.2.1",
+    "ORC": "1.2.1"
+  },
+  "jars": {
+    "launcher.jar": "7d51654fd80dd4c32f64e02b02ca90aa6387c2c9837761befe665ff730a5dc01",
+    "BEAST.app.jar": "45949db1372c6dc874256754489b374c03f205c07af1d3513026664b20db32d2",
+    "BEAST.base.jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+    "BEASTlabs.v2.0.3.jar": "feea1bccaee3fe88868d2c60ffe72410f680f5e1301300b918517603e51aa259",
+    "MM.addon.jar": "78f02140b79f8061cbfacfe73600d6ecc2660af00d852a125bda2c683c595a68",
+    "ORC.addon.jar": "2fa7390b9313e769388ba5863f58807cf7bcc7a54b0cd22e2d72f9a618bbdb3e"
+  },
+  "java_version": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Temurin-17.0.15+6 (build 17.0.15+6)\nOpenJDK 64-Bit Server VM Temurin-17.0.15+6 (build 17.0.15+6, mixed mode, sharing)\n",
+  "steps": 1000,
+  "log_every": 100,
+  "seeds": [
+    17
+  ],
+  "smoke_only": true,
+  "commands": [
+    [
+      "python3",
+      "tools/beast/inference.py",
+      "--case",
+      "reference-mkv",
+      "--smoke",
+      "--packages",
+      "<packages>",
+      "--launcher",
+      "<launcher>",
+      "--output",
+      "<new-output>"
+    ]
+  ]
+}
