@@ -100,7 +100,11 @@ prepares a new run; it does not resume a previous chain.
 
 The main actor only receives validated progress. The process worker drains stdout
 and writes stderr separately; malformed events, unexpected exits and invalid output
-metadata fail the run. Cancellation closes the engine's stdin pipe. The engine
+metadata fail the run. Analysis, tree-summary and diagnostic workers each wait on
+a dedicated thread and return through a continuation. Blocking pipe reads and
+process waits do not occupy Swift's cooperative executor, keeping cancellation
+and other tasks schedulable on machines with fewer cores.
+Cancellation closes the engine's stdin pipe. The engine
 polls EOF between steps, finishes its writers and records `cancelled` with exit 130.
 Closing the main window or quitting asks whether to stop, then waits for the owned
 process. EOF also stops sampling if the app dies. A stalled child gets SIGTERM after

@@ -39,7 +39,7 @@ struct HistoryTests {
     let directory = try temporary()
     defer { try? FileManager.default.removeItem(at: directory) }
     let completed = try await request(directory.appendingPathComponent("completed"))
-    #expect(RunProcess().execute(completed) { _ in }.status == .completed)
+    #expect(await RunProcess().execute(completed) { _ in }.status == .completed)
     let first = HistoryEntry.read(completed.directory)
     #expect(first.status == .completed)
     #expect(first.completedSteps == 1_000)
@@ -51,7 +51,7 @@ struct HistoryTests {
     let cancelled = try await request(
       directory.appendingPathComponent("cancelled"), steps: 100_000_000)
     let worker = RunProcess()
-    let result = worker.execute(cancelled) { event in
+    let result = await worker.execute(cancelled) { event in
       if event.event == "started" { worker.cancel() }
     }
     #expect(result.status == .cancelled)
@@ -63,7 +63,7 @@ struct HistoryTests {
     let failed = RunRequest(
       id: UUID(), executable: directory.appendingPathComponent("missing-engine"),
       directory: directory.appendingPathComponent("failed"), draft: completed.draft)
-    #expect(RunProcess().execute(failed) { _ in }.status == .failed)
+    #expect(await RunProcess().execute(failed) { _ in }.status == .failed)
     let third = HistoryEntry.read(failed.directory)
     #expect(third.status == .failed)
     #expect(third.message != nil)
@@ -73,7 +73,7 @@ struct HistoryTests {
     let early = try await request(directory.appendingPathComponent("early-cancel"))
     let earlyWorker = RunProcess()
     earlyWorker.cancel()
-    #expect(earlyWorker.execute(early) { _ in }.status == .cancelled)
+    #expect(await earlyWorker.execute(early) { _ in }.status == .cancelled)
     let beforeLaunch = HistoryEntry.read(early.directory)
     #expect(beforeLaunch.status == .cancelled && beforeLaunch.completedSteps == 0)
     #expect(!FileManager.default.fileExists(atPath: early.output.path))
@@ -87,7 +87,7 @@ struct HistoryTests {
     let directory = try temporary()
     defer { try? FileManager.default.removeItem(at: directory) }
     let request = try await request(directory.appendingPathComponent("run"))
-    #expect(RunProcess().execute(request) { _ in }.status == .completed)
+    #expect(await RunProcess().execute(request) { _ in }.status == .completed)
     let file = request.directory.appendingPathComponent("session.json")
     var json = try #require(
       JSONSerialization.jsonObject(with: Data(contentsOf: file)) as? [String: Any])
@@ -116,7 +116,7 @@ struct HistoryTests {
     let directory = try temporary()
     defer { try? FileManager.default.removeItem(at: directory) }
     let request = try await request(directory.appendingPathComponent("run"))
-    #expect(RunProcess().execute(request) { _ in }.status == .completed)
+    #expect(await RunProcess().execute(request) { _ in }.status == .completed)
     let engineFile = request.output.appendingPathComponent("run.json")
     let original = try Data(contentsOf: engineFile)
     var json = try #require(JSONSerialization.jsonObject(with: original) as? [String: Any])
@@ -166,7 +166,7 @@ struct HistoryTests {
     let first = try await request(defaultRoot.appendingPathComponent("first"))
     let second = try await request(customRoot.appendingPathComponent("second"))
     for request in [first, second] {
-      #expect(RunProcess().execute(request) { _ in }.status == .completed)
+      #expect(await RunProcess().execute(request) { _ in }.status == .completed)
     }
     let history = RunHistory(defaults: defaults, defaultRoot: defaultRoot)
     history.rememberLocation(customRoot)
@@ -201,7 +201,7 @@ struct HistoryTests {
     let failed = RunRequest(
       id: request.id, executable: directory.appendingPathComponent("missing"),
       directory: request.directory, draft: request.draft)
-    #expect(RunProcess().execute(failed) { _ in }.status == .failed)
+    #expect(await RunProcess().execute(failed) { _ in }.status == .failed)
     let entry = HistoryEntry.read(request.directory)
     let history = RunHistory(defaults: defaults, defaultRoot: directory)
     let workspace = Workspace(

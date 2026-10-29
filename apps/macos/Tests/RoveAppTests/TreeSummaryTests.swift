@@ -22,7 +22,7 @@ struct TreeSummaryTests {
       id: UUID(), executable: engine, directory: folder,
       draft: AnalysisDraft(
         matrix: matrix, report: report, settings: settings, monophyly: [], outgroup: "T20"))
-    #expect(RunProcess().execute(request) { _ in }.status == .completed)
+    #expect(await RunProcess().execute(request) { _ in }.status == .completed)
     return request
   }
 
@@ -51,7 +51,7 @@ struct TreeSummaryTests {
     #expect(
       try Data(contentsOf: first.directory.appendingPathComponent("samples.trees")) == originals[2])
     let diagnostic = try await Task.detached {
-      try TraceDiagnosticsProcess().execute(
+      try await TraceDiagnosticsProcess().execute(
         directory: directory, executable: self.engine, burnin: 25)
     }.value
     #expect(diagnostic.report.source.completion == "completed")
@@ -110,23 +110,23 @@ struct TreeSummaryTests {
     _ = try await completedRun(directory)
     let worker = TreeSummaryProcess()
     worker.cancel()
-    #expect(throws: CancellationError.self) {
-      try worker.execute(directory: directory, executable: engine, burnin: 10, heights: "ca")
+    await #expect(throws: CancellationError.self) {
+      try await worker.execute(directory: directory, executable: engine, burnin: 10, heights: "ca")
     }
     let source = directory.appendingPathComponent("results/trees.nexus")
     var content = try String(contentsOf: source, encoding: .utf8)
     content = content.replacingOccurrences(of: "End;", with: "")
     try content.write(to: source, atomically: true, encoding: .utf8)
-    #expect(throws: (any Error).self) {
-      try TreeSummaryProcess().execute(
+    await #expect(throws: (any Error).self) {
+      try await TreeSummaryProcess().execute(
         directory: directory, executable: engine, burnin: 10, heights: "ca")
     }
     let children = try FileManager.default.contentsOfDirectory(
       atPath: directory.appendingPathComponent("summaries").path)
     #expect(children.isEmpty)
     try FileManager.default.removeItem(at: directory.appendingPathComponent("results/run.json"))
-    #expect(throws: (any Error).self) {
-      try TreeSummaryProcess().execute(
+    await #expect(throws: (any Error).self) {
+      try await TreeSummaryProcess().execute(
         directory: directory, executable: engine, burnin: 10, heights: "ca")
     }
   }

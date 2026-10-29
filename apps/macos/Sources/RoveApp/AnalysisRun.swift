@@ -24,8 +24,8 @@ final class AnalysisRun {
     let request = request
     let worker = worker
     task = Task {
-      let work = Task.detached(priority: .userInitiated) {
-        let result = worker.execute(request) { continuation.yield($0) }
+      let work = Task {
+        let result = await worker.execute(request) { continuation.yield($0) }
         continuation.finish()
         return result
       }

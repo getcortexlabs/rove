@@ -112,7 +112,22 @@ final class TraceDiagnosticsProcess: @unchecked Sendable {
     input = nil
   }
 
-  func execute(directory: URL, executable: URL, burnin: Int) throws -> SavedDiagnostics {
+  func execute(directory: URL, executable: URL, burnin: Int) async throws -> SavedDiagnostics {
+    try await withCheckedThrowingContinuation { continuation in
+      Thread.detachNewThread {
+        autoreleasepool {
+          continuation.resume(
+            with: Result {
+              try self.executeBlocking(directory: directory, executable: executable, burnin: burnin)
+            })
+        }
+      }
+    }
+  }
+
+  private func executeBlocking(directory: URL, executable: URL, burnin: Int) throws
+    -> SavedDiagnostics
+  {
     guard (0..<100).contains(burnin) else {
       throw ImportError.message("Choose a burn-in from 0 to 99 percent.")
     }
@@ -232,9 +247,8 @@ final class TraceDiagnosticsModel: Identifiable {
     let executable = executable
     task = Task {
       do {
-        let saved = try await Task.detached {
-          try process.execute(directory: directory, executable: executable, burnin: percent)
-        }.value
+        let saved = try await process.execute(
+          directory: directory, executable: executable, burnin: percent)
         result = saved
         if statistic == nil { selected = saved.report.columns.first?.name ?? "posterior" }
       } catch is CancellationError {

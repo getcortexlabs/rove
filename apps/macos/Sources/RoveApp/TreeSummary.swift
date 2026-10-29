@@ -59,7 +59,24 @@ final class TreeSummaryProcess: @unchecked Sendable {
     input = nil
   }
 
-  func execute(directory: URL, executable: URL, burnin: Int, heights: String) throws -> SavedSummary
+  func execute(directory: URL, executable: URL, burnin: Int, heights: String) async throws
+    -> SavedSummary
+  {
+    try await withCheckedThrowingContinuation { continuation in
+      Thread.detachNewThread {
+        autoreleasepool {
+          continuation.resume(
+            with: Result {
+              try self.executeBlocking(
+                directory: directory, executable: executable, burnin: burnin, heights: heights)
+            })
+        }
+      }
+    }
+  }
+
+  private func executeBlocking(directory: URL, executable: URL, burnin: Int, heights: String)
+    throws -> SavedSummary
   {
     guard (0..<100).contains(burnin), ["keep", "ca"].contains(heights) else {
       throw ImportError.message("Choose a burn-in from 0 to 99 percent.")
@@ -163,10 +180,8 @@ final class TreeSummaryModel: Identifiable {
     let heights = heights
     task = Task {
       do {
-        let result = try await Task.detached {
-          try process.execute(
-            directory: directory, executable: executable, burnin: percent, heights: heights)
-        }.value
+        let result = try await process.execute(
+          directory: directory, executable: executable, burnin: percent, heights: heights)
         summaries.append(result)
       } catch is CancellationError {
         error = "Tree summarization was cancelled."

@@ -68,7 +68,22 @@ final class RunProcess: @unchecked Sendable {
     return requestedCancellation
   }
 
-  func execute(_ request: RunRequest, onEvent: @Sendable (RunEvent) -> Void) -> RunResult {
+  func execute(_ request: RunRequest, onEvent: @escaping @Sendable (RunEvent) -> Void) async
+    -> RunResult
+  {
+    // Pipe reads and process waits must not occupy Swift's cooperative executor.
+    await withCheckedContinuation { continuation in
+      Thread.detachNewThread {
+        autoreleasepool {
+          continuation.resume(returning: self.executeBlocking(request, onEvent: onEvent))
+        }
+      }
+    }
+  }
+
+  private func executeBlocking(_ request: RunRequest, onEvent: @Sendable (RunEvent) -> Void)
+    -> RunResult
+  {
     var result: RunResult
     var launched: Process?
     var ownsDirectory = false

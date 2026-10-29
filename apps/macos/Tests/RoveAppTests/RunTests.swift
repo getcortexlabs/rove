@@ -40,7 +40,7 @@ struct RunTests {
     let directory = try temporary()
     defer { try? FileManager.default.removeItem(at: directory) }
     let request = try await request(in: directory)
-    let result = RunProcess().execute(request) { _ in }
+    let result = await RunProcess().execute(request) { _ in }
     #expect(result.status == .completed, "\(String(describing: result))")
     let direct = directory.appendingPathComponent("direct")
     let child = Process()
@@ -128,7 +128,7 @@ struct RunTests {
       try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: script.path)
       let request = try await request(in: directory, engine: script)
       let began = Date()
-      let result = RunProcess().execute(request) { _ in }
+      let result = await RunProcess().execute(request) { _ in }
       #expect(result.status == .failed)
       let pidText = try String(
         contentsOf: URL(fileURLWithPath: script.path + ".pid"), encoding: .utf8)
@@ -145,10 +145,10 @@ struct RunTests {
     let request = try await request(
       in: directory, engine: directory.appendingPathComponent("missing"))
     let worker = RunProcess()
-    #expect(worker.execute(request) { _ in }.status == .failed)
+    #expect(await worker.execute(request) { _ in }.status == .failed)
     let record = request.directory.appendingPathComponent("session.json")
     try "existing record".write(to: record, atomically: true, encoding: .utf8)
-    #expect(RunProcess().execute(request) { _ in }.status == .failed)
+    #expect(await RunProcess().execute(request) { _ in }.status == .failed)
     #expect(try String(contentsOf: record, encoding: .utf8) == "existing record")
     let matrix = directory.appendingPathComponent("changed.nex")
     try Data(contentsOf: URL(fileURLWithPath: request.draft.matrixPath)).write(to: matrix)
@@ -160,7 +160,8 @@ struct RunTests {
       id: UUID(), executable: executable,
       directory: directory.appendingPathComponent("changed"), draft: draft)
     #expect(
-      RunProcess().execute(changed) { _ in }.error == RunFailure.changedInput.errorDescription)
+      await RunProcess().execute(changed) { _ in }.error == RunFailure.changedInput.errorDescription
+    )
     #expect(!FileManager.default.fileExists(atPath: changed.output.path))
     #expect(
       try SessionRecord.read(changed.directory.appendingPathComponent("session.json")).status

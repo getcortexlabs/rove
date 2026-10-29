@@ -68,10 +68,10 @@ struct TraceDiagnosticsTests {
     #expect(try TraceReport.read(first.directory).retainedSamples == 1537)
   }
 
-  @Test func invalidSavedPlotsAndNonfiniteTracesAreRejected() throws {
+  @Test func invalidSavedPlotsAndNonfiniteTracesAreRejected() async throws {
     let directory = try fixture()
     defer { try? FileManager.default.removeItem(at: directory) }
-    let saved = try TraceDiagnosticsProcess().execute(
+    let saved = try await TraceDiagnosticsProcess().execute(
       directory: directory, executable: engine, burnin: 10)
     let path = saved.directory.appendingPathComponent("diagnostics.json")
     var json = try #require(
@@ -81,8 +81,8 @@ struct TraceDiagnosticsTests {
     #expect(throws: (any Error).self) { try TraceReport.read(saved.directory) }
     let worker = TraceDiagnosticsProcess()
     worker.cancel()
-    #expect(throws: CancellationError.self) {
-      try worker.execute(directory: directory, executable: engine, burnin: 10)
+    await #expect(throws: CancellationError.self) {
+      try await worker.execute(directory: directory, executable: engine, burnin: 10)
     }
   }
 
@@ -100,7 +100,7 @@ struct TraceDiagnosticsTests {
     let worker = TraceDiagnosticsProcess()
     let executable = engine
     let task = Task.detached {
-      try worker.execute(directory: directory, executable: executable, burnin: 10)
+      try await worker.execute(directory: directory, executable: executable, burnin: 10)
     }
     try await Task.sleep(for: .milliseconds(20))
     worker.cancel()

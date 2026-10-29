@@ -230,7 +230,7 @@ struct PreviewTests {
           monophyly: workspace.monophyly, outgroup: workspace.outgroup))
       let worker = RunProcess()
       _ = await Task.detached {
-        worker.execute(request) { event in
+        await worker.execute(request) { event in
           if cancelled && event.event == "started" { worker.cancel() }
         }
       }.value
