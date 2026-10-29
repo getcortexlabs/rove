@@ -54,6 +54,7 @@ final class Workspace {
     page == .review && report != nil && issue == nil && !loading && run == nil && !showingHistory
   }
   private var importID = UUID()
+  var traceDiagnostics: TraceDiagnosticsModel?
   var treeExplorer: TreeExplorer?
   private let executable: URL
   let preferences: AppPreferences
@@ -354,6 +355,10 @@ final class Workspace {
     }
     monophyly = groups
     return true
+  }
+
+  func openDiagnostics(in directory: URL) {
+    traceDiagnostics = TraceDiagnosticsModel(directory: directory, executable: executable)
   }
 
   func openTree(_ directory: URL, run: URL) {

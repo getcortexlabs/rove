@@ -27,6 +27,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Selección explícita del grupo externo y restricciones aplicadas | Implementado, #31 |
 | Resumen MCC posterior y exportación anotada | Implementado, #32 |
 | Explorador nativo de árboles anotados y figuras SVG | Implementado, #33 |
+| Diagnósticos de muestreo e inspección del burn-in en la app | Implementado, #34 |
 | Cadenas en paralelo e informes de convergencia | Planificado, #23 |
 | Reescalado por potencias de dos | Planificado, #18 |
 | Checkpoints y reanudación de ejecuciones | Planificado, #22 |

@@ -1,0 +1,82 @@
+{
+  "build": "cargo build --release; LTO=fat, codegen-units=1; no target-cpu override",
+  "cases": [
+    {
+      "bytes": 1275473,
+      "columns": 7,
+      "median_wall_seconds": 0.014680625000000003,
+      "rows": 10001,
+      "runs": [
+        {
+          "maximum_rss_bytes": 14057472,
+          "wall_seconds": 0.015267208000000004
+        },
+        {
+          "maximum_rss_bytes": 14057472,
+          "wall_seconds": 0.014680625000000003
+        },
+        {
+          "maximum_rss_bytes": 13975552,
+          "wall_seconds": 0.014654082999999998
+        }
+      ],
+      "sha256": "8ff71a71b6ba7cbbfb9c74630ba318faa5f74ddf8f7e825fef3806b56ef0bee1"
+    },
+    {
+      "bytes": 12852653,
+      "columns": 7,
+      "median_wall_seconds": 0.125746458,
+      "rows": 100001,
+      "runs": [
+        {
+          "maximum_rss_bytes": 38600704,
+          "wall_seconds": 0.12682770899999998
+        },
+        {
+          "maximum_rss_bytes": 38338560,
+          "wall_seconds": 0.125378959
+        },
+        {
+          "maximum_rss_bytes": 38600704,
+          "wall_seconds": 0.125746458
+        }
+      ],
+      "sha256": "e30876594cbe25c46b60db504ff2cd8599e21e182f8c9d9f1ae3686adf5ef08e"
+    },
+    {
+      "bytes": 32297851,
+      "columns": 7,
+      "median_wall_seconds": 0.2880657919999998,
+      "rows": 250001,
+      "runs": [
+        {
+          "maximum_rss_bytes": 76103680,
+          "wall_seconds": 0.2922483330000001
+        },
+        {
+          "maximum_rss_bytes": 81215488,
+          "wall_seconds": 0.2880657919999998
+        },
+        {
+          "maximum_rss_bytes": 73039872,
+          "wall_seconds": 0.28491212499999996
+        }
+      ],
+      "sha256": "4e134b307e817e4dd99aca7035679221a74df1035a3d67b7353a7d068925b7ad"
+    }
+  ],
+  "caveat": "Rows repeat a synthetic trace. This measures parsing, retained statistics and bounded plot serialization, not convergence or inference performance.",
+  "engine_sha256": "96d94f53a4fc6c6c1300d34c99911850825835758994d82381b4a55794b73b9c",
+  "fixture_sha256": "d34344b48138ecbe518ab9675a02605dba04ea7400d110b109b63c1149a9ca97",
+  "hardware": {
+    "chip_type": "Apple M4 Max",
+    "machine_model": "Mac16,6",
+    "machine_name": "MacBook Pro",
+    "number_processors": "proc 16:12:4:0",
+    "physical_memory": "64 GB"
+  },
+  "machine": "arm64",
+  "method": "three separate CLI processes per size; stdout discarded; wait4 per-child peak RSS converted to bytes",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+}

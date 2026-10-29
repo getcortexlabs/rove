@@ -292,3 +292,67 @@ Lectura, disposición, búsqueda y generación de SVG se ejecutan fuera del hilo
 de interfaz. El visor admite un árbol MCC de Rove de hasta 16 MiB, 4.096 taxones
 y 512 niveles de anidamiento; los límites anteriores del lector de muestras
 no cambian. Un resumen sigue sin demostrar convergencia.
+
+## Inspeccionar los diagnósticos
+
+![Diagnósticos de la traza con un 25% de burn-in en la aplicación nativa](/images/macos-diagnostics.png)
+
+Elige **Diagnostics** en un resultado finalizado o en una entrada de History
+con archivo de muestras. La ventana enumera todos los parámetros, empezando por
+posterior, likelihood y prior. Selecciona una fila para ver media, desviación
+estándar, ESS, intervalo del 95% de colas iguales y gráfico. `posterior` es una
+**densidad logarítmica**, no el soporte posterior de un nodo.
+
+Cambia **Burn-in (%)** y pulsa **Apply**. Los recuentos y el primer estado retenido
+corresponden al cálculo aplicado; una edición pendiente no cambia las etiquetas
+del resultado anterior. La regla coincide con el resumen de árboles: descartar
+`floor(N × porcentaje / 100)` muestras, incluyendo `STATE_0` en una ejecución
+estándar. **Summarize trees with this burn-in** abre el panel con ese porcentaje.
+Ambos lectores contrastan estados e intervalos con el registro de ejecución.
+
+**Whole run** incluye el inicio descartado en gris y marca el límite del burn-in.
+**After burn-in** ajusta el gráfico a los puntos retenidos sin cambiar los cálculos.
+El control bajo el gráfico permite consultar estados y valores con el teclado.
+Tabla, búsqueda y controles ofrecen navegación nativa; el gráfico no tiene
+transiciones animadas. Se muestran hasta 1.028 puntos por parámetro, conservando
+primero, mínimo, máximo y último de cada bloque, además del límite del burn-in.
+**Los cálculos usan todas las muestras retenidas**, nunca solo los puntos dibujados.
+
+ESS estima información equivalente a muestras independientes, no pasos de MCMC.
+Usamos la convención de autocovarianzas positivas por pares de BEAST 2.7.8, con
+retardos inferiores a 2.000; no es ESS de centro o colas normalizado por rangos.
+Las series constantes o con menos de cuatro valores retenidos tienen ESS no
+disponible. Se señala si la correlación positiva alcanza el límite de retardos
+evaluado. Estos números no activan un sello de convergencia ni una parada automática.
+
+El intervalo usa los percentiles 2,5 y 97,5 con interpolación lineal (tipo 7 de R).
+Describe la distribución retenida; **no es HPD** ni el error de Monte Carlo de la
+media. Una única muestra no tiene intervalo y las series muy cortas se señalan.
+Mezcla escalar, acuerdo entre ejecuciones independientes y convergencia topológica
+son cuestiones distintas: esta vista no calcula R-hat ni compara clados.
+
+Cada cálculo correcto guarda `diagnostics/trace-*/diagnostics.json` en una carpeta
+nueva, con huella del origen, burn-in, estados, métodos, estadísticas y puntos.
+**Calculation record** muestra el archivo en Finder. Al volver a abrir, se recuerda
+el último porcentaje correcto y se recalcula el archivo actual. Los informes
+anteriores y archivos originales permanecen intactos. Lectura y cálculo se ejecutan
+fuera del hilo de interfaz y pueden cancelarse mientras otras cadenas continúan.
+
+Las ejecuciones parciales o no verificadas se identifican. Se rechazan valores no
+finitos, columnas inconsistentes, estados irregulares y líneas finales incompletas.
+También se rechaza un registro terminado al que le falten muestras. Sin `run.json`,
+un archivo válido no demuestra finalización. Los límites son 128 MiB, un millón
+de filas, 128 parámetros y ocho millones de celdas numéricas; no limitan toda
+la memoria del proceso.
+
+El comando independiente usa el mismo cálculo Rust:
+
+```sh
+target/release/rove diagnose /ruta/results/trace.log --burnin-percent 25 \
+  --output /ruta/nuevo-diagnostico
+```
+
+Omite `--output` para emitir JSON o usa `--burnin-samples N` en lugar del porcentaje.
+La carpeta de salida debe ser nueva. No se requiere Java ni Tracer.
+[Validación y mediciones](https://github.com/getcortexlabs/rove/blob/main/benchmarks/diagnostics/2026-10-29/README.md)
+incluyen series sintéticas y una referencia BEAST con versión fijada.

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RunView: View {
+  @Environment(\.openWindow) private var openWindow
   @Bindable var workspace: Workspace
   let run: AnalysisRun
   @State private var confirmingCancellation = false
@@ -135,6 +136,15 @@ struct RunView: View {
           }.buttonStyle(LabButtonStyle(prominent: true))
         }
         Spacer()
+        if !run.isActive
+          && FileManager.default.fileExists(
+            atPath: run.request.output.appendingPathComponent("trace.log").path)
+        {
+          Button(strings("Diagnostics")) {
+            workspace.openDiagnostics(in: run.request.directory)
+            openWindow(id: "trace-diagnostics")
+          }.buttonStyle(LabButtonStyle(compact: true))
+        }
         if run.status == .completed {
           Button(strings("Summarize trees")) { workspace.summarizeTrees(in: run.request.directory) }
             .buttonStyle(LabButtonStyle(compact: true))

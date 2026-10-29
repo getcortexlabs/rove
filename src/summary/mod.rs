@@ -31,14 +31,14 @@ pub enum Burnin {
     Samples(usize),
 }
 impl Burnin {
-    fn discard(self, total: usize) -> Result<usize> {
+    pub fn discard(self, total: usize) -> Result<usize> {
         let skip = match self {
             Self::Percent(p) if p < 100 => (total as u128 * p as u128 / 100) as usize,
             Self::Samples(n) => n,
             _ => return Err(Error("burn-in percent must be between 0 and 99".into())),
         };
         if skip >= total {
-            return Err(Error("burn-in leaves no retained trees".into()));
+            return Err(Error("burn-in leaves no retained samples".into()));
         }
         Ok(skip)
     }

@@ -256,3 +256,34 @@ XML escaping and protected-file exports. A 4,096-tip synthetic document exercise
 background decoding, layout and SVG generation; its elapsed time is printed by
 `largeLayoutAndExportRemainBounded`, without a hardware-dependent pass threshold.
 Native preview captures cover both languages and compact windows.
+
+## Trace diagnostics
+
+Completed results and History entries with `results/trace.log` open a separate
+Diagnostics window. Cancelled and partial runs may be inspected, with their
+status visible. `TraceDiagnosticsProcess` runs the bundled `rove diagnose`
+off the main actor and cancels through stdin EOF. The Rust `diagnostics` module
+owns parsing, moments, quantiles, autocovariance ESS and display point selection;
+Swift decodes and validates the versioned report rather than implementing another
+estimator. No Java or Tracer runtime is needed.
+
+Each successful calculation saves a new `diagnostics/trace-*/diagnostics.json`
+with source SHA-256, burn-in, retained state range and methods. Reopening restores
+the latest successful percentage, then calculates from the current trace.
+Applying burn-in never changes raw data. Older results keep their applied
+percentage visible while a new calculation runs or fails. The tree-summary
+button passes that same applied percentage through the existing summary workflow.
+
+Swift Charts receives at most 1,028 representative points per parameter; Rust
+statistics use every retained sample. A native table, search and sample stepper
+provide keyboard access. Whole-run and retained-only plots share the same
+statistics; the latter adjusts the display range after burn-in. Plot coordinates
+are normalized internally for extreme finite values, while axes and accessibility
+controls expose original states and values.
+
+ESS is unavailable for constant or very short traces. Reaching the estimator's
+lag limit is marked, and the interval is explicitly equal-tailed, not HPD.
+The view never infers cross-run or tree convergence from scalar ESS. See the
+[guide](../../docs/guide/macos-preview.md#inspect-trace-diagnostics) and
+[validation report](../../benchmarks/diagnostics/2026-10-29/README.md) for methods,
+input bounds, reference comparisons and measured cost.

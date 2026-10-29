@@ -76,6 +76,17 @@ struct RoveApp: App {
     .defaultSize(width: 1100, height: 780)
     .windowResizability(.contentMinSize)
 
+    Window(strings("Trace diagnostics"), id: "trace-diagnostics") {
+      if let model = workspace.traceDiagnostics {
+        TraceDiagnosticsView(model: model, preferences: workspace.preferences) { directory in
+          workspace.openTree(directory, run: model.directory)
+          openWindow(id: "tree-explorer")
+        }.id(model.id)
+      }
+    }
+    .defaultSize(width: 1160, height: 850)
+    .windowResizability(.contentMinSize)
+
     Settings {
       SettingsView(preferences: workspace.preferences)
     }.windowResizability(.contentSize)

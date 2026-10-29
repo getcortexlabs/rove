@@ -106,6 +106,33 @@ struct PreviewTests {
         runView, to: directory.appendingPathComponent("completed-\(language.rawValue).png"))
     }
     runWindow.close()
+    let diagnostics = TraceDiagnosticsModel(
+      directory: run.request.directory,
+      executable: root.appendingPathComponent("target/release/rove"))
+    diagnostics.burnin = "25"
+    diagnostics.start()
+    await diagnostics.waitForExit()
+    #expect(diagnostics.error == nil)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      for size in [NSSize(width: 1160, height: 850), NSSize(width: 960, height: 700)] {
+        let view = NSHostingView(
+          rootView: TraceDiagnosticsView(
+            model: diagnostics, preferences: preferences, onOpenTree: { _ in }))
+        let window = NSWindow(
+          contentRect: NSRect(origin: .zero, size: size), styleMask: [.borderless],
+          backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.appearance = NSAppearance(named: .darkAqua)
+        window.contentView = view
+        window.orderBack(nil)
+        try await capture(
+          view,
+          to: directory.appendingPathComponent(
+            "diagnostics-\(language.rawValue)-\(Int(size.width)).png"))
+        window.close()
+      }
+    }
     let summary = TreeSummaryModel(
       directory: run.request.directory,
       executable: root.appendingPathComponent("target/release/rove"))

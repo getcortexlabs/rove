@@ -229,3 +229,53 @@ target/release/rove summarize /path/to/results/trees.nexus \
 读取、布局、搜索和 SVG 生成均在界面线程之外运行。查看器接受单棵 Rove MCC 树，文件不超过 16 MiB，
 最多 4,096 个分类单元及 512 层嵌套；上文原始样本读取器的限制保持不变。
 汇总依然不能证明收敛。
+
+## 检查采样诊断
+
+![原生 Mac 工作区中的轨迹诊断，预热比例为 25%](/images/macos-diagnostics.png)
+
+在已结束的结果或含有轨迹文件的 History 条目中选择 **Diagnostics**。
+窗口列出全部记录参数，首先显示 posterior、likelihood 和 prior。
+选择一行即可查看均值、标准差、ESS、95% 等尾区间及轨迹图。
+`posterior` 是**对数密度**，不是节点的后验支持度。
+
+修改 **Burn-in (%)** 后按 **Apply**。样本计数和第一个保留状态对应已应用的计算；
+尚未应用的修改不会重新标记旧结果。规则与树汇总一致：丢弃 `floor(N × 百分比 / 100)`
+个样本，标准运行中的 `STATE_0` 也计入。**Summarize trees with this burn-in**
+用已应用的百分比打开汇总面板。两个读取器都会根据运行记录核验采样状态和间隔。
+
+**Whole run** 将丢弃的开头画为灰色并标记 burn-in 边界。**After burn-in**
+仅调整绘图范围到保留样本，不改变统计计算。图下方的样本控件支持用键盘查询状态和值。
+表格、搜索及控件均有原生键盘导航，图形切换不使用动画。每个参数最多绘制 1,028 个点，
+保留各分段的首值、最小值、最大值、末值及 burn-in 边界。
+**统计计算使用全部保留样本**，不使用缩减后的绘图数据。
+
+ESS 估计等价于独立样本的信息量，而不是 MCMC 步数。Rove 使用 BEAST 2.7.8
+的正自协方差配对约定，滞后小于 2,000；这不是秩归一化的 bulk 或 tail ESS。
+常数序列或保留值少于四个时 ESS 不可用。如果正相关延伸到所评估的滞后上限，会明确提示。
+这些数值不会触发收敛标记或自动停止。
+
+区间使用线性插值的第 2.5 和 97.5 百分位数（R 类型 7）。它描述保留样本的分布，
+**不是 HPD**，也不是均值的蒙特卡洛误差区间。单个样本不提供区间，极短轨迹会被提示。
+标量混合、独立运行间的一致性和拓扑收敛是不同的问题：此视图不计算 R-hat 或比较支系。
+
+每次成功计算都会在新目录中保存 `diagnostics/trace-*/diagnostics.json`，包含来源指纹、
+burn-in、状态范围、方法、统计量及绘图点。**Calculation record** 在 Finder 中显示该文件。
+重新打开时恢复上一次成功使用的百分比，并根据当前文件重新计算。旧报告及原始运行文件保持不变。
+读取和计算在界面线程之外运行，可取消，且不停止其他分析。
+
+部分或未核验的运行会被标明。非有限值、列数不一致、采样状态间隔不规则或末行未写完会被拒绝。
+如果运行记录声称已完成但轨迹缺少样本，也会拒绝。缺少 `run.json` 时，语法有效的文件不能证明运行结束。
+限制为 128 MiB、一百万行、128 个参数及八百万个数值单元格；这些限制不等于进程总内存上限。
+
+独立命令使用同一套 Rust 计算：
+
+```sh
+target/release/rove diagnose /path/to/results/trace.log --burnin-percent 25 \
+  --output /path/to/new-diagnostics
+```
+
+省略 `--output` 可直接输出 JSON，或用 `--burnin-samples N` 指定丢弃数量。
+输出目录必须是新目录。运行不需要 Java 或 Tracer。
+[验证与测量报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/diagnostics/2026-10-29/README.md)
+包括合成轨迹及固定版本的 BEAST 参考结果。

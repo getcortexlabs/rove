@@ -193,6 +193,7 @@ private struct HistoryStatusBadge: View {
 }
 
 private struct HistoryDetail: View {
+  @Environment(\.openWindow) private var openWindow
   @Bindable var workspace: Workspace
   let entry: HistoryEntry
   private var strings: AppStrings { workspace.strings }
@@ -286,6 +287,12 @@ private struct HistoryDetail: View {
             VStack(alignment: .leading, spacing: 8) { outputButtons }
           }
         }
+      }
+      if entry.files.contains("results/trace.log") {
+        Button(strings("Diagnostics")) {
+          workspace.openDiagnostics(in: entry.directory)
+          openWindow(id: "trace-diagnostics")
+        }.buttonStyle(LabButtonStyle(compact: true))
       }
       if entry.status == .completed {
         Button(strings("Summarize trees")) { workspace.summarizeTrees(in: entry.directory) }

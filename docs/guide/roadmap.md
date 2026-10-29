@@ -27,6 +27,7 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Explicit outgroup selection and applied constraints | Implemented, #31 |
 | Posterior MCC tree summary and annotated export | Implemented, #32 |
 | Native annotated-tree explorer and SVG figures | Implemented, #33 |
+| Native trace diagnostics and burn-in inspection | Implemented, #34 |
 | Parallel chains and convergence reports | Planned, #23 |
 | Power-of-two rescaling | Planned, #18 |
 | Checkpoints and resumed runs | Planned, #22 |

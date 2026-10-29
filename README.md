@@ -54,7 +54,8 @@ Completed runs can produce an annotated MCC tree for FigTree, with explicit
 burn-in and a choice of common ancestor or sampled heights. Open saved summaries
 in the native tree explorer to inspect nodes, search taxa, rotate or collapse
 clades and export an SVG figure. Original samples stay unchanged. Completion and node support do not establish convergence; resumed
-runs remain future work.
+runs remain future work. Diagnostics show recorded parameters, trace plots, ESS
+and equal-tailed intervals with an adjustable burn-in; calculations stay in Rust.
 See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/README.md).
 
 ## People

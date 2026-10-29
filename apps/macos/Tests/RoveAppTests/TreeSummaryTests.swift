@@ -50,6 +50,14 @@ struct TreeSummaryTests {
     #expect(first.record.heightPolicy == "ca" && !first.record.convergenceAssessed)
     #expect(
       try Data(contentsOf: first.directory.appendingPathComponent("samples.trees")) == originals[2])
+    let diagnostic = try await Task.detached {
+      try TraceDiagnosticsProcess().execute(
+        directory: directory, executable: self.engine, burnin: 25)
+    }.value
+    #expect(diagnostic.report.source.completion == "completed")
+    #expect(diagnostic.report.retainedSamples == first.record.retainedSamples)
+    #expect(diagnostic.report.discardedSamples == first.record.discardedSamples)
+    #expect(diagnostic.report.firstRetainedState == 200 && diagnostic.report.lastState == 1000)
     let annotated = try String(
       contentsOf: first.directory.appendingPathComponent("mcc.tree"), encoding: .utf8)
     #expect(annotated.contains("constrained=true") && annotated.contains("posterior="))

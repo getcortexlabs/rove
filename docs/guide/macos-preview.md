@@ -281,3 +281,68 @@ Reading, layout, search and SVG generation run outside the interface thread.
 The viewer accepts one Rove MCC tree, up to 16 MiB, 4,096 taxa and 512 nesting
 levels; raw sample reader limits above remain unchanged. A summary still does
 not establish convergence.
+
+## Inspect trace diagnostics
+
+![Trace diagnostics with 25% burn-in in the native Mac workspace](/images/macos-diagnostics.png)
+
+Choose **Diagnostics** from a finished result or a History entry with a trace.
+The native window lists every recorded parameter, with posterior, likelihood
+and prior first. Select a row to see its mean, standard deviation, ESS, 95%
+equal-tailed interval and trace. `posterior` is a **log density**, not a node's
+posterior support.
+
+Set **Burn-in (%)** and press **Apply**. Counts and the first retained state
+refer to the applied calculation; pending edits do not relabel older results.
+The rule matches tree summarization: discard `floor(N × percent / 100)` samples,
+including `STATE_0` in a standard recorded run. **Summarize trees with this
+burn-in** opens the summary panel with the applied percentage. Both readers
+check recorded sample states and intervals against the run metadata.
+
+**Whole run** includes the discarded beginning in gray and marks the burn-in
+boundary. **After burn-in** fits the plot to retained points without changing
+statistics. The sample control below the plot supports keyboard inspection of
+the plotted state and value. The table, search and controls use native keyboard
+navigation; no plot transition is animated. The display keeps at most 1,028
+points per parameter, preserving the first, minimum, maximum and last values
+in each bucket and the burn-in boundary. **Calculations use every retained
+sample**, never the reduced plot.
+
+ESS estimates information equivalent to independent samples, not the number
+of MCMC steps. Rove uses the BEAST 2.7.8 paired-positive autocovariance convention,
+with lags below 2,000; it is not rank-normalized bulk or tail ESS. A constant
+series has unavailable ESS; fewer than four retained values also leave ESS
+unavailable. Positive correlation reaching the evaluated lag limit is flagged.
+These numbers do not trigger a convergence badge or an automatic stopping rule.
+
+The interval uses linearly interpolated 2.5th and 97.5th percentiles (R type 7).
+It describes the retained distribution, **not HPD** or the Monte Carlo error of
+the mean. One value has no interval, and very short traces are identified.
+Scalar mixing, agreement between independent runs and topology convergence
+remain distinct: R-hat and clade comparisons are not calculated in this view.
+
+Each successful calculation saves a new `diagnostics/trace-*/diagnostics.json`
+with the source hash, burn-in, state range, methods, statistics and plot points.
+**Calculation record** reveals it in Finder. Reopening remembers the last
+successful percentage and recalculates from the current trace; saved reports
+and original run files remain unchanged. Parsing and statistics run outside
+the interface thread and can be cancelled while other analyses continue.
+
+Partial or unverified runs are marked. Non-finite values, inconsistent columns,
+irregular states and an unfinished final line are rejected. A recorded completed
+run whose trace is missing samples is rejected too. Without `run.json`, a
+syntactically valid trace cannot establish completion. Limits are 128 MiB,
+one million rows, 128 parameters and eight million numeric cells. The limits
+bound the workload, not total process memory.
+
+The standalone command uses the same Rust implementation:
+
+```sh
+target/release/rove diagnose /path/to/results/trace.log --burnin-percent 25 \
+  --output /path/to/new-diagnostics
+```
+
+Omit `--output` to emit JSON, or use `--burnin-samples N` instead of a percentage.
+An output directory must be new. No Java or Tracer runtime is required.
+[Validation and measurements](https://github.com/getcortexlabs/rove/blob/main/benchmarks/diagnostics/2026-10-29/README.md)
+cover synthetic traces and a pinned BEAST reference.
