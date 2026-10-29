@@ -124,6 +124,31 @@ struct TraceDiagnosticsTests {
     try text.write(to: trace, atomically: true, encoding: .utf8)
     let matrix = root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
     let report = try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine)
+    // Hold the child until navigation has been checked. Counting timer ticks
+    // during a real calculation makes a faster completion look like a UI stall.
+    func quoted(_ path: String) -> String {
+      "'" + path.replacingOccurrences(of: "'", with: "'\\''") + "'"
+    }
+    let ready = directory.appendingPathComponent("diagnostic-ready")
+    let release = directory.appendingPathComponent("diagnostic-release")
+    let gatedEngine = directory.appendingPathComponent("gated-engine")
+    let script = """
+      #!/bin/sh
+      if [ "$1" = diagnose ]; then
+        : > \(quoted(ready.path))
+        attempts=0
+        while [ ! -f \(quoted(release.path)) ]; do
+          [ -d \(quoted(directory.path)) ] || exit 70
+          attempts=$((attempts + 1))
+          [ "$attempts" -lt 1000 ] || exit 70
+          sleep 0.01
+        done
+      fi
+      exec \(quoted(engine.path)) "$@"
+      """
+    try script.write(to: gatedEngine, atomically: true, encoding: .utf8)
+    try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: gatedEngine.path)
+    defer { try? Data().write(to: release) }
     var settings = AnalysisSettings()
     settings.steps = 100_000_000
     settings.sampleEvery = 1_000_000
@@ -135,7 +160,7 @@ struct TraceDiagnosticsTests {
     let defaults = try #require(UserDefaults(suiteName: suite))
     defer { defaults.removePersistentDomain(forName: suite) }
     let workspace = Workspace(
-      executable: engine, preferences: AppPreferences(defaults: defaults),
+      executable: gatedEngine, preferences: AppPreferences(defaults: defaults),
       history: RunHistory(defaults: defaults, defaultRoot: directory))
     let run = AnalysisRun(request: request)
     workspace.run = run
@@ -144,15 +169,23 @@ struct TraceDiagnosticsTests {
     workspace.openDiagnostics(in: directory)
     let model = try #require(workspace.traceDiagnostics)
     model.start()
-    var ticks = 0
-    while model.busy {
-      workspace.openHistory()
-      workspace.returnToWorkspace()
-      ticks += 1
+    let deadline = ContinuousClock.now.advanced(by: .seconds(10))
+    while !FileManager.default.fileExists(atPath: ready.path) {
+      try #require(model.busy && ContinuousClock.now < deadline)
       try await Task.sleep(for: .milliseconds(5))
     }
+    for _ in 0..<2 {
+      #expect(model.busy)
+      workspace.openHistory()
+      #expect(workspace.showingHistory && workspace.run?.id == run.id)
+      workspace.returnToWorkspace()
+      #expect(!workspace.showingHistory && run.isActive)
+      try await Task.sleep(for: .milliseconds(5))
+    }
+    try Data().write(to: release)
     await model.waitForExit()
-    #expect(ticks > 1 && model.error == nil && model.result?.report.totalSamples == 50_000)
+    #expect(model.error == nil, "\(model.details ?? "No diagnostic error details")")
+    #expect(model.result?.report.totalSamples == 50_000)
     #expect(run.isActive && workspace.run?.id == run.id && !workspace.showingHistory)
     await workspace.cancelAndWait()
     #expect(run.status == .cancelled)
