@@ -62,8 +62,8 @@ scale moves are added: `gamma_shape_scale` (weight 0.1), `clock_sigma_scale`
 starts with factor 0.5 and includes the scale move's Hastings ratio. They
 use the same tuning schedule as the other scale moves.
 
-These are not ORC's adaptive operator mixtures, Bactrian kernels, coupled
-time/rate moves, epoch or tree-stretch moves. Rove also omits the XML's
+The default schedule does not use ORC's adaptive operator mixtures, Bactrian
+kernels, epoch or tree-stretch moves. Rove also omits the XML's
 mutation-rate proposal, which has no effect in one dimension. Matching the
 probability model does not establish equal mixing or ESS per second.
 
@@ -74,6 +74,39 @@ length by rate for its distance before the character-rate multiplier. Heights
 are relative to the fixed clock multiplier, with no calendar-time calibration.
 `run.json` records the preset, priors, initial values, rate mapping and final
 rate parameters. It is not a checkpoint for resuming a chain.
+
+## Joint proposals
+
+Three additional moves are available through `--weight`; their default weight
+is zero. They require the relaxed clock. They change the proposals, leaving
+the likelihood, priors and parameter coordinates intact.
+
+- `node_time_rates` draws a non-root internal height uniformly between its
+  older child and parent. Each incident rate becomes `rate × old duration /
+  new duration`, preserving branch distance. The log Hastings factor is the
+  sum of `ln(old duration / new duration)` over its three branches.
+- `root_time_rates` scales the root height by `f`, drawn uniformly from
+  `[s, 1/s]` (initial `s = 0.75`), and compensates its two branch rates.
+  Its log Hastings factor adds `−ln(f)` to their duration terms.
+- `clock_sigma_rates` scales sigma by the same kind of multiplier (initial
+  `s = 0.5`) while keeping each standardized log rate
+  `z = (ln(rate) + σ²/2) / σ` fixed. With `d` branch rates, its log Hastings
+  factor is `(d − 1) ln(f) + Σ ln(new rate / old rate)`.
+
+These factors include the proposal's change of volume, not an extra prior.
+The sigma transformation has rate Jacobian `f^d × Π(new rate / old rate)`;
+the uniform multiplier contributes `1/f`. The inverse uses `1/f` and the old
+height. Invalid values are rejected before mutation. Changed distances still
+go through the existing cache update and rejection path.
+
+The tests check inverse maps, numerical Jacobians, independently known target
+distributions, root-index changes, exact restoration and backend agreement.
+The time/rate and standardized-rate ideas are established relaxed-clock
+methods, described by [Douglas, Zhang and Bouckaert (2021)](https://doi.org/10.1371/journal.pcbi.1008322);
+this implementation does not reproduce the entire ORC package. The
+[evaluation protocol](https://github.com/getcortexlabs/rove/blob/main/fixtures/validation/SAMPLING-EFFICIENCY.md)
+separates candidate selection from four-chain validation and defines the
+conditions for changing the default schedule.
 
 ## Validation
 

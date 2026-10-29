@@ -197,6 +197,11 @@ fn rate_moves_and_root_changes_restore_all_cached_values() {
                 *weight = 10.0;
             }
         }
+        settings.weights.extend([
+            (Move::NodeTimeRates, 10.0),
+            (Move::RootTimeRates, 5.0),
+            (Move::ClockSigmaRates, 10.0),
+        ]);
         let mut chain = Sampler::new(&patterns, &settings, 29).unwrap();
         let mut root_changes = 0;
         for _ in 0..5000 {
@@ -232,6 +237,9 @@ fn rate_moves_and_root_changes_restore_all_cached_values() {
             Move::GammaShapeScale,
             Move::ClockSigmaScale,
             Move::BranchRateScale,
+            Move::NodeTimeRates,
+            Move::RootTimeRates,
+            Move::ClockSigmaRates,
         ] {
             let operator = chain.operators().iter().find(|o| o.kind == kind).unwrap();
             assert!(
@@ -249,15 +257,16 @@ fn relaxed_clock_backends_give_identical_samples() {
         .into_iter()
         .filter(|b| b.is_available())
         .map(|backend| {
-            Sampler::new(
-                &data,
-                &Settings {
-                    backend,
-                    ..Settings::reference()
-                },
-                21,
-            )
-            .unwrap()
+            let mut settings = Settings {
+                backend,
+                ..Settings::reference()
+            };
+            settings.weights.extend([
+                (Move::NodeTimeRates, 10.0),
+                (Move::RootTimeRates, 5.0),
+                (Move::ClockSigmaRates, 10.0),
+            ]);
+            Sampler::new(&data, &settings, 21).unwrap()
         })
         .collect();
     for _ in 0..3000 {

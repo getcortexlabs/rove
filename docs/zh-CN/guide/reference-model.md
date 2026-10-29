@@ -55,8 +55,8 @@ sh fixtures/reference/20x50/rove.sh runs/reference-1 1
 `branch_rate_scale`（20，均匀选择一个速率）。初始缩放因子均为 0.5，
 都包含缩放移动的 Hastings 比，并使用与其他缩放移动相同的调节规则。
 
-这些提议不同于 ORC 的自适应算子混合、Bactrian 核、时间与速率联合移动、
-分期或树拉伸移动。Rove 还省略了 XML 中在一维下无作用的突变速率提议。
+默认调度不使用 ORC 的自适应算子混合、Bactrian 核、分期或树拉伸移动。
+Rove 还省略了 XML 中在一维下无作用的突变速率提议。
 概率模型一致不意味着链的混合程度或每秒 ESS 相同。
 
 轨迹增加 `gamma_shape`、`gamma_prior`、`clock_sigma`、`clock_rate_prior`、
@@ -64,6 +64,34 @@ sh fixtures/reference/20x50/rove.sh runs/reference-1 1
 树保留时间枝长，并在每条分枝上添加 `[&rate=...]`；枝长乘速率得到尚未乘以
 性状速率的距离。高度相对于固定的时钟乘数，没有日历时间校准。
 `run.json` 记录配置、先验、初值、速率映射和最终速率参数。它不是用于恢复运行的检查点。
+
+## 联合提议
+
+另外三个移动可通过 `--weight` 启用，默认权重为零。它们要求松弛时钟，
+只改变提议机制，保留似然、先验和参数坐标。
+
+- `node_time_rates` 在较老子节点与父节点之间均匀抽取非根内部节点的高度。
+  每条相邻分枝的速率变为 `速率 × 旧时长 / 新时长`，保持分枝距离。
+  对数 Hastings 因子是三条分枝的 `ln(旧时长 / 新时长)` 之和。
+- `root_time_rates` 将根高度乘以从 `[s, 1/s]` 均匀抽取的 `f`
+  （初始 `s = 0.75`），同时补偿两条相邻分枝的速率。
+  对数 Hastings 因子在时长项之外还包括 `−ln(f)`。
+- `clock_sigma_rates` 用同类乘数缩放 sigma（初始 `s = 0.5`），
+  保持各标准化对数速率 `z = (ln(速率) + σ²/2) / σ` 不变。
+  对 `d` 个速率，对数 Hastings 因子为
+  `(d − 1) ln(f) + Σ ln(新速率 / 旧速率)`。
+
+这些因子修正提议造成的体积变化，不是额外的先验。sigma 移动中速率的
+雅可比行列式为 `f^d × Π(新速率 / 旧速率)`，均匀乘数贡献 `1/f`。
+逆变换使用 `1/f` 和旧高度。无效值在修改状态前被拒绝。
+距离仍经过现有的缓存更新和拒绝恢复流程。
+
+测试检查逆变换、数值雅可比、已知目标分布、根索引变化、精确恢复和后端一致性。
+时间与速率联合移动及标准化速率方法已有研究基础，见
+[Douglas、Zhang 和 Bouckaert（2021）](https://doi.org/10.1371/journal.pcbi.1008322)；
+此实现并未复现整个 ORC 软件包。
+[评估协议](https://github.com/getcortexlabs/rove/blob/main/fixtures/validation/SAMPLING-EFFICIENCY.md)
+将候选选择与四链验证分开，并预先规定改变默认调度的条件。
 
 ## 验证
 

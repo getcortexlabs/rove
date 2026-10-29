@@ -8,6 +8,7 @@
 //! `speciation`, with Uniform(0, `birth_difference_upper`) on λ − μ and
 //! Uniform(0, 1) on μ / λ. Monophyly constraints restrict the topology.
 
+mod coupled;
 mod moves;
 pub mod output;
 
@@ -455,8 +456,14 @@ impl Sampler {
         for &(kind, weight) in &settings.weights {
             if weight > 0.0
                 && ((kind == Move::GammaShapeScale && rates.gamma.is_none())
-                    || (matches!(kind, Move::ClockSigmaScale | Move::BranchRateScale)
-                        && rates.clock.is_none()))
+                    || (matches!(
+                        kind,
+                        Move::ClockSigmaScale
+                            | Move::BranchRateScale
+                            | Move::NodeTimeRates
+                            | Move::RootTimeRates
+                            | Move::ClockSigmaRates
+                    ) && rates.clock.is_none()))
             {
                 return Err(Error::RateMove(kind));
             }
@@ -466,7 +473,8 @@ impl Sampler {
             .map(|clade| (0..tips).map(|t| clade.contains(&t)).collect())
             .collect();
         let valid = |(_, w): &(Move, f64)| w.is_finite() && *w >= 0.0;
-        if !settings.weights.iter().all(valid) || settings.weights.iter().all(|(_, w)| *w == 0.0) {
+        let total_weight: f64 = settings.weights.iter().map(|(_, w)| w).sum();
+        if !settings.weights.iter().all(valid) || !total_weight.is_finite() || total_weight <= 0.0 {
             return Err(Error::Weights);
         }
         for &(kind, value) in &settings.tuning_values {

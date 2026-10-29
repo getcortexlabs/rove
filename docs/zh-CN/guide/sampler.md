@@ -35,6 +35,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-from-prior` | 忽略性状，从先验中采样。 |
 | `--no-tuning` | 保持所有滑动步长和缩放因子固定不变。 |
 | `--tuning <移动>=<值>` | 某个移动的初始滑动步长或缩放因子，例如 `subtree_slide=0.001`。可以重复。 |
+| `--weight <move>=<value>` | 相对选择权重，必须有限且非负。零表示禁用该移动。可重复指定；同一移动以最后一个值为准。 |
 | `--backend portable\|neon` | 似然[后端](./kernel#后端)：可移植代码，或 NEON 内核（aarch64 上的默认值）。两者给出相同的样本。 |
 | `--print-every <n>` | 在标准错误上输出进度行的间隔步数；默认为链长的二十分之一。 |
 

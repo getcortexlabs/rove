@@ -449,6 +449,63 @@ fn reference_model_writes_rate_parameters_priors_and_annotated_branches() {
 }
 
 #[test]
+fn custom_weights_select_and_record_coupled_moves() {
+    let directory = scratch("custom-weights");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let output = directory.join("out");
+    let result = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--model",
+        "reference",
+        "--output",
+        output.to_str().unwrap(),
+        "--seed",
+        "27",
+        "--steps",
+        "2000",
+        "--sample-every",
+        "100",
+        "--gaps",
+        "missing",
+        "--conditioning",
+        "none",
+        "--weight",
+        "node_height=0",
+        "--weight",
+        "node_time_rates=30",
+        "--weight",
+        "root_time_rates=3",
+        "--weight",
+        "clock_sigma_rates=3",
+    ]);
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    let metadata: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(output.join("run.json")).unwrap()).unwrap();
+    let moves = metadata["moves"].as_array().unwrap();
+    let disabled = moves.iter().find(|m| m["name"] == "node_height").unwrap();
+    assert_eq!(disabled["weight"], 0.0);
+    for counter in ["accepted", "rejected", "failed"] {
+        assert_eq!(disabled[counter], 0);
+    }
+    for (name, weight) in [
+        ("node_time_rates", 30.0),
+        ("root_time_rates", 3.0),
+        ("clock_sigma_rates", 3.0),
+    ] {
+        let record = moves.iter().find(|m| m["name"] == name).unwrap();
+        assert_eq!(record["weight"], weight);
+        assert!(record["accepted"].as_u64().unwrap() > 0);
+        assert!(record["rejected"].as_u64().unwrap() > 0);
+    }
+}
+
+#[test]
 fn unsupported_inputs_and_settings_are_rejected() {
     let directory = scratch("errors");
     let matrix = directory.join("matrix.nex");
@@ -598,6 +655,26 @@ fn labels_repeated_options_and_degenerate_inputs_are_rejected() {
             .contains("invalid tuning value for tree_scale")
     );
     assert!(run(&matrix, &["--tuning", "spin=0.1"]).contains("--tuning needs <move>=<value>"));
+    assert!(run(&matrix, &["--weight", "spin=1"]).contains("--weight needs <move>=<value>"));
+    for value in ["node_height=-1", "node_height=NaN", "node_height=inf"] {
+        assert!(run(&matrix, &["--weight", value]).contains("move weights must be"));
+    }
+    assert!(
+        run(
+            &matrix,
+            &[
+                "--weight",
+                "node_height=1e308",
+                "--weight",
+                "tree_scale=1e308"
+            ]
+        )
+        .contains("move weights must be")
+    );
+    assert!(
+        run(&matrix, &["--weight", "node_time_rates=1"])
+            .contains("node_time_rates needs its rate model")
+    );
     assert!(!Path::new(&out).exists());
 }
 

@@ -1,0 +1,5581 @@
+{
+  "phase": "pilot",
+  "cases": [
+    "reference-mk",
+    "reference-mkv",
+    "missing"
+  ],
+  "schemes": {
+    "classical": {},
+    "sigma-frequency": {
+      "node_height": 21,
+      "clock_sigma_scale": 12
+    },
+    "time-rates": {
+      "node_height": 18,
+      "node_time_rates": 12,
+      "root_scale": 1,
+      "root_time_rates": 2
+    },
+    "sigma-rates": {
+      "clock_sigma_scale": 1,
+      "clock_sigma_rates": 2
+    },
+    "combined": {
+      "node_height": 18,
+      "node_time_rates": 12,
+      "root_scale": 1,
+      "root_time_rates": 2,
+      "clock_sigma_scale": 1,
+      "clock_sigma_rates": 2
+    }
+  },
+  "selected": null,
+  "binary": "<repository>/target/release/rove",
+  "binary_sha256": "2dd2609a68ede64bb4451cea4b66bec55042a358bc6c97af5251b4a4198ccf37",
+  "source_commit": "e91df87317e24879796fef85e1027d256e17e882",
+  "source_dirty": true,
+  "source_diff_sha256": "7991f5083399cda421429273b199771a27c6589ab20ad3018e0b475446cd54d4",
+  "protocol_sha256": "98620ea92656690356b693674c9c2d376bc3b15027cd0b29080b4a2db1cb786b",
+  "hardware": {
+    "chip_type": "Apple M4 Max",
+    "machine_model": "Mac16,6",
+    "machine_name": "MacBook Pro",
+    "number_processors": "proc 16:12:4:0",
+    "physical_memory": "64 GB"
+  },
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "build": "cargo build --locked --release; fat LTO; one codegen unit; no target-cpu override",
+  "power_before": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22806627)\t62%; charging; 0:58 remaining present: true",
+    "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+  },
+  "load_before": [
+    51.6123046875,
+    73.21240234375,
+    41.4208984375
+  ],
+  "runs": [
+    {
+      "case": "reference-mk",
+      "scheme": "classical",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/classical/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/classical/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 3.711263208,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 281156,
+          "rejected": 311958,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.05692843445572405,
+          "accepted": 68702,
+          "rejected": 118377,
+          "failed": 109056
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 9587,
+          "rejected": 257989,
+          "failed": 29337
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 54,
+          "rejected": 25765,
+          "failed": 33347
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 182,
+          "rejected": 45122,
+          "failed": 14039
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6664087006608621,
+          "accepted": 14117,
+          "rejected": 28866,
+          "failed": 16614
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.42558653261197105,
+          "accepted": 14143,
+          "rejected": 45306,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.24992905653752215,
+          "accepted": 14306,
+          "rejected": 45269,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.21744179951007095,
+          "accepted": 14078,
+          "rejected": 12295,
+          "failed": 32810
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.22853790982411357,
+          "accepted": 437,
+          "rejected": 1467,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.47094271798996096,
+          "accepted": 14090,
+          "rejected": 45781,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.25800805370838875,
+          "accepted": 93755,
+          "rejected": 301995,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "2a798e197fa922da2cbfdbfb2be3fa7a16d1cb6a060f4d336f11e303efea27b8",
+        "trees.nexus": "70e35d67ea37e75a592a788d92050f2db13cb56b73b32ec58dfa28b40a9abb75",
+        "run.json": "80cad5fb28dc25f636f3689d466c3f6f6c625b4ce76998619cdafe94986171f3"
+      },
+      "scientific_sha256": {
+        "trace.log": "17d023ad4b548932974b29309bc0b4ff3eacc99ecdc641c831c76d241c2e936b",
+        "trees.nexus": "70e35d67ea37e75a592a788d92050f2db13cb56b73b32ec58dfa28b40a9abb75"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "sigma-frequency",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/sigma-frequency/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/sigma-frequency/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=21",
+        "--weight",
+        "clock_sigma_scale=12"
+      ],
+      "wall_seconds": 3.217555208,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 21.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 197011,
+          "rejected": 218682,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.05711886098747325,
+          "accepted": 68751,
+          "rejected": 119243,
+          "failed": 108144
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 9675,
+          "rejected": 257113,
+          "failed": 29273
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 54,
+          "rejected": 25852,
+          "failed": 33952
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 185,
+          "rejected": 44922,
+          "failed": 13894
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6501157235066551,
+          "accepted": 14032,
+          "rejected": 29198,
+          "failed": 16450
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4279839956611413,
+          "accepted": 14137,
+          "rejected": 45346,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2543655534655756,
+          "accepted": 14177,
+          "rejected": 45145,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.18019236831819452,
+          "accepted": 13970,
+          "rejected": 12665,
+          "failed": 32608
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2169648085955497,
+          "accepted": 466,
+          "rejected": 1499,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 12.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5097730661787941,
+          "accepted": 55617,
+          "rejected": 182061,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.18048132938319267,
+          "accepted": 94174,
+          "rejected": 301704,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "541532e599ec44f5901e28ebbb53dfa803fa46e4da62cbe524e3651ff797f5ae",
+        "trees.nexus": "b243860122b9ecfce2224c43baaae0e42f9fe470a70ca3ea7e0cdc66e13192df",
+        "run.json": "e29ae63cdd8b0cd8935ffb329d7593423a32f4bc1ac0b7e99ce9e00af3b06b32"
+      },
+      "scientific_sha256": {
+        "trace.log": "7d710687d904070606d208e04bfb99bc3d719205edbc7f6236b7ee81698dbcf3",
+        "trees.nexus": "b243860122b9ecfce2224c43baaae0e42f9fe470a70ca3ea7e0cdc66e13192df"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "time-rates",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/time-rates/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/time-rates/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2"
+      ],
+      "wall_seconds": 3.5586780829999993,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 167900,
+          "rejected": 187954,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.057048064489603444,
+          "accepted": 68726,
+          "rejected": 118047,
+          "failed": 109390
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 10093,
+          "rejected": 257718,
+          "failed": 29445
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 60,
+          "rejected": 25669,
+          "failed": 33298
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 196,
+          "rejected": 45187,
+          "failed": 14247
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6660089763490135,
+          "accepted": 4460,
+          "rejected": 9619,
+          "failed": 5484
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4381314049235128,
+          "accepted": 14195,
+          "rejected": 45394,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2512331780318439,
+          "accepted": 14313,
+          "rejected": 45275,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.1913982847955762,
+          "accepted": 14100,
+          "rejected": 12292,
+          "failed": 32660
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.21313628998575568,
+          "accepted": 479,
+          "rejected": 1477,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5189824012497285,
+          "accepted": 13761,
+          "rejected": 45418,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.18808945218801412,
+          "accepted": 94356,
+          "rejected": 301794,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 60964,
+          "rejected": 176546,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7911409483523999,
+          "accepted": 9290,
+          "rejected": 20345,
+          "failed": 9848
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "d3a9dacfc2f3931b446cbd77413356ad86919043f4f420871c1deab32989f769",
+        "trees.nexus": "bf5ebb2c4980b05d1885c5244c18b266c4129d4a3b1dba27c7a77adca29e5275",
+        "run.json": "5a387e5eaeb437b29d9fcea9c3854f894a7bf5b4d3dac4472eda1f79a92a8c4b"
+      },
+      "scientific_sha256": {
+        "trace.log": "2fd2163207d6f33172debfe5621e53ee6d6d35cd3256eb8f1eafeea28f57a158",
+        "trees.nexus": "bf5ebb2c4980b05d1885c5244c18b266c4129d4a3b1dba27c7a77adca29e5275"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "sigma-rates",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/sigma-rates/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/sigma-rates/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 3.7597858749999986,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 281027,
+          "rejected": 311471,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.059741783950214955,
+          "accepted": 68946,
+          "rejected": 118417,
+          "failed": 109617
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 9703,
+          "rejected": 257657,
+          "failed": 29441
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 58,
+          "rejected": 25449,
+          "failed": 33698
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 188,
+          "rejected": 45146,
+          "failed": 14123
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6294778991054718,
+          "accepted": 13963,
+          "rejected": 29124,
+          "failed": 16306
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.41486044986327225,
+          "accepted": 14152,
+          "rejected": 45457,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2461967254075716,
+          "accepted": 14272,
+          "rejected": 44841,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2611088751259985,
+          "accepted": 14165,
+          "rejected": 12554,
+          "failed": 32733
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.204785377441566,
+          "accepted": 473,
+          "rejected": 1481,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.4972311007291368,
+          "accepted": 4637,
+          "rejected": 15075,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.18799638852738956,
+          "accepted": 94215,
+          "rejected": 301894,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2260595622181825,
+          "accepted": 9483,
+          "rejected": 30234,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "ca559979faee8ab1cce5254b4f7d3f856630e6c42ab8d02fb03a69606f7a32d8",
+        "trees.nexus": "2f6b05edeead57b001fb4f17a4044b8148bc88fc573d186ca521b91babbdb0c1",
+        "run.json": "0c145accd85aa080c468927207505bf136b118caea325c33d2067a53fe34ce84"
+      },
+      "scientific_sha256": {
+        "trace.log": "7ba58e499e20fc28c0dadeb209ff8d45b36c1e556b5fe141b67f04f84a4cdba2",
+        "trees.nexus": "2f6b05edeead57b001fb4f17a4044b8148bc88fc573d186ca521b91babbdb0c1"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "combined",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/combined/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/combined/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 3.7081773750000018,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 167266,
+          "rejected": 188635,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.05236553940799313,
+          "accepted": 68644,
+          "rejected": 118894,
+          "failed": 109047
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 9476,
+          "rejected": 258232,
+          "failed": 29462
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 64,
+          "rejected": 25738,
+          "failed": 33584
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 178,
+          "rejected": 45140,
+          "failed": 14031
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6684324920560829,
+          "accepted": 4480,
+          "rejected": 9499,
+          "failed": 5568
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4380188639316461,
+          "accepted": 14165,
+          "rejected": 45274,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.23903353873106334,
+          "accepted": 14483,
+          "rejected": 45486,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.22184827009583818,
+          "accepted": 14068,
+          "rejected": 12201,
+          "failed": 32578
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.21986634621119738,
+          "accepted": 465,
+          "rejected": 1462,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5221984019027281,
+          "accepted": 4562,
+          "rejected": 15124,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.19235293643440507,
+          "accepted": 94035,
+          "rejected": 301976,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 58853,
+          "rejected": 178078,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7627808499466071,
+          "accepted": 9261,
+          "rejected": 20466,
+          "failed": 9865
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.23399132990271004,
+          "accepted": 9411,
+          "rejected": 30249,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "5a7e126051a62f3f821eb21fe2e907767e1a12258288e98a7e20fb41b45024ec",
+        "trees.nexus": "4f74072fdec09c25cbc3f2714e21182f9c1804a4a217a90bc3a06f901c5556f0",
+        "run.json": "2c0b9cead7d3a2cd7fb7481cc40c24ad4951d1a9aeb1ba4687851853341c716c"
+      },
+      "scientific_sha256": {
+        "trace.log": "b1d520fec0488bf98e7c7f81b4b35573b0c4ea14a05acc401dc1717d2bb630e4",
+        "trees.nexus": "4f74072fdec09c25cbc3f2714e21182f9c1804a4a217a90bc3a06f901c5556f0"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "sigma-frequency",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/sigma-frequency/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/sigma-frequency/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=21",
+        "--weight",
+        "clock_sigma_scale=12"
+      ],
+      "wall_seconds": 3.2076497089999982,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 21.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 196082,
+          "rejected": 218556,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.05415915775924629,
+          "accepted": 69080,
+          "rejected": 119620,
+          "failed": 108630
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 10079,
+          "rejected": 256978,
+          "failed": 29429
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 66,
+          "rejected": 25815,
+          "failed": 33828
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 169,
+          "rejected": 45380,
+          "failed": 13937
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6634843229346699,
+          "accepted": 13814,
+          "rejected": 29103,
+          "failed": 16194
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4327335691291419,
+          "accepted": 14030,
+          "rejected": 45120,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.24871065402027223,
+          "accepted": 14186,
+          "rejected": 45403,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.188449085377434,
+          "accepted": 14100,
+          "rejected": 12286,
+          "failed": 32548
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2408993366403957,
+          "accepted": 472,
+          "rejected": 1565,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 12.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.4981477354536972,
+          "accepted": 55680,
+          "rejected": 182274,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2537351029787375,
+          "accepted": 93818,
+          "rejected": 301758,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "ef7dffa643c282030356e4856bfd4d08efcdc577cd2d3fce8235851a05cbe71f",
+        "trees.nexus": "d36f92261ea877cf8de6e19f924ed0fddd167b5b1d0aa32fa95776484f770cb0",
+        "run.json": "f50c1e40c995f06eede99773873df9e9e12fdd026e9185f5b9aec48bf4cc8851"
+      },
+      "scientific_sha256": {
+        "trace.log": "fe219bf4a8b89f2f15bef0169aeebbc94074fc27e92f63b3f779e291d039369a",
+        "trees.nexus": "d36f92261ea877cf8de6e19f924ed0fddd167b5b1d0aa32fa95776484f770cb0"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "time-rates",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/time-rates/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/time-rates/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2"
+      ],
+      "wall_seconds": 3.5214554579999984,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 168707,
+          "rejected": 187977,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.05236413908549506,
+          "accepted": 68600,
+          "rejected": 118056,
+          "failed": 109987
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 10341,
+          "rejected": 256426,
+          "failed": 29568
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 63,
+          "rejected": 25550,
+          "failed": 33303
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 197,
+          "rejected": 45104,
+          "failed": 13967
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6771535775738379,
+          "accepted": 4561,
+          "rejected": 9605,
+          "failed": 5471
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.42794331154910215,
+          "accepted": 14049,
+          "rejected": 45326,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.25645885460078466,
+          "accepted": 14243,
+          "rejected": 45334,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.16460953709251877,
+          "accepted": 14246,
+          "rejected": 12603,
+          "failed": 32343
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.21597882610845887,
+          "accepted": 485,
+          "rejected": 1471,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.47497956796443513,
+          "accepted": 13961,
+          "rejected": 45380,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.3151272435462581,
+          "accepted": 93253,
+          "rejected": 301884,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 61862,
+          "rejected": 176571,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.8343689921836379,
+          "accepted": 9186,
+          "rejected": 20452,
+          "failed": 9868
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "375ff4f1eea77c319201b5df0faa033af5a5574ac456872c9b46e19fa0756ade",
+        "trees.nexus": "909ee75363e8819c81519e7b940c168372cd7b74d188941b9d785393a20fafb6",
+        "run.json": "220db9851b4c69b9407ed451cb3f401d853c4382dc15d068df5dbd151ee90b3d"
+      },
+      "scientific_sha256": {
+        "trace.log": "744c153631377bfc222d6331e094d240b4beb8b2edab6aa63af18a547e646ce2",
+        "trees.nexus": "909ee75363e8819c81519e7b940c168372cd7b74d188941b9d785393a20fafb6"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "sigma-rates",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/sigma-rates/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/sigma-rates/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 3.6482430830000006,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 279642,
+          "rejected": 313915,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.05581849087701612,
+          "accepted": 68937,
+          "rejected": 118013,
+          "failed": 110089
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 10053,
+          "rejected": 256765,
+          "failed": 29479
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 50,
+          "rejected": 25967,
+          "failed": 33537
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 197,
+          "rejected": 45307,
+          "failed": 14069
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6563605302573944,
+          "accepted": 13806,
+          "rejected": 28853,
+          "failed": 16318
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4324178899839743,
+          "accepted": 14150,
+          "rejected": 45017,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2704877206177812,
+          "accepted": 14087,
+          "rejected": 45242,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.16760838343426493,
+          "accepted": 14159,
+          "rejected": 12238,
+          "failed": 32673
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.24468098178648887,
+          "accepted": 473,
+          "rejected": 1527,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.508407199908734,
+          "accepted": 4642,
+          "rejected": 15205,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.1752246786471827,
+          "accepted": 93933,
+          "rejected": 301906,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.23415299180908042,
+          "accepted": 9421,
+          "rejected": 30330,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "5afc29f81f43705d5a108b478f6addc2b265d7c1cfefb986d603a8ebbad5a4ff",
+        "trees.nexus": "32f2e7626cdc8c35186f143ad5c93773ef740bf3159429d279e104e3e7957f94",
+        "run.json": "875495e1b6f8b9cc4ccc47b9fcf98b6c9a680558c5b90ac81ea8b73ac975b1be"
+      },
+      "scientific_sha256": {
+        "trace.log": "bbfe9fe8a144e5e987d0835d729a0c1763067809d3b2fc297186fbf827fd76bc",
+        "trees.nexus": "32f2e7626cdc8c35186f143ad5c93773ef740bf3159429d279e104e3e7957f94"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "combined",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/combined/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/combined/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 3.7058782080000015,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 167679,
+          "rejected": 188173,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.056639150113706106,
+          "accepted": 68944,
+          "rejected": 118895,
+          "failed": 109364
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 9714,
+          "rejected": 258135,
+          "failed": 29603
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 50,
+          "rejected": 25561,
+          "failed": 33366
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 177,
+          "rejected": 45076,
+          "failed": 14122
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6586533066560368,
+          "accepted": 4612,
+          "rejected": 9408,
+          "failed": 5492
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4229636915393028,
+          "accepted": 14035,
+          "rejected": 45295,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.24687634034962183,
+          "accepted": 14150,
+          "rejected": 45086,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.18541667124259031,
+          "accepted": 14160,
+          "rejected": 12230,
+          "failed": 32904
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2339613379574965,
+          "accepted": 437,
+          "rejected": 1452,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5119685459118225,
+          "accepted": 4617,
+          "rejected": 15315,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.1811920089602383,
+          "accepted": 94078,
+          "rejected": 301362,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 59310,
+          "rejected": 178057,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7718334458615553,
+          "accepted": 9336,
+          "rejected": 20353,
+          "failed": 9966
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2310430544212812,
+          "accepted": 9367,
+          "rejected": 30119,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "42d13901ffa932efe00e117436d28cc3cb03a0703d75773b275e6e2a6f3b6e53",
+        "trees.nexus": "4a0e7244ca69a50b4e8858ee0accb643930cfef61c0dd15771de411f0f87bda0",
+        "run.json": "d41e95d44609261d3a8396280e7132a001cac268a85954eff0559839f0def8cb"
+      },
+      "scientific_sha256": {
+        "trace.log": "a204c7242c26c29246f4015a76a32e598f60fc397b648354dccdaebdafdfc313",
+        "trees.nexus": "4a0e7244ca69a50b4e8858ee0accb643930cfef61c0dd15771de411f0f87bda0"
+      }
+    },
+    {
+      "case": "reference-mk",
+      "scheme": "classical",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mk/classical/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mk/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mk/classical/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 3.5604689580000013,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 280197,
+          "rejected": 314166,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.05652259684344249,
+          "accepted": 68733,
+          "rejected": 118404,
+          "failed": 109584
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 9892,
+          "rejected": 256576,
+          "failed": 29335
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 49,
+          "rejected": 25769,
+          "failed": 33528
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 200,
+          "rejected": 45246,
+          "failed": 13908
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6422733874918788,
+          "accepted": 13802,
+          "rejected": 28761,
+          "failed": 16422
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.43816280811914093,
+          "accepted": 14158,
+          "rejected": 45051,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2664401163666173,
+          "accepted": 14124,
+          "rejected": 45151,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.20286608700626124,
+          "accepted": 14257,
+          "rejected": 12306,
+          "failed": 32875
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.229614295060342,
+          "accepted": 481,
+          "rejected": 1542,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5104654453235847,
+          "accepted": 13755,
+          "rejected": 45446,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.16810705079395838,
+          "accepted": 94312,
+          "rejected": 301970,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "187051e0dabcbb6b70e4c0a9f8ec55bad028936b00fa3e8c049358afbf45425a",
+        "trees.nexus": "278c74ee81ecf4cb5b455ae47611aa597b8f7f0ab86d67784a4a919023f81b74",
+        "run.json": "f2e994cd0fa8d035894c655c6acf072c6aef8e0079f5ef493b09f44bf8aba446"
+      },
+      "scientific_sha256": {
+        "trace.log": "c28d537ada89110120c7ec452d379b75dd6576300b430098cda4fed87bac5e5e",
+        "trees.nexus": "278c74ee81ecf4cb5b455ae47611aa597b8f7f0ab86d67784a4a919023f81b74"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "classical",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/classical/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/classical/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 3.765510415999998,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 263485,
+          "rejected": 328992,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0004018351927240158,
+          "accepted": 68574,
+          "rejected": 109463,
+          "failed": 118526
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 67,
+          "rejected": 268316,
+          "failed": 29755
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 4,
+          "rejected": 25788,
+          "failed": 33829
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 7,
+          "rejected": 45103,
+          "failed": 13900
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6581843068931766,
+          "accepted": 13974,
+          "rejected": 28415,
+          "failed": 16962
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2220955964215873,
+          "accepted": 14330,
+          "rejected": 45232,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.27146707172860707,
+          "accepted": 14338,
+          "rejected": 14850,
+          "failed": 30477
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.37248213451592455,
+          "accepted": 13940,
+          "rejected": 13972,
+          "failed": 31089
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.14549987178713056,
+          "accepted": 447,
+          "rejected": 1404,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.49570091000612865,
+          "accepted": 13905,
+          "rejected": 45497,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.18282528123602276,
+          "accepted": 94003,
+          "rejected": 301356,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "6688d19b89321fd798a9dd35e5ac5795fb399ce65f26b283cbf76e5b19e790bf",
+        "trees.nexus": "ed32231092302800f36418495c9e19e40d6b7ce8919ed1fdedde214c760e0ef1",
+        "run.json": "17267ce6eb5f61a1832feeabdac8c16fa1b83c7e6ac55944468d19bca46deded"
+      },
+      "scientific_sha256": {
+        "trace.log": "fb8eac77fa3465def11aaef53fe3d5590a3f03b9ac128dca4b235789e4365c3b",
+        "trees.nexus": "ed32231092302800f36418495c9e19e40d6b7ce8919ed1fdedde214c760e0ef1"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "sigma-frequency",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/sigma-frequency/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/sigma-frequency/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=21",
+        "--weight",
+        "clock_sigma_scale=12"
+      ],
+      "wall_seconds": 3.5452803749999973,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 21.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 184125,
+          "rejected": 230965,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0005694871699525557,
+          "accepted": 68631,
+          "rejected": 108892,
+          "failed": 118677
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 92,
+          "rejected": 267149,
+          "failed": 29525
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 2,
+          "rejected": 25914,
+          "failed": 33611
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 4,
+          "rejected": 45214,
+          "failed": 14020
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.684491494294004,
+          "accepted": 13977,
+          "rejected": 28576,
+          "failed": 16981
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.24016132693202505,
+          "accepted": 14184,
+          "rejected": 45221,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.28922839372844317,
+          "accepted": 14208,
+          "rejected": 14494,
+          "failed": 30367
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.259399759249077,
+          "accepted": 14203,
+          "rejected": 14140,
+          "failed": 31277
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.129491029281517,
+          "accepted": 455,
+          "rejected": 1496,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 12.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.4992779462799497,
+          "accepted": 55665,
+          "rejected": 181998,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.19437247260644935,
+          "accepted": 93907,
+          "rejected": 302030,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "db7e28517be6395016eab548b4b163bcecb7f8b4d81edd05f0d78fd0873e6b78",
+        "trees.nexus": "6bb00cdf187320911146cd1bce1152114969d147a74db3a98d3793c75488cc4d",
+        "run.json": "95e5bdc0eef1111640c644f427ba67984b8dc2c92306751068deb57bc74b3b64"
+      },
+      "scientific_sha256": {
+        "trace.log": "5e167f39a1d89dd3cf64aa456ded1e6e759ac616868ab676ccd2f176835484a1",
+        "trees.nexus": "6bb00cdf187320911146cd1bce1152114969d147a74db3a98d3793c75488cc4d"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "time-rates",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/time-rates/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/time-rates/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2"
+      ],
+      "wall_seconds": 3.748300999999998,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 158195,
+          "rejected": 198169,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0005893881045024769,
+          "accepted": 68478,
+          "rejected": 113061,
+          "failed": 114287
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 102,
+          "rejected": 267497,
+          "failed": 29665
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 4,
+          "rejected": 25799,
+          "failed": 33324
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 5,
+          "rejected": 45394,
+          "failed": 13983
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6913920637689028,
+          "accepted": 4617,
+          "rejected": 9548,
+          "failed": 5659
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.22735940393135462,
+          "accepted": 14190,
+          "rejected": 45385,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.29588237482192986,
+          "accepted": 14281,
+          "rejected": 14254,
+          "failed": 31148
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.31512577486314486,
+          "accepted": 14164,
+          "rejected": 13562,
+          "failed": 31694
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.12595723743463166,
+          "accepted": 486,
+          "rejected": 1453,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5192758010355034,
+          "accepted": 13869,
+          "rejected": 45448,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.21890210660914797,
+          "accepted": 93886,
+          "rejected": 301517,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 63831,
+          "rejected": 173599,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7850690207672721,
+          "accepted": 9198,
+          "rejected": 20124,
+          "failed": 10124
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "187ee125294b456f8deefc96a6b3791db1911f399e98c82c43a9f828d3d7b77d",
+        "trees.nexus": "51ffd14223e538654b710545a3c1c8bd0caee8434455a88a8321961cede7c040",
+        "run.json": "53fd2c0c42ce5d3b6be1cd192bccf8b0d5761e676669e171d8b3dbae1e53f303"
+      },
+      "scientific_sha256": {
+        "trace.log": "79ba701bcf831ffa08ec1951ef69244d320707426478f63dbbcd35c9c28f15fb",
+        "trees.nexus": "51ffd14223e538654b710545a3c1c8bd0caee8434455a88a8321961cede7c040"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "sigma-rates",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/sigma-rates/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/sigma-rates/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 4.085730042000002,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 261034,
+          "rejected": 331590,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0005158691474627642,
+          "accepted": 68887,
+          "rejected": 110486,
+          "failed": 118000
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 72,
+          "rejected": 267126,
+          "failed": 29704
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 3,
+          "rejected": 25843,
+          "failed": 33517
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 3,
+          "rejected": 45260,
+          "failed": 14083
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6505284745625226,
+          "accepted": 14059,
+          "rejected": 28416,
+          "failed": 16964
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2213846713624874,
+          "accepted": 14162,
+          "rejected": 45018,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.30403674974741624,
+          "accepted": 14158,
+          "rejected": 14153,
+          "failed": 30924
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.33223147681866727,
+          "accepted": 14018,
+          "rejected": 14177,
+          "failed": 31164
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.11679357710400036,
+          "accepted": 484,
+          "rejected": 1504,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.4935828762438046,
+          "accepted": 4649,
+          "rejected": 15165,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.20244861001385123,
+          "accepted": 94157,
+          "rejected": 301818,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.22239053361655817,
+          "accepted": 9358,
+          "rejected": 30044,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "2d58e0c89126b072c4684250b1ac1e016f3336ffcc5c70ae94d6540ba50a40e2",
+        "trees.nexus": "228010b716ccb43c6dc8b92ca4823a7ed20d86047337e161fe3413fb6d2f9daf",
+        "run.json": "db07c7c7273c5c556067ca943d652fe59218f76abcc6d7ab53630e9c612ff729"
+      },
+      "scientific_sha256": {
+        "trace.log": "97f7fa43f20c77f60b584cb64d9b908713d744e6f14dd006f619f71015f673ab",
+        "trees.nexus": "228010b716ccb43c6dc8b92ca4823a7ed20d86047337e161fe3413fb6d2f9daf"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "combined",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/combined/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/combined/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 4.0910726250000025,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 157585,
+          "rejected": 198587,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0007275635059946142,
+          "accepted": 68576,
+          "rejected": 111721,
+          "failed": 116160
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 132,
+          "rejected": 267366,
+          "failed": 29603
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 3,
+          "rejected": 25837,
+          "failed": 33447
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 3,
+          "rejected": 45104,
+          "failed": 13841
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6966207809124317,
+          "accepted": 4529,
+          "rejected": 9334,
+          "failed": 5590
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.22856690181241285,
+          "accepted": 14157,
+          "rejected": 45130,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2751780796686117,
+          "accepted": 14300,
+          "rejected": 15069,
+          "failed": 30143
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.3150987093337589,
+          "accepted": 14323,
+          "rejected": 14014,
+          "failed": 31437
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.14022126661397116,
+          "accepted": 467,
+          "rejected": 1438,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5065081167497905,
+          "accepted": 4646,
+          "rejected": 15235,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.21156369622415785,
+          "accepted": 93981,
+          "rejected": 302210,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 59542,
+          "rejected": 177473,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.8129040843807503,
+          "accepted": 9230,
+          "rejected": 20144,
+          "failed": 10008
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2257391918904718,
+          "accepted": 9436,
+          "rejected": 30199,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "f7aff36908f15e48e2f4bf443c936d712566cf8667c85e0fd9c444a0037e2c7e",
+        "trees.nexus": "b2cb48f00b405f6b8d94cd0ebe0b39db9aa41c715c752b43f0ec225d396d42d6",
+        "run.json": "00a58639fba942c6ef533ca69fa44871e920b7cccaf1cace59f8e39852ad9ee6"
+      },
+      "scientific_sha256": {
+        "trace.log": "ea84ebbc4dca0d1189374753eb40d1dcb262c3e89b87a1390e0f88cd029c9834",
+        "trees.nexus": "b2cb48f00b405f6b8d94cd0ebe0b39db9aa41c715c752b43f0ec225d396d42d6"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "sigma-frequency",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/sigma-frequency/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/sigma-frequency/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=21",
+        "--weight",
+        "clock_sigma_scale=12"
+      ],
+      "wall_seconds": 4.024281207999998,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 21.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 184425,
+          "rejected": 230877,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0006940669809631815,
+          "accepted": 68967,
+          "rejected": 111431,
+          "failed": 116291
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 131,
+          "rejected": 267234,
+          "failed": 29693
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 3,
+          "rejected": 25961,
+          "failed": 33569
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 2,
+          "rejected": 45392,
+          "failed": 13990
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.684870531715096,
+          "accepted": 13828,
+          "rejected": 28484,
+          "failed": 16932
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.24014414201111348,
+          "accepted": 14092,
+          "rejected": 45076,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2827543454841405,
+          "accepted": 14053,
+          "rejected": 14518,
+          "failed": 30503
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.3113851471260193,
+          "accepted": 14096,
+          "rejected": 13736,
+          "failed": 31458
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.132683215449635,
+          "accepted": 493,
+          "rejected": 1566,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 12.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5180962301226424,
+          "accepted": 55443,
+          "rejected": 181709,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.17091169245792925,
+          "accepted": 94146,
+          "rejected": 301901,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "5d4ed78e55ae95fe0302a9b28549c09553d0681bf878602d80d9de4cd923262e",
+        "trees.nexus": "239de4a2fcc5920e0fb9d64afa4f17c32008e350d3238b5588a534a57f0f0497",
+        "run.json": "1f3c48ebecc47940343e967e1f245a236a7db8e13abfafc43fc8e5560ee60ac1"
+      },
+      "scientific_sha256": {
+        "trace.log": "f14772fe48e898dd946ce522a6cf1bee833e3b0950066ee1ca04e51dc2d265ad",
+        "trees.nexus": "239de4a2fcc5920e0fb9d64afa4f17c32008e350d3238b5588a534a57f0f0497"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "time-rates",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/time-rates/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/time-rates/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2"
+      ],
+      "wall_seconds": 3.914575792000001,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 157461,
+          "rejected": 198013,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0007775026161047459,
+          "accepted": 68927,
+          "rejected": 110356,
+          "failed": 117870
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 79,
+          "rejected": 267131,
+          "failed": 29613
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 6,
+          "rejected": 25690,
+          "failed": 33425
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 3,
+          "rejected": 45287,
+          "failed": 13945
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.673692990514398,
+          "accepted": 4697,
+          "rejected": 9392,
+          "failed": 5660
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.23425227317336375,
+          "accepted": 14048,
+          "rejected": 44809,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2904691674787696,
+          "accepted": 14162,
+          "rejected": 14965,
+          "failed": 30279
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.26827133097738626,
+          "accepted": 14272,
+          "rejected": 14171,
+          "failed": 31087
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.14646003273306518,
+          "accepted": 458,
+          "rejected": 1449,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5073147718877791,
+          "accepted": 13750,
+          "rejected": 45552,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.192242924755792,
+          "accepted": 93938,
+          "rejected": 301437,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 62671,
+          "rejected": 176032,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7930076561070077,
+          "accepted": 9181,
+          "rejected": 20108,
+          "failed": 10076
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "dab1ba40b35c99eea8a38534909ea92634a0c5b95af9bea21aea0cf0082f1df1",
+        "trees.nexus": "6beeae93680d1a464ef641cb22fe756c7e058085b5c423f3c0dc1889436eac48",
+        "run.json": "6dc222f15b9f0b7d43cdcebd80360cdfe534cb9533f1e8f8fcbcfc4081cf371f"
+      },
+      "scientific_sha256": {
+        "trace.log": "b6de310621619967ffa1c34c5c73436364740f66239c868faa2d159ea3115e9c",
+        "trees.nexus": "6beeae93680d1a464ef641cb22fe756c7e058085b5c423f3c0dc1889436eac48"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "sigma-rates",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/sigma-rates/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/sigma-rates/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 3.9582060830000003,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 263487,
+          "rejected": 329400,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0004676086068030997,
+          "accepted": 68689,
+          "rejected": 110156,
+          "failed": 118183
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 91,
+          "rejected": 266151,
+          "failed": 29712
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 4,
+          "rejected": 25750,
+          "failed": 33756
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 4,
+          "rejected": 45577,
+          "failed": 14217
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.664743308374058,
+          "accepted": 13885,
+          "rejected": 28079,
+          "failed": 17020
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.23073557733333042,
+          "accepted": 14182,
+          "rejected": 45067,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.28284765468885426,
+          "accepted": 14303,
+          "rejected": 14358,
+          "failed": 30784
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.34062481162292796,
+          "accepted": 14199,
+          "rejected": 13959,
+          "failed": 31471
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.11604687473309401,
+          "accepted": 471,
+          "rejected": 1487,
+          "failed": 2
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5152760015743371,
+          "accepted": 4653,
+          "rejected": 15214,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.19647084624148595,
+          "accepted": 94032,
+          "rejected": 302109,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2303201920039919,
+          "accepted": 9418,
+          "rejected": 30130,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "09e31e5ebdd5228f0d6ed1589107d48506cb2f8b0e89429e081f109400cc463f",
+        "trees.nexus": "c4638a8011a38932b83b18a8b1b53f52a77800c338a62e1798899285c2526fc2",
+        "run.json": "133bd0afa92238488c52729f8bc28533f0ff96b1a5971ac1a2d80ef2bcd2e94e"
+      },
+      "scientific_sha256": {
+        "trace.log": "306e242f195b6afb4a5242fa9a72756c8a5a7ed642596548ccad5b644693e42a",
+        "trees.nexus": "c4638a8011a38932b83b18a8b1b53f52a77800c338a62e1798899285c2526fc2"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "combined",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/combined/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/combined/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 3.9932362500000096,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 157574,
+          "rejected": 197860,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.000593006136320449,
+          "accepted": 68764,
+          "rejected": 111432,
+          "failed": 116824
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 90,
+          "rejected": 266876,
+          "failed": 29691
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 2,
+          "rejected": 25625,
+          "failed": 33334
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 5,
+          "rejected": 45233,
+          "failed": 14017
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6725027569298954,
+          "accepted": 4674,
+          "rejected": 9438,
+          "failed": 5588
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.23369297681054008,
+          "accepted": 14116,
+          "rejected": 45010,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.28980243631223357,
+          "accepted": 14123,
+          "rejected": 14682,
+          "failed": 30675
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.30179002120016024,
+          "accepted": 14144,
+          "rejected": 13462,
+          "failed": 31348
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.12962503870314968,
+          "accepted": 485,
+          "rejected": 1464,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5060421487075281,
+          "accepted": 4665,
+          "rejected": 15440,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.1925455808122142,
+          "accepted": 94130,
+          "rejected": 301784,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 60119,
+          "rejected": 178000,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.8055099613219681,
+          "accepted": 9239,
+          "rejected": 20340,
+          "failed": 9978
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.22461048847783566,
+          "accepted": 9471,
+          "rejected": 30298,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "d808d8fabc514b2612eb183c56b586db3cecc89928ce2ee5d67664ac969f56af",
+        "trees.nexus": "905e43dcc6119aadf80979851fde0032822360e9d9dca9608bf8cd167cc49125",
+        "run.json": "b0185ffe41dea8c6149b5ad260ccdef50987712feff52923d5159e75cf6ddd7c"
+      },
+      "scientific_sha256": {
+        "trace.log": "8ab4d7bb95daaa8b3cbbcf5bebc8c56e07ce53e33567e6886bc7235a4b44354c",
+        "trees.nexus": "905e43dcc6119aadf80979851fde0032822360e9d9dca9608bf8cd167cc49125"
+      }
+    },
+    {
+      "case": "reference-mkv",
+      "scheme": "classical",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "reference-mkv/classical/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/reference-mkv/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/reference-mkv/classical/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "variable",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 3.619560000000007,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 261961,
+          "rejected": 331035,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0008111873898972533,
+          "accepted": 69106,
+          "rejected": 106995,
+          "failed": 121012
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 98,
+          "rejected": 266262,
+          "failed": 29927
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 2,
+          "rejected": 25722,
+          "failed": 33346
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 8,
+          "rejected": 45556,
+          "failed": 14147
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7126939849374272,
+          "accepted": 13820,
+          "rejected": 28402,
+          "failed": 16963
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2510106371841015,
+          "accepted": 14121,
+          "rejected": 44988,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2880108705311305,
+          "accepted": 14272,
+          "rejected": 15404,
+          "failed": 30134
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2377164915848175,
+          "accepted": 14178,
+          "rejected": 15301,
+          "failed": 30221
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.1318156751163628,
+          "accepted": 482,
+          "rejected": 1536,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5079187880752545,
+          "accepted": 14010,
+          "rejected": 45873,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2119715154170739,
+          "accepted": 93825,
+          "rejected": 301293,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "cb9f8a799e20cdbf07bc1c0945b600f65b3594670e712d195f9b3638907b1eab",
+      "sha256": {
+        "trace.log": "bf6bd53380b2421582cba16d96a680b19a3cf8e7daaff780b7097208fa1fccb0",
+        "trees.nexus": "cfbedf20070bf13e3c5a8e2bda16f6f403cf890cddd51622c6584fceb487d576",
+        "run.json": "790ef04944597665bf3a9633b62646bc8779dd959882796396b4c997e486e57b"
+      },
+      "scientific_sha256": {
+        "trace.log": "1e2bd02103623385bd054b049de078ea8d3ce27e4b0ef103141255be8e39ac97",
+        "trees.nexus": "cfbedf20070bf13e3c5a8e2bda16f6f403cf890cddd51622c6584fceb487d576"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "classical",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/classical/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/classical/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 5.416379166999988,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 338724,
+          "rejected": 254735,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.06633113161099136,
+          "accepted": 68730,
+          "rejected": 113500,
+          "failed": 113761
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 41413,
+          "rejected": 229631,
+          "failed": 25601
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 305,
+          "rejected": 25596,
+          "failed": 33488
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 464,
+          "rejected": 45065,
+          "failed": 14189
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6569287884091716,
+          "accepted": 13969,
+          "rejected": 28857,
+          "failed": 16467
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4041035691965221,
+          "accepted": 14067,
+          "rejected": 45139,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2785239534877518,
+          "accepted": 14324,
+          "rejected": 45451,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.15519337109832357,
+          "accepted": 14176,
+          "rejected": 15957,
+          "failed": 29122
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2135338872246091,
+          "accepted": 476,
+          "rejected": 1493,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.4972768089762479,
+          "accepted": 13899,
+          "rejected": 45432,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.15998021273363194,
+          "accepted": 94038,
+          "rejected": 301931,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "041a46522c9da3a46d85f89df3f5c336d79d6f33e91f62ceddcc18e560a764fe",
+        "trees.nexus": "0e50b3fe4a3a80341b81f3f774239922750c135d84bcd52aa67ce56f2238b0d4",
+        "run.json": "08b6af9b10c6c0f2f67fc17d4d20fb50286d963167d927b4c948ded43edddb62"
+      },
+      "scientific_sha256": {
+        "trace.log": "7f72374062e968c0174c260d0c576afe56b7ed54f29352d564823cee04da5b80",
+        "trees.nexus": "0e50b3fe4a3a80341b81f3f774239922750c135d84bcd52aa67ce56f2238b0d4"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "sigma-frequency",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/sigma-frequency/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/sigma-frequency/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=21",
+        "--weight",
+        "clock_sigma_scale=12"
+      ],
+      "wall_seconds": 5.229136124999997,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 21.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 236219,
+          "rejected": 179234,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0660520541427987,
+          "accepted": 68812,
+          "rejected": 113858,
+          "failed": 113214
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 41341,
+          "rejected": 229268,
+          "failed": 25655
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 287,
+          "rejected": 25809,
+          "failed": 33396
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 493,
+          "rejected": 44931,
+          "failed": 13838
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6446988485009949,
+          "accepted": 13927,
+          "rejected": 29096,
+          "failed": 16314
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.42202928369510645,
+          "accepted": 14131,
+          "rejected": 45471,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2622282243043032,
+          "accepted": 14307,
+          "rejected": 45538,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.14845007402990523,
+          "accepted": 14227,
+          "rejected": 15634,
+          "failed": 29823
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.22705958878259141,
+          "accepted": 479,
+          "rejected": 1483,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 12.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5257333735775674,
+          "accepted": 55452,
+          "rejected": 181950,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.15585498817650217,
+          "accepted": 93935,
+          "rejected": 301878,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "b31a1707dcd118f5829edebe9872f3ee7fc3bf3d26a571827d05eb6a17efe30f",
+        "trees.nexus": "1ce8de88f01af04d3042dc6466ddc1620ca3a111edf6848d1c7f44b6454465b7",
+        "run.json": "32c2caa5d782afcaec8420185fd5080ba2287e9ef3b26e44d95c9bb6ea990ff7"
+      },
+      "scientific_sha256": {
+        "trace.log": "6866e75f9a97f13e5b8217c04c51d647ead645ad0900fbf7b33487105278d935",
+        "trees.nexus": "1ce8de88f01af04d3042dc6466ddc1620ca3a111edf6848d1c7f44b6454465b7"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "time-rates",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/time-rates/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/time-rates/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2"
+      ],
+      "wall_seconds": 5.939050500000008,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 203162,
+          "rejected": 153644,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.06498633014902151,
+          "accepted": 68923,
+          "rejected": 113700,
+          "failed": 114076
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 40904,
+          "rejected": 230417,
+          "failed": 25521
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 305,
+          "rejected": 25624,
+          "failed": 33600
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 446,
+          "rejected": 44737,
+          "failed": 13983
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6262772969385165,
+          "accepted": 4624,
+          "rejected": 9669,
+          "failed": 5315
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4208058388085769,
+          "accepted": 14141,
+          "rejected": 45163,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2761457317144338,
+          "accepted": 14238,
+          "rejected": 45173,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.15831318487136795,
+          "accepted": 14239,
+          "rejected": 15679,
+          "failed": 29325
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.23378786629092208,
+          "accepted": 484,
+          "rejected": 1457,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5124249919889079,
+          "accepted": 13838,
+          "rejected": 45267,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.15800528971096095,
+          "accepted": 94101,
+          "rejected": 300982,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 80823,
+          "rejected": 156817,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7213925456739017,
+          "accepted": 9423,
+          "rejected": 20011,
+          "failed": 10189
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "be4fa70b8cd4b75d7ac1e483ab60527851babcdce8f40423d60ab2f7cc9e8c05",
+        "trees.nexus": "c100d3626a39a39304db4bd0e8079558bf3058e679b4f521f769c799e1b8efd3",
+        "run.json": "9be71ad0753e3160e7085246cf480e69db2296d365ecb27672137d6bb418cc19"
+      },
+      "scientific_sha256": {
+        "trace.log": "95642a2f680142f73d6500b751f590757506698a1638875fa180050444b50ffb",
+        "trees.nexus": "c100d3626a39a39304db4bd0e8079558bf3058e679b4f521f769c799e1b8efd3"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "sigma-rates",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/sigma-rates/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/sigma-rates/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 6.336237292000007,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 337712,
+          "rejected": 255841,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.0697755195213646,
+          "accepted": 68833,
+          "rejected": 113116,
+          "failed": 114193
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 41434,
+          "rejected": 230019,
+          "failed": 25819
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 271,
+          "rejected": 25439,
+          "failed": 33848
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 485,
+          "rejected": 44780,
+          "failed": 14226
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6405378100987102,
+          "accepted": 14014,
+          "rejected": 29081,
+          "failed": 16123
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4292750405072996,
+          "accepted": 14074,
+          "rejected": 45313,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.26671701136563475,
+          "accepted": 14222,
+          "rejected": 45199,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.17299582488547827,
+          "accepted": 13954,
+          "rejected": 15526,
+          "failed": 29260
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.22220204017363784,
+          "accepted": 460,
+          "rejected": 1468,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5096503073380004,
+          "accepted": 4663,
+          "rejected": 15367,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.172869131985588,
+          "accepted": 94232,
+          "rejected": 301542,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2612555714434684,
+          "accepted": 9378,
+          "rejected": 30108,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "8f8fb66391604d01ecfc773cdda2daa64cc6e8fbb9eb6246f8f0c0d3275743cf",
+        "trees.nexus": "94df8d43e5bc7f31343930d145393e4000fbb73973209c1d670d938d5c5a700d",
+        "run.json": "95b9975365dd8868ab36cfcbe8a8b72044a2555bb4a5667a2b864b4c9ed98ff6"
+      },
+      "scientific_sha256": {
+        "trace.log": "876beabd1a096b39d08257bb3b1a0caecd9fe93177bc84fc54acc710e50117b1",
+        "trees.nexus": "94df8d43e5bc7f31343930d145393e4000fbb73973209c1d670d938d5c5a700d"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "combined",
+      "seed": 27011,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/combined/27011",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/combined/27011",
+        "--seed",
+        "27011",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 6.066062958000003,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 202264,
+          "rejected": 153865,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.06425708031607491,
+          "accepted": 68559,
+          "rejected": 113652,
+          "failed": 113951
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 40854,
+          "rejected": 231135,
+          "failed": 25787
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 314,
+          "rejected": 25598,
+          "failed": 33519
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 422,
+          "rejected": 44821,
+          "failed": 14059
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6594263467379641,
+          "accepted": 4554,
+          "rejected": 9640,
+          "failed": 5545
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4151969339138716,
+          "accepted": 14119,
+          "rejected": 45132,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.25967182120817406,
+          "accepted": 14257,
+          "rejected": 45145,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.1834982782061825,
+          "accepted": 14051,
+          "rejected": 15127,
+          "failed": 29681
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2202142873037455,
+          "accepted": 471,
+          "rejected": 1473,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5183301734382675,
+          "accepted": 4678,
+          "rejected": 14992,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.1625505962779204,
+          "accepted": 94092,
+          "rejected": 301520,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 76865,
+          "rejected": 160850,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7394884716053439,
+          "accepted": 9166,
+          "rejected": 20040,
+          "failed": 10194
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.26251195509174535,
+          "accepted": 9399,
+          "rejected": 30209,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27011,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "01bdb90c4ee32c2aa928dd4a92f5ca71c12d45289ce407b4cfe472fbf50bdd50",
+        "trees.nexus": "bfa78a69be8dd48e128fbee86b3c4aa190a9621e7ae0c88552dfb710627fd63d",
+        "run.json": "16c43c89d2b2f7d7f20ef4a6f5b623b58e4b04b63a80e0eac836381ecd209c77"
+      },
+      "scientific_sha256": {
+        "trace.log": "abec9fe16904758a6b1e46e8a842624cd9efbca0488ab29eea594f9301cb2148",
+        "trees.nexus": "bfa78a69be8dd48e128fbee86b3c4aa190a9621e7ae0c88552dfb710627fd63d"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "sigma-frequency",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/sigma-frequency/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/sigma-frequency/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=21",
+        "--weight",
+        "clock_sigma_scale=12"
+      ],
+      "wall_seconds": 5.765050875,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 21.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 236858,
+          "rejected": 178073,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.06631769522848664,
+          "accepted": 68870,
+          "rejected": 114369,
+          "failed": 113719
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 41248,
+          "rejected": 229763,
+          "failed": 25661
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 290,
+          "rejected": 25490,
+          "failed": 33490
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 427,
+          "rejected": 44979,
+          "failed": 13987
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.652570871139518,
+          "accepted": 13873,
+          "rejected": 29070,
+          "failed": 16301
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4295910234911497,
+          "accepted": 14008,
+          "rejected": 45036,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.26688045811991057,
+          "accepted": 14215,
+          "rejected": 45340,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.1546750905272547,
+          "accepted": 14181,
+          "rejected": 15419,
+          "failed": 29723
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2269094246217102,
+          "accepted": 465,
+          "rejected": 1525,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 12.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5165162766730055,
+          "accepted": 55432,
+          "rejected": 181457,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.18300830900668502,
+          "accepted": 94325,
+          "rejected": 302406,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "6dbe8726e98dc35d0b86e27207413bbbf6d3524630410cbaec4c9765cd41902e",
+        "trees.nexus": "aaa35c96c316650e6ab601228c3c68acc45c201905cfecad639107fb5913e8dd",
+        "run.json": "04a99512d7cfb08136bdddc00c0731819f3f6347a52bb0d7fe01359c0f9f39f5"
+      },
+      "scientific_sha256": {
+        "trace.log": "0cfb3fbc24413de9abfe558fc4b4fd6bb9a61e96030266b55ad7baf99e6f2971",
+        "trees.nexus": "aaa35c96c316650e6ab601228c3c68acc45c201905cfecad639107fb5913e8dd"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "time-rates",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/time-rates/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/time-rates/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2"
+      ],
+      "wall_seconds": 6.678375958000004,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 202168,
+          "rejected": 153792,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.06973164162201649,
+          "accepted": 68876,
+          "rejected": 113849,
+          "failed": 114167
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 41382,
+          "rejected": 229268,
+          "failed": 25937
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 307,
+          "rejected": 25561,
+          "failed": 33395
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 479,
+          "rejected": 44799,
+          "failed": 13960
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6317154215047256,
+          "accepted": 4683,
+          "rejected": 9598,
+          "failed": 5470
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.42321602283232945,
+          "accepted": 14100,
+          "rejected": 45286,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2622052071199685,
+          "accepted": 14274,
+          "rejected": 45334,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.1778088340738655,
+          "accepted": 14327,
+          "rejected": 15113,
+          "failed": 29950
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.18973451361398988,
+          "accepted": 453,
+          "rejected": 1496,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5185283612598225,
+          "accepted": 13795,
+          "rejected": 45448,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.15781995764344914,
+          "accepted": 93969,
+          "rejected": 301893,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 78678,
+          "rejected": 158994,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7311014874088974,
+          "accepted": 9122,
+          "rejected": 19933,
+          "failed": 10144
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "e0706cf78329566924cf9a8dbcaea8f11c23fc126bdad53a93a678907201f3e1",
+        "trees.nexus": "6edb0d94693e63ebddd53b336cc28f5efe15ac7fb43785d7dd8e5507d6385513",
+        "run.json": "4c74aaadf7935e668b4b721a784c5682b1425a7da18475ef3a6af462c729baf1"
+      },
+      "scientific_sha256": {
+        "trace.log": "60c8a34f56c11059c178ea85a7774e22fee50d322c9c574bd93e3cc2dff576d9",
+        "trees.nexus": "6edb0d94693e63ebddd53b336cc28f5efe15ac7fb43785d7dd8e5507d6385513"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "sigma-rates",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/sigma-rates/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/sigma-rates/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 6.747252375000002,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 338093,
+          "rejected": 256198,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.06547271825317277,
+          "accepted": 68873,
+          "rejected": 113621,
+          "failed": 114370
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 41157,
+          "rejected": 229260,
+          "failed": 25766
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 293,
+          "rejected": 25435,
+          "failed": 33342
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 486,
+          "rejected": 45189,
+          "failed": 14069
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6478008112099326,
+          "accepted": 13798,
+          "rejected": 28908,
+          "failed": 16297
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4216975457578671,
+          "accepted": 14181,
+          "rejected": 45230,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2652690919244303,
+          "accepted": 14195,
+          "rejected": 44759,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.14743965563150596,
+          "accepted": 14144,
+          "rejected": 15555,
+          "failed": 29654
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.21882144198987416,
+          "accepted": 462,
+          "rejected": 1556,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5051276866127132,
+          "accepted": 4658,
+          "rejected": 15135,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.17199202817819648,
+          "accepted": 94092,
+          "rejected": 301581,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.24675721186399616,
+          "accepted": 9332,
+          "rejected": 30311,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "198d500ea2ce4e5fcc863474c4b5791605f59558660115aaac714649e8e3fe9e",
+        "trees.nexus": "2599584af58a768b0a02479b419e9809592f96cc6e047dc8a394e9e0ba1ee490",
+        "run.json": "04f7977a609596ee8e2a9ec2c3d051ed573acba51752abe38ba33495031637af"
+      },
+      "scientific_sha256": {
+        "trace.log": "d1018656262dbc7d2cfa7b18a5e1b41865d620f4d9484e307d6c089b682c40e7",
+        "trees.nexus": "2599584af58a768b0a02479b419e9809592f96cc6e047dc8a394e9e0ba1ee490"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "combined",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/combined/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/combined/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000",
+        "--weight",
+        "node_height=18",
+        "--weight",
+        "node_time_rates=12",
+        "--weight",
+        "root_scale=1",
+        "--weight",
+        "root_time_rates=2",
+        "--weight",
+        "clock_sigma_scale=1",
+        "--weight",
+        "clock_sigma_rates=2"
+      ],
+      "wall_seconds": 6.212550459000013,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 18.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 202685,
+          "rejected": 152837,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.06500558800442766,
+          "accepted": 68786,
+          "rejected": 114084,
+          "failed": 114466
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 41002,
+          "rejected": 230217,
+          "failed": 25698
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 308,
+          "rejected": 25327,
+          "failed": 33573
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 478,
+          "rejected": 44862,
+          "failed": 13996
+        },
+        {
+          "name": "root_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6424061439762503,
+          "accepted": 4702,
+          "rejected": 9694,
+          "failed": 5451
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.4126463958863777,
+          "accepted": 14130,
+          "rejected": 45336,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.26558640245306164,
+          "accepted": 14182,
+          "rejected": 44972,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.1464142060652092,
+          "accepted": 14261,
+          "rejected": 15606,
+          "failed": 29556
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2152730677473911,
+          "accepted": 453,
+          "rejected": 1440,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 1.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5332819099571591,
+          "accepted": 4641,
+          "rejected": 15135,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.16381101864127207,
+          "accepted": 94261,
+          "rejected": 301812,
+          "failed": 0
+        },
+        {
+          "name": "node_time_rates",
+          "weight": 12.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 77040,
+          "rejected": 160209,
+          "failed": 0
+        },
+        {
+          "name": "root_time_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.7452797003605592,
+          "accepted": 9402,
+          "rejected": 19956,
+          "failed": 10270
+        },
+        {
+          "name": "clock_sigma_rates",
+          "weight": 2.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2598100990225492,
+          "accepted": 9344,
+          "rejected": 29828,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "4b641adbb9e4129b31f53ac5f148d59f5de412cf7c99560c7b48ed3803bb66a7",
+        "trees.nexus": "4a1de6ca61b496210287b8ccb028185b20d5a3e9c9204cbde6320816ce0a47a0",
+        "run.json": "ba859634517ec91bcf7c89b05116fdfdb449c88ab4ff2b9a751ef801f7bbba58"
+      },
+      "scientific_sha256": {
+        "trace.log": "303570040a9269589ad94e0b6d9f7fc7522bd189c78ac38273959e0820326a60",
+        "trees.nexus": "4a1de6ca61b496210287b8ccb028185b20d5a3e9c9204cbde6320816ce0a47a0"
+      }
+    },
+    {
+      "case": "missing",
+      "scheme": "classical",
+      "seed": 27012,
+      "steps": 2000000,
+      "sample_every": 200,
+      "directory": "missing/classical/27012",
+      "command": [
+        "<repository>/target/release/rove",
+        "sample",
+        "<repository>/fixtures/validation/missing/matrix.nex",
+        "--model",
+        "reference",
+        "--output",
+        "<repository>/.local/issue27/pilot/missing/classical/27012",
+        "--seed",
+        "27012",
+        "--steps",
+        "2000000",
+        "--sample-every",
+        "200",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19",
+        "--print-every",
+        "100000"
+      ],
+      "wall_seconds": 5.519592708000005,
+      "moves": [
+        {
+          "name": "node_height",
+          "weight": 30.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 336524,
+          "rejected": 256903,
+          "failed": 0
+        },
+        {
+          "name": "subtree_slide",
+          "weight": 15.0,
+          "initial_tuning": 1.0,
+          "final_tuning": 0.07248810223253078,
+          "accepted": 68841,
+          "rejected": 113984,
+          "failed": 114198
+        },
+        {
+          "name": "narrow_exchange",
+          "weight": 15.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 40276,
+          "rejected": 230205,
+          "failed": 25684
+        },
+        {
+          "name": "wide_exchange",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 277,
+          "rejected": 25470,
+          "failed": 33578
+        },
+        {
+          "name": "wilson_balding",
+          "weight": 3.0,
+          "initial_tuning": null,
+          "final_tuning": null,
+          "accepted": 467,
+          "rejected": 45158,
+          "failed": 13905
+        },
+        {
+          "name": "root_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.6418962016299018,
+          "accepted": 13779,
+          "rejected": 28814,
+          "failed": 16345
+        },
+        {
+          "name": "tree_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.43719748524455615,
+          "accepted": 14203,
+          "rejected": 45134,
+          "failed": 0
+        },
+        {
+          "name": "birth_difference_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.2780329702089973,
+          "accepted": 14197,
+          "rejected": 45027,
+          "failed": 0
+        },
+        {
+          "name": "relative_death_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.75,
+          "final_tuning": 0.15040587456382407,
+          "accepted": 14142,
+          "rejected": 15238,
+          "failed": 29840
+        },
+        {
+          "name": "gamma_shape_scale",
+          "weight": 0.1,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.2614089415789404,
+          "accepted": 470,
+          "rejected": 1555,
+          "failed": 0
+        },
+        {
+          "name": "clock_sigma_scale",
+          "weight": 3.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.5306478467163789,
+          "accepted": 13885,
+          "rejected": 45612,
+          "failed": 0
+        },
+        {
+          "name": "branch_rate_scale",
+          "weight": 20.0,
+          "initial_tuning": 0.5,
+          "final_tuning": 0.17276150464103773,
+          "accepted": 94436,
+          "rejected": 301853,
+          "failed": 0
+        }
+      ],
+      "settings": {
+        "seed": 27012,
+        "initial_gamma_shape": 1.0,
+        "initial_clock_sigma": 0.2,
+        "initial_branch_rate": 0.5,
+        "steps": 2000000,
+        "sample_every": 200,
+        "initial_birth_difference_rate": 1.0,
+        "initial_relative_death_rate": 0.5,
+        "initial_tree": "random, with every monophyly constraint satisfied",
+        "tuning": true,
+        "tuning_schedule": "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero",
+        "tuning_delay": 10000,
+        "tuning_target_acceptance": 0.234,
+        "backend": "neon"
+      },
+      "input_sha256": "451e8e9e6187be334eaf9bf8d8d22d3dfb037de028d2f9f3e24c7b6992b2137a",
+      "sha256": {
+        "trace.log": "955ae9673b8ff22274f9cd150513a19eb6368bd734456d529e61ffab281cabdf",
+        "trees.nexus": "9c01b1419500449f3ef3c2c639e74b203c750d627cdfd6d0e7680a42944209e2",
+        "run.json": "7c7f4edc41e06e87820f8e34fb17f320b28584964c5342c1c7c18df0f0ca85a2"
+      },
+      "scientific_sha256": {
+        "trace.log": "9a171d49185e8b40a70e77aeff6a13770d6de7396aa413f393e10c086687c998",
+        "trees.nexus": "9c01b1419500449f3ef3c2c639e74b203c750d627cdfd6d0e7680a42944209e2"
+      }
+    }
+  ],
+  "burnin_percent": 10,
+  "concurrent_chains": 1,
+  "timing": "Process start to exit, including setup, adaptation, sampling and I/O; diagnostics excluded",
+  "pilot_sha256": null,
+  "power_after": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22806627)\t65%; charging; 1:09 remaining present: true",
+    "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+  },
+  "load_after": [
+    35.24267578125,
+    54.6884765625,
+    38.3583984375
+  ],
+  "source_files": {
+    "src/random.rs": "db2b14a77037e3dba7ff3f4daacbad7fea6efaabbc3dc214d6d099b43f95d214",
+    "src/layout.rs": "009082f02bfa33458086bb29f70d47422019ddcd9cc8b475dfddb2051c91b48b",
+    "src/lib.rs": "b024aaeec0b1ceff932299bae977604633a9d1af30bccaa4719b37466e7ce288",
+    "src/tree.rs": "d865bafc111fee836beff63b5a39a86f153ba63878b7af4c81504490cc267f1c",
+    "src/ascertainment.rs": "e72da5c4578a51371ab1c1564bb6386dc4a2cbaef65fe3b77a3b1db310a414e9",
+    "src/speciation.rs": "ac0f12a586d18bf6f3b1e643c2b63c5777d9786a2da86981170672cd3cee9388",
+    "src/rates.rs": "2d9b6be6d16a5cfbaf7f7903fe139268e3b291985d89c1f5959000c1d51d4454",
+    "src/data.rs": "4f0615769ffd08551670af515014b09832263dbae0d6c69907fa49e6d16c0c71",
+    "src/reference.rs": "b94952ebfd6be28bfacecbf5d977ce6025448add45cabc36cef421a20d608def",
+    "src/model.rs": "48ff38fce6f2a6f199b382f662e711797ceabcc168e208ff5ccba40508544ec1",
+    "src/bin/rove/summarize.rs": "bdceb3917e05d704e67d816bc25220b3729911ab741c170635daaa7a1dc2e8fa",
+    "src/bin/rove/events.rs": "f07e53f8c498ccf54042af655f9778e54f6b7f5f4d94c91770926bbd4232842b",
+    "src/bin/rove/sha256.rs": "992be4d0ca74449534e28f5894e826d51f71d3c82c296b86cd2689d27ba1c06a",
+    "src/bin/rove/inspect_tree.rs": "ce515805729dae80aacf7c7f4ced5476c014f56ed272b1b718188c48f2dc52a7",
+    "src/bin/rove/main.rs": "ca58670e9c53f3bfaf2a395a58c2e1ca5208406d725f58c74dd6a497c9d42f38",
+    "src/bin/rove/inspect.rs": "d2a359c3885bdcd09790f60b6f5dc8d6ba8d600d27e304b326d77be9fc6b2fe7",
+    "src/bin/rove/diagnose.rs": "86052d13558fd5f05b500f3b6b3b6bcd81980771ce5578dd04eb1a0216f1cb4e",
+    "src/nexus/matrix.rs": "73795ca85e3b02ea7ad9e489ba6a8cf953dbf1c60e686ff7c770acc21d3076a9",
+    "src/nexus/mod.rs": "acc9974bd2ae85439b16685ffa2dd9a523b8048c4afff348f03e695510174549",
+    "src/nexus/lexer.rs": "78bb00518e17f637312438d5822a18c4d3844d781b2df93a7e9c1b1d2be25d1a",
+    "src/mcmc/moves.rs": "76213d437ddd5f7e9889e45c5d61086c2332137b262759888228d6ad00718f58",
+    "src/mcmc/mod.rs": "09e1fe4d039b761cac407bb2cdf11bba91ae6ff495d005a41c4625264c6f29a2",
+    "src/mcmc/coupled.rs": "c5aa53269df3dcc485d8d5cda2ccf4782f0745131cb73a7b2effd51976124e27",
+    "src/mcmc/output.rs": "9142b40d8df3f79ff6cf21d142e95ee5f22cc59b07f4bf93dfc8fd0a5d5b4a30",
+    "src/diagnostics/trace.rs": "e01ff291892d74b28e88370ba267ad2a4ada60b2c1db42908f86f0178f0a3e27",
+    "src/diagnostics/mod.rs": "43e97e3105814f1307616d938f478287d1e37f45e9736dc7ecedb20d65268799",
+    "src/diagnostics/spectrum.rs": "f9e66419a884306fbb261fc02a2c02d1359fda36abbbfc375e8c6639e30356d2",
+    "src/kernel/neon.rs": "65b9440a9bbfad17b30f0670c46356b27ade59f722801fb33d34e0032875086d",
+    "src/kernel/mod.rs": "52aa2038b0221e35e310af117cca440444617effa737012f345fc598d9964a14",
+    "src/summary/mod.rs": "4fdab0066f4784e75c38c63439a12d1fd59b91ddcd91664f02aaa55099478f01",
+    "src/summary/nexus.rs": "30accc2a964fb3483944f57cd4f6d2ceac4f03930fff22df0784bad7efe96c1d",
+    "Cargo.toml": "a8161f2fdc7504f38de3d63750558bd639a46d73c0fc137eccfaaa2597bea115",
+    "Cargo.lock": "12f2cd8d830165d1dce25e3def1b9ac8d9a24e66b7744c27937e152adc204563"
+  }
+}

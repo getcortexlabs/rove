@@ -35,6 +35,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-from-prior` | Ignore the characters and sample the prior. |
 | `--no-tuning` | Keep every slide size and scale factor fixed. |
 | `--tuning <move>=<value>` | Starting slide size or scale factor for a move, such as `subtree_slide=0.001`. Can be repeated. |
+| `--weight <move>=<value>` | Relative selection weight; finite and nonnegative. Zero disables a move. Repeat to override several moves; the last value for a move wins. |
 | `--backend portable\|neon` | The likelihood [backend](./kernel#backends): the portable code, or the NEON kernel (the default on aarch64). Both give the same samples. |
 | `--print-every <n>` | Steps between progress lines on standard error; by default, a twentieth of the chain. |
 

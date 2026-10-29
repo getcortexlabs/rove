@@ -63,9 +63,9 @@ de escala: `gamma_shape_scale` (peso 0,1), `clock_sigma_scale` (3) e
 com fator 0,5 e inclui a razão de Hastings da escala. Usam a mesma regra de
 ajuste dos demais movimentos de escala.
 
-São diferentes das misturas adaptativas do ORC, dos kernels Bactrian, dos
-movimentos conjuntos de tempo e taxa e dos movimentos de época ou alongamento
-da árvore. O Rove também omite a proposta de taxa de mutação do XML, que não
+A configuração padrão não usa as misturas adaptativas do ORC, os kernels
+Bactrian nem os movimentos de época ou alongamento da árvore. O Rove também
+omite a proposta de taxa de mutação do XML, que não
 tem efeito em uma dimensão. Reproduzir o modelo probabilístico não estabelece
 a mesma mistura da cadeia nem o mesmo ESS por segundo.
 
@@ -77,6 +77,41 @@ do caractere. As alturas são relativas ao multiplicador fixo do relógio,
 sem calibração em tempo de calendário. `run.json` registra a configuração,
 priors, valores iniciais, mapeamento e taxas finais. Não é um checkpoint para
 retomar a cadeia.
+
+## Propostas conjuntas
+
+Três movimentos adicionais estão disponíveis por `--weight`, com peso zero
+por padrão. Eles exigem o relógio relaxado. Mudam as propostas e preservam a
+verossimilhança, os priors e as coordenadas dos parâmetros.
+
+- `node_time_rates` sorteia a altura de um nó interno que não seja a raiz,
+  uniformemente entre o filho mais antigo e o pai. Cada taxa incidente vira
+  `taxa × duração antiga / duração nova`, preservando a distância do ramo.
+  O logaritmo da razão de Hastings soma `ln(duração antiga / duração nova)`
+  dos três ramos.
+- `root_time_rates` multiplica a altura da raiz por `f`, uniforme em
+  `[s, 1/s]` (`s = 0,75` inicialmente), e compensa as duas taxas incidentes.
+  Sua razão de Hastings em log acrescenta `−ln(f)` aos termos de duração.
+- `clock_sigma_rates` multiplica sigma pelo mesmo tipo de fator
+  (`s = 0,5` inicialmente), mantendo cada taxa logarítmica padronizada
+  `z = (ln(taxa) + σ²/2) / σ`. Com `d` taxas, a razão de Hastings em log é
+  `(d − 1) ln(f) + Σ ln(taxa nova / taxa antiga)`.
+
+Esses fatores corrigem a mudança de volume da proposta; não são um prior
+adicional. O jacobiano das taxas no movimento de sigma é
+`f^d × Π(taxa nova / taxa antiga)`, e o multiplicador uniforme contribui
+`1/f`. A transformação inversa usa `1/f` e a altura antiga. Valores inválidos
+são rejeitados antes da alteração. As distâncias passam pelo caminho
+existente de atualização e restauração do cache.
+
+Os testes verificam inversas, jacobianos numéricos, distribuições conhecidas,
+mudanças do índice da raiz, restauração exata e concordância entre backends.
+São ideias já estabelecidas para relógios relaxados, descritas por
+[Douglas, Zhang e Bouckaert (2021)](https://doi.org/10.1371/journal.pcbi.1008322);
+esta implementação não reproduz o pacote ORC inteiro. O
+[protocolo de avaliação](https://github.com/getcortexlabs/rove/blob/main/fixtures/validation/SAMPLING-EFFICIENCY.md)
+separa a escolha da candidata da validação com quatro cadeias e define as
+condições para mudar a configuração padrão.
 
 ## Validação
 

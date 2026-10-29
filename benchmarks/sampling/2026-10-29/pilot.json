@@ -1,0 +1,3838 @@
+{
+  "phase": "exploratory_pilot",
+  "cases": {
+    "reference-mk": {
+      "classical": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -248.61859592168693,
+            "sd": 12.970886399491896,
+            "ess": 112.37957744221372,
+            "ess_per_second": 30.2806810360333,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -250.97066032973214,
+            "sd": 13.576692354109298,
+            "ess": 88.53884874802003,
+            "ess_per_second": 24.867187382460532,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -251.40220105043403,
+            "sd": 3.523284772756597,
+            "ess": 933.015537041732,
+            "ess_per_second": 251.4010687871783,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -251.21947171613382,
+            "sd": 3.5274575821181493,
+            "ess": 1337.3110391732548,
+            "ess_per_second": 375.5996906442498,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 2.783605128747101,
+            "sd": 12.397903642299555,
+            "ess": 106.1605216818914,
+            "ess_per_second": 28.60495624590887,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.24881138640168565,
+            "sd": 13.193217642317945,
+            "ess": 85.2052801840643,
+            "ess_per_second": 23.93091505337154,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 32.80480224990046,
+            "sd": 3.8969634221798066,
+            "ess": 798.3715879767524,
+            "ess_per_second": 215.12125204587548,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 32.08996280381965,
+            "sd": 4.263747801727056,
+            "ess": 378.59449563975465,
+            "ess_per_second": 106.33276124738917,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.760924669586903,
+            "sd": 5.012951225636755,
+            "ess": 818.7833849147756,
+            "ess_per_second": 220.62121143814483,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.09613343397769,
+            "sd": 4.855319793744342,
+            "ess": 924.3776436418964,
+            "ess_per_second": 259.6224414665704,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.5180061204105141,
+            "sd": 0.25220030823816675,
+            "ess": 914.6800846740776,
+            "ess_per_second": 246.46058051134528,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5341537684594031,
+            "sd": 0.25147941761618087,
+            "ess": 1022.6998570348203,
+            "ess_per_second": 287.2374030215657,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.21419316718793555,
+            "sd": 0.055306942724618516,
+            "ess": 681.0874154637958,
+            "ess_per_second": 183.5190276980742,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.22611338742475182,
+            "sd": 0.06610858750510887,
+            "ess": 375.1583694636553,
+            "ess_per_second": 105.36768439469573,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.3129107343959774,
+            "sd": 0.2759659344970429,
+            "ess": 667.2000779608925,
+            "ess_per_second": 179.7770841266865,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.3740779237874805,
+            "sd": 0.3280817899803304,
+            "ess": 315.70598828570445,
+            "ess_per_second": 88.66977693383511,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.552037112958677,
+            "sd": 1.5760570141498267,
+            "ess": 122.1776442294932,
+            "ess_per_second": 32.92077047139288,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.699962287900577,
+            "sd": 1.5433991106493652,
+            "ess": 222.78072533441485,
+            "ess_per_second": 62.570613018223305,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.552037112958677,
+            "sd": 1.5760570141498267,
+            "ess": 122.1776442294932,
+            "ess_per_second": 32.92077047139288,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.699962287900577,
+            "sd": 1.5433991106493652,
+            "ess": 222.78072533441485,
+            "ess_per_second": 62.570613018223305,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.4818288979200079,
+            "sd": 0.1775335393421829,
+            "ess": 97.93750266309087,
+            "ess_per_second": 26.389263486345232,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5319009704592242,
+            "sd": 0.20535447440393106,
+            "ess": 102.53883396056811,
+            "ess_per_second": 28.799249528681912,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -17.82373888980907,
+            "sd": 12.099077095815042,
+            "ess": 107.7508128334294,
+            "ess_per_second": 29.03346025179829,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -19.60093535113003,
+            "sd": 12.553797093471223,
+            "ess": 78.8441041702359,
+            "ess_per_second": 22.14430320845276,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.7376658394034765,
+            "sd": 0.6960996608427995,
+            "ess": 119.25869489128713,
+            "ess_per_second": 32.134259471064475,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.6324984994052207,
+            "sd": 0.7867104049727592,
+            "ess": 69.47234137889794,
+            "ess_per_second": 19.512132305718,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9977074023843273,
+            "sd": 0.08854855954589075,
+            "ess": 397.2231569746453,
+            "ess_per_second": 107.03179341157774,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9833704990903896,
+            "sd": 0.09600412959571565,
+            "ess": 312.8889411687555,
+            "ess_per_second": 87.87857578865469,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "sigma-frequency": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -248.9700989984134,
+            "sd": 14.330117362013969,
+            "ess": 50.54936657192428,
+            "ess_per_second": 15.710489270313177,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -250.99513265224655,
+            "sd": 12.293991875148414,
+            "ess": 86.9708788558971,
+            "ess_per_second": 27.113583697083534,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -251.2962369114876,
+            "sd": 3.5364033410999745,
+            "ess": 1041.312877193283,
+            "ess_per_second": 323.6348127311707,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -251.22604283048983,
+            "sd": 3.545332236464458,
+            "ess": 1202.1070048938573,
+            "ess_per_second": 374.76255637297146,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 2.3261379130742004,
+            "sd": 13.738735702473722,
+            "ess": 46.22667852755379,
+            "ess_per_second": 14.367019534775233,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.2309101782432763,
+            "sd": 11.650942614573035,
+            "ess": 80.01922649149914,
+            "ess_per_second": 24.946373123904966,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 32.28175729183344,
+            "sd": 4.498812468338696,
+            "ess": 157.13291650841956,
+            "ess_per_second": 48.83612132520076,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 32.5109941761238,
+            "sd": 4.071838204013763,
+            "ess": 900.1168400150046,
+            "ess_per_second": 280.6156911365552,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.654146146359464,
+            "sd": 5.016723514911262,
+            "ess": 733.081121023635,
+            "ess_per_second": 227.83793086158445,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.540175427196205,
+            "sd": 5.030275770805346,
+            "ess": 646.5885587828234,
+            "ess_per_second": 201.5770478205991,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.5123548776474953,
+            "sd": 0.24973363655693276,
+            "ess": 869.8752739854019,
+            "ess_per_second": 270.35286661828803,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5243973574101218,
+            "sd": 0.25457780340390296,
+            "ess": 726.0543023099034,
+            "ess_per_second": 226.35087000701665,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.22282713151515515,
+            "sd": 0.0717135324661873,
+            "ess": 153.32300095775744,
+            "ess_per_second": 47.6520187055505,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.22054107994194388,
+            "sd": 0.062279911063229304,
+            "ess": 354.78284036906916,
+            "ess_per_second": 110.60523204065028,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.3618420486205978,
+            "sd": 0.3742552853718428,
+            "ess": 118.52357551630719,
+            "ess_per_second": 36.83653204197241,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.3396282201112335,
+            "sd": 0.2973701607936584,
+            "ess": 404.60186215314565,
+            "ess_per_second": 126.13654820784106,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.668385346638761,
+            "sd": 1.5855760162144223,
+            "ess": 170.1080179717649,
+            "ess_per_second": 52.86871769870962,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.721158071542025,
+            "sd": 1.6034451403286414,
+            "ess": 197.0025712536901,
+            "ess_per_second": 61.41648531662975,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.668385346638761,
+            "sd": 1.5855760162144223,
+            "ess": 170.1080179717649,
+            "ess_per_second": 52.86871769870962,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.721158071542025,
+            "sd": 1.6034451403286414,
+            "ess": 197.0025712536901,
+            "ess_per_second": 61.41648531662975,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.5068253400914402,
+            "sd": 0.2327057912016506,
+            "ess": 50.03230310884416,
+            "ess_per_second": 15.54978854269411,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5190406813737988,
+            "sd": 0.18558284133750275,
+            "ess": 103.83631492323633,
+            "ess_per_second": 32.37146332777336,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -17.605158682726724,
+            "sd": 13.426677815260668,
+            "ess": 47.73138800807617,
+            "ess_per_second": 14.834675684631229,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -20.039031792694193,
+            "sd": 11.245233460349507,
+            "ess": 78.44705341643984,
+            "ess_per_second": 24.456240716164775,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.7743200704116171,
+            "sd": 0.7956696426820457,
+            "ess": 45.369378352852465,
+            "ess_per_second": 14.10057494586196,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.6121388546621704,
+            "sd": 0.617067255596981,
+            "ess": 90.50288190543617,
+            "ess_per_second": 28.214702388326224,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9906649627580508,
+            "sd": 0.10650208040060158,
+            "ess": 121.24245567287359,
+            "ess_per_second": 37.681546340345996,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9946738561097579,
+            "sd": 0.09404110746732003,
+            "ess": 419.88112004928905,
+            "ess_per_second": 130.8999292756905,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "time-rates": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -250.17856124627153,
+            "sd": 12.322230786712767,
+            "ess": 119.23559217566934,
+            "ess_per_second": 33.50558533104309,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -250.92471923014577,
+            "sd": 12.986082249980365,
+            "ess": 182.64139463485196,
+            "ess_per_second": 51.86531444546019,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -251.2540551646036,
+            "sd": 3.496665360698691,
+            "ess": 956.5601425922906,
+            "ess_per_second": 268.7964801204782,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -251.08343359084566,
+            "sd": 3.6302894749593966,
+            "ess": 838.3443740929047,
+            "ess_per_second": 238.06757861678028,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 1.0754939183320769,
+            "sd": 11.911673477519876,
+            "ess": 111.09209452496137,
+            "ess_per_second": 31.2172362697414,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.1587143606998982,
+            "sd": 12.62717320484104,
+            "ess": 165.37863918141713,
+            "ess_per_second": 46.963149514133995,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 32.35848413027233,
+            "sd": 3.9833688312751714,
+            "ess": 871.3244334034376,
+            "ess_per_second": 244.8449713858082,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 32.43307151639348,
+            "sd": 4.04851481316455,
+            "ess": 871.5986040245476,
+            "ess_per_second": 247.51089838278682,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.157972658417206,
+            "sd": 4.953931261067273,
+            "ess": 573.048233916657,
+            "ess_per_second": 161.02839890299148,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.579339375061204,
+            "sd": 5.051915265766966,
+            "ess": 576.6492539586313,
+            "ess_per_second": 163.75310176041182,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.5374648831575048,
+            "sd": 0.2568117471060844,
+            "ess": 596.3507476215523,
+            "ess_per_second": 167.57648028641663,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5213098446453674,
+            "sd": 0.25074767470711073,
+            "ess": 746.908525682398,
+            "ess_per_second": 212.1022215361494,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.22065524868749062,
+            "sd": 0.05995547180592592,
+            "ess": 715.0024216892957,
+            "ess_per_second": 200.91798274895996,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.21883450342838037,
+            "sd": 0.059664189278002266,
+            "ess": 723.1498322907911,
+            "ess_per_second": 205.35538243084926,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.3492442072877884,
+            "sd": 0.2949495821354783,
+            "ess": 700.5753500063387,
+            "ess_per_second": 196.8639291519583,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.3413094567466088,
+            "sd": 0.2959737076953362,
+            "ess": 704.6153672367501,
+            "ess_per_second": 200.09208568463183,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.532104389682585,
+            "sd": 1.4655957407156084,
+            "ess": 132.02948666817343,
+            "ess_per_second": 37.10071087881917,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 5.113204083465896,
+            "sd": 2.1205640058112514,
+            "ess": 115.16661566888037,
+            "ess_per_second": 32.70426590438516,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.532104389682585,
+            "sd": 1.4655957407156084,
+            "ess": 132.02948666817343,
+            "ess_per_second": 37.10071087881917,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -5.113204083465896,
+            "sd": 2.1205640058112514,
+            "ess": 115.16661566888037,
+            "ess_per_second": 32.70426590438516,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.5090107919713052,
+            "sd": 0.18529118609686593,
+            "ess": 112.68057940434774,
+            "ess_per_second": 31.663605635651354,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5162905884775925,
+            "sd": 0.18744313924485204,
+            "ess": 197.86694095580862,
+            "ess_per_second": 56.18896598742914,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -19.198138672225785,
+            "sd": 11.345995523259864,
+            "ess": 106.77009703286012,
+            "ess_per_second": 30.002741057952598,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -19.613942957683307,
+            "sd": 12.12709232451642,
+            "ess": 165.8128373160057,
+            "ess_per_second": 47.086450274222315,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.6449918710497478,
+            "sd": 0.6247258940333393,
+            "ess": 103.86677968658695,
+            "ess_per_second": 29.186899535185344,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.6394548355622414,
+            "sd": 0.6977455346964009,
+            "ess": 147.32594860170394,
+            "ess_per_second": 41.836663947292216,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9913448696773318,
+            "sd": 0.09136116308904005,
+            "ess": 1044.9624444572848,
+            "ess_per_second": 293.63781159333513,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9926278116156002,
+            "sd": 0.09720218068734758,
+            "ess": 802.4822446252141,
+            "ess_per_second": 227.88368451520378,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "sigma-rates": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -249.55384112156048,
+            "sd": 13.524673241010406,
+            "ess": 1340.7772942580539,
+            "ess_per_second": 356.61001419610216,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -249.61243198259257,
+            "sd": 13.423157393900077,
+            "ess": 1462.4540351268722,
+            "ess_per_second": 400.8652937468948,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -251.38748908396647,
+            "sd": 3.617412065376924,
+            "ess": 994.4815732122632,
+            "ess_per_second": 264.50484316803374,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -251.1609970818507,
+            "sd": 3.6268501074794206,
+            "ess": 1311.3337570678173,
+            "ess_per_second": 359.4425391165244,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 1.833647962406019,
+            "sd": 13.041287600211218,
+            "ess": 1107.7976871240062,
+            "ess_per_second": 294.6438238651042,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.54856509925812,
+            "sd": 12.902277848527493,
+            "ess": 1273.176741307396,
+            "ess_per_second": 348.98352778084217,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 32.67728895805262,
+            "sd": 3.9670735393645393,
+            "ess": 1334.6845295347873,
+            "ess_per_second": 354.98950576135877,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 32.431731035325654,
+            "sd": 4.035890875652538,
+            "ess": 1495.8837920223941,
+            "ess_per_second": 410.0285419556825,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.792009641479236,
+            "sd": 5.131642258905845,
+            "ess": 692.3323775664774,
+            "ess_per_second": 184.14143799252335,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.388183012367431,
+            "sd": 4.770823771852698,
+            "ess": 905.4808234527308,
+            "ess_per_second": 248.19640655856227,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.5153499424961285,
+            "sd": 0.253114303950564,
+            "ess": 727.5528635873295,
+            "ess_per_second": 193.50912200214853,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5267107124113498,
+            "sd": 0.24386443830460572,
+            "ess": 940.0753474684134,
+            "ess_per_second": 257.6789227255593,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.21686715180752952,
+            "sd": 0.059811640190414364,
+            "ess": 895.7625914991693,
+            "ess_per_second": 238.2482995788077,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.22026209181488543,
+            "sd": 0.05868401097439171,
+            "ess": 1128.7850142042273,
+            "ess_per_second": 309.4050995297199,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.3245257146557998,
+            "sd": 0.2904166852058814,
+            "ess": 1028.0358946162771,
+            "ess_per_second": 273.4293730533996,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.344716593222623,
+            "sd": 0.29228013409115544,
+            "ess": 1208.4882837262435,
+            "ess_per_second": 331.25212773170995,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.613886048828855,
+            "sd": 1.515218258470031,
+            "ess": 158.9716290464288,
+            "ess_per_second": 42.28209646285478,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.923337649689031,
+            "sd": 1.735159110241544,
+            "ess": 115.42408349040844,
+            "ess_per_second": 31.638265560828152,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.613886048828855,
+            "sd": 1.515218258470031,
+            "ess": 158.9716290464288,
+            "ess_per_second": 42.28209646285478,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.923337649689031,
+            "sd": 1.735159110241544,
+            "ess": 115.42408349040844,
+            "ess_per_second": 31.638265560828152,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.499700251424542,
+            "sd": 0.18731607128133046,
+            "ess": 1209.0237176913545,
+            "ess_per_second": 321.5671737400085,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5015360249856062,
+            "sd": 0.19137028197237071,
+            "ess": 1188.0482254872143,
+            "ess_per_second": 325.64941492611996,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -18.61766390856882,
+            "sd": 12.73980778439725,
+            "ess": 1086.5722956219224,
+            "ess_per_second": 288.9984514402493,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -18.34781491744669,
+            "sd": 12.43566165276068,
+            "ess": 1303.11552315652,
+            "ess_per_second": 357.1898838728011,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.7043357592667925,
+            "sd": 0.7538340882679644,
+            "ess": 1744.1297929010532,
+            "ess_per_second": 463.8907243357453,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.7042580899496724,
+            "sd": 0.7425941337019356,
+            "ess": 1553.2794632176142,
+            "ess_per_second": 425.7609561313363,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9959558133345914,
+            "sd": 0.09464404426679733,
+            "ess": 558.9113843593306,
+            "ess_per_second": 148.65511040820397,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9892640387454028,
+            "sd": 0.09274292169006848,
+            "ess": 640.8658692373824,
+            "ess_per_second": 175.66424568134576,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "combined": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -249.10639164565643,
+            "sd": 13.55847276739487,
+            "ess": 1679.029616465615,
+            "ess_per_second": 452.7910740692694,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -249.36981271034546,
+            "sd": 13.487319435576671,
+            "ess": 1780.4332777184184,
+            "ess_per_second": 480.43491388220434,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -251.24448886836694,
+            "sd": 3.641384180179969,
+            "ess": 1108.8313331424438,
+            "ess_per_second": 299.0232723542366,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -251.17427684414324,
+            "sd": 3.535042469171802,
+            "ess": 838.8738566545896,
+            "ess_per_second": 226.36303989798827,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 2.1380972227105026,
+            "sd": 13.179733065377908,
+            "ess": 1371.5139073029384,
+            "ess_per_second": 369.86200189599555,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.8044641337977652,
+            "sd": 13.002987885471715,
+            "ess": 1249.4660585812337,
+            "ess_per_second": 337.1578849741932,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 32.530830149049216,
+            "sd": 3.9747100915179154,
+            "ess": 1640.3860839536953,
+            "ess_per_second": 442.36990792644986,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 32.58465020566257,
+            "sd": 4.117695252510477,
+            "ess": 1339.1052200296635,
+            "ess_per_second": 361.34625718106247,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.634723674670173,
+            "sd": 4.844003166989139,
+            "ess": 1122.967251367509,
+            "ess_per_second": 302.8353656808309,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.729810344791314,
+            "sd": 4.9306512142755174,
+            "ess": 980.8020752590079,
+            "ess_per_second": 264.66117346806436,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.5208026668085195,
+            "sd": 0.2446763796188211,
+            "ess": 1067.6679953880864,
+            "ess_per_second": 287.92257959021873,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5179179635534644,
+            "sd": 0.24804706885040606,
+            "ess": 1011.9972182825255,
+            "ess_per_second": 273.0789198894593,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.218925729229322,
+            "sd": 0.06050456669446186,
+            "ess": 1273.5139352033484,
+            "ess_per_second": 343.433931663894,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.21736849931911184,
+            "sd": 0.05894400130394669,
+            "ess": 963.865125106857,
+            "ess_per_second": 260.0908802200055,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.3342613553088096,
+            "sd": 0.29093313443739344,
+            "ess": 1328.0845015138739,
+            "ess_per_second": 358.1502089052235,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.3310509572082618,
+            "sd": 0.29630808645631584,
+            "ess": 1070.030392525653,
+            "ess_per_second": 288.73868283521654,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.812657207224524,
+            "sd": 1.869919489947256,
+            "ess": 131.49118849587774,
+            "ess_per_second": 35.459789324634905,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.717065067962869,
+            "sd": 1.5480721028022555,
+            "ess": 139.82124057622266,
+            "ess_per_second": 37.7295833075102,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.812657207224524,
+            "sd": 1.869919489947256,
+            "ess": 131.49118849587774,
+            "ess_per_second": 35.459789324634905,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.717065067962869,
+            "sd": 1.5480721028022555,
+            "ess": 139.82124057622266,
+            "ess_per_second": 37.7295833075102,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.4931838844843589,
+            "sd": 0.1895330208154741,
+            "ess": 1264.7902208107762,
+            "ess_per_second": 341.08137041604584,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.4970808164169314,
+            "sd": 0.18805815489659036,
+            "ess": 1336.190561238102,
+            "ess_per_second": 360.55976107191634,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -17.93855616310812,
+            "sd": 12.725131387732997,
+            "ess": 1616.3179917230136,
+            "ess_per_second": 435.87936289671495,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -18.44041433043736,
+            "sd": 12.658200095892466,
+            "ess": 1673.5831814440699,
+            "ess_per_second": 451.6023159722979,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.7337642770239281,
+            "sd": 0.7634639773447779,
+            "ess": 1853.0444491364556,
+            "ess_per_second": 499.71839578910505,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.714951394482445,
+            "sd": 0.7630224121619348,
+            "ess": 2124.177636472094,
+            "ess_per_second": 573.1914318950261,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9931148035876247,
+            "sd": 0.09331335397920187,
+            "ess": 992.9299857633845,
+            "ess_per_second": 267.76766194022315,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9961224997488006,
+            "sd": 0.09169198504498031,
+            "ess": 1006.8245329148992,
+            "ess_per_second": 271.68311434019444,
+            "lag_limit_reached": false
+          }
+        ]
+      }
+    },
+    "reference-mkv": {
+      "classical": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -106.33097541113466,
+            "sd": 21.181182924078424,
+            "ess": 148.16471457884106,
+            "ess_per_second": 39.34784350861855,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -103.14717403216079,
+            "sd": 25.080662905202747,
+            "ess": 106.51814048497614,
+            "ess_per_second": 29.428477628489635,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -202.48041352624602,
+            "sd": 2.9505966013288316,
+            "ess": 1829.5486695023321,
+            "ess_per_second": 485.8700328455905,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -202.42367503857153,
+            "sd": 2.923518465420555,
+            "ess": 2137.3295404774917,
+            "ess_per_second": 590.4942977813567,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 96.14943811511137,
+            "sd": 20.512342039029225,
+            "ess": 143.39818475020977,
+            "ess_per_second": 38.08200453805619,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 99.27650100641073,
+            "sd": 24.484852478497835,
+            "ess": 104.00875873296455,
+            "ess_per_second": 28.735193982960457,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 122.17291663893752,
+            "sd": 17.710928952235328,
+            "ess": 145.98449223201493,
+            "ess_per_second": 38.76884568203914,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 123.91482699482751,
+            "sd": 20.68579480996071,
+            "ess": 107.58322509270359,
+            "ess_per_second": 29.722735661987475,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 628.5127254259822,
+            "sd": 241.47526982895982,
+            "ess": 1081.4189284609856,
+            "ess_per_second": 287.19052903583474,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 610.1051498262611,
+            "sd": 248.7080858077423,
+            "ess": 1081.6682576756682,
+            "ess_per_second": 298.83970915682187,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.6831721974551856,
+            "sd": 0.2446986464878303,
+            "ess": 357.43980616844374,
+            "ess_per_second": 94.92466270964205,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6981088301772385,
+            "sd": 0.24976398492258417,
+            "ess": 319.59074136733204,
+            "ess_per_second": 88.29546723008637,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.0026508050313334627,
+            "sd": 0.0023163460672370813,
+            "ess": 420.94160049699485,
+            "ess_per_second": 111.78872290682706,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.0026240966865512493,
+            "sd": 0.0024465911493784026,
+            "ess": 350.8413375641457,
+            "ess_per_second": 96.92927802388827,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 0.016536355967711414,
+            "sd": 0.014473455339086075,
+            "ess": 410.9201000849559,
+            "ess_per_second": 109.1273306107238,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.016420085325733733,
+            "sd": 0.01527243979775424,
+            "ess": 346.92792324430116,
+            "ess_per_second": 95.84809292961036,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 1.0946368092805145,
+            "sd": 0.8781034171696684,
+            "ess": 71.98936525153984,
+            "ess_per_second": 19.118089527956275,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.1004016079846755,
+            "sd": 0.9652428418491587,
+            "ess": 79.20044671985451,
+            "ess_per_second": 21.8812360396994,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -1.0946368092805145,
+            "sd": 0.8781034171696684,
+            "ess": 71.98936525153984,
+            "ess_per_second": 19.118089527956275,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -1.1004016079846755,
+            "sd": 0.9652428418491587,
+            "ess": 79.20044671985451,
+            "ess_per_second": 21.8812360396994,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.47419065517353065,
+            "sd": 0.15370869224377207,
+            "ess": 131.08812060558836,
+            "ess_per_second": 34.81284238348749,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.4716863232687033,
+            "sd": 0.17883524477181556,
+            "ess": 91.54036974009118,
+            "ess_per_second": 25.29046893547586,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -17.312622759595094,
+            "sd": 10.634828498370986,
+            "ess": 118.35817146513898,
+            "ess_per_second": 31.432172106661636,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -15.832997718845439,
+            "sd": 12.463335581271457,
+            "ess": 80.2996208874825,
+            "ess_per_second": 22.184912223442172,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.7084636759684046,
+            "sd": 0.6375728600656668,
+            "ess": 117.13553050290678,
+            "ess_per_second": 31.107477489688304,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.7971713826045344,
+            "sd": 0.7780895657702378,
+            "ess": 79.629638189941,
+            "ess_per_second": 21.99981163178421,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9836851748184576,
+            "sd": 0.08412725015803889,
+            "ess": 542.274676293036,
+            "ess_per_second": 144.01093514145157,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9765909893686154,
+            "sd": 0.08909709221599137,
+            "ess": 320.4980398051917,
+            "ess_per_second": 88.546132625289,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "sigma-frequency": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -106.40389163829828,
+            "sd": 21.03231991181817,
+            "ess": 207.25202977136846,
+            "ess_per_second": 58.45857248211818,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -105.39158096089561,
+            "sd": 21.19265603048928,
+            "ess": 194.0760514982302,
+            "ess_per_second": 48.22626488238948,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -202.52034078646074,
+            "sd": 2.9243301045023142,
+            "ess": 2076.0158073804473,
+            "ess_per_second": 585.5716862394695,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -202.36403854370104,
+            "sd": 2.9073901116233825,
+            "ess": 1828.557144296404,
+            "ess_per_second": 454.3810558420611,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 96.11644914816246,
+            "sd": 20.42294280127138,
+            "ess": 199.35021739781428,
+            "ess_per_second": 56.229746680561036,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 96.97245758280543,
+            "sd": 20.59133962450636,
+            "ess": 184.68497933315777,
+            "ess_per_second": 45.892662512255995,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 121.5159986951177,
+            "sd": 17.558990764299452,
+            "ess": 222.99669466072194,
+            "ess_per_second": 62.89959356478882,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 121.53267591976699,
+            "sd": 16.091280835924067,
+            "ess": 251.02297392952872,
+            "ess_per_second": 62.3770956737596,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 620.4253805117396,
+            "sd": 243.04091108954958,
+            "ess": 1135.108106902628,
+            "ess_per_second": 320.17442538733735,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 628.327697482228,
+            "sd": 239.06487038017926,
+            "ess": 1233.5681342515604,
+            "ess_per_second": 306.53129602357575,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.6743677743531697,
+            "sd": 0.2525885712255377,
+            "ess": 355.0890289216575,
+            "ess_per_second": 100.15823612304789,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6764288458305641,
+            "sd": 0.24854620026669846,
+            "ess": 422.30512019408815,
+            "ess_per_second": 104.9392670061362,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.0027604005448033635,
+            "sd": 0.002548544124591266,
+            "ess": 423.42472928237675,
+            "ess_per_second": 119.43335490987143,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.00263823831608272,
+            "sd": 0.00217363025219417,
+            "ess": 628.8942424030643,
+            "ess_per_second": 156.27492461333597,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 0.01729577198377645,
+            "sd": 0.01605091761427947,
+            "ess": 491.23785334971615,
+            "ess_per_second": 138.56107314212534,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.0163541987788324,
+            "sd": 0.013220128169777435,
+            "ess": 596.0362282912729,
+            "ess_per_second": 148.10998473625386,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 0.9764804108680656,
+            "sd": 0.6917368088277297,
+            "ess": 107.73221928750957,
+            "ess_per_second": 30.387503354374235,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.237916362602634,
+            "sd": 1.3101756574515022,
+            "ess": 55.00106169636281,
+            "ess_per_second": 13.667300780826258,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.9764804108680656,
+            "sd": 0.6917368088277297,
+            "ess": 107.73221928750957,
+            "ess_per_second": 30.387503354374235,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -1.237916362602634,
+            "sd": 1.3101756574515022,
+            "ess": 55.00106169636281,
+            "ess_per_second": 13.667300780826258,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.47916259620319257,
+            "sd": 0.17249634453131332,
+            "ess": 180.31486610992948,
+            "ess_per_second": 50.860537683124605,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.46717320367873694,
+            "sd": 0.18049153517190797,
+            "ess": 50.12608725526068,
+            "ess_per_second": 12.455910674336927,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -16.780954454484043,
+            "sd": 11.231678700585219,
+            "ess": 154.0877671354754,
+            "ess_per_second": 43.46278737841023,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -15.580267186146138,
+            "sd": 12.978861459406177,
+            "ess": 45.40574388588012,
+            "ess_per_second": 11.282945087340464,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.7343594026209868,
+            "sd": 0.6867442076835172,
+            "ess": 155.37243155296574,
+            "ess_per_second": 43.82514642525723,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.8342795092306554,
+            "sd": 0.8355536659308459,
+            "ess": 48.958240889548094,
+            "ess_per_second": 12.165710684487564,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9757088213251232,
+            "sd": 0.09057711771688569,
+            "ess": 401.1157836514048,
+            "ess_per_second": 113.14077907065534,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9802061925915793,
+            "sd": 0.08235551464928692,
+            "ess": 368.4498134887091,
+            "ess_per_second": 91.5566766945252,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "time-rates": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -109.18481475697402,
+            "sd": 18.56703919124936,
+            "ess": 272.5892806174431,
+            "ess_per_second": 72.72342339034225,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -105.88002702222605,
+            "sd": 24.95085569124603,
+            "ess": 39.29884130244322,
+            "ess_per_second": 10.039105995279504,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -202.45950428246348,
+            "sd": 2.885042905896853,
+            "ess": 2365.705013112491,
+            "ess_per_second": 631.1406189397522,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -202.40541693385944,
+            "sd": 2.8797941748351534,
+            "ess": 1870.6388135194427,
+            "ess_per_second": 477.8650134562121,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 93.27468952548945,
+            "sd": 17.984334537069046,
+            "ess": 258.55369094229206,
+            "ess_per_second": 68.9789029595788,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 96.52538991163341,
+            "sd": 24.3526837907016,
+            "ess": 38.43337694591321,
+            "ess_per_second": 9.81801834683016,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 120.140587684274,
+            "sd": 14.852119325986958,
+            "ess": 304.715410775039,
+            "ess_per_second": 81.29427459935559,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 123.94825414944413,
+            "sd": 22.803701374367385,
+            "ess": 38.68886877902001,
+            "ess_per_second": 9.88328514626956,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 634.3551019176579,
+            "sd": 239.95587200662905,
+            "ess": 1137.2196250015536,
+            "ess_per_second": 303.3960252929405,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 615.19220069701,
+            "sd": 244.89346450606635,
+            "ess": 1077.2479640886158,
+            "ess_per_second": 275.18894034192084,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.6660298236319085,
+            "sd": 0.24085290155976133,
+            "ess": 578.6853784515216,
+            "ess_per_second": 154.386048092595,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6821684719373415,
+            "sd": 0.24873919230452535,
+            "ess": 155.66049486860888,
+            "ess_per_second": 39.7643328778366,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.0027406559862423914,
+            "sd": 0.0022049142396894715,
+            "ess": 425.4076451403892,
+            "ess_per_second": 113.4934588071741,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.0026461070698488524,
+            "sd": 0.0022954646268926035,
+            "ess": 199.12526591968484,
+            "ess_per_second": 50.86764862916334,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 0.017067970577299904,
+            "sd": 0.013708257229053635,
+            "ess": 429.467536194579,
+            "ess_per_second": 114.576587150973,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.01650385517038011,
+            "sd": 0.014174365321784062,
+            "ess": 189.88712477594697,
+            "ess_per_second": 48.50771446653521,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 0.8881557969254132,
+            "sd": 0.6783644841371047,
+            "ess": 118.64042683757646,
+            "ess_per_second": 31.651787526555772,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.2473118485282053,
+            "sd": 1.174745978044363,
+            "ess": 57.78438313965121,
+            "ess_per_second": 14.761339723640532,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.8881557969254132,
+            "sd": 0.6783644841371047,
+            "ess": 118.64042683757646,
+            "ess_per_second": 31.651787526555772,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -1.2473118485282053,
+            "sd": 1.174745978044363,
+            "ess": 57.78438313965121,
+            "ess_per_second": 14.761339723640532,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.5098425183902995,
+            "sd": 0.18669272751257066,
+            "ess": 195.76761473575678,
+            "ess_per_second": 52.22836019192613,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.5001322928066539,
+            "sd": 0.1683437260112109,
+            "ess": 174.4564514363954,
+            "ess_per_second": 44.565863763047396,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -18.43130423808102,
+            "sd": 10.507082987540823,
+            "ess": 199.4968968393382,
+            "ess_per_second": 53.223286187352166,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -18.63192708505458,
+            "sd": 10.5842093404265,
+            "ess": 160.2177321394788,
+            "ess_per_second": 40.92850430100416,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.638682844795966,
+            "sd": 0.6129811919585142,
+            "ess": 196.2750727974104,
+            "ess_per_second": 52.36374367944583,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.6358700252457974,
+            "sd": 0.6198160961164563,
+            "ess": 135.3196052519749,
+            "ess_per_second": 34.568140315106426,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9735001089107161,
+            "sd": 0.0991325357082745,
+            "ess": 576.7976780728553,
+            "ess_per_second": 153.88243315380905,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9804234011544909,
+            "sd": 0.0933296709967866,
+            "ess": 588.9426194421436,
+            "ess_per_second": 150.44864392349552,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "sigma-rates": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -105.71517640105046,
+            "sd": 20.871425006185067,
+            "ess": 349.17825675541604,
+            "ess_per_second": 85.46288011346196,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -106.46276418210655,
+            "sd": 20.632649162955097,
+            "ess": 371.9860043521655,
+            "ess_per_second": 93.97843279302683,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -202.4261939895783,
+            "sd": 2.921923141663121,
+            "ess": 2359.6787215882073,
+            "ess_per_second": 577.541515795577,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -202.49069859432032,
+            "sd": 2.9125142727643287,
+            "ess": 2328.786149135876,
+            "ess_per_second": 588.3438356425454,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 96.71101758852785,
+            "sd": 20.27217622806997,
+            "ess": 341.5855431453628,
+            "ess_per_second": 83.60453080207756,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 96.02793441221377,
+            "sd": 20.0401360900927,
+            "ess": 359.42994873613924,
+            "ess_per_second": 90.80627466059583,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 122.20531137764752,
+            "sd": 16.633862122040558,
+            "ess": 261.0391430157494,
+            "ess_per_second": 63.890452950231726,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 121.73049562910877,
+            "sd": 16.463925824135742,
+            "ess": 265.17766035739714,
+            "ess_per_second": 66.99440473711108,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 642.8052537412101,
+            "sd": 235.84211029362646,
+            "ess": 1177.4946308855688,
+            "ess_per_second": 288.1968751682807,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 632.309765978793,
+            "sd": 244.03247593920912,
+            "ess": 1113.9999905780655,
+            "ess_per_second": 281.4406241662242,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.6794856607265767,
+            "sd": 0.24363733007565122,
+            "ess": 468.90715392776923,
+            "ess_per_second": 114.7670426356008,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6836052098577955,
+            "sd": 0.24150932591919919,
+            "ess": 500.170933815055,
+            "ess_per_second": 126.36303500295918,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.002594834906190507,
+            "sd": 0.002202135253863031,
+            "ess": 451.98971745024164,
+            "ess_per_second": 110.6264272979202,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.0026458878250346894,
+            "sd": 0.0023593570983571894,
+            "ess": 575.9801630601029,
+            "ess_per_second": 145.51545598746503,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 0.016063331910132025,
+            "sd": 0.013460599538222017,
+            "ess": 439.7441605944377,
+            "ess_per_second": 107.62927459083394,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.016537299928775367,
+            "sd": 0.01468726541766634,
+            "ess": 561.1985458757746,
+            "ess_per_second": 141.78103264659515,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 1.0356259689832736,
+            "sd": 1.0402515580750658,
+            "ess": 72.41925316830982,
+            "ess_per_second": 17.72492367921106,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.401878535609252,
+            "sd": 1.4818769543314954,
+            "ess": 41.0496344765431,
+            "ess_per_second": 10.37076736677409,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -1.0356259689832736,
+            "sd": 1.0402515580750658,
+            "ess": 72.41925316830982,
+            "ess_per_second": 17.72492367921106,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -1.401878535609252,
+            "sd": 1.4818769543314954,
+            "ess": 41.0496344765431,
+            "ess_per_second": 10.37076736677409,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.48171788595125636,
+            "sd": 0.17910478100710658,
+            "ess": 1491.781694795429,
+            "ess_per_second": 365.11998577008006,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.4768445964963475,
+            "sd": 0.1765669767648834,
+            "ess": 1287.2820625755553,
+            "ess_per_second": 325.21855496717836,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -16.80167178666701,
+            "sd": 11.947761671450134,
+            "ess": 1646.6689802144076,
+            "ess_per_second": 403.02931502746776,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -16.630110501702575,
+            "sd": 12.01500519200704,
+            "ess": 1632.6924335446463,
+            "ess_per_second": 412.48292769718483,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.7492407544872317,
+            "sd": 0.7430626171564746,
+            "ess": 1938.3038066513166,
+            "ess_per_second": 474.4081930832854,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.7628169006010479,
+            "sd": 0.7532884180153936,
+            "ess": 1957.0672029106602,
+            "ess_per_second": 494.43287233477275,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9795662400319924,
+            "sd": 0.09043843527801523,
+            "ess": 571.6840387256933,
+            "ess_per_second": 139.92212722058574,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9813477845930487,
+            "sd": 0.0837558295059995,
+            "ess": 721.1082595366835,
+            "ess_per_second": 182.18057484014113,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "combined": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -107.60290033272423,
+            "sd": 20.29213078412523,
+            "ess": 393.8168337653556,
+            "ess_per_second": 96.26248904964267,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -108.19294528340562,
+            "sd": 20.034848290955996,
+            "ess": 322.6585303959224,
+            "ess_per_second": 80.80126248376155,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -202.47669084045248,
+            "sd": 2.9309350463374013,
+            "ess": 2014.2844004109654,
+            "ess_per_second": 492.3609490826295,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -202.43168341487433,
+            "sd": 2.94626196970315,
+            "ess": 2069.7902479710524,
+            "ess_per_second": 518.3240155077344,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": 94.87379050772823,
+            "sd": 19.776892554272145,
+            "ess": 383.8285849527109,
+            "ess_per_second": 93.82101471559936,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 94.23873813146871,
+            "sd": 19.436682940790384,
+            "ess": 310.33176153574146,
+            "ess_per_second": 77.71435049347274,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 119.94035999676662,
+            "sd": 15.865455788859594,
+            "ess": 247.21014833840735,
+            "ess_per_second": 60.42673181300643,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 120.10340829704386,
+            "sd": 15.973254004003888,
+            "ess": 244.61163692463305,
+            "ess_per_second": 61.25649012743297,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 614.6875935911486,
+            "sd": 249.53738138480344,
+            "ess": 613.429642197516,
+            "ess_per_second": 149.9434741023488,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 628.7365841733241,
+            "sd": 243.84294136886686,
+            "ess": 1093.379770514333,
+            "ess_per_second": 273.8079347332205,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.6690907619757775,
+            "sd": 0.24678093958456956,
+            "ess": 309.9833391429912,
+            "ess_per_second": 75.77067619106151,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6623445265111401,
+            "sd": 0.24560824979078888,
+            "ess": 444.7518375659641,
+            "ess_per_second": 111.37628973641692,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.002869354605796591,
+            "sd": 0.0026116080866435175,
+            "ess": 611.2797853637318,
+            "ess_per_second": 149.41797454982392,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.002830397010916282,
+            "sd": 0.002417303437305829,
+            "ess": 771.8841514349762,
+            "ess_per_second": 193.29789251386623,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 0.01789357007838545,
+            "sd": 0.016277155168595753,
+            "ess": 571.0389899705988,
+            "ess_per_second": 139.58172887986765,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.017639559576054037,
+            "sd": 0.014712540846094083,
+            "ess": 539.3593456857203,
+            "ess_per_second": 135.06822835381178,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 1.249946513669632,
+            "sd": 1.0427913330695133,
+            "ess": 74.04545738318348,
+            "ess_per_second": 18.09927717506199,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.3670604712118413,
+            "sd": 1.1915961368275836,
+            "ess": 49.8309121451686,
+            "ess_per_second": 12.478828956130126,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -1.249946513669632,
+            "sd": 1.0427913330695133,
+            "ess": 74.04545738318348,
+            "ess_per_second": 18.09927717506199,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -1.3670604712118413,
+            "sd": 1.1915961368275836,
+            "ess": 49.8309121451686,
+            "ess_per_second": 12.478828956130126,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.4757563966213308,
+            "sd": 0.18145059029857238,
+            "ess": 1415.6306753211184,
+            "ess_per_second": 346.02922144925685,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.4776962406240774,
+            "sd": 0.17033574552604816,
+            "ess": 1726.5043450808032,
+            "ess_per_second": 432.3571752311923,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -16.122727797205293,
+            "sd": 12.162959892976499,
+            "ess": 1246.676772955973,
+            "ess_per_second": 304.73102954410945,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -16.844021567426232,
+            "sd": 11.84999963380334,
+            "ess": 1824.8698412055792,
+            "ess_per_second": 456.99020217137786,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.7861398991813235,
+            "sd": 0.7789997934663814,
+            "ess": 1540.1061558642741,
+            "ess_per_second": 376.4553448533007,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.7458328479549294,
+            "sd": 0.7344458886782377,
+            "ess": 1962.5035057913044,
+            "ess_per_second": 491.45689934856716,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9773109338203838,
+            "sd": 0.0886791821979123,
+            "ess": 1095.679952957177,
+            "ess_per_second": 267.8221711982383,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9813775986029207,
+            "sd": 0.08681023202377315,
+            "ess": 1039.8288187893093,
+            "ess_per_second": 260.39752062986673,
+            "lag_limit_reached": false
+          }
+        ]
+      }
+    },
+    "missing": {
+      "classical": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -245.9352987768977,
+            "sd": 11.989425213583129,
+            "ess": 47.375099932445856,
+            "ess_per_second": 8.746636539237313,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -246.50718222562688,
+            "sd": 11.304923529080321,
+            "ess": 139.31541021296093,
+            "ess_per_second": 25.240161291437232,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -239.66718639660627,
+            "sd": 3.98935033999604,
+            "ess": 902.8649637430428,
+            "ess_per_second": 166.69161000468134,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -239.37818217664997,
+            "sd": 3.948619060321819,
+            "ess": 830.4572425651015,
+            "ess_per_second": 150.45625402060026,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": -6.268112380291431,
+            "sd": 12.010928027082533,
+            "ess": 42.332974232999696,
+            "ess_per_second": 7.815733154524887,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -7.12900004897689,
+            "sd": 11.15784228295313,
+            "ess": 119.03505918159371,
+            "ess_per_second": 21.56591355174926,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 30.367623302254337,
+            "sd": 4.5001860668047895,
+            "ess": 323.5804970786854,
+            "ess_per_second": 59.741108792778526,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 30.35640006302442,
+            "sd": 4.484056236491615,
+            "ess": 227.56330188702543,
+            "ess_per_second": 41.22827786861864,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.9995636516346,
+            "sd": 4.643267921720099,
+            "ess": 644.0554760232756,
+            "ess_per_second": 118.9088607288185,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.53616074415306,
+            "sd": 4.8821529777298185,
+            "ess": 496.61601051556005,
+            "ess_per_second": 89.9733072325741,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.39584517224771115,
+            "sd": 0.23757330113952316,
+            "ess": 868.3517310724471,
+            "ess_per_second": 160.3195980744841,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.4385401746147268,
+            "sd": 0.24987322443969284,
+            "ess": 560.5697977539614,
+            "ess_per_second": 101.55999317512703,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.2209799367297885,
+            "sd": 0.07012010555394435,
+            "ess": 245.73119172375604,
+            "ess_per_second": 45.36816647196822,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.22336507350811172,
+            "sd": 0.06614941365794813,
+            "ess": 378.6624647975118,
+            "ess_per_second": 68.60333449036644,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.4442877584542406,
+            "sd": 0.3705905776623616,
+            "ess": 244.6557870500611,
+            "ess_per_second": 45.1696196862766,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.4488088663759997,
+            "sd": 0.35749892606846845,
+            "ess": 207.10821349754923,
+            "ess_per_second": 37.52237247457953,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.527421959776934,
+            "sd": 1.486326836598837,
+            "ess": 174.65893844365263,
+            "ess_per_second": 32.246438637048435,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.7020546444687525,
+            "sd": 1.4513626600167413,
+            "ess": 132.42416242269385,
+            "ess_per_second": 23.991654715892444,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.527421959776934,
+            "sd": 1.486326836598837,
+            "ess": 174.65893844365263,
+            "ess_per_second": 32.246438637048435,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.7020546444687525,
+            "sd": 1.4513626600167413,
+            "ess": 132.42416242269385,
+            "ess_per_second": 23.991654715892444,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.6233775002937726,
+            "sd": 0.22232776302409002,
+            "ess": 51.04700056404648,
+            "ess_per_second": 9.424561868758586,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6332874028236798,
+            "sd": 0.21884839904733025,
+            "ess": 105.8226940175693,
+            "ess_per_second": 19.17219251779061,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -24.781169951824836,
+            "sd": 11.445178374271382,
+            "ess": 45.327449686882765,
+            "ess_per_second": 8.368588736003987,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -25.500018502665156,
+            "sd": 10.535347033859757,
+            "ess": 125.70483748373526,
+            "ess_per_second": 22.774295882654673,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.41938849196186334,
+            "sd": 0.5894818927663626,
+            "ess": 40.39605630721755,
+            "ess_per_second": 7.4581293261993,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.37557168588526313,
+            "sd": 0.4981707337130788,
+            "ess": 120.65953759143217,
+            "ess_per_second": 21.860224834442995,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9935314851688021,
+            "sd": 0.11522992139464996,
+            "ess": 258.39258295336225,
+            "ess_per_second": 47.70577815667956,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9950565589201601,
+            "sd": 0.11806292355790314,
+            "ess": 273.0218269861832,
+            "ess_per_second": 49.46412560304857,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "sigma-frequency": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -247.0238147581097,
+            "sd": 10.983307251795708,
+            "ess": 108.01083561612569,
+            "ess_per_second": 20.65557924563032,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -247.71028180492738,
+            "sd": 10.402924062728617,
+            "ess": 139.35968384551919,
+            "ess_per_second": 24.173192373695954,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -239.54031015081858,
+            "sd": 3.9707411596243913,
+            "ess": 860.5331399838013,
+            "ess_per_second": 164.56506761598254,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -239.60770010928752,
+            "sd": 3.9968449960506556,
+            "ess": 734.4273763478701,
+            "ess_per_second": 127.393043404473,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": -7.483504607291111,
+            "sd": 10.878669387225633,
+            "ess": 86.73806917256938,
+            "ess_per_second": 16.587456723087207,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -8.102581695639856,
+            "sd": 10.262187076659233,
+            "ess": 112.41409457695998,
+            "ess_per_second": 19.499237216524993,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 29.906106111446643,
+            "sd": 4.478036304490831,
+            "ess": 438.57994683473675,
+            "ess_per_second": 83.87235221089928,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 30.057854912868468,
+            "sd": 4.574907860463562,
+            "ess": 316.1671498396681,
+            "ess_per_second": 54.84203985271303,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.361051167301493,
+            "sd": 4.751556354276786,
+            "ess": 745.5437620355486,
+            "ess_per_second": 142.57493861580227,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.604809002608189,
+            "sd": 4.750640017742637,
+            "ess": 641.426809992098,
+            "ess_per_second": 111.26125751528568,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.42804813744436576,
+            "sd": 0.24833070637681187,
+            "ess": 856.7145822156004,
+            "ess_per_second": 163.83482122787558,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.4206973866241703,
+            "sd": 0.24496274012365096,
+            "ess": 815.5296621399332,
+            "ess_per_second": 141.46096536224118,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.22984383070025147,
+            "sd": 0.07032096376348837,
+            "ess": 273.18252425902523,
+            "ess_per_second": 52.24238148113335,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.22765702859303655,
+            "sd": 0.07019197034920152,
+            "ess": 298.67288713924694,
+            "ess_per_second": 51.80750241674961,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.4855943334777182,
+            "sd": 0.3661867505135034,
+            "ess": 326.2513830460236,
+            "ess_per_second": 62.39106713750425,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.4732065136271055,
+            "sd": 0.37188748034670005,
+            "ess": 267.1542798864824,
+            "ess_per_second": 46.34031610111028,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.592464705895075,
+            "sd": 1.531199671853774,
+            "ess": 180.7245410007967,
+            "ess_per_second": 34.56107025724002,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.624097315153069,
+            "sd": 1.715310664056676,
+            "ess": 160.49583497315868,
+            "ess_per_second": 27.839448159797666,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.592464705895075,
+            "sd": 1.531199671853774,
+            "ess": 180.7245410007967,
+            "ess_per_second": 34.56107025724002,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.624097315153069,
+            "sd": 1.715310664056676,
+            "ess": 160.49583497315868,
+            "ess_per_second": 27.839448159797666,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.6447079304249618,
+            "sd": 0.22295534890377333,
+            "ess": 86.91500914130178,
+            "ess_per_second": 16.621294046213386,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6557948902049879,
+            "sd": 0.2201144074204429,
+            "ess": 108.80461617794109,
+            "ess_per_second": 18.873140677694554,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -25.530571536533564,
+            "sd": 10.076886530656656,
+            "ess": 94.80786277577083,
+            "ess_per_second": 18.130693198538772,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -26.30269949289729,
+            "sd": 9.58479885821583,
+            "ess": 122.21660364731153,
+            "ess_per_second": 21.19957070583727,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.3588191973269754,
+            "sd": 0.43698158576525054,
+            "ess": 140.72475219654052,
+            "ess_per_second": 26.91166357742133,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.3258845214758257,
+            "sd": 0.3938833633418574,
+            "ess": 134.3420683494141,
+            "ess_per_second": 23.302841772305104,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9879899225115367,
+            "sd": 0.12006430278473229,
+            "ess": 367.9131593410942,
+            "ess_per_second": 70.35830595079305,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9879221982171987,
+            "sd": 0.1274051393375983,
+            "ess": 235.9140403025625,
+            "ess_per_second": 40.92141516488569,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "time-rates": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -248.30751406460723,
+            "sd": 10.001038516526881,
+            "ess": 258.31793640212976,
+            "ess_per_second": 43.494820662348204,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -246.86380006888285,
+            "sd": 11.203384247131844,
+            "ess": 189.53526324656457,
+            "ess_per_second": 28.38044225700126,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -239.4548357169069,
+            "sd": 4.045307998472918,
+            "ess": 1082.6516785179301,
+            "ess_per_second": 182.29373171989846,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -239.768540842498,
+            "sd": 4.0062431762834585,
+            "ess": 994.0823299239293,
+            "ess_per_second": 148.85090869032635,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": -8.852678347700333,
+            "sd": 9.819604949922876,
+            "ess": 215.24773050588604,
+            "ess_per_second": 36.24278502192998,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -7.095259226384867,
+            "sd": 11.00534397875061,
+            "ess": 162.63002236648728,
+            "ess_per_second": 24.35173212608274,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 29.951032696726656,
+            "sd": 4.665386168724241,
+            "ess": 510.6736672070146,
+            "ess_per_second": 85.98574253696175,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 30.188905861676226,
+            "sd": 4.477443323065726,
+            "ess": 589.5440896150553,
+            "ess_per_second": 88.27656503956511,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.51141342308389,
+            "sd": 4.907547023190707,
+            "ess": 731.800621514461,
+            "ess_per_second": 123.21845411391267,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.430122454741213,
+            "sd": 4.85516593921843,
+            "ess": 656.9061320940008,
+            "ess_per_second": 98.36315538766505,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.4274644110725542,
+            "sd": 0.246807538074766,
+            "ess": 918.0968851458892,
+            "ess_per_second": 154.58647558997657,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.4376713656184097,
+            "sd": 0.248486732704581,
+            "ess": 838.7231119172304,
+            "ess_per_second": 125.58788501754336,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.2286564050710591,
+            "sd": 0.07453297625113095,
+            "ess": 391.55314336685734,
+            "ess_per_second": 65.92857618685964,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.22593749205622105,
+            "sd": 0.06904617963926132,
+            "ess": 519.0545462745573,
+            "ess_per_second": 77.72167208597827,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.4821518827599374,
+            "sd": 0.39041529047547807,
+            "ess": 405.6036913413821,
+            "ess_per_second": 68.29436647177552,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.4631026178206297,
+            "sd": 0.3629187831353134,
+            "ess": 495.28408955981786,
+            "ess_per_second": 74.16235514062647,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.68969847633243,
+            "sd": 1.7148252190327598,
+            "ess": 221.54342273078063,
+            "ess_per_second": 37.30283531530509,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.366149075696065,
+            "sd": 1.6268494285813435,
+            "ess": 156.0111985992006,
+            "ess_per_second": 23.360649292634587,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.68969847633243,
+            "sd": 1.7148252190327598,
+            "ess": 221.54342273078063,
+            "ess_per_second": 37.30283531530509,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.366149075696065,
+            "sd": 1.6268494285813435,
+            "ess": 156.0111985992006,
+            "ess_per_second": 23.360649292634587,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.6653168507523293,
+            "sd": 0.21580020230491598,
+            "ess": 176.25431887135255,
+            "ess_per_second": 29.677188107990045,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6424991639692725,
+            "sd": 0.22581880622468206,
+            "ess": 154.9687951816175,
+            "ess_per_second": 23.204562929102686,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -26.90508560583955,
+            "sd": 9.08046239461319,
+            "ess": 226.7422128303533,
+            "ess_per_second": 38.17819242829355,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -25.641069619759733,
+            "sd": 10.378378143305827,
+            "ess": 163.40786296775866,
+            "ess_per_second": 24.46820364642888,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.3011716832728768,
+            "sd": 0.3576720144646801,
+            "ess": 204.1521721902848,
+            "ess_per_second": 34.374547276586476,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.3691911136231585,
+            "sd": 0.4528526809732031,
+            "ess": 158.67270400010705,
+            "ess_per_second": 23.759175134492626,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9907997038318731,
+            "sd": 0.12870372831625673,
+            "ess": 671.2872322153249,
+            "ess_per_second": 113.02938613088475,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9933934161848275,
+            "sd": 0.12289750451284333,
+            "ess": 666.8477555499094,
+            "ess_per_second": 99.8517842876298,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "sigma-rates": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -246.4858628284545,
+            "sd": 11.575196868814528,
+            "ess": 1619.451868890379,
+            "ess_per_second": 255.58573554924516,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -245.91431708461852,
+            "sd": 11.74785265266771,
+            "ess": 1547.3196089556996,
+            "ess_per_second": 229.32588303482558,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -239.60250864391088,
+            "sd": 3.9793987165262004,
+            "ess": 868.0036069720602,
+            "ess_per_second": 136.99038829684966,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -239.78970327828443,
+            "sd": 4.036007011146606,
+            "ess": 954.9047317504026,
+            "ess_per_second": 141.52497619453612,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": -6.883354184543602,
+            "sd": 11.673161878815527,
+            "ess": 1161.658385853339,
+            "ess_per_second": 183.33568209637968,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -6.1246138063341,
+            "sd": 11.717134893587756,
+            "ess": 1217.4787091802204,
+            "ess_per_second": 180.44066555020777,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 30.455723288702124,
+            "sd": 4.589524291462675,
+            "ess": 891.9385847535523,
+            "ess_per_second": 140.7678632679515,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 30.196767045322794,
+            "sd": 4.544480035850928,
+            "ess": 969.3069101813228,
+            "ess_per_second": 143.65950112860904,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.729111577560305,
+            "sd": 4.868164689143989,
+            "ess": 887.934544463406,
+            "ess_per_second": 140.13593613113142,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.66235445893785,
+            "sd": 4.8937465882143805,
+            "ess": 706.9697779834157,
+            "ess_per_second": 104.77891424409859,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.4237864032518108,
+            "sd": 0.24968808575621465,
+            "ess": 837.569987850042,
+            "ess_per_second": 132.18728233356086,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.4232309010425548,
+            "sd": 0.24664134895615772,
+            "ess": 794.3473933593424,
+            "ess_per_second": 117.72901756314431,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.22165860639328297,
+            "sd": 0.06902051924294947,
+            "ess": 816.7126040199184,
+            "ess_per_second": 128.89552054041312,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.22572245984918676,
+            "sd": 0.06947126600943904,
+            "ess": 735.0099744445281,
+            "ess_per_second": 108.93470906289137,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.4423644665568518,
+            "sd": 0.3805625349274311,
+            "ess": 703.1121534495077,
+            "ess_per_second": 110.96682795280434,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.4630559960979193,
+            "sd": 0.37363378447269086,
+            "ess": 773.4896036146854,
+            "ess_per_second": 114.63771630665958,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.470526549737695,
+            "sd": 1.4570509975196948,
+            "ess": 202.2171601878164,
+            "ess_per_second": 31.91439191255216,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.35999507756257,
+            "sd": 1.4344668887596028,
+            "ess": 95.14813017900988,
+            "ess_per_second": 14.101759485320846,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.470526549737695,
+            "sd": 1.4570509975196948,
+            "ess": 202.2171601878164,
+            "ess_per_second": 31.91439191255216,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.35999507756257,
+            "sd": 1.4344668887596028,
+            "ess": 95.14813017900988,
+            "ess_per_second": 14.101759485320846,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.6406887255755694,
+            "sd": 0.24384170647573178,
+            "ess": 799.5628351172786,
+            "ess_per_second": 126.1889033301813,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6350491644916418,
+            "sd": 0.22979192872632725,
+            "ess": 830.3970266149322,
+            "ess_per_second": 123.07187881273404,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -25.55202953137069,
+            "sd": 11.07524130933528,
+            "ess": 1044.5624332424063,
+            "ess_per_second": 164.85532108484128,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -24.646573044138208,
+            "sd": 11.075255674216837,
+            "ess": 1029.6052240296444,
+            "ess_per_second": 152.59622240373722,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.4087661131552047,
+            "sd": 0.5396705352395725,
+            "ess": 1536.5733490067446,
+            "ess_per_second": 242.50565093999685,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.4070574509739817,
+            "sd": 0.5555751156028154,
+            "ess": 1769.6037113145237,
+            "ess_per_second": 262.2702713583502,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 1.0014908209202715,
+            "sd": 0.1199741086153159,
+            "ess": 535.5814922638369,
+            "ess_per_second": 84.52674159473956,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9843138731698252,
+            "sd": 0.12274557417504775,
+            "ess": 415.421263651282,
+            "ess_per_second": 61.56895289562692,
+            "lag_limit_reached": false
+          }
+        ]
+      },
+      "combined": {
+        "posterior": [
+          {
+            "seed": 27011,
+            "mean": -246.09727944811692,
+            "sd": 11.841896724841279,
+            "ess": 1877.8819117653813,
+            "ess_per_second": 309.571780703134,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -246.4078185433735,
+            "sd": 11.596727851927767,
+            "ess": 1208.3603826094159,
+            "ess_per_second": 194.50310956571553,
+            "lag_limit_reached": false
+          }
+        ],
+        "likelihood": [
+          {
+            "seed": 27011,
+            "mean": -239.48765686456596,
+            "sd": 3.9531878384429113,
+            "ess": 1301.372591668259,
+            "ess_per_second": 214.53331438836977,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -239.5827984980318,
+            "sd": 4.079256520960366,
+            "ess": 860.2406173235198,
+            "ess_per_second": 138.46818999712175,
+            "lag_limit_reached": false
+          }
+        ],
+        "prior": [
+          {
+            "seed": 27011,
+            "mean": -6.609622583550957,
+            "sd": 11.873015668878086,
+            "ess": 1449.0443269033062,
+            "ess_per_second": 238.87723172940161,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -6.825020045341724,
+            "sd": 11.637476049198414,
+            "ess": 831.6245228515601,
+            "ess_per_second": 133.86201501941932,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_death": [
+          {
+            "seed": 27011,
+            "mean": 30.112854305801726,
+            "sd": 4.541276737471343,
+            "ess": 1022.9143755627254,
+            "ess_per_second": 168.6290403916254,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 30.26968036537191,
+            "sd": 4.5933712715531785,
+            "ess": 1050.1800579418198,
+            "ess_per_second": 169.04169469085636,
+            "lag_limit_reached": false
+          }
+        ],
+        "birth_difference_rate": [
+          {
+            "seed": 27011,
+            "mean": 10.429942559019931,
+            "sd": 4.8911912899917525,
+            "ess": 890.1510673919609,
+            "ess_per_second": 146.74280065260746,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 10.839346914268177,
+            "sd": 4.839268891433401,
+            "ess": 1003.1846847286165,
+            "ess_per_second": 161.47710853202332,
+            "lag_limit_reached": false
+          }
+        ],
+        "relative_death_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.43688142922625534,
+            "sd": 0.24945035348942884,
+            "ess": 917.8817256485485,
+            "ess_per_second": 151.3142431926187,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.41354407039950736,
+            "sd": 0.24043621777572863,
+            "ess": 967.1523279819343,
+            "ess_per_second": 155.6771786989412,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_height": [
+          {
+            "seed": 27011,
+            "mean": 0.22773402680288077,
+            "sd": 0.07016070136441761,
+            "ess": 854.2205310874263,
+            "ess_per_second": 140.8195953457537,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.22431807373014284,
+            "sd": 0.069424118300503,
+            "ess": 843.7529624126901,
+            "ess_per_second": 135.81426307618312,
+            "lag_limit_reached": false
+          }
+        ],
+        "tree_length": [
+          {
+            "seed": 27011,
+            "mean": 1.4703059799608207,
+            "sd": 0.3718371905926959,
+            "ess": 887.8898037545763,
+            "ess_per_second": 146.3700277926749,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 1.4564917201428629,
+            "sd": 0.3780028820089917,
+            "ess": 836.2538110228164,
+            "ess_per_second": 134.60716601687318,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_shape": [
+          {
+            "seed": 27011,
+            "mean": 4.624745880213803,
+            "sd": 1.547281519686863,
+            "ess": 199.7560760414995,
+            "ess_per_second": 32.93010267525472,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 4.745693756248704,
+            "sd": 1.966246420660165,
+            "ess": 156.0651013631705,
+            "ess_per_second": 25.120939039952862,
+            "lag_limit_reached": false
+          }
+        ],
+        "gamma_prior": [
+          {
+            "seed": 27011,
+            "mean": -4.624745880213803,
+            "sd": 1.547281519686863,
+            "ess": 199.7560760414995,
+            "ess_per_second": 32.93010267525472,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -4.745693756248704,
+            "sd": 1.966246420660165,
+            "ess": 156.0651013631705,
+            "ess_per_second": 25.120939039952862,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma": [
+          {
+            "seed": 27011,
+            "mean": 0.6317452655181346,
+            "sd": 0.22816102814284417,
+            "ess": 1157.464153970065,
+            "ess_per_second": 190.8097825532104,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.6343712003521209,
+            "sd": 0.22589417279596608,
+            "ess": 1011.6438745547506,
+            "ess_per_second": 162.83873768609794,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_rate_prior": [
+          {
+            "seed": 27011,
+            "mean": -24.781646334299516,
+            "sd": 11.14914325516181,
+            "ess": 1556.1438888691976,
+            "ess_per_second": 256.5327626243863,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -25.046595553588087,
+            "sd": 10.986783953384169,
+            "ess": 1496.0237823741545,
+            "ess_per_second": 240.8067012489035,
+            "lag_limit_reached": false
+          }
+        ],
+        "clock_sigma_prior": [
+          {
+            "seed": 27011,
+            "mean": -0.40832939585722405,
+            "sd": 0.5499049764193712,
+            "ess": 1979.3719522273059,
+            "ess_per_second": 326.30257317340966,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": -0.3946558218947067,
+            "sd": 0.5290379849778967,
+            "ess": 2140.1408543064836,
+            "ess_per_second": 344.4866755498298,
+            "lag_limit_reached": false
+          }
+        ],
+        "mean_branch_rate": [
+          {
+            "seed": 27011,
+            "mean": 0.9884719673261384,
+            "sd": 0.12080724229829506,
+            "ess": 865.6766504211422,
+            "ess_per_second": 142.7081545995952,
+            "lag_limit_reached": false
+          },
+          {
+            "seed": 27012,
+            "mean": 0.9896861257003133,
+            "sd": 0.12449211248728918,
+            "ess": 976.6885297924164,
+            "ess_per_second": 157.21216853498626,
+            "lag_limit_reached": false
+          }
+        ]
+      }
+    }
+  },
+  "scores": {
+    "sigma-frequency": 1.0050946660058449,
+    "time-rates": 1.5102714333099556,
+    "sigma-rates": 6.436857340742023,
+    "combined": 7.397257255462648
+  },
+  "selected": "combined",
+  "selected_weights": {
+    "node_height": 18,
+    "node_time_rates": 12,
+    "root_scale": 1,
+    "root_time_rates": 2,
+    "clock_sigma_scale": 1,
+    "clock_sigma_rates": 2
+  },
+  "protocol_sha256": "98620ea92656690356b693674c9c2d376bc3b15027cd0b29080b4a2db1cb786b",
+  "caveat": "Pilot selection only; no posterior-concordance or final efficiency claim."
+}

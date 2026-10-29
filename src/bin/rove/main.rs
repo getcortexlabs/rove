@@ -22,7 +22,8 @@ const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|none] [--sample-from-prior]
-                   [--no-tuning] [--tuning <move>=<value>]... [--backend portable|neon]
+                   [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
+                   [--backend portable|neon]
                    [--print-every <n>] [--events-json] [--cancel-on-stdin-close]
                    [--expect-input-sha256 <hash>]
        rove inspect <matrix.nex> [--gaps reject|missing]
@@ -49,6 +50,7 @@ struct Options {
     sample_from_prior: bool,
     tuning: bool,
     tuning_values: Vec<(Move, f64)>,
+    weights: Vec<(Move, f64)>,
     backend: Backend,
 }
 
@@ -70,10 +72,11 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut sample_from_prior = false;
     let mut tuning = true;
     let mut tuning_values = Vec::new();
+    let mut weights = Vec::new();
     let mut backend = Backend::NATIVE;
     let mut seen = HashSet::new();
     while let Some(argument) = arguments.next() {
-        let repeatable = matches!(argument.as_str(), "--monophyly" | "--tuning");
+        let repeatable = matches!(argument.as_str(), "--monophyly" | "--tuning" | "--weight");
         if argument.starts_with("--") && !repeatable && !seen.insert(argument.as_str()) {
             return Err(format!("{argument} is given more than once"));
         }
@@ -152,17 +155,20 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
             }
             "--sample-from-prior" => sample_from_prior = true,
             "--no-tuning" => tuning = false,
-            "--tuning" => {
-                let text = value("--tuning")?;
+            "--tuning" | "--weight" => {
+                let text = value(argument)?;
                 let parsed = text.split_once('=').and_then(|(name, number)| {
                     let kind = Move::ALL.into_iter().find(|m| m.name() == name)?;
                     Some((kind, number.parse::<f64>().ok()?))
                 });
-                tuning_values.push(parsed.ok_or_else(|| {
-                    format!(
-                        "--tuning needs <move>=<value>, such as subtree_slide=0.001, not {text:?}"
-                    )
-                })?);
+                let parsed = parsed.ok_or_else(|| {
+                    format!("{argument} needs <move>=<value> with a known move, not {text:?}")
+                })?;
+                if argument == "--weight" {
+                    weights.push(parsed);
+                } else {
+                    tuning_values.push(parsed);
+                }
             }
             flag if flag.starts_with("--") => {
                 return Err(format!("unsupported option {flag}\n{USAGE}"));
@@ -191,6 +197,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         sample_from_prior,
         tuning,
         tuning_values,
+        weights,
         backend,
     };
     if options.steps == 0 || options.sample_every == 0 || options.steps % options.sample_every != 0
@@ -354,7 +361,7 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
         }
         monophyly.push(tips);
     }
-    let settings = Settings {
+    let mut settings = Settings {
         conditioning: options.conditioning,
         sample_from_prior: options.sample_from_prior,
         monophyly,
@@ -367,6 +374,13 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
             Settings::default()
         }
     };
+    for &(kind, weight) in &options.weights {
+        if let Some(entry) = settings.weights.iter_mut().find(|(k, _)| *k == kind) {
+            entry.1 = weight;
+        } else {
+            settings.weights.push((kind, weight));
+        }
+    }
     let mut sampler = Sampler::new(&patterns, &settings, options.seed)?;
 
     if let Some(parent) = options

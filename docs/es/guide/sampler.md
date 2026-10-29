@@ -35,6 +35,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--sample-from-prior` | Ignorar los caracteres y muestrear el prior. |
 | `--no-tuning` | Mantener fijos todos los tamaños de desplazamiento y factores de escala. |
 | `--tuning <movimiento>=<valor>` | Tamaño inicial de desplazamiento o factor de escala de un movimiento, como `subtree_slide=0.001`. Se puede repetir. |
+| `--weight <move>=<value>` | Peso relativo de selección, finito y no negativo. Cero desactiva el movimiento. Se puede repetir; prevalece el último valor de cada movimiento. |
 | `--backend portable\|neon` | El [backend](./kernel#backends) de la verosimilitud: el código portable o el kernel NEON (por defecto en aarch64). Ambos dan las mismas muestras. |
 | `--print-every <n>` | Pasos entre líneas de progreso en la salida de error estándar; por defecto, una vigésima parte de la cadena. |
 

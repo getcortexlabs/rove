@@ -1,7 +1,9 @@
 //! Proposals on the tree and the birth–death parameters, following the
 //! definitions and Hastings ratios of the corresponding BEAST 2.7 operators.
+//! Joint time/rate and sigma/rate proposals are derived in `coupled`.
 //! Each returns the log Hastings ratio, or `None` when the move is invalid.
 
+use super::coupled;
 use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation};
 use crate::speciation::BirthDeath;
@@ -31,10 +33,16 @@ pub enum Move {
     GammaShapeScale,
     ClockSigmaScale,
     BranchRateScale,
+    /// Move an internal height and compensate its incident branch rates.
+    NodeTimeRates,
+    /// Scale the root height and compensate its two incident branch rates.
+    RootTimeRates,
+    /// Scale clock sigma while preserving standardized log branch rates.
+    ClockSigmaRates,
 }
 
 impl Move {
-    pub const ALL: [Move; 12] = [
+    pub const ALL: [Move; 15] = [
         Move::NodeHeight,
         Move::SubtreeSlide,
         Move::NarrowExchange,
@@ -47,6 +55,9 @@ impl Move {
         Move::GammaShapeScale,
         Move::ClockSigmaScale,
         Move::BranchRateScale,
+        Move::NodeTimeRates,
+        Move::RootTimeRates,
+        Move::ClockSigmaRates,
     ];
 
     pub fn name(self) -> &'static str {
@@ -63,6 +74,9 @@ impl Move {
             Self::GammaShapeScale => "gamma_shape_scale",
             Self::ClockSigmaScale => "clock_sigma_scale",
             Self::BranchRateScale => "branch_rate_scale",
+            Self::NodeTimeRates => "node_time_rates",
+            Self::RootTimeRates => "root_time_rates",
+            Self::ClockSigmaRates => "clock_sigma_rates",
         }
     }
 
@@ -73,8 +87,12 @@ impl Move {
             Self::RootScale
             | Self::TreeScale
             | Self::BirthDifferenceScale
-            | Self::RelativeDeathScale => Some(0.75),
-            Self::GammaShapeScale | Self::ClockSigmaScale | Self::BranchRateScale => Some(0.5),
+            | Self::RelativeDeathScale
+            | Self::RootTimeRates => Some(0.75),
+            Self::GammaShapeScale
+            | Self::ClockSigmaScale
+            | Self::BranchRateScale
+            | Self::ClockSigmaRates => Some(0.5),
             _ => None,
         }
     }
@@ -89,11 +107,17 @@ impl Move {
                 | Self::WilsonBalding
                 | Self::RootScale
                 | Self::TreeScale
+                | Self::NodeTimeRates
+                | Self::RootTimeRates
         )
     }
 
     pub fn changes_likelihood(self) -> bool {
-        self.changes_tree() || matches!(self, Self::GammaShapeScale | Self::BranchRateScale)
+        self.changes_tree()
+            || matches!(
+                self,
+                Self::GammaShapeScale | Self::BranchRateScale | Self::ClockSigmaRates
+            )
     }
 
     pub fn changes_topology(self) -> bool {
@@ -153,6 +177,37 @@ impl Move {
                 clock
                     .set_rate(index, clock.rates()[index] * factor)
                     .then(|| -factor.ln())
+            }
+            Self::NodeTimeRates => {
+                if tree.nodes() - tree.tips() < 2 {
+                    return None;
+                }
+                let clock = rates.clock.as_mut()?;
+                let node = loop {
+                    let node = tree.tips() + random.below(tree.nodes() - tree.tips());
+                    if node != tree.root() {
+                        break node;
+                    }
+                };
+                let (a, b) = tree.children(node)?;
+                let lower = tree.height(a).max(tree.height(b));
+                let upper = tree.height(tree.parent(node)?);
+                coupled::time_rates(
+                    tree,
+                    clock,
+                    node,
+                    lower + random.uniform() * (upper - lower),
+                )
+            }
+            Self::RootTimeRates => {
+                let factor = scaler(tuning, random);
+                let root = tree.root();
+                let height = tree.height(root) * factor;
+                coupled::time_rates(tree, rates.clock.as_mut()?, root, height)
+                    .map(|jacobian| jacobian - factor.ln())
+            }
+            Self::ClockSigmaRates => {
+                coupled::sigma_rates(rates.clock.as_mut()?, scaler(tuning, random))
             }
         }
     }
