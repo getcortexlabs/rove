@@ -37,6 +37,187 @@ fn error(output: &Output) -> String {
 }
 
 #[test]
+fn events_do_not_change_the_sampled_trace_or_trees() {
+    let directory = scratch("sample-events");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let plain = directory.join("plain");
+    let streamed = directory.join("streamed");
+    let run = |path: &Path, events: bool| {
+        let mut args = vec![
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            path.to_str().unwrap(),
+            "--seed",
+            "42",
+            "--steps",
+            "40",
+            "--sample-every",
+            "10",
+            "--gaps",
+            "missing",
+            "--conditioning",
+            "none",
+            "--model",
+            "reference",
+            "--print-every",
+            "10",
+        ];
+        if events {
+            args.push("--events-json");
+        }
+        let result = rove(&args);
+        assert!(result.status.success(), "{}", error_text(&result));
+        result
+    };
+    run(&plain, false);
+    let result = run(&streamed, true);
+    let events = String::from_utf8(result.stdout).unwrap();
+    let lines: Vec<_> = events.lines().collect();
+    assert_eq!(lines.len(), 6);
+    assert!(lines[0].contains("\"event\":\"started\""));
+    assert!(lines[5].contains("\"event\":\"completed\""));
+    assert!(lines[5].contains("\"step\":40,"));
+    assert!(
+        lines
+            .iter()
+            .all(|line| line.starts_with("{\"schema_version\":1,") && line.ends_with('}'))
+    );
+    for name in ["trace.log", "trees.nexus"] {
+        let read = |path: &Path| {
+            fs::read_to_string(path.join(name))
+                .unwrap()
+                .lines()
+                .filter(|line| !line.starts_with("# command") && !line.starts_with("[command"))
+                .map(str::to_string)
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(read(&plain), read(&streamed));
+    }
+}
+
+fn error_text(output: &Output) -> String {
+    String::from_utf8_lossy(&output.stderr).into_owned()
+}
+
+#[test]
+fn a_changed_fingerprint_fails_before_creating_outputs() {
+    let directory = scratch("sample-fingerprint");
+    let matrix = directory.join("matrix.nex");
+    let output = directory.join("output");
+    fs::write(&matrix, MATRIX).unwrap();
+    let result = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--output",
+        output.to_str().unwrap(),
+        "--seed",
+        "1",
+        "--steps",
+        "20",
+        "--sample-every",
+        "10",
+        "--gaps",
+        "missing",
+        "--expect-input-sha256",
+        &"0".repeat(64),
+        "--events-json",
+    ]);
+    assert!(error(&result).contains("fingerprint changed"));
+    let event = String::from_utf8(result.stdout).unwrap();
+    assert_eq!(event.lines().count(), 1);
+    assert!(event.contains("\"event\":\"failed\""));
+    assert!(!output.exists());
+}
+
+#[test]
+fn closing_the_owner_pipe_cancels_and_finishes_partial_files() {
+    use std::io::Read;
+    use std::process::Stdio;
+    use std::time::{Duration, Instant};
+    struct ChildGuard(std::process::Child);
+    impl Drop for ChildGuard {
+        fn drop(&mut self) {
+            let _ = self.0.kill();
+            let _ = self.0.wait();
+        }
+    }
+    let directory = scratch("sample-cancel");
+    let matrix = directory.join("matrix.nex");
+    let output = directory.join("output");
+    fs::write(&matrix, MATRIX).unwrap();
+    let events_path = directory.join("events.jsonl");
+    let events = fs::File::create(&events_path).unwrap();
+    let mut child = ChildGuard(
+        Command::new(env!("CARGO_BIN_EXE_rove"))
+            .args([
+                "sample",
+                matrix.to_str().unwrap(),
+                "--output",
+                output.to_str().unwrap(),
+                "--seed",
+                "1",
+                "--steps",
+                "1000000000",
+                "--sample-every",
+                "100",
+                "--gaps",
+                "missing",
+                "--conditioning",
+                "none",
+                "--events-json",
+                "--cancel-on-stdin-close",
+            ])
+            .stdin(Stdio::piped())
+            .stdout(events)
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap(),
+    );
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while !fs::read_to_string(&events_path)
+        .unwrap()
+        .contains("\"event\":\"started\"")
+    {
+        assert!(Instant::now() < deadline, "engine did not start");
+        assert!(child.0.try_wait().unwrap().is_none());
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    drop(child.0.stdin.take());
+    let status = loop {
+        if let Some(status) = child.0.try_wait().unwrap() {
+            break status;
+        }
+        assert!(Instant::now() < deadline, "engine ignored owner EOF");
+        std::thread::sleep(Duration::from_millis(10));
+    };
+    assert_eq!(status.code(), Some(130));
+    let mut text = String::new();
+    fs::File::open(&events_path)
+        .unwrap()
+        .read_to_string(&mut text)
+        .unwrap();
+    assert!(
+        text.lines()
+            .last()
+            .unwrap()
+            .contains("\"event\":\"cancelled\"")
+    );
+    assert!(
+        fs::read_to_string(output.join("trees.nexus"))
+            .unwrap()
+            .trim_end()
+            .ends_with("End;")
+    );
+    assert!(
+        fs::read_to_string(output.join("run.json"))
+            .unwrap()
+            .contains("\"status\": \"cancelled\"")
+    );
+}
+
+#[test]
 fn inspection_preserves_observations_and_requires_an_explicit_gap_policy() {
     let directory = scratch("inspect-gaps");
     let matrix = directory.join("matrix with spaces.nex");

@@ -127,7 +127,7 @@ jobs:
           persist-credentials: false
       - name: Build the app and bundled engine
         run: scripts/build-macos.sh release
-      - name: Test imports and analysis preparation
+      - name: Test imports, settings and native execution
         run: swift test --package-path apps/macos
       - name: Verify the bundle and example
         run: |

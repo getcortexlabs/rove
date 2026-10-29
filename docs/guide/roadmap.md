@@ -22,7 +22,7 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Complete inference validation | Done for six 20-taxon cases, #12 |
 | Relaxed-clock sampling efficiency | Next, #27 |
 | Native Mac import and setup preview | Implemented, #28 |
-| In-app execution and progress | Planned, #29 |
+| In-app execution and progress | Implemented, #29 |
 | Parallel chains and convergence reports | Planned, #23 |
 | Power-of-two rescaling | Planned, #18 |
 | Checkpoints and resumed runs | Planned, #22 |
@@ -53,6 +53,6 @@ The [minimal sampler](./sampler) supports binary Mk or Mkv, a strict clock and t
 
 After sampling efficiency (#27), the planned features follow what morphological analyses need: parallel chains with convergence reports (#23), checkpoints (#22), partitions by number of states (#19), conditioning on parsimony-informative characters (#20), ordered characters (#21), marginal likelihoods for model comparison (#24), the fossilized birth–death prior with tip dates (#25) and posterior predictive checks (#26). RevBayes documents each of these for morphological data and can serve as a second reference where BEAST has no matching feature.
 
-The [native Mac preview](./macos-preview) imports and displays matrices and prepares analysis settings. Running and monitoring analyses inside the app comes next. BEAST and BEAGLE adapters are optional compatibility paths, not dependencies of the Rust engine.
+The [native Mac preview](./macos-preview) imports and displays matrices and prepares analysis settings. It runs the bundled Rust engine with live progress, cancellation and fingerprint-checked setup reopening. BEAST and BEAGLE adapters are optional compatibility paths, not dependencies of the Rust engine.
 
 Follow the [repository issues](https://github.com/getcortexlabs/rove/issues) for acceptance criteria and results.

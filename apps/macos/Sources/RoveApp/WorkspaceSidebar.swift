@@ -15,7 +15,8 @@ struct WorkspaceSidebar: View {
           Spacer()
           Text("⌘N").font(.system(size: 10)).foregroundStyle(Lab.muted)
         }.padding(.horizontal, 13).padding(.vertical, 12)
-      }.buttonStyle(SidebarButtonStyle(outlined: true)).padding(.horizontal, 13)
+      }.buttonStyle(SidebarButtonStyle(outlined: true)).padding(.horizontal, 13).disabled(
+        workspace.isRunning)
 
       sectionLabel("WORKSPACE").padding(.top, 29)
       VStack(spacing: 5) {
@@ -36,7 +37,7 @@ struct WorkspaceSidebar: View {
           }
           Spacer(minLength: 0)
         }.padding(.horizontal, 12).padding(.vertical, 12)
-      }.buttonStyle(SidebarButtonStyle()).padding(.horizontal, 12)
+      }.buttonStyle(SidebarButtonStyle()).padding(.horizontal, 12).disabled(workspace.isRunning)
 
       Spacer(minLength: 16)
 
@@ -110,9 +111,12 @@ struct WorkspaceSidebar: View {
   }
 
   private func navigationItem(_ page: WorkspacePage) -> some View {
-    let selected = workspace.page == page
+    let selected = workspace.run == nil && workspace.page == page
     return Button {
-      if workspace.canOpen(page) { workspace.page = page }
+      if workspace.canOpen(page) {
+        workspace.dismissRun()
+        workspace.page = page
+      }
     } label: {
       HStack(spacing: 10) {
         Image(systemName: icon(page))

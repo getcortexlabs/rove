@@ -6,7 +6,7 @@ description: Rove 是一个以 ARM 为先、用 Rust 编写的系统发育推断
 hero:
   name: Rove
   text: 探索演化的路径。
-  tagline: 用 Rust 编写、以 ARM 为先的系统发育推断。今天，是面向形态学数据的似然内核。下一步，是独立分析。
+  tagline: 用 Rust 实现的系统发育推断，优先面向 ARM。在原生 Mac 工作区中探索形态数据。
   image:
     src: /images/rove-logo.webp
     width: 640
@@ -45,5 +45,13 @@ features:
 ::: info 早期
 带直接 Mk 路径及 NEON 内核的似然核心、Mkv 校正、等价性测试和一个最小的独立采样器已经实现。松弛时钟参考模型已实现并通过固定状态检查。后验比较已覆盖六个含 20 个分类单元的构造案例。AVX2 路径和更大规模的跨引擎工作负载仍待完成。[看看今天已有什么 →](/zh-CN/guide/#今天已有什么)
 :::
+
+</div>
+
+<div class="home-status">
+
+## 共同打造
+
+Rove 源于 Rafael Augusto 与生物学家 **Thiago José da Silva** 的交流。Thiago 对系统发育分析的提问促成了这个项目。如今，他与 Rafael 一起推进 Rove，从生物学角度提出意见、测试分析并讨论结果的含义。
 
 </div>

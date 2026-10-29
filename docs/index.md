@@ -6,7 +6,7 @@ description: Rove is an ARM-first phylogenetic inference project in Rust. It sta
 hero:
   name: Rove
   text: Explore evolutionary paths.
-  tagline: Phylogenetic inference in Rust, built ARM-first. Today, a likelihood kernel for morphological data. Next, standalone analysis.
+  tagline: Phylogenetic inference in Rust, built ARM-first. Explore morphological data in a native Mac workspace.
   image:
     src: /images/rove-logo.webp
     width: 640
@@ -45,5 +45,13 @@ features:
 ::: info Early
 The likelihood core with its direct Mk path and a NEON kernel, the Mkv correction, the equality tests and a minimal standalone sampler are implemented. The relaxed-clock reference model is implemented and checked at fixed states. Posterior comparisons cover six constructed 20-taxon cases. An AVX2 path and broader cross-engine workloads remain future work. [See what exists today →](/guide/#what-exists-today)
 :::
+
+</div>
+
+<div class="home-status">
+
+## Built together
+
+Rove began with conversations between Rafael Augusto and **Thiago José da Silva**, the biologist whose questions about phylogenetic analysis set the project in motion. Thiago works alongside Rafael, bringing the biological perspective, testing analyses and discussing what the results mean.
 
 </div>

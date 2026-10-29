@@ -19,7 +19,8 @@ struct PreviewTests {
     let defaults = try #require(UserDefaults(suiteName: suite))
     defer { defaults.removePersistentDomain(forName: suite) }
     let preferences = AppPreferences(defaults: defaults, preferredLanguages: ["en-US"])
-    let workspace = Workspace(preferences: preferences)
+    let workspace = Workspace(
+      executable: root.appendingPathComponent("target/release/rove"), preferences: preferences)
     let report = try await MatrixInspector.inspect(
       root.appendingPathComponent("fixtures/reference/20x50/matrix.nex"), gapsAsMissing: false,
       executable: root.appendingPathComponent("target/release/rove"))
@@ -49,6 +50,35 @@ struct PreviewTests {
       }
       window.close()
     }
+    workspace.report = report
+    workspace.file = root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
+    workspace.page = .review
+    workspace.settings.steps = 1_000_000
+    workspace.outputParent = directory.appendingPathComponent("runs")
+    workspace.monophyly = [Array(report.allTaxa.prefix(19))]
+    workspace.startRun()
+    let run = try #require(workspace.run)
+    let runView = NSHostingView(rootView: RootView(workspace: workspace))
+    let runWindow = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 1240, height: 850),
+      styleMask: [.borderless], backing: .buffered, defer: false)
+    runWindow.isReleasedWhenClosed = false
+    runWindow.appearance = NSAppearance(named: .darkAqua)
+    runWindow.contentView = runView
+    runWindow.orderBack(nil)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      try await capture(
+        runView, to: directory.appendingPathComponent("running-\(language.rawValue).png"))
+    }
+    await run.waitForExit()
+    #expect(run.status == .completed)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      try await capture(
+        runView, to: directory.appendingPathComponent("completed-\(language.rawValue).png"))
+    }
+    runWindow.close()
     let settings = NSHostingView(rootView: SettingsView(preferences: preferences))
     let settingsWindow = NSWindow(
       contentRect: NSRect(x: 0, y: 0, width: 560, height: 590),

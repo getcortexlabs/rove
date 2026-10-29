@@ -88,6 +88,10 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment) -> Json {
         ("sampler_error", optional(sampler_error)),
         ("variable_error", optional(variable_error)),
         (
+            "taxon_names",
+            Json::List(data.taxa().iter().map(Json::text).collect()),
+        ),
+        (
             "symbols",
             Json::List(
                 data.symbols()

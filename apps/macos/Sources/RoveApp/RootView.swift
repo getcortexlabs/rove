@@ -28,7 +28,9 @@ struct RootView: View {
                 .buttonStyle(.plain).padding(.top, 14).help(strings("Dismiss error"))
               }
             }
-            if let report = workspace.report {
+            if let run = workspace.run {
+              RunView(workspace: workspace, run: run)
+            } else if let report = workspace.report {
               switch workspace.page {
               case .matrix: MatrixView(workspace: workspace, report: report)
               case .model: SetupView(workspace: workspace)
@@ -42,7 +44,7 @@ struct RootView: View {
           .frame(maxWidth: .infinity)
         }
         .id("\(workspace.page.rawValue):\(workspace.report?.inputSha256 ?? "welcome")")
-        if workspace.report != nil { footer }
+        if workspace.report != nil && workspace.run == nil { footer }
       }
     }
     .background { WorkspaceBackdrop() }.foregroundStyle(Lab.ink)
@@ -59,10 +61,6 @@ struct RootView: View {
       reduceMotion || workspace.preferences.reduceMotion ? nil : .easeInOut(duration: 0.2),
       value: workspace.page
     )
-    .onChange(of: workspace.settings) {
-      workspace.savedURL = nil
-      workspace.notice = nil
-    }
     .overlay {
       if workspace.loading {
         ZStack {
@@ -89,7 +87,7 @@ struct RootView: View {
           .buttonStyle(.plain).foregroundStyle(Lab.secondary).help(
             strings("Choose another matrix (⌘O)")
           )
-          .padding(.trailing, 12)
+          .padding(.trailing, 12).disabled(workspace.isRunning)
       }
       HStack(spacing: 5) {
         Image(systemName: "lock.shield").font(.system(size: 10)).foregroundStyle(Lab.ice)
@@ -111,7 +109,7 @@ struct RootView: View {
           )
           Text(
             strings(
-              "Save your setup or copy a Terminal command. Running and monitoring analyses inside the app will come in a later version."
+              "Run the Rust engine here, follow its progress and inspect the output files. You can also save and reopen a setup."
             )
           )
           Text(
@@ -150,10 +148,10 @@ struct RootView: View {
         )
         .foregroundStyle(Lab.muted).padding(.trailing, 12)
         if workspace.page == .review {
-          Button(action: workspace.saveDraft) {
-            Label(strings("Save setup"), systemImage: "square.and.arrow.down")
+          Button(action: workspace.startRun) {
+            Label(strings("Start analysis"), systemImage: "play.fill")
           }
-          .buttonStyle(LabButtonStyle(prominent: true)).disabled(workspace.issue != nil)
+          .buttonStyle(LabButtonStyle(prominent: true)).disabled(!workspace.canStartRun)
         } else {
           Button {
             workspace.page = workspace.page == .matrix ? .model : .review

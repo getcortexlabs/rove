@@ -1,3 +1,4 @@
+mod events;
 mod inspect;
 mod sha256;
 
@@ -19,7 +20,8 @@ const USAGE: &str =
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|none] [--sample-from-prior]
                    [--no-tuning] [--tuning <move>=<value>]... [--backend portable|neon]
-                   [--print-every <n>]
+                   [--print-every <n>] [--events-json] [--cancel-on-stdin-close]
+                   [--expect-input-sha256 <hash>]
        rove inspect <matrix.nex> [--gaps reject|missing]";
 
 const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero";
@@ -31,6 +33,9 @@ struct Options {
     steps: u64,
     sample_every: u64,
     print_every: Option<u64>,
+    events_json: bool,
+    cancel_on_stdin_close: bool,
+    expected_input: Option<String>,
     monophyly: Vec<Vec<String>>,
     gaps: GapTreatment,
     conditioning: Conditioning,
@@ -50,6 +55,9 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let (mut output, mut seed, mut steps, mut sample_every, mut print_every) =
         (None, None, None, None, None);
     let mut monophyly = Vec::new();
+    let mut events_json = false;
+    let mut cancel_on_stdin_close = false;
+    let mut expected_input = None;
     let mut gaps = GapTreatment::Reject;
     let mut conditioning = Conditioning::Variable;
     let mut reference_model = false;
@@ -74,6 +82,15 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 .map_err(|_| format!("{name} needs a non-negative integer, not {text:?}"))
         };
         match argument.as_str() {
+            "--events-json" => events_json = true,
+            "--cancel-on-stdin-close" => cancel_on_stdin_close = true,
+            "--expect-input-sha256" => {
+                let hash = value("--expect-input-sha256")?;
+                if hash.len() != 64 || !hash.bytes().all(|c| c.is_ascii_hexdigit()) {
+                    return Err("--expect-input-sha256 needs 64 hexadecimal digits".into());
+                }
+                expected_input = Some(hash.to_ascii_lowercase());
+            }
             "--output" => output = Some(PathBuf::from(value("--output")?)),
             "--seed" => seed = Some(number("--seed", value("--seed")?)?),
             "--steps" => steps = Some(number("--steps", value("--steps")?)?),
@@ -158,6 +175,9 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         steps: required(steps, "--steps")?,
         sample_every: required(sample_every, "--sample-every")?,
         print_every,
+        events_json,
+        cancel_on_stdin_close,
+        expected_input,
         monophyly,
         gaps,
         conditioning,
@@ -217,6 +237,34 @@ impl Json {
         Self::Text(value.into())
     }
 
+    fn write_compact(&self, out: &mut String) {
+        match self {
+            Self::List(items) => {
+                out.push('[');
+                for (i, item) in items.iter().enumerate() {
+                    if i > 0 {
+                        out.push(',');
+                    }
+                    item.write_compact(out);
+                }
+                out.push(']');
+            }
+            Self::Object(fields) => {
+                out.push('{');
+                for (i, (key, value)) in fields.iter().enumerate() {
+                    if i > 0 {
+                        out.push(',');
+                    }
+                    out.push_str(&quoted(key));
+                    out.push(':');
+                    value.write_compact(out);
+                }
+                out.push('}');
+            }
+            _ => self.write(out, 0),
+        }
+    }
+
     fn write(&self, out: &mut String, depth: usize) {
         let indent = |out: &mut String, depth: usize| out.push_str(&"  ".repeat(depth));
         match self {
@@ -257,8 +305,9 @@ impl Json {
     }
 }
 
-fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
+fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
     let options = parse_options(arguments)?;
+    let cancellation = events::Cancellation::watch_stdin(options.cancel_on_stdin_close);
     let executable = std::env::current_exe()
         .and_then(fs::read)
         .map(|binary| sha256::hex(&binary))
@@ -266,6 +315,13 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     let bytes = fs::read(&options.matrix)
         .map_err(|e| format!("cannot read {}: {e}", options.matrix.display()))?;
     let input = sha256::hex(&bytes);
+    if options
+        .expected_input
+        .as_ref()
+        .is_some_and(|expected| *expected != input)
+    {
+        return Err("the matrix fingerprint changed; inspect and review the input again".into());
+    }
     let data = nexus::parse(std::str::from_utf8(&bytes)?)?;
     let sites = 0..data.character_count();
     let patterns = data
@@ -356,14 +412,34 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     let print_every = options.print_every.unwrap_or((options.steps / 20).max(1));
     trace.write(0, &sampler)?;
     trees.write(0, &sampler)?;
-    progress("step\tposterior\tlikelihood\tprior\tseconds");
+    if options.events_json {
+        events::state("started", 0, options.steps, 0.0, &input, &sampler)?;
+    } else {
+        progress("step\tposterior\tlikelihood\tprior\tseconds");
+    }
+    let mut completed_steps = 0;
     for step in 1..=options.steps {
+        if step % 1024 == 1 && cancellation.requested() {
+            break;
+        }
         sampler.step();
+        completed_steps = step;
         if step % options.sample_every == 0 {
             trace.write(step, &sampler)?;
             trees.write(step, &sampler)?;
         }
         if step % print_every == 0 {
+            if options.events_json {
+                events::state(
+                    "progress",
+                    step,
+                    options.steps,
+                    clock.elapsed().as_secs_f64(),
+                    &input,
+                    &sampler,
+                )?;
+                continue;
+            }
             let posterior = sampler.posterior();
             progress(format_args!(
                 "{step}\t{:.4}\t{:.4}\t{:.4}\t{:.1}",
@@ -377,6 +453,8 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     trace.finish()?;
     trees.finish()?;
     let seconds = clock.elapsed().as_secs_f64();
+    let completed = completed_steps == options.steps;
+    let status = if completed { "completed" } else { "cancelled" };
 
     let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
     let posterior = sampler.posterior();
@@ -401,6 +479,8 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
         Conditioning::None => "none (Mk)",
     };
     let metadata = Json::Object(vec![
+        ("status", Json::text(status)),
+        ("completed_steps", Json::Integer(completed_steps)),
         ("rove_version", Json::text(env!("CARGO_PKG_VERSION"))),
         (
             "executable_sha256",
@@ -422,7 +502,7 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
             "input",
             Json::Object(vec![
                 ("path", Json::text(options.matrix.display().to_string())),
-                ("sha256", Json::text(input)),
+                ("sha256", Json::text(&input)),
                 ("taxa", Json::Integer(taxa.len() as u64)),
                 ("characters", Json::Integer(data.character_count() as u64)),
                 (
@@ -621,23 +701,44 @@ fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     metadata.write(&mut text, 0);
     text.push('\n');
     fs::write(options.output.join("run.json"), text)?;
+    if options.events_json {
+        events::state(
+            status,
+            completed_steps,
+            options.steps,
+            seconds,
+            &input,
+            &sampler,
+        )?;
+    }
     progress(format_args!(
-        "Finished {} steps in {seconds:.1} s; wrote {}",
+        "{status}: {completed_steps} of {} steps in {seconds:.1} s; wrote {}",
         options.steps,
         options.output.display()
     ));
-    Ok(())
+    Ok(completed)
 }
 
 fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
     let result = if arguments.first().is_some_and(|a| a == "inspect") {
-        inspect::run(&arguments[1..])
+        inspect::run(&arguments[1..]).map(|_| true)
     } else {
         run(&arguments)
     };
-    if let Err(error) = result {
-        progress(format_args!("rove: {error}"));
-        std::process::exit(2);
+    match result {
+        Ok(true) => {}
+        Ok(false) => std::process::exit(130),
+        Err(error) => {
+            if arguments.iter().any(|arg| arg == "--events-json") {
+                let _ = events::emit(vec![
+                    ("schema_version", Json::Integer(1)),
+                    ("event", Json::text("failed")),
+                    ("message", Json::text(error.to_string())),
+                ]);
+            }
+            progress(format_args!("rove: {error}"));
+            std::process::exit(2);
+        }
     }
 }

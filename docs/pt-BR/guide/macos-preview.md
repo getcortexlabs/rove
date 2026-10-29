@@ -5,9 +5,8 @@ description: "Compile e explore a primeira interface nativa do Rove: importe uma
 # A prévia para Mac
 
 O Rove tem uma primeira interface nativa para macOS, feita com SwiftUI e
-AppKit. Ela importa matrizes pelo motor Rust e prepara as configurações da
-análise. A execução e o acompanhamento do progresso dentro da janela ainda
-não estão implementados.
+AppKit. Ela importa matrizes, prepara a configuração e executa o motor Rust
+incluído com progresso real e cancelamento. Não precisa de BEAST nem Java.
 
 ![A interface nativa do Rove](/images/macos-preview.png)
 
@@ -52,22 +51,57 @@ Entradas incompatíveis recebem uma explicação. Gaps exigem uma escolha
 explícita para serem tratados como ausentes; caracteres potencialmente
 constantes não podem usar Mkv.
 
-## Preparar uma análise
+## Preparar e executar uma análise
 
 Escolha o relógio estrito ou a [configuração de referência com relógio relaxado](./reference-model),
-Mk ou Mkv, tamanho da cadeia, intervalo de amostragem e semente. Revise as
-escolhas antes de salvar. Os priors mantêm os padrões do motor, e nenhum grupo
-recebe uma restrição automaticamente. O tamanho da cadeia sozinho não
-estabelece convergência.
+Mk ou Mkv, tamanho da cadeia, intervalo de amostragem e semente. Os priors
+mantêm os padrões do motor. Em Modelo, **Adicionar grupo** seleciona os terminais
+que devem formar um clado. Os grupos precisam estar contidos um no outro ou ser
+separados. Nada é imposto automaticamente, nem o grupo interno do exemplo.
+Suporte imposto por uma restrição não é recuperação independente pelos dados.
+
+Revise a configuração e os grupos, escolha onde salvar e pressione **Iniciar
+análise** ou **Command-Return**. O motor Rust incluído executa localmente enquanto
+a janela mostra os passos realmente concluídos e o tempo decorrido. As
+preferências continuam disponíveis; a configuração científica fica bloqueada
+durante a execução. Não há previsão de término, ESS ou suporte inventados.
+
+Cada execução recebe uma pasta nova, por padrão em `~/Rove Runs`. **Abrir pasta**
+mostra a configuração salva, o registro da sessão, os eventos de progresso e o
+log do motor. A subpasta `results` contém `trace.log`, `trees.nexus` e `run.json`.
+Após o término, os botões Traço, Árvores e Registro da execução mostram esses
+arquivos no Finder. **Concluída** significa que os passos solicitados terminaram
+e os metadados da saída foram conferidos. Não significa convergência. Compare
+execuções independentes e avalie os diagnósticos de amostragem e árvores antes
+de interpretar os resultados; veja o [guia de amostragem](./sampler).
+
+**Cancelar análise** pede confirmação antes de parar. Os arquivos parciais
+continuam identificados; não são uma análise concluída nem um ponto de retomada.
+Fechar a janela principal ou sair durante uma análise pede confirmação e espera
+o motor encerrar. Se for necessário forçar a parada, os arquivos parciais podem
+estar incompletos. Ainda não é possível retomar uma cadeia.
+
+## Salvar e reabrir uma configuração
 
 **Salvar configuração** grava um `.rove.json` com o caminho da matriz original,
-SHA-256 e configurações. Não copia a matriz nem inicia uma corrida. Reabrir
-esses registros no aplicativo ainda não está implementado.
+SHA-256, configurações e grupos explícitos. Não copia a matriz nem inicia uma
+execução. **Abrir configuração** (**Command-Shift-O**) restaura os ajustes depois
+de conferir se a matriz original existe e tem a mesma impressão digital.
+Arquivos ausentes ou alterados são informados antes da execução. Revise os
+ajustes restaurados antes de iniciar uma nova corrida. Uma configuração não
+é um ponto de retomada.
 
-**Copiar comando do Terminal** prepara um comando para o motor Rust incluído.
-Colá-lo no Terminal inicia uma análise real usando a matriz original no
-momento da execução. O comando usa uma pasta nova dentro de `~/Rove Runs`.
-O [guia de amostragem](./sampler) explica os arquivos gerados e os diagnósticos.
+**Copiar comando do Terminal** prepara um comando para o motor Rust incluído
+e uma pasta nova em `~/Rove Runs`. Ele lê a matriz no momento da execução.
+O mesmo binário, entrada, configuração, grupos e semente produzem as mesmas
+amostras científicas pelo app e pelo CLI; o progresso do app não altera a amostragem.
+
+Para automação, `rove sample ... --events-json` emite linhas JSON versionadas com
+os eventos `started`, `progress`, `completed`, `cancelled` ou `failed`.
+`--expect-input-sha256 HASH` rejeita entradas alteradas antes de criar resultados;
+`--cancel-on-stdin-close` permite cancelar quando o processo controlador fecha
+o canal de entrada. O app usa essas opções. As [notas do protocolo e processo](https://github.com/getcortexlabs/rove/blob/main/apps/macos/README.md#cli-event-protocol-version-1)
+definem campos, validação e códigos de saída.
 
 ## Inspecionar pelo terminal
 

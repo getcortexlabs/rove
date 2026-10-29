@@ -14,8 +14,10 @@ struct MatrixReport: Decodable, Sendable {
   let variableError: String?
   let symbols: [String]
   let taxa: [String]
+  let taxonNames: [String]?
   let characterLabels: [String?]
   let cells: [[String]]
+  var allTaxa: [String] { taxonNames ?? taxa }
 
   var missingPercent: Double {
     100 * Double(missingCount) / (Double(taxonCount) * Double(characterCount))
@@ -89,7 +91,7 @@ enum MatrixInspector {
   }
 }
 
-struct AnalysisSettings: Codable, Equatable {
+struct AnalysisSettings: Codable, Equatable, Sendable {
   var clock = "reference"
   var conditioning = "variable"
   var steps = 10_000_000
@@ -98,6 +100,10 @@ struct AnalysisSettings: Codable, Equatable {
   var gapsAsMissing = false
 
   var validationError: String? {
+    guard ["strict", "reference"].contains(clock), ["variable", "none"].contains(conditioning)
+    else {
+      return "This setup uses an unsupported model."
+    }
     guard UInt64(seed) != nil else {
       return "Use a whole-number seed from 0 to 18446744073709551615."
     }
@@ -107,23 +113,24 @@ struct AnalysisSettings: Codable, Equatable {
     return nil
   }
 
-  func arguments(matrix: URL, output: URL) -> [String] {
+  func arguments(matrix: URL, output: URL, monophyly: [[String]] = []) -> [String] {
     [
       "sample", matrix.path, "--output", output.path, "--seed", seed,
       "--steps", String(steps), "--sample-every", String(sampleEvery),
       "--model", clock, "--conditioning", conditioning,
       "--gaps", gapsAsMissing ? "missing" : "reject",
-    ]
+    ] + monophyly.flatMap { ["--monophyly", $0.joined(separator: ",")] }
   }
 
-  func command(executable: URL, matrix: URL, output: URL) -> String {
-    ([executable.path] + arguments(matrix: matrix, output: output)).map { value in
+  func command(executable: URL, matrix: URL, output: URL, monophyly: [[String]] = []) -> String {
+    ([executable.path] + arguments(matrix: matrix, output: output, monophyly: monophyly)).map {
+      value in
       "'" + value.replacingOccurrences(of: "'", with: "'\\''") + "'"
     }.joined(separator: " ")
   }
 }
 
-struct AnalysisDraft: Codable {
+struct AnalysisDraft: Codable, Sendable {
   let formatVersion: Int
   let createdAt: Date
   let matrixPath: String
@@ -131,12 +138,58 @@ struct AnalysisDraft: Codable {
   let settings: AnalysisSettings
   let monophyly: [[String]]
 
-  init(matrix: URL, report: MatrixReport, settings: AnalysisSettings) {
+  init(matrix: URL, report: MatrixReport, settings: AnalysisSettings, monophyly: [[String]] = []) {
     formatVersion = 1
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
     self.settings = settings
-    monophyly = []
+    self.monophyly = monophyly
+  }
+
+  static func read(_ url: URL) throws -> Self {
+    let values = try url.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey])
+    guard url.isFileURL, values.isRegularFile == true, (values.fileSize ?? 0) <= 1_048_576 else {
+      throw ImportError.message("Choose a setup file smaller than 1 MB.")
+    }
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    let draft = try decoder.decode(Self.self, from: Data(contentsOf: url))
+    guard draft.formatVersion == 1, (draft.matrixPath as NSString).isAbsolutePath,
+      draft.matrixSHA256.count == 64,
+      draft.matrixSHA256.utf8.allSatisfy({
+        (48...57).contains($0) || (97...102).contains($0)
+      })
+    else { throw ImportError.message("This setup has an unsupported or invalid format.") }
+    if let issue = draft.settings.validationError { throw ImportError.message(issue) }
+    return draft
+  }
+
+  func write(to url: URL) throws {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    encoder.dateEncodingStrategy = .iso8601
+    try encoder.encode(self).write(to: url, options: .atomic)
+  }
+}
+
+enum GroupConstraints {
+  static func validate(_ groups: [[String]], taxa: [String]) -> String? {
+    let known = Set(taxa)
+    var previous: [Set<String>] = []
+    for group in groups {
+      let names = Set(group)
+      guard names.count >= 2, names.count == group.count, names.isSubset(of: known) else {
+        return "Each group needs at least two distinct terminals from this matrix."
+      }
+      for other in previous {
+        if names == other { return "This group is already constrained." }
+        if !names.isDisjoint(with: other), !names.isSubset(of: other), !other.isSubset(of: names) {
+          return "Groups must be nested or separate; partially overlapping groups are incompatible."
+        }
+      }
+      previous.append(names)
+    }
+    return nil
   }
 }

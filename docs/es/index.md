@@ -6,7 +6,7 @@ description: Rove es un proyecto de inferencia filogenética en Rust, pensado pr
 hero:
   name: Rove
   text: Explora caminos evolutivos.
-  tagline: Inferencia filogenética en Rust, construida primero para ARM. Hoy, un kernel de verosimilitud para datos morfológicos. Después, análisis independiente.
+  tagline: Inferencia filogenética en Rust, pensada primero para ARM. Explora datos morfológicos en una aplicación nativa para Mac.
   image:
     src: /images/rove-logo.webp
     width: 640
@@ -45,5 +45,13 @@ features:
 ::: info Etapa inicial
 El núcleo de verosimilitud con la ruta directa de Mk y un kernel NEON, la corrección Mkv, las pruebas de igualdad y un muestreador independiente mínimo están implementados. El modelo de referencia con reloj relajado está implementado y comprobado en estados fijos. Las comparaciones de posterior cubren seis casos construidos con 20 taxones. Una ruta AVX2 y cargas mayores para comparar motores siguen pendientes. [Ver lo que existe hoy →](/es/guide/#lo-que-existe-hoy)
 :::
+
+</div>
+
+<div class="home-status">
+
+## Hecho en colaboración
+
+Rove nació de las conversaciones entre Rafael Augusto y **Thiago José da Silva**, el biólogo cuyas preguntas sobre análisis filogenético dieron origen al proyecto. Thiago trabaja junto a Rafael, aportando la perspectiva biológica, probando análisis y discutiendo el significado de los resultados.
 
 </div>

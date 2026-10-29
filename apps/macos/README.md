@@ -1,7 +1,7 @@
 # Native macOS preview
 
 A SwiftUI and AppKit workspace for importing a morphological NEXUS matrix,
-inspecting its observations and preparing an analysis. Requires macOS 14 or
+inspecting its observations and running an analysis. Requires macOS 14 or
 newer, Xcode with Swift 6, and the repository's Rust toolchain.
 
 From the repository root:
@@ -37,8 +37,9 @@ sandboxes build processes and cannot start SwiftPM's nested sandbox, set
   CLI. A saved setup references the original matrix and records its SHA-256;
   it does not copy the data. Copied commands read the file when executed.
 
-The window does not run or monitor MCMC, reopen setup files, edit the matrix,
-or display inferred trees. There are no invented runs, progress or results.
+The window runs the bundled Rust sampler with live progress and cancellation.
+It does not edit matrices, resume chains or visualize inferred trees. Completion
+means the requested steps finished and output metadata was verified, not convergence.
 The setup format is a preview format, not a configuration accepted by the CLI.
 The app supports English and Brazilian Portuguese, with a dark appearance.
 Open Settings from the sidebar or Command-comma to follow the Mac's language
@@ -49,12 +50,62 @@ System accessibility preferences take priority over the app's motion and
 transparency controls. Native system dialogs follow the Mac's language;
 original engine diagnostics remain available under Technical details.
 No account, network service, Java or BEAST is
-needed to import a matrix; only the explicitly clicked guide and Cortex links
+needed to import or analyze a matrix; only the explicitly clicked guide and Cortex links
 open a browser.
 
 Files are limited to 32 MB in the app. Statistics cover the full imported
 matrix; the visual preview contains at most 200 taxa and 120 characters.
 The window is resizable down to 1080 × 700, with scrollable content.
+
+## Execution and saved setups
+
+Review the configuration and press Start analysis (Command-Return). Select
+monophyly groups explicitly in Model; nested or disjoint groups are allowed,
+with at least two known terminals each. The review, saved setup and engine
+record retain these constraints. Constrained support is not independent evidence.
+
+Each run gets a unique directory under `~/Rove Runs` or a selected parent folder:
+`setup.rove.json`, `session.json`, `events.jsonl`, `engine.stderr.log` and
+`results/{trace.log,trees.nexus,run.json}`. The app never overwrites a run.
+A session starts as `partial`; only a valid terminal event, successful exit
+and matching engine metadata establish `completed`. Failed and cancelled runs
+retain their partial files. Abrupt termination can leave incomplete files.
+
+Open Setup (Command-Shift-O) restores a `.rove.json` after checking its version,
+settings, referenced matrix and SHA-256. Missing or changed input blocks reopening.
+The app and engine check the fingerprint again before a run. Reopening a setup
+prepares a new run; it does not resume a previous chain.
+
+The main actor only receives validated progress. The process worker drains stdout
+and writes stderr separately; malformed events, unexpected exits and invalid output
+metadata fail the run. Cancellation closes the engine's stdin pipe. The engine
+polls EOF between steps, finishes its writers and records `cancelled` with exit 130.
+Closing the main window or quitting asks whether to stop, then waits for the owned
+process. EOF also stops sampling if the app dies. A stalled child gets SIGTERM after
+two seconds and SIGKILL two seconds later; this fallback may leave incomplete files.
+
+## CLI event protocol (version 1)
+
+`rove sample ... --events-json` emits one JSON object per stdout line and flushes
+it immediately. Human diagnostics remain on stderr. `--print-every N` controls
+progress frequency without changing the random trajectory or scientific samples.
+
+- `started`, `progress`, `completed`, `cancelled`: `schema_version`, `event`,
+  `step`, `total_steps`, `elapsed_seconds`, `input_sha256`, `posterior`,
+  `likelihood`, `prior`. Posterior values are log densities, not support or ESS.
+- `failed`: `schema_version`, `event`, `message`; it may appear before `started`.
+- `completed` follows closed outputs and the written `run.json`; exit status is 0.
+  `cancelled` exits 130. Other failures exit 2. A crash may emit no terminal event.
+- `--expect-input-sha256 HASH` checks the exact bytes parsed before creating output.
+- `--cancel-on-stdin-close` opts into owner-pipe cancellation. Keep stdin open while
+  running; EOF requests cancellation. Ordinary terminal runs do not enable this flag.
+
+Consumers must reject unknown protocol versions, truncated/malformed events,
+backward steps or elapsed time, a mismatched fingerprint, events after termination,
+and an exit without a terminal event. Event lines are capped at 64 KiB in the app.
+The `run.json` record adds `status` and `completed_steps`; requested steps remain
+under `settings.steps`. The inspector includes full `taxon_names` independently
+of its bounded cell preview so group selection covers the whole matrix.
 
 ## Checks
 
@@ -68,6 +119,9 @@ fixtures, check import failure/reset behavior, validate sampling settings,
 round-trip draft metadata and execute copied commands against an argument
 recorder to check shell quoting. Preference tests cover language resolution,
 persistence, localized formatting and analysis preservation during switching.
+Run tests also compare app and CLI samples with the same binary and seed, reopen
+setups, reject changed input, cancel a live child, and handle malformed events,
+launch failures, output collisions and stale progress.
 Set `ROVE_TEST_ENGINE` to test another Rust
 executable; otherwise tests use `target/release/rove`.
 

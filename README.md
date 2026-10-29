@@ -31,7 +31,7 @@ remain pending. Work is tracked in the
 ## Native Mac preview
 
 The first SwiftUI/AppKit workspace imports matrices through Rust, displays their
-characters and prepares analysis settings. It uses a glass sidebar, a fossil
+characters and runs analyses with live progress and cancellation. It uses a glass sidebar, a fossil
 explorer and the Cortex Labs typography. Settings supports English, Brazilian
 Portuguese and preferences for reduced motion and transparency.
 
@@ -43,9 +43,18 @@ open build/macos/Rove.app
 ```
 
 Requires macOS 14+, Xcode with Swift 6, and Rust. This builds a local app; a
-notarized release and DMG are future work. The preview can save a setup record
-or copy a CLI command. Running and monitoring MCMC inside the window comes next.
+notarized release and DMG are future work. Review the model and explicit group
+constraints, start the bundled Rust engine, and inspect trace and tree files.
+Saved setups can be reopened after their matrix fingerprint is checked.
+Completion does not establish convergence; resumed runs remain future work.
 See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/README.md).
+
+## People
+
+Rove began with conversations between Rafael Augusto and **Thiago José da Silva**,
+the biologist whose questions about phylogenetic analysis set the project in motion.
+Thiago works alongside Rafael on the project, bringing the biological perspective,
+testing analyses and discussing what the results mean.
 
 ## Why
 

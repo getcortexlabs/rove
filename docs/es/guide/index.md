@@ -25,7 +25,7 @@ Rove parte de los datos: una disposición que vectoriza a lo largo de los patron
 ## Lo que existe hoy
 
 El motor es un único crate de Rust sin dependencias en tiempo de ejecución. Un paquete Swift
-separado ofrece la [vista previa nativa para Mac](./macos-preview) para importar matrices y preparar análisis.
+separado ofrece la [vista previa nativa para Mac](./macos-preview) para importar matrices, revisar ajustes, ejecutar análisis y seguir el progreso.
 
 - `LikelihoodCore`: poda de Felsenstein sobre una disposición por patrones, con categorías de tasa, reescalado opcional por nodo y guardado/restauración del estado de los nodos para un muestreador. `LikelihoodCore::mk` hace la poda con la forma cerrada de Mk; `LikelihoodCore::new` multiplica una matriz de transición por rama.
 - `Backend`: código portable para cualquier destino y, en aarch64, un kernel NEON para la actualización de nodo de Mk que da los mismos resultados. Ver [Backends](./kernel#backends).
@@ -45,7 +45,7 @@ La página del [núcleo de verosimilitud](./kernel) muestra cómo llamarlo. La p
 - Múltiples particiones, fechas de terminales, calibraciones y otros priors de árbol.
 - Una ruta de código AVX2. Los destinos que no son aarch64 ejecutan el código portable.
 - Benchmarks controlados de rendimiento frente a BEAST o BEAGLE.
-- Ejecutar y supervisar análisis dentro de la aplicación Mac, y los adaptadores opcionales para BEAST 2 o BEAGLE.
+- Reanudar ejecuciones, informes de convergencia en la aplicación y los adaptadores opcionales para BEAST 2 o BEAGLE.
 
 Nada de esta lista se documenta como disponible en ningún lugar de este sitio. El [roadmap](./roadmap) indica el orden.
 

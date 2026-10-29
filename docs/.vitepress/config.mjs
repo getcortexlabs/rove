@@ -31,7 +31,7 @@ const locales = {
       outline: 'On this page',
       edit: 'Edit this page on GitHub',
       message: 'Phylogenetic inference in Rust. MIT or Apache-2.0.',
-      copyright: `Maintained by Rafael Augusto and ${cortex}`
+      copyright: `By Rafael Augusto and Thiago José da Silva · ${cortex}`
     }
   },
   'pt-BR': {
@@ -57,7 +57,7 @@ const locales = {
       outline: 'Nesta página',
       edit: 'Editar esta página no GitHub',
       message: 'Inferência filogenética em Rust. MIT ou Apache-2.0.',
-      copyright: `Mantido por Rafael Augusto e ${cortex}`,
+      copyright: `Por Rafael Augusto e Thiago José da Silva · ${cortex}`,
       docFooter: { prev: 'Anterior', next: 'Próxima' },
       darkModeSwitchLabel: 'Aparência',
       lightModeSwitchTitle: 'Mudar para o tema claro',
@@ -100,7 +100,7 @@ const locales = {
       outline: 'En esta página',
       edit: 'Editar esta página en GitHub',
       message: 'Inferencia filogenética en Rust. MIT o Apache-2.0.',
-      copyright: `Mantenido por Rafael Augusto y ${cortex}`,
+      copyright: `Por Rafael Augusto y Thiago José da Silva · ${cortex}`,
       docFooter: { prev: 'Anterior', next: 'Siguiente' },
       darkModeSwitchLabel: 'Apariencia',
       lightModeSwitchTitle: 'Cambiar al tema claro',
@@ -143,7 +143,7 @@ const locales = {
       outline: '本页目录',
       edit: '在 GitHub 上编辑此页',
       message: '用 Rust 实现的系统发育推断。MIT 或 Apache-2.0 许可。',
-      copyright: `由 Rafael Augusto 和 ${cortex} 维护`,
+      copyright: `由 Rafael Augusto 与 Thiago José da Silva 共同打造 · ${cortex}`,
       docFooter: { prev: '上一页', next: '下一页' },
       darkModeSwitchLabel: '外观',
       lightModeSwitchTitle: '切换为浅色主题',

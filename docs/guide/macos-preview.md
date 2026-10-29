@@ -5,8 +5,8 @@ description: "Build and explore Rove's first native Mac workspace: import a matr
 # The Mac preview
 
 Rove has a first native macOS workspace built with SwiftUI and AppKit. It
-imports matrices through the Rust engine and prepares analysis settings.
-Execution and progress monitoring inside the window are not implemented yet.
+imports matrices, prepares settings and runs the bundled Rust engine with
+live progress and cancellation. BEAST and Java are not required.
 
 ![The native Rove workspace](/images/macos-preview.png)
 
@@ -49,21 +49,56 @@ can be viewed, but the current sampler accepts only binary characters.
 Unsupported inputs show an explanation. Gaps need an explicit decision to
 treat them as missing; potentially constant characters cannot use Mkv.
 
-## Prepare an analysis
+## Prepare and run an analysis
 
 Choose a strict clock or the [relaxed-clock reference preset](./reference-model),
-Mk or Mkv, chain length, sampling interval and seed. Review these choices before
-saving. Priors keep their engine defaults, and no group is constrained
-automatically. Chain length alone does not establish convergence.
+Mk or Mkv, chain length, sampling interval and seed. Priors keep their engine
+defaults. In Model, **Add group** selects terminals that must form a clade.
+Groups must be nested or disjoint. Nothing is constrained automatically,
+including the example's ingroup. Support imposed by a constraint is not
+independent recovery from the data.
 
-**Save setup** writes a `.rove.json` record with the original matrix path,
-SHA-256 and settings. It does not copy the matrix or start a run. Reopening
-these records in the app is not implemented yet.
+Review the settings and groups, choose an output location, and press **Start
+analysis** or **Command-Return**. The bundled Rust engine runs locally while
+the window shows actual completed steps and elapsed time. Settings remain
+available during a run; editing its scientific configuration is locked.
+There is no estimated completion time or invented ESS or posterior support.
 
-**Copy terminal command** prepares a command for the bundled Rust engine.
-Pasting it into Terminal starts a real analysis using the original matrix at
-execution time. The command uses a new output folder under `~/Rove Runs`.
-The [sampling guide](./sampler) explains those output files and diagnostics.
+Each run gets a new folder under `~/Rove Runs` by default. **Open folder** shows
+the saved setup, session record, progress events and engine log. The `results`
+subfolder contains `trace.log`, `trees.nexus` and `run.json`. Once the run ends,
+the Trace, Trees and Run record buttons reveal those files in Finder.
+**Completed** means the requested steps finished and output metadata was checked.
+It does not establish convergence. Compare independent runs and assess sampling
+and tree diagnostics before interpreting results; see the [sampling guide](./sampler).
+
+**Cancel analysis** asks before stopping. Partial files remain clearly marked;
+they are not a completed analysis or a checkpoint. Closing the main window or
+quitting while running asks whether to stop and waits for the engine to exit.
+If a process must be forcibly stopped, its partial files may be incomplete.
+Resuming a chain is not available yet.
+
+## Save and reopen a setup
+
+**Save setup** writes a `.rove.json` with the original matrix path, SHA-256,
+settings and explicit groups. It does not copy the matrix or start a run.
+**Open Setup** (**Command-Shift-O**) restores the configuration after checking
+that the original matrix still exists and has the same fingerprint. Missing
+or changed input is reported before execution. Review the restored settings
+before starting a new run. A setup is not a checkpoint.
+
+**Copy terminal command** prepares a command for the bundled Rust engine and
+a new output folder under `~/Rove Runs`. It reads the matrix at execution time.
+The same binary, input, settings, groups and seed produce the same scientific
+samples through the app and CLI; the app's progress reporting does not change
+sampling.
+
+For automation, `rove sample ... --events-json` emits versioned JSON lines with
+`started`, `progress`, `completed`, `cancelled` or `failed` events.
+`--expect-input-sha256 HASH` rejects changed input before creating outputs;
+`--cancel-on-stdin-close` enables cancellation when an owner closes its pipe.
+The app uses these options. The [protocol and process notes](https://github.com/getcortexlabs/rove/blob/main/apps/macos/README.md#cli-event-protocol-version-1)
+define fields, validation and exit codes.
 
 ## Inspect from the command line
 

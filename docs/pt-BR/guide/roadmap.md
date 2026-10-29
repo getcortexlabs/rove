@@ -22,7 +22,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Validação da inferência completa | Concluído em seis casos de 20 táxons, #12 |
 | Eficiência da amostragem com relógio relaxado | Próximo, #27 |
 | Prévia nativa para importar e preparar análises | Implementado, #28 |
-| Execução e progresso no aplicativo | Planejado, #29 |
+| Execução e progresso no aplicativo | Implementado, #29 |
 | Cadeias paralelas e relatórios de convergência | Planejado, #23 |
 | Reescalonamento por potências de dois | Planejado, #18 |
 | Checkpoints e retomada de execuções | Planejado, #22 |
@@ -53,6 +53,6 @@ O [amostrador mínimo](./sampler) suporta Mk ou Mkv binário, um relógio estrit
 
 Depois da eficiência da amostragem (#27), os recursos planejados seguem o que as análises morfológicas precisam: cadeias paralelas com relatórios de convergência (#23), checkpoints (#22), partições por número de estados (#19), condicionamento a caracteres informativos para parcimônia (#20), caracteres ordenados (#21), verossimilhanças marginais para comparar modelos (#24), o prior de nascimento–morte fossilizado com datas de terminais (#25) e checagens preditivas posteriores (#26). O RevBayes documenta cada um deles para dados morfológicos e pode servir de segunda referência onde o BEAST não tiver um recurso equivalente.
 
-A [prévia nativa para Mac](./macos-preview) importa e exibe matrizes e prepara as configurações da análise. Executar e acompanhar análises dentro do aplicativo vem a seguir. Os adaptadores BEAST e BEAGLE são caminhos de compatibilidade opcionais, não dependências da engine em Rust.
+A [prévia nativa para Mac](./macos-preview) importa e exibe matrizes e prepara as configurações da análise. Ela executa o motor Rust incluído com progresso real, cancelamento e reabertura de configurações com verificação da impressão digital. Os adaptadores BEAST e BEAGLE são caminhos de compatibilidade opcionais, não dependências da engine em Rust.
 
 Acompanhe as [issues do repositório](https://github.com/getcortexlabs/rove/issues) para critérios de aceitação e resultados.

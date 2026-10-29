@@ -14,7 +14,8 @@ struct RoveApp: App {
       RootView(workspace: workspace)
         .ignoresSafeArea(.container, edges: .top)
         .background(WindowSetup(workspace: workspace))
-        .onOpenURL { workspace.load($0) }
+        .onOpenURL { workspace.open($0) }
+        .onAppear { delegate.workspace = workspace }
     }
     .windowStyle(.hiddenTitleBar)
     .defaultSize(width: 1240, height: 850)
@@ -24,12 +25,22 @@ struct RoveApp: App {
         SettingsLink { Text(strings("Settings…")) }.keyboardShortcut(",", modifiers: .command)
       }
       CommandGroup(replacing: .newItem) {
-        Button(strings("New Analysis"), action: workspace.reset).keyboardShortcut("n")
+        Button(strings("New Analysis"), action: workspace.reset).keyboardShortcut("n").disabled(
+          workspace.isRunning)
         Button(strings("Open Matrix…"), action: workspace.chooseFile).keyboardShortcut("o")
-        Button(strings("Try Example Matrix"), action: workspace.loadExample)
+          .disabled(workspace.isRunning)
+        Button(strings("Open Setup…"), action: workspace.chooseSetup).keyboardShortcut(
+          "o", modifiers: [.command, .shift]
+        ).disabled(workspace.isRunning)
+        Button(strings("Try Example Matrix"), action: workspace.loadExample).disabled(
+          workspace.isRunning)
         Divider()
         Button(strings("Save Setup…"), action: workspace.saveDraft).keyboardShortcut("s")
-          .disabled(workspace.report == nil || workspace.issue != nil)
+          .disabled(workspace.report == nil || workspace.issue != nil || workspace.isRunning)
+        Divider()
+        Button(strings("Start analysis"), action: workspace.startRun).keyboardShortcut(
+          .return, modifiers: .command
+        ).disabled(!workspace.canStartRun)
       }
       CommandGroup(replacing: .help) {
         Button(strings("Rove Field Guide")) {
@@ -43,17 +54,55 @@ struct RoveApp: App {
   }
 }
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
+  var workspace: Workspace?
+  private var quitting = false
+
+  func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+    guard let workspace, workspace.isRunning else { return .terminateNow }
+    guard !quitting, confirmStop(workspace) else { return .terminateCancel }
+    quitting = true
+    Task {
+      await workspace.cancelAndWait()
+      sender.reply(toApplicationShouldTerminate: true)
+    }
+    return .terminateLater
+  }
   func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
 }
 
-private struct WindowSetup: NSViewRepresentable {
+struct WindowSetup: NSViewRepresentable {
   let workspace: Workspace
+
+  func makeCoordinator() -> Coordinator { Coordinator(workspace: workspace) }
+
+  final class Coordinator: NSObject, NSWindowDelegate {
+    let workspace: Workspace
+    var closing = false
+    private let confirm: @MainActor () -> Bool
+    init(workspace: Workspace, confirm: (@MainActor () -> Bool)? = nil) {
+      self.workspace = workspace
+      self.confirm = confirm ?? { confirmStop(workspace) }
+    }
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+      guard workspace.isRunning else { return true }
+      guard !closing, confirm() else { return false }
+      closing = true
+      Task { @MainActor in
+        await workspace.cancelAndWait()
+        closing = false
+        sender.performClose(nil)
+      }
+      return false
+    }
+  }
 
   func makeNSView(context: Context) -> NSView {
     let view = NSView()
     Task { @MainActor in
       guard let window = view.window else { return }
+      window.delegate = context.coordinator
       window.titlebarAppearsTransparent = true
       window.backgroundColor = NSColor(srgbRed: 16 / 255, green: 17 / 255, blue: 23 / 255, alpha: 1)
       window.isMovableByWindowBackground = false
@@ -91,4 +140,15 @@ private struct WindowSetup: NSViewRepresentable {
       NSApp.terminate(nil)
     }
   #endif
+}
+
+@MainActor private func confirmStop(_ workspace: Workspace) -> Bool {
+  let strings = workspace.strings
+  let alert = NSAlert()
+  alert.messageText = strings("An analysis is still running.")
+  alert.informativeText = strings(
+    "Closing Rove will stop the engine and keep partial files. This run cannot be resumed.")
+  alert.addButton(withTitle: strings("Keep running"))
+  alert.addButton(withTitle: strings("Stop and close"))
+  return alert.runModal() == .alertSecondButtonReturn
 }

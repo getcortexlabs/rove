@@ -76,6 +76,10 @@ struct SetupView: View {
             VStack(alignment: .leading, spacing: 9) {
               Eyebrow(text: strings("Chain length"))
               Picker(strings("Chain length"), selection: $workspace.settings.steps) {
+                if ![1_000_000, 10_000_000, 100_000_000].contains(workspace.settings.steps) {
+                  Text(strings("%@ steps", strings.number(workspace.settings.steps))).tag(
+                    workspace.settings.steps)
+                }
                 Text(strings("1 million steps")).tag(1_000_000)
                 Text(strings("10 million steps")).tag(10_000_000)
                 Text(strings("100 million steps")).tag(100_000_000)
@@ -87,6 +91,10 @@ struct SetupView: View {
             VStack(alignment: .leading, spacing: 9) {
               Eyebrow(text: strings("Save a sample every"))
               Picker(strings("Sampling interval"), selection: $workspace.settings.sampleEvery) {
+                if ![100, 1_000, 10_000].contains(workspace.settings.sampleEvery) {
+                  Text(strings("%@ steps", strings.number(workspace.settings.sampleEvery))).tag(
+                    workspace.settings.sampleEvery)
+                }
                 Text(strings("100 steps")).tag(100)
                 Text(strings("1,000 steps")).tag(1_000)
                 Text(strings("10,000 steps")).tag(10_000)
@@ -110,6 +118,7 @@ struct SetupView: View {
           .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
         }
       }
+      GroupSection(workspace: workspace)
       if let error = workspace.settings.validationError {
         InlineMessage(text: strings(error), isError: true)
       }
@@ -197,7 +206,11 @@ struct ReviewView: View {
             workspace.settings.clock == "reference"
               ? "Lognormal relaxed clock · 4 gamma categories" : "Strict clock · 1 rate category")
           row("Tree prior", "Birth–death · all tips at height zero")
-          row("Groups constrained", "None")
+          row(
+            "Groups constrained",
+            workspace.monophyly.isEmpty
+              ? strings("None")
+              : workspace.monophyly.map { $0.joined(separator: ", ") }.joined(separator: "\n"))
           rule
           row(
             "Chain",
@@ -215,15 +228,33 @@ struct ReviewView: View {
           Text(strings("Ready to keep exploring.")).font(Lab.display(20, weight: .semibold))
           Text(
             strings(
-              "Save a record of this setup, or copy a command to run it in Terminal. No analysis has been run in this window."
+              "Start the analysis on this Mac. Your reviewed settings and input fingerprint will be saved with the output."
             )
           )
           .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
         }
       }.padding(21).frame(maxWidth: .infinity, alignment: .leading)
         .background(Lab.accent.opacity(0.045), in: RoundedRectangle(cornerRadius: 15))
+      LabPanel {
+        VStack(alignment: .leading, spacing: 12) {
+          HStack {
+            Eyebrow(text: strings("Save runs in"))
+            Spacer()
+            Button(strings("Choose folder…"), action: workspace.chooseOutputFolder).buttonStyle(
+              LabButtonStyle(compact: true))
+          }
+          Text(workspace.outputParent.path).font(.system(size: 11, design: .monospaced))
+            .foregroundStyle(Lab.secondary).textSelection(.enabled)
+          Text(strings("Each run gets its own folder. Existing results are never overwritten."))
+            .font(.system(size: 11)).foregroundStyle(Lab.muted)
+        }
+      }
+      if let issue = workspace.issue { InlineMessage(text: strings(issue), isError: true) }
       if let notice = workspace.notice { InlineMessage(text: strings(notice)) }
       HStack(spacing: 12) {
+        Button(action: workspace.saveDraft) {
+          Label(strings("Save setup"), systemImage: "square.and.arrow.down")
+        }.buttonStyle(LabButtonStyle(compact: true))
         Button(action: workspace.copyCommand) {
           Label(strings("Copy terminal command"), systemImage: "terminal")
         }
