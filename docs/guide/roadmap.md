@@ -24,6 +24,7 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Native Mac import and setup preview | Implemented, #28 |
 | In-app execution and progress | Implemented, #29 |
 | Run history and configuration reuse | Implemented, #30 |
+| Explicit outgroup selection and applied constraints | Implemented, #31 |
 | Parallel chains and convergence reports | Planned, #23 |
 | Power-of-two rescaling | Planned, #18 |
 | Checkpoints and resumed runs | Planned, #22 |

@@ -61,9 +61,15 @@ struct RunView: View {
               }
             }
             metric("Random seed", run.request.draft.settings.seed)
-            metric("Groups constrained", strings.number(run.request.draft.monophyly.count))
+            metric("Groups constrained", strings.number(run.request.draft.constraints.count))
             Spacer()
           }
+          DisclosureGroup(strings("Applied analysis setup")) {
+            ConstraintSummary(
+              outgroup: run.request.draft.outgroup, taxa: run.request.draft.taxa,
+              groups: run.request.draft.constraints, strings: strings
+            ).padding(.top, 10)
+          }.font(.system(size: 12))
           Text(
             strings(
               "Progress counts completed MCMC steps. It does not measure convergence or confidence."

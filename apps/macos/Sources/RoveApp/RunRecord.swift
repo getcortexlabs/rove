@@ -66,7 +66,7 @@ struct EngineRecord: Decodable, Sendable {
       && command[conditioningIndex + 1] == draft.settings.conditioning
       && settings.steps == UInt64(draft.settings.steps)
       && settings.sampleEvery == UInt64(draft.settings.sampleEvery)
-      && settings.seed == UInt64(draft.settings.seed) && model.monophyly == draft.monophyly
+      && settings.seed == UInt64(draft.settings.seed) && model.monophyly == draft.constraints
       && completedSteps <= settings.steps
   }
 }

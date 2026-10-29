@@ -2,17 +2,17 @@ import SwiftUI
 
 struct GroupSection: View {
   @Bindable var workspace: Workspace
-  @State private var editing = false
+  @State private var editing: GroupSelection?
   private var strings: AppStrings { workspace.strings }
 
   var body: some View {
     LabPanel {
       VStack(alignment: .leading, spacing: 14) {
         HStack {
-          Text(strings("Groups that must stay together")).font(.system(size: 13, weight: .semibold))
+          Text(strings("Additional groups")).font(.system(size: 13, weight: .semibold))
           Spacer()
           Button {
-            editing = true
+            editing = GroupSelection()
           } label: {
             Label(strings("Add group"), systemImage: "plus")
           }.buttonStyle(LabButtonStyle(compact: true))
@@ -24,7 +24,7 @@ struct GroupSection: View {
         )
         .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
         if workspace.monophyly.isEmpty {
-          Text(strings("No groups constrained. Rove does not select an ingroup automatically."))
+          Text(strings("No additional groups applied."))
             .font(.system(size: 11)).foregroundStyle(Lab.muted)
         }
         ForEach(Array(workspace.monophyly.enumerated()), id: \.offset) { index, group in
@@ -32,6 +32,11 @@ struct GroupSection: View {
             Image(systemName: "point.3.connected.trianglepath.dotted").foregroundStyle(Lab.lilac)
             Text(group.joined(separator: ", ")).font(.system(size: 12)).textSelection(.enabled)
             Spacer()
+            Button {
+              editing = GroupSelection(index: index, group: group)
+            } label: {
+              Image(systemName: "pencil")
+            }.buttonStyle(.plain).accessibilityLabel(strings("Edit group %@", String(index + 1)))
             Button {
               workspace.monophyly.remove(at: index)
             } label: {
@@ -41,33 +46,46 @@ struct GroupSection: View {
         }
       }
     }
-    .sheet(isPresented: $editing) { GroupEditor(workspace: workspace) }
+    .sheet(item: $editing) { selection in
+      GroupEditor(workspace: workspace, selection: selection)
+    }
   }
 }
 
-private struct GroupEditor: View {
+struct GroupEditor: View {
   @Bindable var workspace: Workspace
   @Environment(\.dismiss) private var dismiss
-  @State private var selected: Set<String> = []
+  @State private var selection: GroupSelection
   @State private var search = ""
+  init(workspace: Workspace, selection: GroupSelection) {
+    self.workspace = workspace
+    _selection = State(initialValue: selection)
+  }
+
   private var strings: AppStrings { workspace.strings }
   private var taxa: [String] { workspace.report?.allTaxa ?? [] }
-  private var group: [String] { taxa.filter { selected.contains($0) } }
   private var issue: String? {
-    GroupConstraints.validate(workspace.monophyly + [group], taxa: taxa)
+    GroupConstraints.validate(
+      selection.groups(replacing: workspace.monophyly, taxa: taxa), taxa: taxa,
+      outgroup: workspace.outgroup)
   }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 18) {
       Text(strings("Keep a group together")).font(Lab.display(26))
-      Text(strings("Select the terminals that must share an exclusive ancestor."))
-        .font(.system(size: 12)).foregroundStyle(Lab.secondary)
+      Text(
+        strings(
+          "Select the terminals that must share an exclusive ancestor. Unchecked terminals stay in the analysis."
+        )
+      )
+      .font(.system(size: 12)).foregroundStyle(Lab.secondary)
       TextField(strings("Find a terminal"), text: $search).textFieldStyle(.roundedBorder)
       HStack {
-        Button(strings("Select all")) { selected = Set(taxa) }
-        Button(strings("Clear")) { selected = [] }
+        Button(strings("Select all")) { selection.selected = Set(taxa) }
+        Button(strings("Clear")) { selection.selected = [] }
         Spacer()
-        Text(strings("%@ selected", strings.number(selected.count))).foregroundStyle(Lab.secondary)
+        Text(strings("%@ selected", strings.number(selection.selected.count))).foregroundStyle(
+          Lab.secondary)
       }.font(.system(size: 12))
       ScrollView {
         LazyVStack(alignment: .leading, spacing: 10) {
@@ -78,20 +96,27 @@ private struct GroupEditor: View {
             Toggle(
               taxon,
               isOn: Binding(
-                get: { selected.contains(taxon) },
-                set: { if $0 { selected.insert(taxon) } else { selected.remove(taxon) } }
+                get: { selection.selected.contains(taxon) },
+                set: {
+                  if $0 {
+                    selection.selected.insert(taxon)
+                  } else {
+                    selection.selected.remove(taxon)
+                  }
+                }
               )
             ).toggleStyle(.checkbox)
           }
         }.frame(maxWidth: .infinity, alignment: .leading).padding(12)
       }.frame(height: 260).background(Lab.surface, in: RoundedRectangle(cornerRadius: 12))
       if let issue { Text(strings(issue)).font(.system(size: 11)).foregroundStyle(Lab.secondary) }
+      Text(strings("Changes are applied only when you press Apply group."))
+        .font(.system(size: 11)).foregroundStyle(Lab.secondary)
       HStack {
         Button(strings("Cancel")) { dismiss() }.keyboardShortcut(.cancelAction)
         Spacer()
-        Button(strings("Add group")) {
-          workspace.monophyly.append(group)
-          dismiss()
+        Button(strings("Apply group")) {
+          if workspace.applyGroup(selection) { dismiss() }
         }.keyboardShortcut(.defaultAction).disabled(issue != nil)
       }
     }.padding(28).frame(width: 470).foregroundStyle(Lab.ink).background(Lab.background)

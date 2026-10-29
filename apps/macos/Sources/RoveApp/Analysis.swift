@@ -137,14 +137,26 @@ struct AnalysisDraft: Codable, Sendable {
   let matrixSHA256: String
   let settings: AnalysisSettings
   let monophyly: [[String]]
+  let outgroup: String?
+  let taxa: [String]?
+  let appliedMonophyly: [[String]]?
+  var constraints: [[String]] {
+    GroupConstraints.applied(monophyly, taxa: taxa ?? [], outgroup: outgroup)
+  }
 
-  init(matrix: URL, report: MatrixReport, settings: AnalysisSettings, monophyly: [[String]] = []) {
-    formatVersion = 1
+  init(
+    matrix: URL, report: MatrixReport, settings: AnalysisSettings,
+    monophyly: [[String]] = [], outgroup: String? = nil
+  ) {
+    formatVersion = 2
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
     self.settings = settings
     self.monophyly = monophyly
+    self.outgroup = outgroup
+    taxa = report.allTaxa
+    appliedMonophyly = GroupConstraints.applied(monophyly, taxa: report.allTaxa, outgroup: outgroup)
   }
 
   static func read(_ url: URL) throws -> Self {
@@ -160,11 +172,33 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard formatVersion == 1, (matrixPath as NSString).isAbsolutePath,
+    guard [1, 2].contains(formatVersion), (matrixPath as NSString).isAbsolutePath,
       matrixSHA256.count == 64,
       matrixSHA256.utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) })
     else { throw ImportError.message("This setup has an unsupported or invalid format.") }
     if let issue = settings.validationError { throw ImportError.message(issue) }
+    if formatVersion == 1 {
+      guard outgroup == nil else {
+        throw ImportError.message("This setup has an unsupported or invalid format.")
+      }
+    } else {
+      guard let taxa, !taxa.isEmpty, Set(taxa).count == taxa.count, appliedMonophyly == constraints
+      else {
+        throw ImportError.message("This setup has an unsupported or invalid format.")
+      }
+      if let issue = GroupConstraints.validate(monophyly, taxa: taxa, outgroup: outgroup) {
+        throw ImportError.message(issue)
+      }
+    }
+  }
+
+  func validateTaxa(_ actual: [String]) throws {
+    if let taxa, taxa != actual {
+      throw ImportError.message("The saved terminals do not match the original matrix.")
+    }
+    if let issue = GroupConstraints.validate(monophyly, taxa: actual, outgroup: outgroup) {
+      throw ImportError.message(issue)
+    }
   }
 
   func write(to url: URL) throws {
@@ -176,8 +210,18 @@ struct AnalysisDraft: Codable, Sendable {
 }
 
 enum GroupConstraints {
-  static func validate(_ groups: [[String]], taxa: [String]) -> String? {
+  // A single outgroup is sister to the clade containing every other terminal.
+  static func applied(_ groups: [[String]], taxa: [String], outgroup: String?) -> [[String]] {
+    guard let outgroup else { return groups }
+    let ingroup = taxa.filter { $0 != outgroup }
+    return groups.contains(where: { Set($0) == Set(ingroup) }) ? groups : [ingroup] + groups
+  }
+
+  static func validate(_ groups: [[String]], taxa: [String], outgroup: String? = nil) -> String? {
     let known = Set(taxa)
+    if let outgroup, !known.contains(outgroup) || known.count < 3 {
+      return "Choose one outgroup from a matrix with at least three terminals."
+    }
     var previous: [Set<String>] = []
     for group in groups {
       let names = Set(group)
@@ -192,6 +236,31 @@ enum GroupConstraints {
       }
       previous.append(names)
     }
+    if outgroup != nil {
+      return validate(applied(groups, taxa: taxa, outgroup: outgroup), taxa: taxa)
+    }
     return nil
+  }
+}
+
+struct GroupSelection: Identifiable {
+  let id = UUID()
+  let index: Int?
+  var selected: Set<String>
+
+  init(index: Int? = nil, group: [String] = []) {
+    self.index = index
+    selected = Set(group)
+  }
+
+  func groups(replacing groups: [[String]], taxa: [String]) -> [[String]] {
+    var result = groups
+    let group = taxa.filter { selected.contains($0) }
+    if let index, result.indices.contains(index) {
+      result[index] = group
+    } else {
+      result.append(group)
+    }
+    return result
   }
 }

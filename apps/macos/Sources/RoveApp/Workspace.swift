@@ -33,6 +33,15 @@ final class Workspace {
       notice = nil
     }
   }
+  var outgroup: String? {
+    didSet {
+      savedURL = nil
+      notice = nil
+    }
+  }
+  var constraints: [[String]] {
+    GroupConstraints.applied(monophyly, taxa: report?.allTaxa ?? [], outgroup: outgroup)
+  }
   var run: AnalysisRun?
   var showingHistory = false
   var selectedHistoryID: String?
@@ -65,7 +74,8 @@ final class Workspace {
   var issue: String? {
     guard let report else { return "Import a matrix to continue." }
     return report.samplerError ?? (settings.conditioning == "variable" ? report.variableError : nil)
-      ?? settings.validationError ?? GroupConstraints.validate(monophyly, taxa: report.allTaxa)
+      ?? settings.validationError
+      ?? GroupConstraints.validate(monophyly, taxa: report.allTaxa, outgroup: outgroup)
   }
 
   func canOpen(_ destination: WorkspacePage) -> Bool {
@@ -122,6 +132,7 @@ final class Workspace {
         if !preserveSettings {
           settings = AnalysisSettings()
           monophyly = []
+          outgroup = nil
         }
         run = nil
         showingHistory = false
@@ -159,6 +170,7 @@ final class Workspace {
     run = nil
     showingHistory = false
     monophyly = []
+    outgroup = nil
     importID = UUID()
     report = nil
     file = nil
@@ -186,7 +198,7 @@ final class Workspace {
     guard panel.runModal() == .OK, let url = panel.url else { return }
     do {
       let draft = AnalysisDraft(
-        matrix: file, report: report, settings: settings, monophyly: monophyly)
+        matrix: file, report: report, settings: settings, monophyly: monophyly, outgroup: outgroup)
       try draft.write(to: url)
       savedURL = url
       notice = "Setup saved. Your next discovery has a starting point."
@@ -202,7 +214,7 @@ final class Workspace {
       .appendingPathComponent("Rove Runs")
       .appendingPathComponent("analysis-\(UUID().uuidString.prefix(8))")
     let command = settings.command(
-      executable: executable, matrix: file, output: output, monophyly: monophyly)
+      executable: executable, matrix: file, output: output, monophyly: constraints)
     NSPasteboard.general.clearContents()
     NSPasteboard.general.setString(command, forType: .string)
     notice = "Command copied. Paste it in Terminal to run this analysis."
@@ -259,13 +271,12 @@ final class Workspace {
         let imported = try await MatrixInspector.inspect(
           matrix, gapsAsMissing: draft.settings.gapsAsMissing, executable: executable)
         guard imported.inputSha256 == draft.matrixSHA256 else { throw RunFailure.changedInput }
-        if let issue = GroupConstraints.validate(draft.monophyly, taxa: imported.allTaxa) {
-          throw ImportError.message(issue)
-        }
+        try draft.validateTaxa(imported.allTaxa)
         guard importID == id else { return }
         run = nil
         settings = draft.settings
         monophyly = draft.monophyly
+        outgroup = draft.outgroup
         report = imported
         file = matrix
         isExample = false
@@ -306,7 +317,8 @@ final class Workspace {
     let request = RunRequest(
       id: id, executable: executable,
       directory: outputParent.appendingPathComponent("analysis-\(id.uuidString)"),
-      draft: AnalysisDraft(matrix: file, report: report, settings: settings, monophyly: monophyly))
+      draft: AnalysisDraft(
+        matrix: file, report: report, settings: settings, monophyly: monophyly, outgroup: outgroup))
     let analysis = AnalysisRun(request: request)
     run = analysis
     error = nil
@@ -327,6 +339,19 @@ final class Workspace {
     guard let run, run.isActive else { return }
     run.cancel()
     await run.waitForExit()
+  }
+
+  func applyGroup(_ selection: GroupSelection) -> Bool {
+    guard !isRunning, let report else { return false }
+    guard selection.selected.isSubset(of: Set(report.allTaxa)),
+      selection.index.map({ monophyly.indices.contains($0) }) ?? true
+    else { return false }
+    let groups = selection.groups(replacing: monophyly, taxa: report.allTaxa)
+    guard GroupConstraints.validate(groups, taxa: report.allTaxa, outgroup: outgroup) == nil else {
+      return false
+    }
+    monophyly = groups
+    return true
   }
 
   func openHistory() {

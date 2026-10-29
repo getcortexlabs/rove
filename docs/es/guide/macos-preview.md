@@ -60,6 +60,28 @@ formar un clado. Los grupos deben estar anidados o separados. No se restringe
 nada automáticamente, tampoco el grupo interno del ejemplo. El soporte impuesto
 por una restricción no es recuperación independiente a partir de los datos.
 
+En **Outgroup**, puedes seleccionar un terminal como T20. Todos permanecen en
+el análisis: elegir T20 obliga a T1–T19 a formar un clado, con T20 al otro lado
+de la división de la raíz. El grupo externo es un terminal, no el ancestro de
+la raíz. Este control admite un grupo externo y comienza en **Not selected**.
+
+En **Additional groups**, añade grupos o usa el lápiz para editar uno existente.
+Marcar terminales prepara una selección; **Apply group** la confirma y **Cancel**
+descarta los cambios pendientes. Los terminales sin marcar siguen en el análisis.
+Los conflictos con el grupo externo bloquean la ejecución. Quitar el grupo externo
+conserva los grupos manuales; comprueba **Applied groups** en la revisión.
+
+La revisión muestra la división de la raíz, los grupos aplicados y todos los
+terminales conservados. También aparecen en **Applied analysis setup** durante
+la ejecución y en History. Guardar/reabrir y **Use this setup** conservan la elección;
+otra matriz o **New analysis** empieza sin grupo externo. Las configuraciones
+antiguas conservan los grupos originales sin inferir un grupo externo. Los nuevos
+archivos de formato 2 requieren la aplicación actualizada. Cambiar estas opciones
+prepara otro análisis; no cambia la raíz de resultados existentes. El soporte de
+un grupo impuesto proviene de la restricción.
+
+![Selección explícita del grupo externo en la aplicación](/images/macos-outgroup.png)
+
 Revisa los ajustes y grupos, elige dónde guardar y pulsa **Start analysis** o
 **Command-Return**. El motor Rust incluido se ejecuta localmente mientras la
 ventana muestra los pasos realmente completados y el tiempo transcurrido.

@@ -31,10 +31,14 @@ struct PreviewTests {
       ("welcome", nil, 1240, 850), ("matrix", .matrix, 1240, 850),
       ("model", .model, 1240, 850), ("review", .review, 1240, 850),
       ("welcome-compact", nil, 1080, 700), ("model-compact", .model, 1080, 700),
+      ("outgroup-model", .model, 1240, 850), ("outgroup-review", .review, 1240, 850),
+      ("outgroup-model-compact", .model, 1080, 700),
+      ("outgroup-review-compact", .review, 1080, 700),
       ("history-empty", nil, 1240, 850), ("history-empty-compact", nil, 1080, 700),
     ]
     for (name, page, width, height) in states {
       workspace.showingHistory = name.hasPrefix("history")
+      workspace.outgroup = name.hasPrefix("outgroup") ? "T20" : nil
       workspace.report = page == nil ? nil : report
       workspace.file =
         page == nil ? nil : root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
@@ -61,7 +65,24 @@ struct PreviewTests {
     workspace.page = .review
     workspace.settings.steps = 1_000_000
     workspace.outputParent = historyRoot
-    workspace.monophyly = [Array(report.allTaxa.prefix(19))]
+    workspace.outgroup = "T20"
+    let editor = NSHostingView(
+      rootView: GroupEditor(
+        workspace: workspace,
+        selection: GroupSelection(group: Array(report.allTaxa.prefix(19)))))
+    let editorWindow = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 526, height: 650),
+      styleMask: [.borderless], backing: .buffered, defer: false)
+    editorWindow.isReleasedWhenClosed = false
+    editorWindow.appearance = NSAppearance(named: .darkAqua)
+    editorWindow.contentView = editor
+    editorWindow.orderBack(nil)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      try await capture(
+        editor, to: directory.appendingPathComponent("group-editor-\(language.rawValue).png"))
+    }
+    editorWindow.close()
     workspace.startRun()
     let run = try #require(workspace.run)
     let runView = NSHostingView(rootView: RootView(workspace: workspace))
@@ -97,7 +118,7 @@ struct PreviewTests {
         directory: historyRoot.appendingPathComponent(name),
         draft: AnalysisDraft(
           matrix: workspace.file!, report: report, settings: configuration,
-          monophyly: workspace.monophyly))
+          monophyly: workspace.monophyly, outgroup: workspace.outgroup))
       let worker = RunProcess()
       _ = await Task.detached {
         worker.execute(request) { event in

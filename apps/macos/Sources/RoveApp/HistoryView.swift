@@ -245,11 +245,10 @@ private struct HistoryDetail: View {
                   ? "Binary Mkv · variable characters" : "Binary Mk · all characters"))
             field("Sampling", strings("Every %@ steps", strings.number(draft.settings.sampleEvery)))
             field("Gaps", strings(draft.settings.gapsAsMissing ? "Treat as missing" : "Reject"))
-            field(
-              "Groups constrained",
-              draft.monophyly.isEmpty
-                ? strings("None")
-                : draft.monophyly.map { $0.joined(separator: ", ") }.joined(separator: "\n"))
+            Divider().overlay(Lab.border)
+            ConstraintSummary(
+              outgroup: draft.outgroup, taxa: draft.taxa,
+              groups: draft.constraints, strings: strings)
             DisclosureGroup(strings("Input details")) {
               VStack(alignment: .leading, spacing: 8) {
                 Text(draft.matrixPath)

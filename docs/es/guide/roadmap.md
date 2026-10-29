@@ -24,6 +24,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Vista previa nativa para importar y preparar análisis | Implementado, #28 |
 | Ejecución y progreso en la aplicación | Implementado, #29 |
 | Historial de ejecuciones y reutilización de ajustes | Implementado, #30 |
+| Selección explícita del grupo externo y restricciones aplicadas | Implementado, #31 |
 | Cadenas en paralelo e informes de convergencia | Planificado, #23 |
 | Reescalado por potencias de dos | Planificado, #18 |
 | Checkpoints y reanudación de ejecuciones | Planificado, #22 |

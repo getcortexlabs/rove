@@ -12,6 +12,7 @@ struct SetupView: View {
         Text(strings("Choose the assumptions behind your analysis."))
           .font(.system(size: 13)).foregroundStyle(Lab.secondary)
       }.padding(.top, 16)
+      RootingSection(workspace: workspace)
 
       VStack(alignment: .leading, spacing: 12) {
         HStack {
@@ -206,11 +207,6 @@ struct ReviewView: View {
             workspace.settings.clock == "reference"
               ? "Lognormal relaxed clock · 4 gamma categories" : "Strict clock · 1 rate category")
           row("Tree prior", "Birth–death · all tips at height zero")
-          row(
-            "Groups constrained",
-            workspace.monophyly.isEmpty
-              ? strings("None")
-              : workspace.monophyly.map { $0.joined(separator: ", ") }.joined(separator: "\n"))
           rule
           row(
             "Chain",
@@ -222,6 +218,11 @@ struct ReviewView: View {
         }
       }
 
+      LabPanel {
+        ConstraintSummary(
+          outgroup: workspace.outgroup, taxa: report.allTaxa,
+          groups: workspace.constraints, strings: strings)
+      }
       HStack(alignment: .top, spacing: 13) {
         Image(systemName: "leaf").font(.system(size: 23)).foregroundStyle(Lab.accent)
         VStack(alignment: .leading, spacing: 8) {

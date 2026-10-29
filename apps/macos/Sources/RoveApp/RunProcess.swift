@@ -11,7 +11,7 @@ struct RunRequest: Sendable {
   var arguments: [String] {
     draft.settings.arguments(
       matrix: URL(fileURLWithPath: draft.matrixPath), output: output,
-      monophyly: draft.monophyly) + [
+      monophyly: draft.constraints) + [
         "--events-json", "--cancel-on-stdin-close", "--expect-input-sha256", draft.matrixSHA256,
         "--print-every", String(max(1, min(100_000, draft.settings.steps / 100))),
       ]

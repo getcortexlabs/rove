@@ -58,6 +58,27 @@ Groups must be nested or disjoint. Nothing is constrained automatically,
 including the example's ingroup. Support imposed by a constraint is not
 independent recovery from the data.
 
+In **Outgroup**, optionally select one terminal such as T20. All terminals remain
+in the analysis: choosing T20 requires T1–T19 to form a clade, with T20 on the
+other side of the root split. The outgroup is a terminal, not the ancestral root.
+This control supports one outgroup, and starts at **Not selected**.
+
+**Additional groups** can be added or edited with the pencil button. Checking
+terminals prepares a group; **Apply group** commits it and **Cancel** discards
+pending edits. Unchecked terminals remain in the analysis. Conflicts between a
+group and the outgroup block execution. Clearing the outgroup preserves any
+manually applied groups, so check **Applied groups** in Review.
+
+Review lists the root split, applied groups and every retained terminal. The same
+information is available under **Applied analysis setup** during a run and in
+History. Save/reopen and **Use this setup** preserve the choice; a new matrix or
+**New analysis** starts without an outgroup. Older setups retain their original
+groups without guessing which terminal was intended as outgroup. New format 2
+setups require the updated app. Changing these settings prepares a new analysis;
+it does not reroot an existing result. A constrained group's support is imposed.
+
+![Explicit outgroup selection in the Mac workspace](/images/macos-outgroup.png)
+
 Review the settings and groups, choose an output location, and press **Start
 analysis** or **Command-Return**. The bundled Rust engine runs locally while
 the window shows actual completed steps and elapsed time. Settings remain

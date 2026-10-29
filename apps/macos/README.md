@@ -59,10 +59,32 @@ The window is resizable down to 1080 × 700, with scrollable content.
 
 ## Execution and saved setups
 
-Review the configuration and press Start analysis (Command-Return). Select
-monophyly groups explicitly in Model; nested or disjoint groups are allowed,
-with at least two known terminals each. The review, saved setup and engine
-record retain these constraints. Constrained support is not independent evidence.
+Review the configuration and press Start analysis (Command-Return). In Model,
+Outgroup optionally selects one terminal from a matrix with at least three taxa.
+The app passes a monophyly constraint for all remaining terminals to the existing
+Rust sampler. Every taxon stays in the analysis. T20 is never selected automatically;
+multiple outgroups are not supported by this control.
+
+Additional groups remain explicit, nested or disjoint, with at least two known
+terminals each. The editor stages changes until Apply group; Cancel leaves the
+previous group untouched. Existing groups can be edited with the pencil button.
+Groups incompatible with the outgroup block review and execution. An identical
+manual ingroup is deduplicated in the applied constraints, but retained as a manual
+choice if the outgroup is later cleared.
+
+Review, running results and History show the outgroup, applied groups and retained
+taxa. Imposed support is not independent evidence. Changing the setup affects a
+new run, never reroots saved trees. The outgroup is a tip, not the ancestral root;
+branch rotation or vertical ordering in a viewer does not determine rooting.
+
+New setup records use format 2: `taxa` stores the complete terminal list,
+`outgroup` is optional, `monophyly` retains manual groups, and `appliedMonophyly`
+records the derived constraints sent through `--monophyly`. Validation checks
+these fields agree, then verifies the terminal list against the fingerprint-checked
+matrix on reopen. Engine records are matched against the applied constraints.
+Format 1 setups and sessions remain readable with their original groups, without
+inferring an outgroup or inventing a missing terminal list. Older apps reject format
+2 rather than silently dropping rooting. The outer session format remains 1.
 
 Each run gets a unique directory under `~/Rove Runs` or a selected parent folder:
 `setup.rove.json`, `session.json`, `events.jsonl`, `engine.stderr.log` and
@@ -155,7 +177,10 @@ setups, reject changed input, cancel a live child, and handle malformed events,
 launch failures, output collisions and stale progress. History tests cover real
 completed/cancelled/failed runs, cancellation before launch, legacy metadata,
 missing and corrupt files, persistent custom locations, duplicate paths and
-configuration reuse while preserving an active run.
+configuration reuse while preserving an active run. Outgroup tests run both clock
+presets and inspect every saved root split, including STATE_0; they also cover staged
+group edits, conflicting selections, format 1 compatibility, format 2 integrity,
+reset/import behavior and reuse through History.
 Set `ROVE_TEST_ENGINE` to test another Rust
 executable; otherwise tests use `target/release/rove`.
 
