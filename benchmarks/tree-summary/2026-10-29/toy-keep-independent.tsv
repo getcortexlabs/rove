@@ -1,0 +1,7 @@
+A	0.0	null	null
+B	0.0	null	null
+A,B	1.0	0.6666666666666666	null
+C	0.0	null	null
+D	0.0	null	null
+C,D	1.0	0.6666666666666666	null
+A,B,C,D	3.0	1.0	null

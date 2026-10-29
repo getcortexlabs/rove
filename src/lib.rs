@@ -9,6 +9,7 @@ pub mod random;
 pub mod rates;
 pub mod reference;
 pub mod speciation;
+pub mod summary;
 pub mod tree;
 
 pub use kernel::{Backend, LikelihoodCore, Scaling};

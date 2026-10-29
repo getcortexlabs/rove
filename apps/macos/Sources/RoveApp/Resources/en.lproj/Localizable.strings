@@ -313,3 +313,45 @@
 "Apply group" = "Apply group";
 "Applied analysis setup" = "Applied analysis setup";
 "The saved terminals do not match the original matrix." = "The saved terminals do not match the original matrix.";
+
+"Summarize trees" = "Summarize trees";
+
+"From samples to a tree" = "From samples to a tree";
+
+"Find the shared branches." = "Find the shared branches.";
+
+"Build an annotated MCC tree from the sampled trees. Your original files stay unchanged." = "Build an annotated MCC tree from the sampled trees. Your original files stay unchanged.";
+
+"Burn-in (%)" = "Burn-in (%)";
+
+"Discard this percentage of the first samples, rounded down. Choose it after checking the trace." = "Discard this percentage of the first samples, rounded down. Choose it after checking the trace.";
+
+"Node heights" = "Node heights";
+
+"Common ancestor mean" = "Common ancestor mean";
+
+"Keep selected tree" = "Keep selected tree";
+
+"Common ancestor means use every retained tree. Keeping heights preserves those of the selected MCC tree." = "Common ancestor means use every retained tree. Keeping heights preserves those of the selected MCC tree.";
+
+"MCC selects a sampled tree by clade credibility. Support is the frequency of a clade after burn-in; imposed groups are marked. Ranges are minima and maxima, not credible intervals." = "MCC selects a sampled tree by clade credibility. Support is the frequency of a clade after burn-in; imposed groups are marked. Ranges are minima and maxima, not credible intervals.";
+
+"Reading trees and calculating the summary…" = "Reading trees and calculating the summary…";
+
+"%@ trees retained · %@ discarded" = "%@ trees retained · %@ discarded";
+
+"Annotated tree" = "Annotated tree";
+
+"Raw trees (.trees)" = "Raw trees (.trees)";
+
+"Summary record" = "Summary record";
+
+"A summary and high support do not establish convergence. Check independent runs and sampling diagnostics before interpreting the tree." = "A summary and high support do not establish convergence. Check independent runs and sampling diagnostics before interpreting the tree.";
+
+"Create tree summary" = "Create tree summary";
+
+"Tree summarization was cancelled." = "Tree summarization was cancelled.";
+
+"The trees could not be summarized." = "The trees could not be summarized.";
+
+"Close" = "Close";

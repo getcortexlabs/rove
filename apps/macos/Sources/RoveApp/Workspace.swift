@@ -42,6 +42,7 @@ final class Workspace {
   var constraints: [[String]] {
     GroupConstraints.applied(monophyly, taxa: report?.allTaxa ?? [], outgroup: outgroup)
   }
+  var treeSummary: TreeSummaryModel?
   var run: AnalysisRun?
   var showingHistory = false
   var selectedHistoryID: String?
@@ -352,6 +353,10 @@ final class Workspace {
     }
     monophyly = groups
     return true
+  }
+
+  func summarizeTrees(in directory: URL) {
+    treeSummary = TreeSummaryModel(directory: directory, executable: executable)
   }
 
   func openHistory() {

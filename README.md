@@ -50,7 +50,10 @@ groups before starting. Saved setups preserve that choice and can be reopened
 after their matrix fingerprint is checked.
 History keeps previous runs accessible across launches, with their settings,
 outcomes and output files, and can prepare a new run from a saved configuration.
-Completion does not establish convergence; resumed runs remain future work.
+Completed runs can produce an annotated MCC tree for FigTree, with explicit
+burn-in and a choice of common ancestor or sampled heights. Original samples
+stay unchanged. Completion and node support do not establish convergence; resumed
+runs remain future work.
 See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/README.md).
 
 ## People

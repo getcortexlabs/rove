@@ -162,3 +162,74 @@ The command emits versioned JSON with counts, a bounded cell preview,
 the input hash and separate sampling/Mkv eligibility errors. Add
 `--gaps missing` only when that interpretation is appropriate. Reading a
 matrix does not write any analysis outputs.
+
+## Summarize posterior trees
+
+![Posterior tree summary in Rove](/images/macos-summary.png)
+
+After a completed run, choose **Summarize trees** in the result or its History
+entry. Choose the burn-in percentage and node heights, then **Create tree
+summary**. Saved summaries reappear when this panel is reopened. Processing
+runs outside the interface thread and can be cancelled.
+
+Burn-in discards the first `floor(total samples × percentage / 100)` trees.
+`STATE_0` counts as a sample. The initial 10% is an editable suggestion, not a
+convergence assessment; choose it after inspecting the trace. The panel reports
+discarded and retained counts. Partial, cancelled and interrupted runs cannot
+be summarized through the app.
+
+MCC (maximum clade credibility) selects a **sampled topology**, not a
+majority-rule consensus. Rove scores each retained tree by the sum of log clade
+frequencies over internal nodes. Clades are sorted before summation; the first
+retained candidate wins exact ties. `posterior` is the fraction of retained
+trees containing a clade. Groups imposed by recorded constraints carry
+`constrained=true`; their support is not independent recovery from data.
+
+Choose **Keep selected tree** to preserve the selected sample's heights, or
+**Common ancestor mean** to use the mean height of each group's most recent
+common ancestor across **every** retained tree. Branch lengths are differences
+between parent and child heights in the source time units. Rates remain separate
+multipliers; no calendar calibration or rate-scaled distances are inferred.
+Height/rate means and observed ranges are conditional on the clade existing;
+`CAheight_mean` and `CAheight_range` use all retained trees. Ranges are minima
+and maxima, **not HPD or credible intervals**. Median heights and HPD intervals
+are not implemented.
+
+Each summary creates a new folder under the run's `summaries` directory:
+
+- `mcc.tree`: one annotated, rooted NEXUS tree for FigTree. Select `posterior`
+  in FigTree's Node Labels to display support.
+- `samples.trees`: a byte-for-byte copy of all original samples, including
+  burn-in, for tools expecting the `.trees` extension.
+- `summary.json`: source and executable hashes, source run metadata, burn-in,
+  retained count, chosen state, method, heights policy and Rove version.
+
+The buttons reveal these files in Finder. Original `results/trees.nexus` and
+other run outputs remain unchanged. Each summary needs disk space for another
+copy of the raw tree file. A summary and high node support do not establish
+convergence; compare independent runs and sampling diagnostics.
+
+The standalone Rust command uses the same calculation, without Java or BEAST:
+
+```sh
+target/release/rove summarize /path/to/results/trees.nexus \
+  --output /path/to/new-summary --burnin-percent 25 --heights ca
+```
+
+Use `--burnin-samples N` instead of a percentage, or `--heights keep`. The output
+directory must not exist. Extensions do not change the input interpretation.
+Without an adjacent `run.json`, completion is recorded as **unverified**;
+a syntactically complete file alone cannot prove a run finished. With a run
+record, the command verifies completion, sample count and every sampling interval.
+
+This reader supports Rove's rooted binary, ultrametric trees with contemporaneous
+tips, a translation table and increasing `STATE_` identifiers. Mixed taxa,
+missing final `End;`, partial rate annotations and unsupported tree shapes are
+rejected. Fossil tip dates, polytomies and arbitrary external NEXUS blocks are
+not supported. Limits are 4,096 taxa, 512 nesting levels, 2 MiB per statement and
+one million distinct clades or a 128 MiB estimate for clade keys, whichever comes
+first. That estimate is not a hard process-memory cap. Four streaming passes
+retain clade counts and target statistics, not all parsed trees.
+
+[Validation and Apple silicon measurements](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
+record comparisons with pinned TreeAnnotator and external NEXUS readers.

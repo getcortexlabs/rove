@@ -134,3 +134,62 @@ target/release/rove inspect fixtures/reference/20x50/matrix.nex
 命令输出带版本号的 JSON，包含计数、有限的单元格预览、输入哈希，以及分别
 说明采样器和 Mkv 适用性的错误。只有该解释合适时才加上 `--gaps missing`。
 读取矩阵不会写入分析结果。
+
+## 汇总后验树
+
+![Rove 的后验树汇总](/images/macos-summary.png)
+
+分析完成后，在结果或 History 中选择 **Summarize trees**，设置 burn-in 百分比和节点高度，
+再选择 **Create tree summary**。重新打开面板可以查看已保存的汇总。
+计算在界面线程之外运行，可以取消。应用不汇总未完成、已取消或中断的分析。
+
+Burn-in 丢弃最前面的 `floor(样本总数 × 百分比 / 100)` 棵树，向下取整。
+`STATE_0` 也计为一个样本。默认的 10% 是可修改的建议，并非收敛诊断；
+请检查轨迹后再选择。面板显示丢弃和保留的数量。
+
+MCC（最大分支可信度）选择一个**已采样的拓扑**，不是多数规则共识树。
+Rove 对每棵保留树的内部支系频率取对数并求和；求和前先对支系排序。
+分数完全相同时，选择保留样本中最先出现的候选树。
+`posterior` 是包含该支系的保留树所占比例。
+由已记录约束强制形成的支系标有 `constrained=true`，其支持度并非从数据中独立恢复的结果。
+
+**Keep selected tree** 保留选中样本的节点高度。
+**Common ancestor mean** 使用每个组在**全部**保留树中的最近共同祖先高度的平均值。
+枝长是父、子节点高度之差，单位沿用输入树的时间单位。速率仍是独立的乘数；
+不推断日历年代，也不转换为速率缩放后的距离。
+高度和速率的均值及范围以该支系出现为条件；`CAheight_mean` 和 `CAheight_range` 使用全部保留树。
+范围表示观测最小值和最大值，**不是 HPD 或可信区间**。尚未实现高度中位数和 HPD 区间。
+
+每次汇总在分析目录的 `summaries` 下创建新文件夹：
+
+- `mcc.tree`：供 FigTree 使用的单棵有根、带注释的 NEXUS 树。
+  在 FigTree 的 Node Labels 中选择 `posterior` 可显示支持度。
+- `samples.trees`：全部原始样本的逐字节副本，包含 burn-in，供要求 `.trees` 扩展名的工具使用。
+- `summary.json`：输入和可执行文件的哈希、原分析元数据、burn-in、保留数量、选中状态、方法、
+  高度策略和 Rove 版本。
+
+按钮会在 Finder 中定位文件。原始 `results/trees.nexus` 和其他分析输出保持不变。
+每次汇总都需要容纳另一份原始树文件的磁盘空间。汇总和高支持度不能证明收敛；
+还应比较独立运行及采样诊断。
+
+独立 Rust 命令执行同样的计算，不依赖 Java 或 BEAST：
+
+```sh
+target/release/rove summarize /path/to/results/trees.nexus \
+  --output /path/to/new-summary --burnin-percent 25 --heights ca
+```
+
+可改用 `--burnin-samples N` 指定丢弃样本数，或 `--heights keep` 保留高度。
+输出目录必须尚不存在。扩展名不改变输入的解释方式。
+若输入旁没有 `run.json`，完成状态记为 **unverified**；语法完整的文件并不能证明分析已结束。
+若有运行记录，则检查完成状态、样本数量及每个采样间隔。
+
+当前读取器支持 Rove 输出的有根、二叉、超度量树，要求末端同期、含翻译表，
+且 `STATE_` 标识符严格递增。混合分类单元、缺少结尾 `End;`、不完整速率注释或不支持的树形均被拒绝。
+不支持化石末端日期、多分叉和任意外部 NEXUS 块。
+限制为 4,096 个分类单元、512 层嵌套、每条语句 2 MiB，以及一百万个不同支系或支系键
+估计占用 128 MiB（先到者为准）。该估计不是进程内存的硬上限。
+四次流式遍历只保留支系计数和目标树统计，不在内存中保存全部解析树。
+
+[验证与 Apple silicon 测量](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
+记录了与固定版本 TreeAnnotator 和外部 NEXUS 读取器的比较。

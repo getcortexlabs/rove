@@ -106,6 +106,29 @@ struct PreviewTests {
         runView, to: directory.appendingPathComponent("completed-\(language.rawValue).png"))
     }
     runWindow.close()
+    let summary = TreeSummaryModel(
+      directory: run.request.directory,
+      executable: root.appendingPathComponent("target/release/rove"))
+    summary.burnin = "25"
+    summary.start()
+    await summary.waitForExit()
+    #expect(summary.error == nil && summary.summaries.count == 1)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      let view = NSHostingView(
+        rootView: TreeSummaryView(model: summary, strings: workspace.strings))
+      let window = NSWindow(
+        contentRect: NSRect(x: 0, y: 0, width: 620, height: 650), styleMask: [.borderless],
+        backing: .buffered, defer: false)
+      window.isReleasedWhenClosed = false
+      window.appearance = NSAppearance(named: .darkAqua)
+      window.contentView = view
+      window.orderBack(nil)
+      try await capture(
+        view, to: directory.appendingPathComponent("summary-\(language.rawValue).png"))
+      window.close()
+    }
+
     for (name, seed, cancelled) in [("failed", "43", false), ("cancelled", "44", true)] {
       var configuration = workspace.settings
       configuration.seed = seed

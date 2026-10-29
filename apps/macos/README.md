@@ -210,3 +210,19 @@ and `--compact`, then exit after capturing their content view.
   with the same provenance and 20 taxa, 50 observed characters and 23 patterns.
   Keep it synchronized with that fixture. It is not the separate generated
   control and is not a posterior result.
+
+## Posterior tree summaries
+
+Completed Run and History entries open `TreeSummaryView`. The model dispatches
+`TreeSummaryProcess` off the main actor; it invokes the bundled `rove summarize`
+with explicit burn-in and height policy. Closing its stdin cancels the child,
+including when the owner exits. Original session/setup/engine files are never
+rewritten. New UUID directories under `summaries` contain the raw `.trees` copy,
+annotated `mcc.tree` and versioned `summary.json`; there is no Java dependency.
+
+Summary records and required output files are checked when reopening the panel.
+Incomplete directories are ignored. The native process rechecks that the source
+run is completed; the CLI independently validates source metadata, sampling
+intervals and tree content. Errors retain engine details without interpreting
+summary support as convergence. The [guide](../../docs/guide/macos-preview.md#summarize-posterior-trees)
+documents supported inputs, formulas, disk costs and remaining statistical limits.

@@ -1,0 +1,79 @@
+{
+  "hardware": {
+    "chip_type": "Apple M4 Max",
+    "machine_model": "Mac16,6",
+    "machine_name": "MacBook Pro",
+    "number_processors": "proc 16:12:4:0",
+    "physical_memory": "64 GB"
+  },
+  "measurements": [
+    {
+      "input": "original",
+      "trial": 0,
+      "wall_seconds": 0.539151208,
+      "peak_rss_bytes": 3031040,
+      "total_samples": 10001,
+      "distinct_clades": 20,
+      "retained_samples": 7501
+    },
+    {
+      "input": "original",
+      "trial": 1,
+      "wall_seconds": 0.5436158749999999,
+      "peak_rss_bytes": 3178496,
+      "total_samples": 10001,
+      "distinct_clades": 20,
+      "retained_samples": 7501
+    },
+    {
+      "input": "original",
+      "trial": 2,
+      "wall_seconds": 0.5441726250000001,
+      "peak_rss_bytes": 3031040,
+      "total_samples": 10001,
+      "distinct_clades": 20,
+      "retained_samples": 7501
+    },
+    {
+      "input": "repeated",
+      "trial": 0,
+      "wall_seconds": 5.483443167,
+      "peak_rss_bytes": 3178496,
+      "total_samples": 100010,
+      "distinct_clades": 102,
+      "retained_samples": 75008
+    },
+    {
+      "input": "repeated",
+      "trial": 1,
+      "wall_seconds": 5.364789083000001,
+      "peak_rss_bytes": 2949120,
+      "total_samples": 100010,
+      "distinct_clades": 102,
+      "retained_samples": 75008
+    },
+    {
+      "input": "repeated",
+      "trial": 2,
+      "wall_seconds": 5.367839375000001,
+      "peak_rss_bytes": 3063808,
+      "total_samples": 100010,
+      "distinct_clades": 102,
+      "retained_samples": 75008
+    }
+  ],
+  "inputs": {
+    "original": {
+      "bytes": 19540196,
+      "sha256": "54b68a8a896e9293afae48af1f72b328b4035473903c4d2521c85f23cf60bac0"
+    },
+    "repeated": {
+      "bytes": 195493833,
+      "sha256": "e84cb2bc912c84b03d3f980c946c0bc861563fb4acd891cdd946a89a81bd7532"
+    }
+  },
+  "rove_sha256": "06ffc0762ecdc9aaf2b89dc2d29170cea60540662ee09aac6073756068f87c79",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "os": "macOS-26.6.2-arm64-arm-64bit",
+  "build": "cargo build --locked --release; no RUSTFLAGS"
+}

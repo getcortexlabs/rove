@@ -1,0 +1,10 @@
+#NEXUS
+[Rooted MCC summary; posterior support is not a convergence diagnostic.]
+Begin trees;
+Translate
+  1 A,
+  2 B,
+  3 C,
+  4 D;
+tree MCC = [&R] ((1[&height=0,height_mean=0,height_range={0,0},CAheight_mean=0,CAheight_range={0,0}]:2.25,3[&height=0,height_mean=0,height_range={0,0},CAheight_mean=0,CAheight_range={0,0}]:2.25)[&height=2.25,height_mean=1,height_range={1,1},CAheight_mean=2.25,CAheight_range={1,4},posterior=0.5,constrained=false]:2.25,(2[&height=0,height_mean=0,height_range={0,0},CAheight_mean=0,CAheight_range={0,0}]:2.25,4[&height=0,height_mean=0,height_range={0,0},CAheight_mean=0,CAheight_range={0,0}]:2.25)[&height=2.25,height_mean=1,height_range={1,1},CAheight_mean=2.25,CAheight_range={1,4},posterior=0.5,constrained=false]:2.25)[&height=4.5,height_mean=4.5,height_range={3,6},CAheight_mean=4.5,CAheight_range={3,6},posterior=1,constrained=false];
+End;

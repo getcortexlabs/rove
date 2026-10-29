@@ -287,6 +287,10 @@ private struct HistoryDetail: View {
           }
         }
       }
+      if entry.status == .completed {
+        Button(strings("Summarize trees")) { workspace.summarizeTrees(in: entry.directory) }
+          .buttonStyle(LabButtonStyle(prominent: true))
+      }
       HStack(alignment: .center, spacing: 18) {
         Button {
           workspace.reuseSetup(entry)

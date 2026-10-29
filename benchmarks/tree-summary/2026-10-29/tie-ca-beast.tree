@@ -1,0 +1,20 @@
+#NEXUS
+
+Begin taxa;
+	Dimensions ntax=4;
+		Taxlabels
+			A
+			B
+			C
+			D
+			;
+End;
+Begin trees;
+	Translate
+		     1 A,
+		     2 B,
+		     3 C,
+		     4 D
+;
+tree TREE_MCC_CA = ((1[&height=0.0,length=1.25,length_95%_HPD={1.0,2.0},length_median=1.0,length_range={1.0,2.0}]:2.25,3[&height=0.0,length=1.25,length_95%_HPD={1.0,2.0},length_median=1.0,length_range={1.0,2.0}]:2.25)[&CAheight_95%_HPD={1.0,4.0},CAheight_mean=2.25,CAheight_median=2.0,CAheight_range={1.0,4.0},height=1.0,length=4.5,length_95%_HPD={4.0,5.0},length_median=4.5,length_range={4.0,5.0},posterior=0.5]:2.25,(2[&height=0.0,length=1.25,length_95%_HPD={1.0,2.0},length_median=1.0,length_range={1.0,2.0}]:2.25,4[&height=0.0,length=1.25,length_95%_HPD={1.0,2.0},length_median=1.0,length_range={1.0,2.0}]:2.25)[&CAheight_95%_HPD={1.0,4.0},CAheight_mean=2.25,CAheight_median=2.0,CAheight_range={1.0,4.0},height=1.0,length=4.5,length_95%_HPD={4.0,5.0},length_median=4.5,length_range={4.0,5.0},posterior=0.5]:2.25)[&CAheight_95%_HPD={3.0,6.0},CAheight_mean=4.5,CAheight_median=4.5,CAheight_range={3.0,6.0},height=4.5,height_95%_HPD={3.0,6.0},height_median=4.5,height_range={3.0,6.0},length=0.0,posterior=1.0]:0.0;
+End;

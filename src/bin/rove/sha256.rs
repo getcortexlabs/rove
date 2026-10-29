@@ -11,18 +11,54 @@ const K: [u32; 64] = [
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
 ];
 
-pub fn hex(data: &[u8]) -> String {
-    let mut state: [u32; 8] = [
-        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab,
-        0x5be0cd19,
-    ];
-    let mut message = data.to_vec();
-    message.push(0x80);
-    while message.len() % 64 != 56 {
-        message.push(0);
+pub struct Digest {
+    state: [u32; 8],
+    pending: Vec<u8>,
+    bytes: u64,
+}
+impl Digest {
+    pub fn new() -> Self {
+        Self {
+            state: [
+                0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab,
+                0x5be0cd19,
+            ],
+            pending: Vec::with_capacity(64),
+            bytes: 0,
+        }
     }
-    message.extend_from_slice(&((data.len() as u64) * 8).to_be_bytes());
-    for block in message.chunks_exact(64) {
+    pub fn update(&mut self, mut data: &[u8]) {
+        self.bytes += data.len() as u64;
+        if !self.pending.is_empty() {
+            let take = (64 - self.pending.len()).min(data.len());
+            self.pending.extend_from_slice(&data[..take]);
+            data = &data[take..];
+            if self.pending.len() == 64 {
+                let block: [u8; 64] = self.pending.as_slice().try_into().unwrap();
+                self.compress(&block);
+                self.pending.clear();
+            }
+        }
+        while data.len() >= 64 {
+            self.compress(&data[..64]);
+            data = &data[64..];
+        }
+        self.pending.extend_from_slice(data);
+    }
+    pub fn finish(mut self) -> String {
+        let bits = self.bytes * 8;
+        let mut padding = vec![0x80];
+        while (self.pending.len() + padding.len()) % 64 != 56 {
+            padding.push(0);
+        }
+        padding.extend_from_slice(&bits.to_be_bytes());
+        self.update(&padding);
+        self.state
+            .iter()
+            .map(|word| format!("{word:08x}"))
+            .collect()
+    }
+    fn compress(&mut self, block: &[u8]) {
         let mut w = [0u32; 64];
         for (word, bytes) in w.iter_mut().zip(block.chunks_exact(4)) {
             *word = u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]);
@@ -35,7 +71,7 @@ pub fn hex(data: &[u8]) -> String {
                 .wrapping_add(w[i - 7])
                 .wrapping_add(s1);
         }
-        let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = state;
+        let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = self.state;
         for (k, word) in K.iter().zip(w) {
             let s1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
             let choice = (e & f) ^ (!e & g);
@@ -49,16 +85,47 @@ pub fn hex(data: &[u8]) -> String {
             let t2 = s0.wrapping_add(majority);
             (h, g, f, e, d, c, b, a) = (g, f, e, d.wrapping_add(t1), c, b, a, t1.wrapping_add(t2));
         }
-        for (value, add) in state.iter_mut().zip([a, b, c, d, e, f, g, h]) {
+        for (value, add) in self.state.iter_mut().zip([a, b, c, d, e, f, g, h]) {
             *value = value.wrapping_add(add);
         }
     }
-    state.iter().map(|word| format!("{word:08x}")).collect()
+}
+pub fn hex(data: &[u8]) -> String {
+    let mut digest = Digest::new();
+    digest.update(data);
+    digest.finish()
+}
+
+pub fn file(path: &std::path::Path) -> std::io::Result<String> {
+    use std::io::Read;
+    let mut input = std::fs::File::open(path)?;
+    let mut digest = Digest::new();
+    let mut bytes = [0; 65536];
+    loop {
+        let count = input.read(&mut bytes)?;
+        if count == 0 {
+            break;
+        }
+        digest.update(&bytes[..count]);
+    }
+    Ok(digest.finish())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::hex;
+    use super::{Digest, hex};
+
+    #[test]
+    fn streaming_chunks_match_one_shot() {
+        let data = vec![37; 131_073];
+        for size in [1, 7, 63, 64, 65, 65536] {
+            let mut digest = Digest::new();
+            for chunk in data.chunks(size) {
+                digest.update(chunk);
+            }
+            assert_eq!(digest.finish(), hex(&data));
+        }
+    }
 
     #[test]
     fn matches_the_standard_test_vectors() {

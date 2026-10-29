@@ -135,6 +135,10 @@ struct RunView: View {
           }.buttonStyle(LabButtonStyle(prominent: true))
         }
         Spacer()
+        if run.status == .completed {
+          Button(strings("Summarize trees")) { workspace.summarizeTrees(in: run.request.directory) }
+            .buttonStyle(LabButtonStyle(compact: true))
+        }
         Button(action: workspace.openHistory) {
           Label(strings("History"), systemImage: "clock.arrow.circlepath")
         }.buttonStyle(LabButtonStyle(compact: true))

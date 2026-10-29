@@ -1,0 +1,7 @@
+A	0.0	null	null
+C	0.0	null	null
+A,C	2.25	0.5	null
+B	0.0	null	null
+D	0.0	null	null
+B,D	2.25	0.5	null
+A,B,C,D	4.5	1.0	null

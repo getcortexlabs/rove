@@ -66,6 +66,9 @@ struct RootView: View {
       reduceMotion || workspace.preferences.reduceMotion ? nil : .easeInOut(duration: 0.2),
       value: workspace.page
     )
+    .sheet(item: $workspace.treeSummary) { summary in
+      TreeSummaryView(model: summary, strings: workspace.strings)
+    }
     .task { await workspace.history.reload() }
     .overlay {
       if workspace.loading {

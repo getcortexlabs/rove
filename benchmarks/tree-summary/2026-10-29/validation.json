@@ -1,0 +1,117 @@
+{
+  "comparisons": [
+    {
+      "case": "toy-keep",
+      "nodes": 7,
+      "max_abs_difference": {
+        "height": 0.0,
+        "posterior": 0.0,
+        "rate": 0.0
+      },
+      "independent_parser_max_abs_difference": {
+        "height": 0.0,
+        "posterior": 0.0,
+        "rate": 0.0
+      }
+    },
+    {
+      "case": "toy-ca",
+      "nodes": 7,
+      "max_abs_difference": {
+        "height": 4.440892098500626e-16,
+        "posterior": 0.0,
+        "rate": 0.0
+      },
+      "independent_parser_max_abs_difference": {
+        "height": 0.0,
+        "posterior": 0.0,
+        "rate": 0.0
+      }
+    },
+    {
+      "case": "tie-keep",
+      "nodes": 7,
+      "max_abs_difference": {
+        "height": 0.0,
+        "posterior": 0.0,
+        "rate": 0.0
+      },
+      "independent_parser_max_abs_difference": {
+        "height": 0.0,
+        "posterior": 0.0,
+        "rate": 0.0
+      }
+    },
+    {
+      "case": "tie-ca",
+      "nodes": 7,
+      "max_abs_difference": {
+        "height": 0.0,
+        "posterior": 0.0,
+        "rate": 0.0
+      },
+      "independent_parser_max_abs_difference": {
+        "height": 0.0,
+        "posterior": 0.0,
+        "rate": 0.0
+      }
+    },
+    {
+      "case": "reference-keep",
+      "nodes": 39,
+      "max_abs_difference": {
+        "height": 6.505213034913027e-19,
+        "posterior": 0.0,
+        "rate": 2.7755575615628914e-14
+      },
+      "independent_parser_max_abs_difference": {
+        "height": 4.336808689942018e-19,
+        "posterior": 0.0,
+        "rate": 0.0
+      }
+    },
+    {
+      "case": "reference-ca",
+      "nodes": 39,
+      "max_abs_difference": {
+        "height": 6.288372600415926e-18,
+        "posterior": 0.0,
+        "rate": 2.7755575615628914e-14
+      },
+      "independent_parser_max_abs_difference": {
+        "height": 4.336808689942018e-19,
+        "posterior": 0.0,
+        "rate": 0.0
+      }
+    }
+  ],
+  "inputs": {
+    "toy": {
+      "sha256": "7c5e6b5db286fa230af0413cb94ff7903f2685ae996e00b9edd763809ad056e9",
+      "bytes": 229
+    },
+    "tie": {
+      "sha256": "7c5e6b5db286fa230af0413cb94ff7903f2685ae996e00b9edd763809ad056e9",
+      "bytes": 229
+    },
+    "reference": {
+      "sha256": "54b68a8a896e9293afae48af1f72b328b4035473903c4d2521c85f23cf60bac0",
+      "bytes": 19540196
+    }
+  },
+  "tools": {
+    "BEAST.app": "2.7.8 (banner reports 2.7.7)",
+    "BEAST.base": "2.7.8",
+    "FigTree": "1.4.4",
+    "figtree_sha256": "23ab8691cfc0c40bb279e466854f04156194a2b9bd2ba51686fcabfdd0b3fa62",
+    "rove_sha256": "06ffc0762ecdc9aaf2b89dc2d29170cea60540662ee09aac6073756068f87c79",
+    "beast_jars": {
+      "launcher.jar": "7d51654fd80dd4c32f64e02b02ca90aa6387c2c9837761befe665ff730a5dc01",
+      "BEAST.app.jar": "45949db1372c6dc874256754489b374c03f205c07af1d3513026664b20db32d2",
+      "BEAST.base.jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+      "BEASTlabs.v2.0.3.jar": "feea1bccaee3fe88868d2c60ffe72410f680f5e1301300b918517603e51aa259",
+      "MM.addon.jar": "78f02140b79f8061cbfacfe73600d6ecc2660af00d852a125bda2c683c595a68",
+      "ORC.addon.jar": "2fa7390b9313e769388ba5863f58807cf7bcc7a54b0cd22e2d72f9a618bbdb3e"
+    }
+  }
+}

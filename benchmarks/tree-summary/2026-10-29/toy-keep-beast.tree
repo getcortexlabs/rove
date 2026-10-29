@@ -1,0 +1,20 @@
+#NEXUS
+
+Begin taxa;
+	Dimensions ntax=4;
+		Taxlabels
+			A
+			B
+			C
+			D
+			;
+End;
+Begin trees;
+	Translate
+		     1 A,
+		     2 B,
+		     3 C,
+		     4 D
+;
+tree TREE_MCC_keep = ((1[&height=0.0,length=1.3333333333333333,length_95%_HPD={1.0,2.0},length_median=1.0,length_range={1.0,2.0}]:1.0,2[&height=0.0,length=1.3333333333333333,length_95%_HPD={1.0,2.0},length_median=1.0,length_range={1.0,2.0}]:1.0)[&height=1.5,height_95%_HPD={1.0,2.0},height_median=1.5,height_range={1.0,2.0},length=2.0,posterior=0.6666666666666666]:2.0,(3[&height=0.0,length=1.3333333333333333,length_95%_HPD={1.0,2.0},length_median=1.0,length_range={1.0,2.0}]:1.0,4[&height=0.0,length=1.3333333333333333,length_95%_HPD={1.0,2.0},length_median=1.0,length_range={1.0,2.0}]:1.0)[&height=1.5,height_95%_HPD={1.0,2.0},height_median=1.5,height_range={1.0,2.0},length=2.0,posterior=0.6666666666666666]:2.0)[&height=4.0,height_95%_HPD={3.0,5.0},height_median=4.0,height_range={3.0,5.0},length=0.0,posterior=1.0]:0.0;
+End;

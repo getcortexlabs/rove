@@ -169,3 +169,76 @@ O comando emite JSON versionado com contagens, uma prévia limitada das células
 o hash da entrada e erros separados de compatibilidade com o amostrador e Mkv.
 Adicione `--gaps missing` somente quando essa interpretação for adequada.
 Ler uma matriz não grava resultados de análise.
+
+## Resumir as árvores posteriores
+
+![Resumo das árvores no Rove](/images/macos-summary.png)
+
+Após concluir uma execução, escolha **Resumir árvores** no resultado ou na
+entrada do Histórico. Defina o burn-in e as alturas dos nós e clique em **Criar
+resumo das árvores**. Os resumos salvos reaparecem ao abrir esse painel. O
+processamento ocorre fora da thread da interface e pode ser cancelado.
+
+O burn-in descarta as primeiras `floor(total de amostras × porcentagem / 100)`
+árvores, arredondando para baixo. `STATE_0` conta como amostra. Os 10% iniciais
+são uma sugestão editável, não uma avaliação de convergência; escolha após
+inspecionar o trace. O painel mostra quantas árvores foram mantidas e
+descartadas. Execuções parciais, canceladas ou interrompidas não podem ser
+resumidas pelo app.
+
+MCC (máxima credibilidade dos clados) seleciona uma **topologia amostrada**, não
+um consenso de maioria. O Rove soma os logaritmos das frequências dos clados
+internos de cada árvore mantida. Os clados são ordenados antes da soma; em
+empates exatos, vence a primeira candidata mantida. `posterior` é a fração das
+árvores mantidas que contém o clado. Grupos impostos por restrições registradas
+recebem `constrained=true`; esse suporte não é recuperação independente dos dados.
+
+**Manter a árvore selecionada** preserva suas alturas. **Média do ancestral
+comum** usa a altura média do ancestral comum mais recente de cada grupo em
+**todas** as árvores mantidas. Comprimentos dos ramos são diferenças entre
+alturas do pai e do filho, nas unidades de tempo da origem. Taxas continuam
+sendo multiplicadores separados; não se inferem datas de calendário nem
+distâncias multiplicadas pelas taxas. Médias e faixas de altura/taxa são
+condicionais à presença do clado; `CAheight_mean` e `CAheight_range` usam todas
+as árvores mantidas. Faixas são mínimos e máximos, **não intervalos HPD ou de
+credibilidade**. Medianas de altura e intervalos HPD ainda não estão implementados.
+
+Cada resumo cria uma pasta nova em `summaries`, dentro da execução:
+
+- `mcc.tree`: uma árvore NEXUS enraizada e anotada para o FigTree. Escolha
+  `posterior` em Node Labels no FigTree para exibir os suportes.
+- `samples.trees`: cópia idêntica de todas as amostras originais, incluindo o
+  burn-in, para ferramentas que esperam a extensão `.trees`.
+- `summary.json`: hashes da origem e do executável, metadados da execução,
+  burn-in, contagem mantida, estado escolhido, método, alturas e versão do Rove.
+
+Os botões mostram esses arquivos no Finder. `results/trees.nexus` e os demais
+arquivos originais são preservados. Cada resumo ocupa espaço para mais uma
+cópia das árvores brutas. Resumo e suporte alto não comprovam convergência;
+compare execuções independentes e diagnósticos de amostragem.
+
+O comando Rust independente faz o mesmo cálculo, sem Java ou BEAST:
+
+```sh
+target/release/rove summarize /path/to/results/trees.nexus \
+  --output /path/to/new-summary --burnin-percent 25 --heights ca
+```
+
+Use `--burnin-samples N` para contar amostras ou `--heights keep` para manter
+alturas. A pasta de saída não pode existir. A extensão não muda a interpretação.
+Sem `run.json` ao lado da entrada, a conclusão é registrada como **unverified**:
+um arquivo sintaticamente completo não comprova que a execução terminou.
+Com o registro, o comando verifica conclusão, contagem e cada intervalo amostrado.
+
+O leitor aceita árvores do Rove enraizadas, binárias e ultramétricas, com pontas
+contemporâneas, tabela de tradução e identificadores `STATE_` crescentes.
+Táxons misturados, ausência de `End;`, taxas incompletas e formatos de árvore
+não suportados são rejeitados. Datas de fósseis nas pontas, politomias e blocos
+NEXUS externos arbitrários não são suportados. Os limites são 4.096 táxons,
+512 níveis, 2 MiB por comando e um milhão de clados distintos ou uma estimativa
+de 128 MiB para suas chaves, o que ocorrer primeiro. Essa estimativa não é um
+teto rígido de memória do processo. Quatro passagens sequenciais guardam
+contagens e estatísticas da árvore escolhida, não todas as árvores na memória.
+
+[A validação e as medições em Apple silicon](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
+registram comparações com TreeAnnotator e leitores NEXUS externos em versões fixas.

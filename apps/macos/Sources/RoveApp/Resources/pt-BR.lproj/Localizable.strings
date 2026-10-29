@@ -313,3 +313,45 @@
 "Apply group" = "Aplicar grupo";
 "Applied analysis setup" = "Configuração aplicada à análise";
 "The saved terminals do not match the original matrix." = "Os terminais salvos não correspondem à matriz original.";
+
+"Summarize trees" = "Resumir árvores";
+
+"From samples to a tree" = "Das amostras à árvore";
+
+"Find the shared branches." = "Encontre os ramos em comum.";
+
+"Build an annotated MCC tree from the sampled trees. Your original files stay unchanged." = "Crie uma árvore MCC anotada a partir das árvores amostradas. Os arquivos originais são preservados.";
+
+"Burn-in (%)" = "Burn-in (%)";
+
+"Discard this percentage of the first samples, rounded down. Choose it after checking the trace." = "Descarte esta porcentagem das primeiras amostras, arredondando para baixo. Escolha após avaliar o trace.";
+
+"Node heights" = "Alturas dos nós";
+
+"Common ancestor mean" = "Média do ancestral comum";
+
+"Keep selected tree" = "Manter a árvore selecionada";
+
+"Common ancestor means use every retained tree. Keeping heights preserves those of the selected MCC tree." = "A média do ancestral comum usa todas as árvores mantidas. Manter as alturas preserva as da árvore MCC selecionada.";
+
+"MCC selects a sampled tree by clade credibility. Support is the frequency of a clade after burn-in; imposed groups are marked. Ranges are minima and maxima, not credible intervals." = "A MCC seleciona uma árvore amostrada pela credibilidade dos clados. O suporte é a frequência do clado após o burn-in; grupos impostos são identificados. As faixas mostram mínimos e máximos, não intervalos de credibilidade.";
+
+"Reading trees and calculating the summary…" = "Lendo as árvores e calculando o resumo…";
+
+"%@ trees retained · %@ discarded" = "%@ árvores mantidas · %@ descartadas";
+
+"Annotated tree" = "Árvore anotada";
+
+"Raw trees (.trees)" = "Árvores brutas (.trees)";
+
+"Summary record" = "Registro do resumo";
+
+"A summary and high support do not establish convergence. Check independent runs and sampling diagnostics before interpreting the tree." = "Um resumo e suportes altos não comprovam convergência. Verifique execuções independentes e diagnósticos de amostragem antes de interpretar a árvore.";
+
+"Create tree summary" = "Criar resumo das árvores";
+
+"Tree summarization was cancelled." = "O resumo das árvores foi cancelado.";
+
+"The trees could not be summarized." = "Não foi possível resumir as árvores.";
+
+"Close" = "Fechar";
