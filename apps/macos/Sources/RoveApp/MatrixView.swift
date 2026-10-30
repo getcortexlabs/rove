@@ -58,7 +58,7 @@ struct MatrixView: View {
           Text(
             strings(
               workspace.settings.partitioning == "observed"
-                ? "Characters with two, three or more states get separate Mk models. Binary alphabets keep both possible states."
+                ? "Characters are grouped by state count and ordering. Ordered characters keep intermediate states; binary alphabets keep both states."
                 : "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character."
             )
           )
@@ -125,7 +125,7 @@ struct MatrixView: View {
   @ViewBuilder private func partitionCounts(_ partitions: [CharacterPartition]) -> some View {
     ForEach(Array(partitions.enumerated()), id: \.offset) { _, partition in
       Text(
-        strings.partitionSummary(states: partition.states, characters: partition.characters)
+        strings.partitionSummary(partition)
       )
       .font(.system(size: 11, weight: .medium)).foregroundStyle(Lab.lilac)
     }

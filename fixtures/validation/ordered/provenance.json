@@ -1,0 +1,26 @@
+{
+  "packages": {
+    "BEAST.base": "2.7.8",
+    "BEASTLabs": "2.0.3",
+    "BEAST.app": "2.7.8",
+    "MM": "1.2.1",
+    "ORC": "1.2.1"
+  },
+  "java_version": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Temurin-17.0.15+6 (build 17.0.15+6)\nOpenJDK 64-Bit Server VM Temurin-17.0.15+6 (build 17.0.15+6, mixed mode, sharing)\n",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "jars": {
+    "launcher.jar": "7d51654fd80dd4c32f64e02b02ca90aa6387c2c9837761befe665ff730a5dc01",
+    "BEAST.app.jar": "45949db1372c6dc874256754489b374c03f205c07af1d3513026664b20db32d2",
+    "BEAST.base.jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+    "BEASTlabs.v2.0.3.jar": "feea1bccaee3fe88868d2c60ffe72410f680f5e1301300b918517603e51aa259",
+    "MM.addon.jar": "78f02140b79f8061cbfacfe73600d6ecc2660af00d852a125bda2c683c595a68",
+    "ORC.addon.jar": "2fa7390b9313e769388ba5863f58807cf7bcc7a54b0cd22e2d72f9a618bbdb3e"
+  },
+  "source_sha256": "988d2939f634ce711ff20d00e8843a9f0aa9da7bfe294440b0dc2e608d49852d",
+  "matrix_sha256": "78eaf8e9daa61865d50ceca38485b3bb950bf131ab7b6463cdd70eeb625796a9",
+  "result_sha256": "4835d3f03a22ac09125546691dff2247a670c7dfe2077c460755c8345fde91e8",
+  "conditioning": "comparison",
+  "ordered_characters": "2,3,5,8",
+  "backend": "Java BeerLikelihoodCore; java.only=true; scaling=always; useAmbiguities=true",
+  "reproduction": "python3 tools/beast/partition_likelihood.py --packages <packages> --launcher <launcher.jar> --matrix fixtures/validation/ordered/matrix.nex --conditioning comparison --ordered 2,3,5,8 --output <new-directory>"
+}

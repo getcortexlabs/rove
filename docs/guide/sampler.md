@@ -97,7 +97,7 @@ The matrix has no homoplasy, so under Mkv the likelihood does not penalize short
 
 ## Limitations
 
-- All partitions share the tree, clock and gamma shape; separate partition rates and ordered characters are not implemented. Tip dates, calibrations, other clock distributions and other tree priors are not implemented.
+- All partitions share the tree, clock and gamma shape; separate partition rates are not implemented. [Ordered characters](./ordered-characters) support Mk and Mkv. Tip dates, calibrations, other clock distributions and other tree priors are not implemented.
 - The starting tree is random, with coalescent-like node times, and satisfies the constraints.
 - Each independent chain uses one thread. Checkpoints preserve all chains at the same sampled step.
 

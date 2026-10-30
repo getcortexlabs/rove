@@ -80,6 +80,11 @@ struct AppStrings: Sendable {
     return self("%@ states · %@ characters", number(states), number(characters))
   }
 
+  func partitionSummary(_ partition: CharacterPartition) -> String {
+    partitionSummary(states: partition.states, characters: partition.characters)
+      + " · " + self(partition.ordering == .ordered ? "Ordered" : "Unordered")
+  }
+
   func matrixSummary(taxa: Int, characters: Int, patterns: Int? = nil) -> String {
     var parts = [
       self(taxa == 1 ? "%@ terminal" : "%@ terminals", number(taxa)),

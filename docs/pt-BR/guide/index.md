@@ -30,6 +30,7 @@ separado oferece a [prévia nativa para Mac](./macos-preview) para importar matr
 - `LikelihoodCore`: poda de Felsenstein sobre um layout pattern-major, com categorias de taxa, reescalonamento opcional por nó e store/restore do estado dos nós para um amostrador. `LikelihoodCore::mk` faz a poda com a forma fechada do Mk; `LikelihoodCore::new` multiplica uma matriz de transição por ramo.
 - `Backend`: código portátil para qualquer alvo e, em aarch64, um kernel NEON para a atualização de nó do Mk, que dá os mesmos resultados. Veja [Backends](./kernel#backends).
 - `model::Mk`: o modelo Mk com sua matriz de transição em forma fechada, para frequências de estados uniformes ou personalizadas, que são validadas.
+- `model::Ordered`: mudanças entre estados vizinhos com frequências uniformes e partições ordenadas/não ordenadas na mesma análise. Veja [caracteres ordenados](./ordered-characters).
 - `ascertainment::VariableCharacters`: a correção Mkv para matrizes de caracteres variáveis, verificada contra dois estados fixos do BEAST 2.7.8.
 - `ascertainment::InformativeProbability`: condicionamento Mkparsinf com cache para Mk não ordenado de frequências iguais, conferido por enumeração completa de padrões e BEAST 2.7.8. Veja [seleção de caracteres](./character-selection).
 - `reference::Problem`: uma implementação recursiva simples, mantida como referência nos testes.

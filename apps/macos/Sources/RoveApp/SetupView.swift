@@ -75,7 +75,9 @@ struct SetupView: View {
           {
             DiagnosticMessage(
               title: strings(
-                "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected."
+                workspace.report?.partitions?.contains(where: { $0.ordering == .ordered }) == true
+                  ? "Informative-only coding is not available for ordered characters. Keep the coding consistent with how your matrix was collected."
+                  : "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected."
               ), details: issue, strings: strings)
           }
         }
@@ -251,7 +253,7 @@ struct ReviewView: View {
             row(
               "State partitions",
               partitions.map {
-                strings.partitionSummary(states: $0.states, characters: $0.characters)
+                strings.partitionSummary($0)
               }.joined(separator: " / "))
           }
           row(

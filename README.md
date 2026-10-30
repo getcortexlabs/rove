@@ -22,6 +22,8 @@ integration remains a possible compatibility path.
 Early. The likelihood core with its direct Mk path and a NEON kernel for it,
 Mkv and Mkparsinf conditioning, the morphological NEXUS reader, pattern compression,
 numerical tests and a standalone binary and multistate sampler are implemented.
+[Ordered characters](docs/guide/ordered-characters.md) can share an analysis with
+unordered characters under Mk or Mkv; ordered Mkparsinf is not yet supported.
 The supplied reference model runs with four gamma categories and a lognormal
 relaxed clock. Posterior summaries and clade frequencies agree with BEAST 2.7.8
 under predeclared criteria in six constructed 20-taxon cases. Optional integrations

@@ -7,7 +7,7 @@ use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation, RelaxedClock};
 use crate::tree::Tree;
 
-const MAGIC: &[u8; 8] = b"ROVECP03";
+const MAGIC: &[u8; 8] = b"ROVECP04";
 
 impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.
@@ -213,6 +213,10 @@ impl Sampler {
 fn write_partitions(out: &mut impl Write, patterns: &[Patterns]) -> io::Result<()> {
     write_u64(out, patterns.len() as u64)?;
     for partition in patterns {
+        write_u64(
+            out,
+            u64::from(partition.ordering() == crate::model::CharacterOrdering::Ordered),
+        )?;
         write_u64(out, partition.symbols().len() as u64)?;
         write_u64(out, partition.sites().len() as u64)?;
         write_u64(out, partition.weights().len() as u64)?;

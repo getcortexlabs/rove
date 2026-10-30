@@ -1,5 +1,5 @@
 use crate::layout::Layout;
-use crate::model::Mk;
+use crate::model::{Mk, Ordered};
 
 mod checkpoint;
 mod mk;
@@ -66,6 +66,8 @@ enum Transition {
     Matrix,
     /// The distance, `e` and `1 − e` of the Mk closed form per rate category.
     Mk(Mk),
+    /// Matrices followed by one cached distance per rate category.
+    Ordered(Ordered),
 }
 
 impl Transition {
@@ -73,6 +75,7 @@ impl Transition {
         match self {
             Self::Matrix => layout.matrices_len(),
             Self::Mk(_) => 3 * layout.categories,
+            Self::Ordered(_) => layout.matrices_len() + layout.categories,
         }
     }
 }
@@ -125,6 +128,21 @@ impl LikelihoodCore {
     ) -> Self {
         let layout = Layout::new(model.states(), categories, patterns);
         Self::with_transition(layout, node_count, scaling, Transition::Mk(model.clone()))
+    }
+
+    pub fn ordered(
+        states: usize,
+        patterns: usize,
+        categories: usize,
+        node_count: usize,
+        scaling: Scaling,
+    ) -> Self {
+        Self::with_transition(
+            Layout::new(states, categories, patterns),
+            node_count,
+            scaling,
+            Transition::Ordered(Ordered::new(states)),
+        )
     }
 
     fn with_transition(
@@ -283,7 +301,7 @@ impl LikelihoodCore {
 
     pub fn node_matrix(&self, node: usize, category: usize) -> &[f64] {
         assert!(
-            matches!(self.transition, Transition::Matrix),
+            matches!(self.transition, Transition::Matrix | Transition::Ordered(_)),
             "an Mk core stores distances; use node_distance"
         );
         let l = self.layout;
@@ -292,23 +310,37 @@ impl LikelihoodCore {
     }
 
     /// Sets the branch above `node`, in one rate category, to `distance`
-    /// expected changes per character. Only for cores made by `mk`.
+    /// expected changes per character. For cores made by `mk` or `ordered`.
     pub fn set_node_distance(&mut self, node: usize, category: usize, distance: f64) {
-        let Transition::Mk(model) = &self.transition else {
-            panic!("a matrix core takes transition matrices; use set_node_matrix");
-        };
-        let (stay, change) = model.stay_and_change(distance);
         let buffer = self.transitions_buffer(node);
-        self.transitions[buffer][3 * category..3 * category + 3]
-            .copy_from_slice(&[distance, stay, change]);
+        match &mut self.transition {
+            Transition::Mk(model) => {
+                let (stay, change) = model.stay_and_change(distance);
+                self.transitions[buffer][3 * category..3 * category + 3]
+                    .copy_from_slice(&[distance, stay, change]);
+            }
+            Transition::Ordered(model) => {
+                let start = self.layout.matrix_offset(category);
+                let length = self.layout.states * self.layout.states;
+                model.transition_matrix(
+                    distance,
+                    &mut self.transitions[buffer][start..start + length],
+                );
+                self.transitions[buffer][self.layout.matrices_len() + category] = distance;
+            }
+            Transition::Matrix => {
+                panic!("a matrix core takes transition matrices; use set_node_matrix")
+            }
+        }
     }
 
     pub fn node_distance(&self, node: usize, category: usize) -> f64 {
-        assert!(
-            matches!(self.transition, Transition::Mk(_)),
-            "a matrix core stores matrices; use node_matrix"
-        );
-        self.transitions[self.transitions_buffer(node)][3 * category]
+        let at = match self.transition {
+            Transition::Mk(_) => 3 * category,
+            Transition::Ordered(_) => self.layout.matrices_len() + category,
+            Transition::Matrix => panic!("a matrix core stores matrices; use node_matrix"),
+        };
+        self.transitions[self.transitions_buffer(node)][at]
     }
 
     pub fn node_partials(&self, node: usize) -> &[f64] {
@@ -328,7 +360,7 @@ impl LikelihoodCore {
         let out = self.partials_buffer(parent);
         let mut dst = std::mem::take(&mut self.partials[out]);
         let maxima = match self.transition {
-            Transition::Matrix => {
+            Transition::Matrix | Transition::Ordered(_) => {
                 self.multiply_matrices(child1, child2, &mut dst);
                 false
             }

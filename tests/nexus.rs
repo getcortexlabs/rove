@@ -302,12 +302,7 @@ fn unsupported_semantics_are_rejected_instead_of_ignored() {
             "{option}"
         );
     }
-    for block in [
-        "SETS; CHARSET first = 1-2;",
-        "ASSUMPTIONS; OPTIONS GAPMODE=NEWSTATE;",
-        "PAUP; exclude 1;",
-        "CODONS;",
-    ] {
+    for block in ["SETS; CHARSET first = 1-2;", "PAUP; exclude 1;", "CODONS;"] {
         let text = format!("{} BEGIN {block} END;", document(1, 2, "", "A 01"));
         let error = nexus::parse(&text).unwrap_err();
         assert!(error.message.contains("unsupported block"), "{error}");

@@ -5,6 +5,45 @@ import Testing
 @testable import RoveApp
 
 struct PreviewTests {
+  @Test @MainActor func renderOrderedPartitions() async throws {
+    guard ProcessInfo.processInfo.environment["CI"] == nil else { return }
+    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+      .deletingLastPathComponent()
+    let directory = root.appendingPathComponent(".local/ui/ordered")
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    _ = NSApplication.shared
+    NSApp.appearance = NSAppearance(named: .darkAqua)
+    Lab.registerFonts()
+    let suite = "rove-ordered-preview-\(UUID())"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let preferences = AppPreferences(defaults: defaults)
+    let engine = root.appendingPathComponent("target/release/rove")
+    let matrix = root.appendingPathComponent("fixtures/validation/ordered/matrix.nex")
+    let workspace = Workspace(executable: engine, preferences: preferences)
+    workspace.report = try await MatrixInspector.inspect(
+      matrix, gapsAsMissing: false, executable: engine)
+    workspace.file = matrix
+    for page in [WorkspacePage.matrix, .review] {
+      workspace.page = page
+      let view = NSHostingView(rootView: RootView(workspace: workspace))
+      let window = NSWindow(
+        contentRect: NSRect(x: 0, y: 0, width: 1080, height: 850),
+        styleMask: [.borderless], backing: .buffered, defer: false)
+      window.isReleasedWhenClosed = false
+      window.appearance = NSAppearance(named: .darkAqua)
+      window.contentView = view
+      window.orderBack(nil)
+      for language in [AppLanguage.english, .portuguese] {
+        preferences.language = language
+        try await capture(
+          view, to: directory.appendingPathComponent("\(page)-\(language.rawValue).png"))
+      }
+      window.close()
+    }
+  }
+
   @Test @MainActor func renderWorkspaceStates() async throws {
     guard ProcessInfo.processInfo.environment["CI"] == nil else { return }
     let package = URL(fileURLWithPath: #filePath).deletingLastPathComponent()

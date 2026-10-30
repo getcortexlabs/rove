@@ -19,7 +19,7 @@ use crate::ascertainment::{
     self, InformativeProbability, VariableCharacters, validate_informative,
 };
 use crate::data::Patterns;
-use crate::model::Mk;
+use crate::model::{CharacterOrdering, Mk};
 use crate::random::Random;
 use crate::rates::{self, GammaRates, RateVariation, RelaxedClock};
 use crate::speciation::BirthDeath;
@@ -265,13 +265,22 @@ impl Likelihood {
         let tips = variable
             .as_ref()
             .map_or(patterns.tip_partials(), VariableCharacters::tip_partials);
-        let mut core = LikelihoodCore::mk(
-            &model,
-            tips[0].len() / states,
-            rates.category_rates().len(),
-            tree.nodes(),
-            Scaling::Always,
-        );
+        let mut core = match patterns.ordering() {
+            CharacterOrdering::Unordered => LikelihoodCore::mk(
+                &model,
+                tips[0].len() / states,
+                rates.category_rates().len(),
+                tree.nodes(),
+                Scaling::Always,
+            ),
+            CharacterOrdering::Ordered => LikelihoodCore::ordered(
+                states,
+                tips[0].len() / states,
+                rates.category_rates().len(),
+                tree.nodes(),
+                Scaling::Always,
+            ),
+        };
         core.set_backend(backend);
         for (tip, partials) in tips.iter().enumerate() {
             core.set_tip_partials(tip, partials);

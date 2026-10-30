@@ -558,7 +558,7 @@
 
 "Mk · all characters" = "Mk · all characters";
 
-"Characters with two, three or more states get separate Mk models. Binary alphabets keep both possible states." = "Characters with two, three or more states get separate Mk models. Binary alphabets keep both possible states.";
+"Characters are grouped by state count and ordering. Ordered characters keep intermediate states; binary alphabets keep both states." = "Characters are grouped by state count and ordering. Ordered characters keep intermediate states; binary alphabets keep both states.";
 
 "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character." = "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character.";
 
@@ -681,3 +681,8 @@
 "Thank you for sharing what you know and for building this with me. There’s a lot here I couldn’t have done on my own." = "Thank you for sharing what you know and for building this with me. There’s a lot here I couldn’t have done on my own.";
 "I really want to see Rove in other people’s hands, helping with research we haven’t even heard of yet. There’s still plenty of work ahead, and I’m excited to keep working on it with you." = "I really want to see Rove in other people’s hands, helping with research we haven’t even heard of yet. There’s still plenty of work ahead, and I’m excited to keep working on it with you.";
 "Let’s keep going." = "Let’s keep going.";
+
+// Character ordering
+"Ordered" = "Ordered";
+"Unordered" = "Unordered";
+"Informative-only coding is not available for ordered characters. Keep the coding consistent with how your matrix was collected." = "Informative-only coding is not available for ordered characters. Keep the coding consistent with how your matrix was collected.";

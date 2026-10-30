@@ -29,6 +29,38 @@ struct AnalysisTests {
     #expect(settings.validationError != nil)
   }
 
+  @Test @MainActor func orderedPartitionsKeepTheirModelsAndRejectInformativeCoding() async throws {
+    let matrix = root.appendingPathComponent("fixtures/validation/ordered/matrix.nex")
+    let report = try await MatrixInspector.inspect(
+      matrix, gapsAsMissing: false, executable: executable)
+    let parts = try #require(report.partitions)
+    #expect(parts.map(\.states) == [2, 3, 3, 4])
+    #expect(parts.map(\.ordering) == [.unordered, .unordered, .ordered, .ordered])
+    #expect(parts.last?.stateSymbols == ["0123", "0123"])
+    #expect(report.samplerError == nil)
+    #expect(report.variableError == nil)
+    #expect(report.informativeError?.contains("ordered") == true)
+    #expect(AppStrings(language: .english).partitionSummary(parts[2]).contains("Ordered"))
+    #expect(AppStrings(language: .portuguese).partitionSummary(parts[2]).contains("Ordenados"))
+    let suite = "rove-ordered-tests-\(UUID().uuidString)"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let workspace = Workspace(
+      executable: executable, preferences: AppPreferences(defaults: defaults))
+    workspace.load(matrix)
+    try await finishImport(workspace)
+    #expect(workspace.canOpen(.review))
+    workspace.settings.conditioning = "informative"
+    #expect(!workspace.canOpen(.review))
+    workspace.settings.conditioning = "none"
+    #expect(workspace.canOpen(.review))
+    workspace.settings.partitioning = "declared"
+    workspace.reloadGapPolicy()
+    try await finishImport(workspace)
+    #expect(workspace.report?.partitions?.map(\.states) == [4, 4])
+    #expect(workspace.report?.partitions?.map(\.ordering) == [.unordered, .ordered])
+  }
+
   @Test func exportedCommandsKeepPathsAsLiteralArguments() throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

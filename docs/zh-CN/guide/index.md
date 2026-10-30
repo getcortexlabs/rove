@@ -29,6 +29,7 @@ Rove 则从数据出发：一种沿位点模式向量化的布局，以及针对
 - `LikelihoodCore`：在位点模式主序布局上的 Felsenstein 剪枝，支持速率类别、可选的逐节点重缩放，以及为采样器准备的节点状态存储/恢复。`LikelihoodCore::mk` 用 Mk 闭式解做剪枝；`LikelihoodCore::new` 为每条分枝乘一个转移矩阵。
 - `Backend`：适用于任何目标平台的可移植代码，以及在 aarch64 上用于 Mk 节点更新的 NEON 内核，两者结果相同。见[后端](./kernel#后端)。
 - `model::Mk`：带闭式解转移矩阵的 Mk 模型，支持均匀或自定义的状态频率，并会验证这些频率。
+- `model::Ordered`：均匀频率的相邻状态变化，可在同一分析中组合有序/无序分区。参见[有序性状](./ordered-characters)。
 - `ascertainment::VariableCharacters`：针对可变性状矩阵的 Mkv 校正，已与两个固定的 BEAST 2.7.8 状态核对。
 - `ascertainment::InformativeProbability`：等频率无序 Mk 的缓存 Mkparsinf 条件化，已通过完整模式枚举和 BEAST 2.7.8 验证。参见[性状选择](./character-selection)。
 - `reference::Problem`：一个朴素的递归实现，在测试中作为参考保留。

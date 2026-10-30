@@ -35,11 +35,16 @@ pub enum Error {
         site: usize,
     },
     UndefinedInformativeCorrection,
+    OrderedInformative,
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::OrderedInformative => write!(
+                f,
+                "informative-only conditioning is not supported for ordered characters; use all-character or variable-character coding only when it matches how the matrix was collected"
+            ),
             Self::UninformativeCharacter { site } => write!(
                 f,
                 "character {} could be parsimony-uninformative; informative-only coding requires at least two states represented by two or more taxa in every completion of missing or uncertain observations",

@@ -44,6 +44,7 @@ pub(super) fn describe(partitions: &[Patterns]) -> Json {
             .iter()
             .map(|p| {
                 Json::Object(vec![
+                    ("ordering", Json::text(p.ordering().name())),
                     ("states", Json::Integer(p.symbols().len() as u64)),
                     ("characters", Json::Integer(p.sites().len() as u64)),
                     ("observed_patterns", Json::Integer(p.weights().len() as u64)),

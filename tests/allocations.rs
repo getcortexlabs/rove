@@ -149,4 +149,30 @@ fn steps_do_not_allocate() {
             "informative conditioning"
         );
     }
+    let ordered = nexus::parse(include_str!("../fixtures/validation/ordered/matrix.nex"))
+        .unwrap()
+        .partition_by_states(GapTreatment::Reject)
+        .unwrap();
+    for base in [Settings::default(), Settings::reference()] {
+        for conditioning in [Conditioning::None, Conditioning::Variable] {
+            let mut chain = Sampler::new(
+                &ordered,
+                &Settings {
+                    conditioning,
+                    ..base.clone()
+                },
+                5,
+            )
+            .unwrap();
+            for _ in 0..100 {
+                chain.step();
+            }
+            COUNTING.store(true, Ordering::Relaxed);
+            for _ in 0..2000 {
+                chain.step();
+            }
+            COUNTING.store(false, Ordering::Relaxed);
+            assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "ordered partitions");
+        }
+    }
 }

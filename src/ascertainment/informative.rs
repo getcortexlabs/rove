@@ -25,6 +25,9 @@ use super::Error;
 /// candidate repeated state, match all tips that exclude it to distinct other
 /// states. A complete matching is a witness that this character must be rejected.
 pub fn validate_informative(patterns: &Patterns) -> Result<(), Error> {
+    if patterns.ordering() == crate::model::CharacterOrdering::Ordered {
+        return Err(Error::OrderedInformative);
+    }
     let states = patterns.symbols().len();
     let tips = patterns.tip_partials();
     let mut owners = vec![None; states];

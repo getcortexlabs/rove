@@ -769,11 +769,22 @@ fn run_chain(
                 ("partitions", partitions::describe(&patterns)),
                 (
                     "substitution",
-                    Json::text(if options.reference_model {
-                        "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
-                    } else {
-                        "Mk per partition, equal frequencies, one rate category"
-                    }),
+                    Json::text(
+                        if patterns
+                            .iter()
+                            .any(|p| p.ordering() == rove::model::CharacterOrdering::Ordered)
+                        {
+                            if options.reference_model {
+                                "Ordered/unordered models per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+                            } else {
+                                "Ordered/unordered models per partition, equal frequencies, one rate category"
+                            }
+                        } else if options.reference_model {
+                            "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+                        } else {
+                            "Mk per partition, equal frequencies, one rate category"
+                        },
+                    ),
                 ),
                 (
                     "preset",

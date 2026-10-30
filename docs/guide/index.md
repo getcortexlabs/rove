@@ -30,6 +30,7 @@ provides the [native Mac preview](./macos-preview) for matrix import, reviewed s
 - `LikelihoodCore`: Felsenstein pruning over a pattern-major layout, with rate categories, optional per-node rescaling and store/restore of node state for a sampler. `LikelihoodCore::mk` prunes with the Mk closed form; `LikelihoodCore::new` multiplies a transition matrix per branch.
 - `Backend`: portable code for any target and, on aarch64, a NEON kernel for the Mk node update that gives the same results. See [Backends](./kernel#backends).
 - `model::Mk`: the Mk model with its closed-form transition matrix, for uniform or custom state frequencies, which are validated.
+- `model::Ordered`: adjacent-state changes with uniform frequencies and mixed ordered/unordered partitions. See [ordered characters](./ordered-characters).
 - `ascertainment::VariableCharacters`: the Mkv correction for matrices of variable characters, checked against two fixed BEAST 2.7.8 states.
 - `ascertainment::InformativeProbability`: cached Mkparsinf conditioning for uniform unordered Mk, checked by complete pattern enumeration and BEAST 2.7.8. See [character selection](./character-selection).
 - `reference::Problem`: a plain recursive implementation kept as the reference in tests.

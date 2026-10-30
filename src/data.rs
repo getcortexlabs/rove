@@ -1,5 +1,6 @@
 //! Morphological observations and lossless compression within model partitions.
 
+use crate::model::CharacterOrdering;
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
 use std::ops::Range;
@@ -21,6 +22,7 @@ pub struct Matrix {
     pub(crate) rows: Vec<Vec<Cell>>,
     pub(crate) character_labels: Vec<Option<String>>,
     pub(crate) state_labels: Vec<Vec<String>>,
+    pub(crate) ordering: Vec<CharacterOrdering>,
 }
 
 /// Gaps can mean inapplicability, so treating them as missing requires a choice.
@@ -37,11 +39,17 @@ pub enum CompressionError {
     ExcludedState { site: usize, symbol: char },
     Gap { taxon: String, site: usize },
     Polymorphism { taxon: String, site: usize },
+    OrderedAlphabet { site: usize },
 }
 
 impl fmt::Display for CompressionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::OrderedAlphabet { site } => write!(
+                f,
+                "ordered character {} requires a contiguous alphabet in declared SYMBOLS order; intermediate states cannot be removed",
+                site + 1
+            ),
             Self::InvalidPartitions => write!(
                 f,
                 "partitions must have at least two distinct declared symbols and nonempty, sorted character sets covering every character once"
@@ -75,6 +83,7 @@ impl std::error::Error for CompressionError {}
 /// Observed patterns from one partition, numbered by first occurrence.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Patterns {
+    ordering: CharacterOrdering,
     sites: Vec<usize>,
     symbols: Vec<char>,
     state_symbols: Vec<Vec<char>>,
@@ -97,6 +106,10 @@ impl Matrix {
 
     pub fn symbols(&self) -> &[char] {
         &self.symbols
+    }
+
+    pub fn ordering(&self) -> &[CharacterOrdering] {
+        &self.ordering
     }
 
     pub fn character_count(&self) -> usize {
@@ -156,8 +169,9 @@ impl Matrix {
         )
     }
 
-    /// Group characters by distinct observed or explicitly possible states. State labels
-    /// are unordered: {0, 2, 3} becomes a three-state model, not a four-state one.
+    /// Group characters by ordering and model size. Unordered {0, 2, 3}
+    /// becomes three states; ordered characters retain the declared prefix
+    /// through the highest observed or explicitly possible state (0, 1, 2, 3).
     /// Missing cells never add states; explicit uncertainty sets contribute
     /// their allowed states, following BEAST 2 MM's import convention.
     pub fn partition_by_states(
@@ -170,7 +184,7 @@ impl Matrix {
             return self.compress(std::slice::from_ref(&(0..self.character_count())), gaps);
         }
         self.validate_observations(gaps)?;
-        let mut groups = BTreeMap::<usize, Vec<(usize, Vec<usize>)>>::new();
+        let mut groups = BTreeMap::<(usize, CharacterOrdering), Vec<(usize, Vec<usize>)>>::new();
         for site in 0..self.character_count() {
             let mut seen = vec![false; self.symbols.len()];
             for row in &self.rows {
@@ -184,11 +198,20 @@ impl Matrix {
                     _ => {}
                 }
             }
-            let states: Vec<_> = (0..seen.len()).filter(|&s| seen[s]).collect();
+            let states: Vec<_> = if self.ordering[site] == CharacterOrdering::Ordered {
+                seen.iter()
+                    .rposition(|&v| v)
+                    .map_or_else(Vec::new, |last| (0..=last).collect())
+            } else {
+                (0..seen.len()).filter(|&s| seen[s]).collect()
+            };
             if states.len() < 2 {
                 return Err(CompressionError::StateCount { site });
             }
-            groups.entry(states.len()).or_default().push((site, states));
+            groups
+                .entry((states.len(), self.ordering[site]))
+                .or_default()
+                .push((site, states));
         }
         Ok(groups
             .values()
@@ -223,12 +246,17 @@ impl Matrix {
             {
                 return Err(CompressionError::InvalidPartitions);
             }
-            let mut sites = Vec::new();
+            let mut groups = BTreeMap::<CharacterOrdering, Vec<(usize, Vec<usize>)>>::new();
             for &site in &partition.sites {
                 if site >= covered.len() || covered[site] {
                     return Err(CompressionError::InvalidPartitions);
                 }
                 covered[site] = true;
+                if self.ordering[site] == CharacterOrdering::Ordered
+                    && states.windows(2).any(|s| s[1] != s[0] + 1)
+                {
+                    return Err(CompressionError::OrderedAlphabet { site });
+                }
                 for row in &self.rows {
                     let allowed: &[usize] = match &row[site] {
                         Cell::State(state) => std::slice::from_ref(state),
@@ -242,9 +270,12 @@ impl Matrix {
                         });
                     }
                 }
-                sites.push((site, states.clone()));
+                groups
+                    .entry(self.ordering[site])
+                    .or_default()
+                    .push((site, states.clone()));
             }
-            mapped.push(sites);
+            mapped.extend(groups.into_values());
         }
         if covered.iter().any(|&v| !v) || partitions.is_empty() {
             return Err(CompressionError::InvalidPartitions);
@@ -347,6 +378,7 @@ impl Matrix {
             })
             .collect();
         Patterns {
+            ordering: self.ordering[sites[0].0],
             sites: sites.iter().map(|(site, _)| *site).collect(),
             symbols: sites[0].1.iter().map(|&s| self.symbols[s]).collect(),
             state_symbols: sites
@@ -361,6 +393,10 @@ impl Matrix {
 }
 
 impl Patterns {
+    pub fn ordering(&self) -> CharacterOrdering {
+        self.ordering
+    }
+
     pub fn sites(&self) -> &[usize] {
         &self.sites
     }

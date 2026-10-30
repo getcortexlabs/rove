@@ -25,7 +25,7 @@ Entrada inválida ou não suportada devolve `nexus::Error` com linha e coluna co
 
 | Recurso | Suporte |
 | --- | --- |
-| Blocos | Um bloco `DATA` ou `CHARACTERS`, opcionalmente precedido por um bloco `TAXA`. Blocos `TREES` são ignorados; árvores não são importadas. Outros blocos são rejeitados. |
+| Blocos | Um bloco `DATA` ou `CHARACTERS`, opcionalmente precedido por um bloco `TAXA`. Blocos `TREES` são ignorados; árvores não são importadas. Um bloco limitado de `ASSUMPTIONS` pode seguir a matriz; veja [caracteres ordenados](./ordered-characters). Outros blocos são rejeitados. |
 | Dimensões | `NTAX` e `NCHAR` positivos. Um bloco `TAXA` anterior pode fornecer `NTAX`. `NEWTAXA` exige `NTAX`. Todos os táxons declarados devem ocorrer exatamente uma vez na matriz. |
 | Formato | `DATATYPE=STANDARD`, `SYMBOLS`, `MISSING`, `GAP`, `RESPECTCASE`, `LABELS`, `NOTOKENS` e `INTERLEAVE` ou `INTERLEAVE=YES/NO`. |
 | Alfabeto | Pelo menos dois símbolos ASCII válidos, um caractere por estado. Se não for declarado, `01`. A ordem declarada é preservada, incluindo estados não observados. |
@@ -39,7 +39,7 @@ Com `TAXLABELS`, as linhas devolvidas seguem a ordem declarada mesmo que as linh
 
 Sem declaração em contrário, os estados não distinguem maiúsculas de minúsculas, o símbolo de faltante é `?`, não há símbolo de gap e as linhas são sequenciais. Assim, `-` não é um gap a menos que seja declarado com `GAP=-`. Os símbolos de estado, de faltante e de gap devem ser distintos sob a política de maiúsculas e minúsculas escolhida.
 
-Tipos de dados moleculares ou contínuos, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, intervalos de estados, frequências/contagens, `ELIMINATE`, múltiplas matrizes e comandos não suportados são rejeitados. `SETS`, `ASSUMPTIONS` e blocos específicos de aplicativos também são rejeitados: suas partições, pesos, ordenação ou exclusões não devem desaparecer na importação. O parsing de XML está fora desta API.
+Tipos de dados moleculares ou contínuos, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, intervalos de estados, frequências/contagens, `ELIMINATE`, múltiplas matrizes e comandos não suportados são rejeitados. `SETS`, diretivas não suportadas de `ASSUMPTIONS` e blocos específicos de aplicativos também são rejeitados: suas partições, pesos, ordenação ou exclusões não devem desaparecer na importação. O parsing de XML está fora desta API.
 
 ## Observações e verossimilhanças dos terminais
 
@@ -59,7 +59,7 @@ Vetores de incerteza são máscaras de verossimilhança, não distribuições de
 
 ## Compressão de colunas repetidas
 
-`Matrix::compress` mantém o comportamento original: intervalos contíguos, não vazios e começando em zero devem cobrir a matriz uma vez, em ordem; cada partição usa o alfabeto declarado completo. A separação automática por estados e os conjuntos explícitos são descritos abaixo.
+`Matrix::compress` exige intervalos contíguos, não vazios e começando em zero, que devem cobrir a matriz uma vez, em ordem; cada partição usa o alfabeto declarado completo, separando caracteres ordenados dos não ordenados. A separação automática por estados e os conjuntos explícitos são descritos abaixo.
 
 ```rust
 use rove::{data::GapTreatment, nexus};
@@ -84,12 +84,14 @@ Os testes leem as duas [fixtures 20 × 50](./fixtures), reconstroem suas colunas
 
 ## Partições por número de estados
 
-`Matrix::partition_by_states(gaps)` agrupa os caracteres pelo número de estados distintos nas observações. Conjuntos explícitos de incerteza contribuem com seus estados possíveis; dados ausentes e lacunas não acrescentam estados. Um caráter com `0`, `2` e `3` tem, portanto, três estados. Cada caráter é recodificado para um alfabeto compacto na ordem dos símbolos declarados. O modelo Mk é não ordenado; os números não indicam uma sequência obrigatória de mudanças.
+`Matrix::partition_by_states(gaps)` agrupa os caracteres não ordenados pelo número de estados distintos nas observações. Conjuntos explícitos de incerteza contribuem com seus estados possíveis; dados ausentes e lacunas não acrescentam estados. Um caráter com `0`, `2` e `3` tem, portanto, três estados. Cada caráter é recodificado para um alfabeto compacto na ordem dos símbolos declarados. O modelo Mk é não ordenado; os números não indicam uma sequência obrigatória de mudanças.
 
-Um alfabeto declarado de dois estados mantém ambos, inclusive em caracteres constantes ou só com dados ausentes. Com um alfabeto maior, uma coluna com menos de dois estados observados/possíveis não determina seu modelo: a partição automática a rejeita. Use `CharacterSet { sites, symbols }` com `Matrix::compress_sets`, ou `--partitioning declared` se todos os estados da matriz forem possíveis para cada caráter. `CHARSTATELABELS` continua descritivo e não define esses alfabetos. Blocos NEXUS `SETS` continuam rejeitados.
+Caracteres ordenados preservam estados intermediários e formam partições separadas por ordenação; veja [caracteres ordenados](./ordered-characters).
+
+Um alfabeto declarado de dois estados mantém ambos, inclusive em caracteres constantes ou só com dados ausentes. Para caracteres não ordenados com um alfabeto maior, uma coluna com menos de dois estados observados/possíveis não determina seu modelo: a partição automática a rejeita. Use `CharacterSet { sites, symbols }` com `Matrix::compress_sets`, ou `--partitioning declared` se todos os estados da matriz forem possíveis para cada caráter. `CHARSTATELABELS` continua descritivo e não define esses alfabetos. Blocos NEXUS `SETS` continuam rejeitados.
 
 `compress_sets` aceita índices de caracteres ordenados, não necessariamente contíguos, começando em zero. Os conjuntos devem cobrir cada caráter uma única vez e incluir todos os estados observados/possíveis. `Patterns::sites()` lista as posições originais; `state_symbols()` registra os símbolos originais de cada caráter na ordem do modelo. A compressão ocorre após a recodificação, dentro de cada partição, mantendo o peso total dos caracteres.
 
 `rove inspect` e `rove sample` usam `--partitioning observed` por padrão; ambos aceitam `--partitioning declared`. O app mostra essa escolha em **Partições por estados**, junto da quantidade de caracteres de cada partição. Lacunas continuam exigindo uma escolha explícita. Mkv ainda rejeita qualquer caráter que possa ser constante, mesmo que seu número de estados seja conhecido.
 
-Cada partição tem seus próprios padrões constantes e correção Mkv, compartilhando árvore, relógio e categorias gama. `run.json` registra modo, número de estados, índices de caracteres começando em um, mapeamentos e quantidade de padrões observados. Os checkpoints preservam os caches de todas as partições. Doze casos com estado fixo, incluindo três escalas de comprimento de ramo, concordam com BEAST 2.7.8 / MM 1.2.1 com diferença absoluta máxima de log-verossimilhança de `1,34e-9`; veja o [caso de validação](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate).
+Cada partição tem seus próprios padrões constantes e correção Mkv, compartilhando árvore, relógio e categorias gama. `run.json` registra modo, ordenação, número de estados, índices de caracteres começando em um, mapeamentos e quantidade de padrões observados. Os checkpoints preservam os caches de todas as partições. Doze casos com estado fixo, incluindo três escalas de comprimento de ramo, concordam com BEAST 2.7.8 / MM 1.2.1 com diferença absoluta máxima de log-verossimilhança de `1,34e-9`; veja o [caso de validação](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate).

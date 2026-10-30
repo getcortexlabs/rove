@@ -1,5 +1,6 @@
 //! A strict subset of morphological NEXUS. See the NEXUS guide for supported syntax.
 
+mod assumptions;
 mod lexer;
 mod matrix;
 
@@ -49,6 +50,7 @@ pub fn parse(input: &str) -> Result<Matrix, Error> {
     commands.index += 1;
     let mut taxa = None;
     let mut matrix = None;
+    let mut assumptions_seen = false;
     while let Some(command) = commands.next()? {
         let start = words(command);
         if start.len() != 2 || !start[0].is("BEGIN") {
@@ -65,6 +67,15 @@ pub fn parse(input: &str) -> Result<Matrix, Error> {
                 return Err(block.error("only one DATA or CHARACTERS block is supported"));
             }
             matrix = Some(parse_data(&mut commands, block, taxa.as_deref())?);
+        } else if block.is("ASSUMPTIONS") {
+            if assumptions_seen {
+                return Err(block.error("only one ASSUMPTIONS block is supported"));
+            }
+            let data = matrix
+                .as_mut()
+                .ok_or_else(|| block.error("ASSUMPTIONS must follow the matrix"))?;
+            assumptions::parse(&mut commands, block, data)?;
+            assumptions_seen = true;
         } else if block.is("TREES") {
             loop {
                 let command = commands.required(block)?;
@@ -410,6 +421,7 @@ fn parse_data(
                 symbols: fmt.symbols.clone(),
                 character_labels: vec![None; nchar],
                 state_labels: vec![Vec::new(); nchar],
+                ordering: vec![crate::model::CharacterOrdering::Unordered; nchar],
             };
             apply_labels(&mut data, &label_commands)?;
             matrix = Some(data);

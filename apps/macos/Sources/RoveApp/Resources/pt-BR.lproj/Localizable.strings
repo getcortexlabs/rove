@@ -558,7 +558,7 @@
 
 "Mk · all characters" = "Mk · todos os caracteres";
 
-"Characters with two, three or more states get separate Mk models. Binary alphabets keep both possible states." = "Caracteres com dois, três ou mais estados usam modelos Mk separados. Alfabetos binários mantêm os dois estados possíveis.";
+"Characters are grouped by state count and ordering. Ordered characters keep intermediate states; binary alphabets keep both states." = "Os caracteres são agrupados por número de estados e ordenação. Caracteres ordenados mantêm os estados intermediários; alfabetos binários mantêm ambos os estados.";
 
 "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character." = "Cada caráter usa todos os estados declarados em SYMBOLS. Escolha isso apenas se eles forem possíveis para todos os caracteres.";
 
@@ -681,3 +681,8 @@
 "Thank you for sharing what you know and for building this with me. There’s a lot here I couldn’t have done on my own." = "Obrigado por dividir o que você sabe e por topar construir isso comigo. Tem muita coisa aqui que eu não teria conseguido fazer sozinho.";
 "I really want to see Rove in other people’s hands, helping with research we haven’t even heard of yet. There’s still plenty of work ahead, and I’m excited to keep working on it with you." = "Quero muito ver o Rove nas mãos de outras pessoas, ajudando em pesquisas que a gente ainda nem conhece. Ainda tem bastante trabalho pela frente, e eu tô animado pra continuar fazendo isso com você.";
 "Let’s keep going." = "Bora continuar.";
+
+// Character ordering
+"Ordered" = "Ordenados";
+"Unordered" = "Não ordenados";
+"Informative-only coding is not available for ordered characters. Keep the coding consistent with how your matrix was collected." = "A seleção de caracteres informativos ainda não está disponível para caracteres ordenados. Mantenha a seleção compatível com a forma como sua matriz foi coletada.";

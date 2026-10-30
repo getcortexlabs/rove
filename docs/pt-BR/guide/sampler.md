@@ -97,7 +97,7 @@ A matriz não tem homoplasia, então sob Mkv a verossimilhança não penaliza á
 
 ## Limitações
 
-- Todas as partições compartilham árvore, relógio e forma gama; taxas separadas por partição e caracteres ordenados ainda não estão implementados. Datas de terminais, calibrações, outras distribuições de relógio e outros priors de árvore não estão implementados.
+- Todas as partições compartilham árvore, relógio e forma gama; taxas separadas por partição ainda não estão implementadas. [Caracteres ordenados](./ordered-characters) aceitam Mk e Mkv. Datas de terminais, calibrações, outras distribuições de relógio e outros priors de árvore não estão implementados.
 - A árvore inicial é aleatória, com tempos de nós parecidos com os de um coalescente, e satisfaz as restrições.
 - Cada cadeia independente usa uma thread. Os checkpoints preservam todas as cadeias no mesmo passo amostrado.
 

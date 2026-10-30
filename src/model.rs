@@ -1,5 +1,25 @@
 use std::fmt;
 
+mod ordered;
+pub use ordered::Ordered;
+
+/// The adjacency of the character's states, independently of its ascertainment.
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
+pub enum CharacterOrdering {
+    #[default]
+    Unordered,
+    Ordered,
+}
+
+impl CharacterOrdering {
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Unordered => "unordered",
+            Self::Ordered => "ordered",
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum Error {
     TooFewStates(usize),

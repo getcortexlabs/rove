@@ -995,3 +995,68 @@ fn invalid_parallel_options_and_worker_failures_cannot_complete() {
     assert_eq!(record["status"], "failed");
     assert_eq!(record["errors"].as_array().unwrap().len(), 4);
 }
+
+#[test]
+fn ordered_import_and_run_metadata_preserve_the_requested_models() {
+    let directory = scratch("ordered-cli");
+    let matrix = directory.join("matrix.nex");
+    fs::write(
+        &matrix,
+        include_str!("../fixtures/validation/ordered/matrix.nex"),
+    )
+    .unwrap();
+    let inspected = rove(&["inspect", matrix.to_str().unwrap()]);
+    assert!(inspected.status.success(), "{}", error_text(&inspected));
+    let report: serde_json::Value = serde_json::from_slice(&inspected.stdout).unwrap();
+    let partitions = report["partitions"].as_array().unwrap();
+    assert_eq!(partitions.len(), 4);
+    assert_eq!(partitions[2]["ordering"], "ordered");
+    assert_eq!(partitions[3]["states"], 4);
+    assert!(
+        report["informative_error"]
+            .as_str()
+            .unwrap()
+            .contains("ordered")
+    );
+    let output = directory.join("run");
+    let result = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--output",
+        output.to_str().unwrap(),
+        "--steps",
+        "100",
+        "--sample-every",
+        "10",
+        "--seed",
+        "43",
+        "--model",
+        "reference",
+    ]);
+    assert!(result.status.success(), "{}", error_text(&result));
+    let metadata: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("run.json")).unwrap()).unwrap();
+    assert_eq!(metadata["model"]["partitions"], report["partitions"]);
+    assert!(
+        metadata["model"]["substitution"]
+            .as_str()
+            .unwrap()
+            .contains("Ordered/unordered")
+    );
+    let rejected = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--output",
+        directory.join("invalid").to_str().unwrap(),
+        "--steps",
+        "10",
+        "--sample-every",
+        "10",
+        "--seed",
+        "43",
+        "--conditioning",
+        "informative",
+    ]);
+    assert!(error(&rejected).contains("ordered"));
+    assert!(!directory.join("invalid").exists());
+}

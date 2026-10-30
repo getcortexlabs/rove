@@ -15,6 +15,11 @@ import beast.base.inference.parameter.RealParameter;
 import beast.base.parser.NexusParser;
 import beast.pkgmgmt.PackageManager;
 import morphmodels.evolution.substitutionmodel.LewisMK;
+import morphmodels.evolution.substitutionmodel.Ordinal;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.evolution.substitutionmodel.SubstitutionModel;
+import java.util.Set;
+import java.util.HashSet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -34,9 +39,15 @@ public final class PartitionLikelihood {
     private static final double[] RATES = {.25, 1.8, .9, 1.2, 2.1, .7, 1.4, .6, 1.1, .8};
 
     private record Character(int site, List<Integer> states) {}
+    private record Partition(int states, boolean ordered) implements Comparable<Partition> {
+        public int compareTo(Partition other) {
+            int bySize = Integer.compare(states, other.states);
+            return bySize != 0 ? bySize : Boolean.compare(ordered, other.ordered);
+        }
+    }
 
-    private static Map<Integer, List<Character>> partitions(Alignment data) {
-        Map<Integer, List<Character>> groups = new TreeMap<>();
+    private static Map<Partition, List<Character>> partitions(Alignment data, Set<Integer> ordered) {
+        Map<Partition, List<Character>> groups = new TreeMap<>();
         for (int site = 0; site < data.getSiteCount(); site++) {
             TreeSet<Integer> states = new TreeSet<>();
             for (int code : data.getPattern(data.getPatternIndex(site))) {
@@ -45,8 +56,12 @@ public final class PartitionLikelihood {
                     for (int state : data.getDataType().getStatesForCode(code)) states.add(state);
                 }
             }
+            if (ordered.contains(site) && !states.isEmpty()) {
+                int last = states.last();
+                for (int state = 0; state <= last; state++) states.add(state);
+            }
             if (states.size() < 2) throw new IllegalArgumentException("Unknown state count at " + site);
-            groups.computeIfAbsent(states.size(), k -> new ArrayList<>())
+            groups.computeIfAbsent(new Partition(states.size(), ordered.contains(site)), k -> new ArrayList<>())
                 .add(new Character(site, new ArrayList<>(states)));
         }
         return groups;
@@ -135,7 +150,17 @@ public final class PartitionLikelihood {
         parser.parseFile(new File(args[0]));
         Alignment input = parser.m_alignment;
         if (input.getTaxonCount() != 6) throw new IllegalArgumentException("Expected the six-taxon fixture");
-        Map<Integer, List<Character>> groups = partitions(input);
+        Set<Integer> ordered = new HashSet<>();
+        if (args.length > 3 && !args[3].isEmpty()) {
+            for (String index : args[3].split(",")) {
+                int site = Integer.parseInt(index) - 1;
+                if (site < 0 || site >= input.getSiteCount() || !ordered.add(site)) {
+                    throw new IllegalArgumentException("Invalid or duplicate ordered character");
+                }
+            }
+        }
+        if (informative && !ordered.isEmpty()) throw new IllegalArgumentException("Ordered informative coding not supported by this oracle");
+        Map<Partition, List<Character>> groups = partitions(input, ordered);
         JSONArray cases = new JSONArray();
         for (double scale : new double[]{.01, 1, 10}) {
             for (boolean relaxed : new boolean[]{false, true}) {
@@ -157,10 +182,20 @@ public final class PartitionLikelihood {
                     JSONArray contributions = new JSONArray();
                     double total = 0;
                     for (var entry : groups.entrySet()) {
-                        int k = entry.getKey();
+                        int k = entry.getKey().states();
                         Alignment data = alignment(input, k, entry.getValue(), variable, informative);
-                        LewisMK substitution = new LewisMK();
-                        substitution.initByName("stateNumber", k);
+                        SubstitutionModel.Base substitution;
+                        if (entry.getKey().ordered()) {
+                            Frequencies frequencies = new Frequencies();
+                            Double[] uniform = new Double[k];
+                            java.util.Arrays.fill(uniform, 1.0 / k);
+                            frequencies.initByName("frequencies", new RealParameter(uniform));
+                            substitution = new Ordinal();
+                            substitution.initByName("stateNumber", k, "frequencies", frequencies);
+                        } else {
+                            substitution = new LewisMK();
+                            substitution.initByName("stateNumber", k);
+                        }
                         SiteModel siteModel = new SiteModel();
                         siteModel.initByName("substModel", substitution, "gammaCategoryCount", relaxed ? 4 : 1,
                             "shape", new RealParameter("1"));
@@ -170,7 +205,7 @@ public final class PartitionLikelihood {
                         double logL = likelihood.calculateLogP();
                         if (!Double.isFinite(logL)) throw new IllegalStateException("Nonfinite likelihood");
                         total += logL;
-                        contributions.put(new JSONObject().put("states", k).put("log_likelihood", logL)
+                        contributions.put(new JSONObject().put("states", k).put("ordering", entry.getKey().ordered() ? "ordered" : "unordered").put("log_likelihood", logL)
                             .put("sites", new JSONArray(entry.getValue().stream().map(c -> c.site() + 1).toList())));
                     }
                     cases.put(new JSONObject().put("scale", scale).put("relaxed", relaxed).put("variable", variable)
@@ -179,6 +214,7 @@ public final class PartitionLikelihood {
             }
         }
         JSONObject result = new JSONObject().put("beast", "2.7.8").put("mm", "1.2.1")
+            .put("ordered_characters", new JSONArray(ordered.stream().sorted().map(i -> i + 1).toList()))
             .put("conditioning", informative ? "informative" : "variable-and-none")
             .put("taxa", new JSONArray(input.getTaxaNames())).put("heights", new JSONArray(HEIGHTS)).put("children", new JSONArray(CHILDREN))
             .put("branch_rates", new JSONArray(RATES)).put("gamma_shape", 1).put("clock_sigma", .2).put("cases", cases);

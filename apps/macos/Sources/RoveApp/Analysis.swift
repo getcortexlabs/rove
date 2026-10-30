@@ -40,6 +40,8 @@ struct MatrixReport: Decodable, Sendable {
 }
 
 struct CharacterPartition: Decodable, Sendable {
+  enum Ordering: String, Decodable, Sendable { case ordered, unordered }
+  let ordering: Ordering?
   let states: Int
   let characters: Int
   let observedPatterns: Int

@@ -25,7 +25,7 @@ cargo run --release --example read_nexus -- fixtures/reference/20x50/matrix.nex
 
 | 特性 | 支持情况 |
 | --- | --- |
-| 块 | 一个 `DATA` 或 `CHARACTERS` 块，前面可以有一个 `TAXA` 块。`TREES` 块会被跳过；树不会被导入。其他块会被拒绝。 |
+| 块 | 一个 `DATA` 或 `CHARACTERS` 块，前面可以有一个 `TAXA` 块。`TREES` 块会被跳过；树不会被导入。矩阵后可附加一个受限的 `ASSUMPTIONS` 块，参见[有序性状](./ordered-characters)。其他块会被拒绝。 |
 | 维度 | 正的 `NTAX` 和 `NCHAR`。前置的 `TAXA` 块可以提供 `NTAX`。`NEWTAXA` 要求有 `NTAX`。所有声明的分类单元都必须在矩阵中恰好出现一次。 |
 | 格式 | `DATATYPE=STANDARD`、`SYMBOLS`、`MISSING`、`GAP`、`RESPECTCASE`、`LABELS`、`NOTOKENS`，以及 `INTERLEAVE` 或 `INTERLEAVE=YES/NO`。 |
 | 字母表 | 至少两个有效的 ASCII 符号，每个状态一个字符。默认为 `01`。声明的顺序会被保留，包括未观测到的状态。 |
@@ -39,7 +39,7 @@ cargo run --release --example read_nexus -- fixtures/reference/20x50/matrix.nex
 
 默认值是：状态不区分大小写，缺失符号为 `?`，没有缺口符号，顺序行。因此除非用 `GAP=-` 声明，`-` 不是缺口。在所选的大小写策略下，状态、缺失和缺口符号必须互不相同。
 
-分子或连续数据类型、`TOKENS`、`TRANSPOSE`、`NOLABELS`、`EQUATE`、`MATCHCHAR`、状态范围、频率/计数、`ELIMINATE`、多个矩阵和不支持的命令都会被拒绝。`SETS`、`ASSUMPTIONS` 和应用程序特有的块同样会被拒绝：它们的分区、权重、排序或排除项不能在导入时消失。XML 解析不在这个 API 的范围内。
+分子或连续数据类型、`TOKENS`、`TRANSPOSE`、`NOLABELS`、`EQUATE`、`MATCHCHAR`、状态范围、频率/计数、`ELIMINATE`、多个矩阵和不支持的命令都会被拒绝。`SETS`、不支持的 `ASSUMPTIONS` 指令和应用程序特有的块同样会被拒绝：它们的分区、权重、排序或排除项不能在导入时消失。XML 解析不在这个 API 的范围内。
 
 ## 观测与末端节点似然
 
@@ -59,7 +59,7 @@ cargo run --release --example read_nexus -- fixtures/reference/20x50/matrix.nex
 
 ## 压缩重复列
 
-`Matrix::compress` 保持原有行为：从零开始、连续且非空的范围必须按顺序覆盖矩阵一次，每个分区使用完整声明字母表。自动状态数分区和显式性状集合见下文。
+`Matrix::compress` 要求：从零开始、连续且非空的范围必须按顺序覆盖矩阵一次，每个分区使用完整声明字母表，并将有序和无序性状分开。自动状态数分区和显式性状集合见下文。
 
 ```rust
 use rove::{data::GapTreatment, nexus};
@@ -84,12 +84,14 @@ assert_eq!(patterns.weights().iter().sum::<usize>(), 50);
 
 ## 按状态数划分分区
 
-`Matrix::partition_by_states(gaps)` 按观测中不同状态的数量对性状分组。显式不确定集合提供其允许的状态；缺失值和 gap 不增加状态。因此，使用 `0`、`2` 和 `3` 的性状有三个状态。每个性状按声明符号顺序重编码到紧凑字母表。这是无序 Mk 模型，数字标签不表示变化必须按顺序发生。
+`Matrix::partition_by_states(gaps)` 按观测中不同状态的数量对无序性状分组。显式不确定集合提供其允许的状态；缺失值和 gap 不增加状态。因此，使用 `0`、`2` 和 `3` 的性状有三个状态。每个性状按声明符号顺序重编码到紧凑字母表。这是无序 Mk 模型，数字标签不表示变化必须按顺序发生。
 
-声明为二态的字母表保留两个状态，包括恒定或全缺失性状。若字母表更大，观测/可能状态不足两个的列无法确定其模型，自动分区会拒绝该列。可通过 `Matrix::compress_sets` 使用显式 `CharacterSet { sites, symbols }`，或在全部声明状态对每个性状都可能时使用 `--partitioning declared`。`CHARSTATELABELS` 仍只用于描述，不设置这些模型字母表。NEXUS `SETS` 块仍被拒绝。
+有序性状会保留中间状态并按排序类型单独分区；参见[有序性状](./ordered-characters)。
+
+声明为二态的字母表保留两个状态，包括恒定或全缺失性状。对于字母表更大的无序性状，观测/可能状态不足两个的列无法确定其模型，自动分区会拒绝该列。可通过 `Matrix::compress_sets` 使用显式 `CharacterSet { sites, symbols }`，或在全部声明状态对每个性状都可能时使用 `--partitioning declared`。`CHARSTATELABELS` 仍只用于描述，不设置这些模型字母表。NEXUS `SETS` 块仍被拒绝。
 
 `compress_sets` 接受从零开始、已排序但不必连续的性状索引。集合必须恰好覆盖每个性状一次，并包含全部观测/可能状态。`Patterns::sites()` 列出原矩阵位置；`state_symbols()` 按模型状态顺序记录每个性状的原始标签。重编码后在各分区内部压缩，保留性状总权重。
 
 `rove inspect` 和 `rove sample` 默认使用 `--partitioning observed`，也接受 `--partitioning declared`。Mac 应用在 **State partitions** 中提供此选项并显示各分区的性状数量。gap 仍需明确处理。即使状态数已知，Mkv 也拒绝可能为恒定的性状。
 
-各分区在共享的树、时钟和 gamma 类别上有各自的恒定模式及 Mkv 校正。`run.json` 记录模式、状态数、从一开始的性状索引、状态映射和观测模式数。检查点保留全部分区缓存。十二个固定状态案例涵盖三种枝长尺度，与 BEAST 2.7.8 / MM 1.2.1 的对数似然最大绝对差为 `1.34e-9`；参见[验证数据](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate)。
+各分区在共享的树、时钟和 gamma 类别上有各自的恒定模式及 Mkv 校正。`run.json` 记录模式、排序类型、状态数、从一开始的性状索引、状态映射和观测模式数。检查点保留全部分区缓存。十二个固定状态案例涵盖三种枝长尺度，与 BEAST 2.7.8 / MM 1.2.1 的对数似然最大绝对差为 `1.34e-9`；参见[验证数据](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate)。

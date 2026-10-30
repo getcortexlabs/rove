@@ -25,7 +25,7 @@ Invalid or unsupported input returns `nexus::Error` with a one-based line, colum
 
 | Feature | Support |
 | --- | --- |
-| Blocks | One `DATA` or `CHARACTERS` block, optionally preceded by one `TAXA` block. `TREES` blocks are skipped; trees are not imported. Other blocks are rejected. |
+| Blocks | One `DATA` or `CHARACTERS` block, optionally preceded by one `TAXA` block. `TREES` blocks are skipped; trees are not imported. One limited `ASSUMPTIONS` block may follow the matrix; see [ordered characters](./ordered-characters). Other blocks are rejected. |
 | Dimensions | Positive `NTAX` and `NCHAR`. A preceding `TAXA` block may supply `NTAX`. `NEWTAXA` requires `NTAX`. All declared taxa must occur exactly once in the matrix. |
 | Format | `DATATYPE=STANDARD`, `SYMBOLS`, `MISSING`, `GAP`, `RESPECTCASE`, `LABELS`, `NOTOKENS`, and `INTERLEAVE` or `INTERLEAVE=YES/NO`. |
 | Alphabet | At least two valid ASCII symbols, one character per state. Defaults to `01`. Declared order is preserved, including unobserved states. |
@@ -39,7 +39,7 @@ With `TAXLABELS`, returned rows follow the declared order even if matrix rows ap
 
 Defaults are case-insensitive states, missing symbol `?`, no gap symbol, and sequential rows. Thus `-` is not a gap unless declared with `GAP=-`. State, missing and gap symbols must be distinct under the chosen case policy.
 
-Molecular or continuous datatypes, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, state ranges, frequencies/counts, `ELIMINATE`, multiple matrices and unsupported commands are rejected. `SETS`, `ASSUMPTIONS` and application-specific blocks are also rejected: their partitions, weights, ordering or exclusions must not disappear on import. XML parsing is outside this API.
+Molecular or continuous datatypes, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, state ranges, frequencies/counts, `ELIMINATE`, multiple matrices and unsupported commands are rejected. `SETS`, unsupported `ASSUMPTIONS` directives and application-specific blocks are also rejected: their partitions, weights, ordering or exclusions must not disappear on import. XML parsing is outside this API.
 
 ## Observations and tip likelihoods
 
@@ -59,7 +59,7 @@ Uncertainty vectors are likelihood masks, not probability distributions: `{01}` 
 
 ## Compressing repeated columns
 
-`Matrix::compress` retains its original behavior: contiguous, nonempty, zero-based ranges must cover the matrix once in order, and each uses the full declared alphabet. Automatic state-count partitioning and explicit character sets are described below.
+`Matrix::compress` accepts contiguous, nonempty, zero-based ranges that must cover the matrix once in order, and each uses the full declared alphabet, splitting ordered and unordered characters into separate partitions. Automatic state-count partitioning and explicit character sets are described below.
 
 ```rust
 use rove::{data::GapTreatment, nexus};
@@ -84,12 +84,14 @@ Tests read both [20 × 50 fixtures](./fixtures), reconstruct their columns from 
 
 ## Partitions by state count
 
-`Matrix::partition_by_states(gaps)` groups characters by the number of distinct states in their observations. Explicit uncertainty sets contribute their allowed states; missing values and gaps do not add states. A character using `0`, `2` and `3` therefore has three states. Each character is recoded to a dense model alphabet in declared symbol order. This is an unordered Mk model; numerical labels do not imply ordered changes.
+`Matrix::partition_by_states(gaps)` groups unordered characters by the number of distinct states in their observations. Explicit uncertainty sets contribute their allowed states; missing values and gaps do not add states. A character using `0`, `2` and `3` therefore has three states. Each character is recoded to a dense model alphabet in declared symbol order. This is an unordered Mk model; numerical labels do not imply ordered changes.
 
-A declared two-state alphabet keeps both states, including for constant or missing-only characters. With a larger alphabet, a column with fewer than two observed/possible states cannot determine its model: automatic partitioning rejects it. Use an explicit `CharacterSet { sites, symbols }` with `Matrix::compress_sets`, or `--partitioning declared` if the full matrix alphabet is possible for every character. `CHARSTATELABELS` remains descriptive and does not set these model alphabets. NEXUS `SETS` blocks are still rejected.
+Ordered characters instead preserve intermediate states and group separately by ordering; see [ordered characters](./ordered-characters).
+
+A declared two-state alphabet keeps both states, including for constant or missing-only characters. For unordered characters with a larger alphabet, a column with fewer than two observed/possible states cannot determine its model: automatic partitioning rejects it. Use an explicit `CharacterSet { sites, symbols }` with `Matrix::compress_sets`, or `--partitioning declared` if the full matrix alphabet is possible for every character. `CHARSTATELABELS` remains descriptive and does not set these model alphabets. NEXUS `SETS` blocks are still rejected.
 
 `compress_sets` accepts sorted, non-contiguous, zero-based character indices. Sets must cover every character exactly once and include every observed/possible state. `Patterns::sites()` lists original matrix positions; `state_symbols()` records each character’s original labels in model-state order. Compression happens after recoding, within partitions, and preserves total character weight.
 
 `rove inspect` and `rove sample` default to `--partitioning observed`; both accept `--partitioning declared`. The Mac app exposes this choice under **State partitions** and shows each partition’s character count. Gaps still require explicit treatment. Mkv still rejects any character that could be constant, even if its state count is known.
 
-Each partition has its own constant patterns and Mkv correction on the shared tree, clock and gamma categories. `run.json` records the mode, state counts, one-based character indices, state mappings and observed pattern counts. Checkpoints preserve all partition caches. Twelve fixed-state cases, including three branch-length scales, match BEAST 2.7.8 / MM 1.2.1 with a maximum absolute log-likelihood difference of `1.34e-9`; see the [validation fixture](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate).
+Each partition has its own constant patterns and Mkv correction on the shared tree, clock and gamma categories. `run.json` records the mode, ordering, state counts, one-based character indices, state mappings and observed pattern counts. Checkpoints preserve all partition caches. Twelve fixed-state cases, including three branch-length scales, match BEAST 2.7.8 / MM 1.2.1 with a maximum absolute log-likelihood difference of `1.34e-9`; see the [validation fixture](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate).

@@ -82,6 +82,11 @@ fn pause_crash_and_resume_preserve_all_samples_and_moves() {
             "variable",
         ),
         (
+            "ordered",
+            include_str!("../fixtures/validation/ordered/matrix.nex"),
+            "variable",
+        ),
+        (
             "informative",
             include_str!("../fixtures/validation/informative/matrix.nex"),
             "informative",
