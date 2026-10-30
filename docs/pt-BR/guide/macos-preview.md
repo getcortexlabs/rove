@@ -10,6 +10,35 @@ incluído com progresso real e cancelamento. Não precisa de BEAST nem Java.
 
 ![A interface nativa do Rove](/images/macos-preview.png)
 
+## Acesso ao beta e primeira visita
+
+O beta nativo começa com **Já tenho convite** e **Entrar na lista**. Use um e-mail
+aprovado para pedir um código de oito dígitos, válido por dez minutos. Entrar na
+lista também exige confirmar o e-mail, mas registra apenas seu interesse. Isso não
+libera o aplicativo. A equipe do projeto aprova os convites.
+
+Depois de entrar, uma apresentação em quatro partes mostra o aplicativo, as
+matrizes, os grupos externos e os resultados. Você pode pular, testar o exemplo ou
+abrir sua matriz; nenhuma análise começa sozinha. Reabra em **Ajuda → Conhecer o
+Rove**. **Ajuda → Novidades do Rove** reúne os destaques por versão e as notas
+anteriores. As novidades aparecem uma vez por atualização documentada, quando não
+há uma operação em andamento. A primeira apresentação não emenda outra janela de
+novidades. Reabrir essas telas preserva a matriz e suas configurações.
+
+O acesso fica salvo no Chaves do macOS. O Rove confere o convite pela internet ao
+abrir e a cada seis horas enquanto está ativo. Após uma verificação bem-sucedida,
+você pode usar o aplicativo sem internet por até sete dias. Um convite expirado
+ou revogado impede novas análises e retomadas de pontos salvos; uma execução já
+em andamento pode terminar. Para sair da conta, use o menu Ajuda.
+
+A Cloudflare verifica o acesso e o Resend entrega os códigos. O serviço guarda
+seu e-mail, situação do convite, interesse confirmado, idioma e horários de acesso.
+Matrizes, árvores e arquivos das análises ficam no Mac. A lista não é uma assinatura
+de newsletter. Fale com a [Cortex Labs](https://getcortexlabs.com/) para pedir a
+remoção da lista. A CLI Rust independente não exige acesso ao beta nem esses
+serviços de rede.
+
+
 ## Compilar e abrir
 
 No macOS 14 ou mais recente, com Xcode compatível com Swift 6 e Rust

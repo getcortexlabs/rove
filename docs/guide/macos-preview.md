@@ -10,6 +10,34 @@ live progress and cancellation. BEAST and Java are not required.
 
 ![The native Rove workspace](/images/macos-preview.png)
 
+## Beta access and your first visit
+
+The native beta opens with **I have an invitation** and **Join the beta list**.
+Use an approved email to request an eight-digit code; it expires in ten minutes.
+Joining the list also verifies your email, but only records your interest. It does
+not grant access. Invitation approval is managed by the project team.
+
+After signing in, a four-part introduction covers the workspace, matrices,
+outgroups and results. Skip it, explore the example, or choose your own matrix;
+no analysis starts automatically. Reopen it with **Help → Take the Rove tour**.
+**Help → What's new in Rove** shows versioned highlights and previous notes.
+New notes appear once per documented update, when the workspace is idle. The
+first tour does not immediately stack another announcement. Reopened tours and
+release notes preserve an existing matrix and its settings.
+
+Access is stored in macOS Keychain. Rove checks it online at launch and every six
+hours while active. After a successful check, access works offline for up to seven
+days. An expired or revoked invitation blocks new analyses and checkpoint resumes;
+a run already in progress can finish. Sign out through the Help menu.
+
+Cloudflare handles beta access and Resend delivers verification codes. The service
+stores your email, invitation status, confirmed interest, interface language and
+access timestamps. Matrices, trees and analysis files stay on your Mac. The waiting
+list is not a newsletter subscription. Contact [Cortex Labs](https://getcortexlabs.com/)
+to request removal from the list. The standalone Rust CLI does not require beta
+access or these network services.
+
+
 ## Build and open
 
 On macOS 14 or newer, with Xcode supporting Swift 6 and Rust installed, run

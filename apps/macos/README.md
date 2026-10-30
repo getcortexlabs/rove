@@ -51,9 +51,19 @@ in UserDefaults; scientific exports and CLI arguments retain their format.
 System accessibility preferences take priority over the app's motion and
 transparency controls. Native system dialogs follow the Mac's language;
 original engine diagnostics remain available under Technical details.
-No account, network service, Java or BEAST is
-needed to import or analyze a matrix; only the explicitly clicked guide and Cortex links
-open a browser.
+The native beta requires an invited email, verified with a one-time code.
+The initial screen also accepts confirmed waiting-list interest without granting
+access. Sessions live in Keychain, with online checks at launch and every six
+hours, and up to seven days of offline access after a successful check. A running
+analysis can finish if access expires; new runs and resumes require valid access.
+The standalone Rust CLI remains independent of these services, Java and BEAST.
+See the [beta service](https://github.com/getcortexlabs/getcontexlabs-site/tree/main/src/server/rove)
+for deployment, invitation management and data handling.
+
+A skippable first-run tour introduces the app and can open the example or file
+picker without starting an analysis. Help reopens the tour and versioned release
+notes. Update notes wait for an idle workspace and do not stack after the first
+tour. Both flows preserve existing matrix settings.
 
 Files are limited to 32 MB in the app. Statistics cover the full imported
 matrix; the visual preview contains at most 200 taxa and 120 characters.

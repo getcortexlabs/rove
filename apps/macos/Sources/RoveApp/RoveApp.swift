@@ -3,19 +3,33 @@ import SwiftUI
 
 @main
 struct RoveApp: App {
-  @State private var workspace = Workspace()
+  @State private var workspace: Workspace
+  @State private var access: BetaAccess
+  @State private var experience = LaunchExperience()
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
   @Environment(\.openWindow) private var openWindow
   private var strings: AppStrings { workspace.strings }
 
-  init() { Lab.registerFonts() }
+  init() {
+    Lab.registerFonts()
+    let access = BetaAccess()
+    _access = State(initialValue: access)
+    _workspace = State(
+      initialValue: Workspace(accessAllowed: { [weak access] in access?.canUse == true }))
+  }
 
   var body: some Scene {
     Window("Rove", id: "workspace") {
-      RootView(workspace: workspace)
+      EntryView(workspace: workspace, access: access, experience: experience)
         .ignoresSafeArea(.container, edges: .top)
         .background(WindowSetup(workspace: workspace))
-        .onOpenURL { workspace.open($0) }
+        .onOpenURL {
+          if access.canUse && experience.completed {
+            workspace.open($0)
+          } else {
+            experience.pendingURL = $0
+          }
+        }
         .onAppear { delegate.workspace = workspace }
     }
     .windowStyle(.hiddenTitleBar)
@@ -30,18 +44,19 @@ struct RoveApp: App {
       }
       CommandGroup(replacing: .newItem) {
         Button(strings("New Analysis"), action: workspace.reset).keyboardShortcut("n").disabled(
-          workspace.isRunning)
+          workspace.isRunning || !access.canUse)
         Button(strings("Open Matrix…"), action: workspace.chooseFile).keyboardShortcut("o")
-          .disabled(workspace.isRunning)
+          .disabled(workspace.isRunning || !access.canUse)
         Button(strings("Open Setup…"), action: workspace.chooseSetup).keyboardShortcut(
           "o", modifiers: [.command, .shift]
-        ).disabled(workspace.isRunning)
+        ).disabled(workspace.isRunning || !access.canUse)
         Button(strings("Try Example Matrix"), action: workspace.loadExample).disabled(
-          workspace.isRunning)
+          workspace.isRunning || !access.canUse)
         Divider()
         Button(strings("Save Setup…"), action: workspace.saveDraft).keyboardShortcut("s")
           .disabled(
-            workspace.report == nil || workspace.issue != nil || workspace.isRunning
+            !access.canUse || workspace.report == nil || workspace.issue != nil
+              || workspace.isRunning
               || workspace.showingHistory)
         Divider()
         Button(strings("Start analysis"), action: workspace.startRun).keyboardShortcut(
@@ -49,14 +64,30 @@ struct RoveApp: App {
         ).disabled(!workspace.canStartRun)
         Divider()
         Button(strings("History"), action: workspace.openHistory).keyboardShortcut(
-          "h", modifiers: [.command, .shift])
+          "h", modifiers: [.command, .shift]
+        ).disabled(!access.canUse)
         Button(strings("Back to workspace"), action: workspace.returnToWorkspace).keyboardShortcut(
           "r", modifiers: [.command, .shift]
-        ).disabled(!workspace.showingHistory)
+        ).disabled(!workspace.showingHistory || !access.canUse)
       }
       CommandGroup(replacing: .help) {
+        Button(strings("Take the Rove tour")) { experience.presentation = .tour }
+          .disabled(
+            !access.canUse || !experience.completed || workspace.isRunning || workspace.loading
+              || workspace.treeSummary != nil)
+        Button(strings("What's new in Rove")) { experience.presentation = .news }
+          .disabled(
+            !access.canUse || !experience.completed || workspace.isRunning || workspace.loading
+              || workspace.treeSummary != nil || experience.availableReleases.isEmpty)
+        Divider()
         Button(strings("Rove Field Guide")) {
           NSWorkspace.shared.open(strings.guideURL)
+        }
+        Divider()
+        if let session = access.session {
+          Text(session.email)
+          Button(strings("Sign out of the beta")) { access.signOut() }
+            .disabled(workspace.isRunning)
         }
       }
     }

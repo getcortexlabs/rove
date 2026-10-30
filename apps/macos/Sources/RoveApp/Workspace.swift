@@ -51,22 +51,25 @@ final class Workspace {
     "Rove Runs")
   var isRunning: Bool { run?.isActive == true }
   var canStartRun: Bool {
-    page == .review && report != nil && issue == nil && !loading && run == nil && !showingHistory
+    accessAllowed() && page == .review && report != nil && issue == nil && !loading && run == nil
+      && !showingHistory
   }
   private var importID = UUID()
   var traceDiagnostics: TraceDiagnosticsModel?
   var treeExplorer: TreeExplorer?
   private let executable: URL
+  private let accessAllowed: () -> Bool
   let preferences: AppPreferences
   var strings: AppStrings { preferences.strings }
 
   init(
     executable: URL = MatrixInspector.executable, preferences: AppPreferences = AppPreferences(),
-    history: RunHistory = RunHistory()
+    history: RunHistory = RunHistory(), accessAllowed: @escaping () -> Bool = { true }
   ) {
     self.executable = executable
     self.preferences = preferences
     self.history = history
+    self.accessAllowed = accessAllowed
   }
 
   var title: String {
@@ -334,7 +337,8 @@ final class Workspace {
   }
 
   func resumeRun(_ entry: HistoryEntry) {
-    guard !isRunning, !loading, let draft = entry.draft, entry.checkpoint != nil else { return }
+    guard accessAllowed(), !isRunning, !loading, let draft = entry.draft, entry.checkpoint != nil
+    else { return }
     let request = RunRequest(
       id: UUID(), executable: executable, directory: entry.directory, draft: draft, resume: true)
     let analysis = AnalysisRun(request: request)
