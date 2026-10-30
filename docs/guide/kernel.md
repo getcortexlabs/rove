@@ -152,11 +152,17 @@ At both archived BEAST 2.7.8 states of the [reference analysis](https://github.c
 
 ## Rescaling
 
-Pass `Scaling::Always` to divide each internal node's partials by their per-pattern maximum as they are computed. The logarithm of each maximum is kept and added back at the end, so the result matches the unscaled computation without the underflow on deep trees. `Scaling::None` skips the work.
+Pass `Scaling::Always` to rescale after every internal-node update. For a finite positive per-pattern maximum `m` over all states and categories, choose `e = clamp(floor(log2(m)), -1023, 1022)` from its IEEE 754 exponent bits and multiply every partial by `2^-e`. The lower power is used, rather than rounding to the nearest power. The clamp keeps the multiplier finite and normal, including for subnormal maxima. A zero or nonfinite maximum uses `e = 0`; impossible patterns still return negative infinity.
+
+Each buffer stores the cumulative subtree exponent as `i64`: `E = e + E_left + E_right`. After integrating the root over categories and states, the pattern log likelihood is `ln(L_scaled) + E_root * ln(2)`. This avoids per-node logarithms and repeated sums over all nodes. Integer totals cannot accumulate floating-point drift, and store/restore selects the matching partials and exponents together. `Scaling::None` skips rescaling.
+
+The rounding differs from the previous maximum-based scaling; the statistical model is unchanged. Portable and NEON agree bit for bit except for NaN payloads. Checkpoints encode the new exponents and retain the existing requirement to resume with the exact executable that created them.
+
+Tests cover all binary exponent boundaries and 36 independent 60-digit cases, including 2, 3, 4 and 8 states, one or four categories, missing data, distances from `1e-9` to `100`, and balanced and ladder trees with 2,048 tips whose unscaled likelihoods underflow. See the [measurements](https://github.com/getcortexlabs/rove/blob/main/benchmarks/scaling/2026-10-30/README.md).
 
 ## Backends
 
-A core runs one of two backends. Both give the same results: every value that is not NaN agrees bit for bit, while a NaN may come out with another payload or sign. `Backend::Portable` is plain Rust for any target; in release builds the compiler vectorises its loops one at a time. `Backend::Neon`, on aarch64, runs the Mk node update as one pass over blocks of eight patterns: the weighted sums stay in registers and, when the core rescales, so does each pattern's running maximum within a rate category. Per pattern it performs the same floating-point operations in the same order as the portable code, without fused multiply–add. Matrix cores, the logarithms of rescaling and the root computation run the same code under both backends.
+A core runs one of two backends. Both give the same results: every value that is not NaN agrees bit for bit, while a NaN may come out with another payload or sign. `Backend::Portable` is plain Rust for any target; in release builds the compiler vectorises its loops one at a time. `Backend::Neon`, on aarch64, runs the Mk node update as one pass over blocks of eight patterns: the weighted sums stay in registers and, when the core rescales, so does each pattern's running maximum within a rate category. Per pattern it performs the same floating-point operations in the same order as the portable code, without fused multiply–add. Matrix multiplication and the root computation use the same code under both backends. NEON also extracts the binary scaling exponents with vector integer operations.
 
 A new core uses `Backend::NATIVE`: NEON where the target enables it, the portable code elsewhere. `backend` reports the current one and `set_backend` changes it; asking for a backend that the build does not include panics, and `Backend::is_available` tells which ones it does.
 

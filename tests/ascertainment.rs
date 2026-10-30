@@ -251,6 +251,7 @@ fn assert_within(actual: f64, expected: f64, tolerance: f64, context: &str) {
 
 #[test]
 fn archived_beast_states_are_reproduced() {
+    let mut report = Vec::new();
     let patterns = reference_patterns();
     let variable = VariableCharacters::new(&patterns).unwrap();
     assert_eq!(patterns.weights().len(), 23);
@@ -267,6 +268,8 @@ fn archived_beast_states_are_reproduced() {
             let context = format!("seed {}, {path:?}, {scaling:?}", state.seed);
             let mut core = setup.core(&variable, scaling, path);
             let lls = setup.pattern_log_likelihoods(&mut core);
+            let mut maximum_pattern_error = 0.0_f64;
+            let mut maximum_beast_pattern_difference = 0.0_f64;
             for (pattern, &ll) in lls.iter().enumerate() {
                 let column: Vec<u8> = variable
                     .tip_partials()
@@ -282,6 +285,10 @@ fn archived_beast_states_are_reproduced() {
                 assert_eq!(beast.weight, weight);
                 let context = format!("{context}, pattern {pattern}");
                 assert_within(ll, beast.exact_log_likelihood, 2e-14, &context);
+                maximum_pattern_error =
+                    maximum_pattern_error.max((ll - beast.exact_log_likelihood).abs());
+                maximum_beast_pattern_difference =
+                    maximum_beast_pattern_difference.max((ll - beast.log_likelihood).abs());
                 // BEAST 2.7.8 computes 1 − e as 1 − exp(−x), which loses digits on
                 // these short branches: its own values are up to 1.3e-12 from exact.
                 assert_within(ll, beast.log_likelihood, 2e-12, &context);
@@ -303,7 +310,29 @@ fn archived_beast_states_are_reproduced() {
             let log_likelihood = variable.log_likelihood(&lls).unwrap();
             assert_within(log_likelihood, state.exact_log_likelihood, 1e-11, &context);
             assert_within(log_likelihood, state.log_likelihood, 1e-10, &context);
+            let mk: f64 = lls
+                .iter()
+                .zip(patterns.weights())
+                .map(|(ll, &w)| ll * w as f64)
+                .sum();
+            let exact_mk: f64 = state
+                .patterns
+                .iter()
+                .map(|p| p.exact_log_likelihood * p.weight as f64)
+                .sum();
+            report.push(serde_json::json!({
+                "seed": state.seed, "path": format!("{path:?}"), "scaling": format!("{scaling:?}"),
+                "pattern_logs": lls, "mk": mk, "mkv": log_likelihood,
+                "mk_error": mk - exact_mk, "mkv_error": log_likelihood - state.exact_log_likelihood,
+                "maximum_pattern_error": maximum_pattern_error,
+                "maximum_beast_pattern_difference": maximum_beast_pattern_difference,
+                "mkv_minus_beast": log_likelihood - state.log_likelihood,
+                "log_variable": log_variable
+            }));
         }
+    }
+    if let Ok(path) = std::env::var("ROVE_BEAST_SCALING_REPORT") {
+        std::fs::write(path, serde_json::to_string_pretty(&report).unwrap()).unwrap();
     }
 }
 

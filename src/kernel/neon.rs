@@ -15,7 +15,10 @@
 //! and `store` take from a two-element array.
 
 use core::arch::aarch64::{
-    float64x2_t, vaddq_f64, vdupq_n_f64, vld1q_f64, vmaxnmq_f64, vmulq_f64, vst1q_f64,
+    float64x2_t, vaddq_f64, vandq_u64, vbslq_u64, vcgtq_f64, vcgtq_u64, vcltq_f64, vdupq_n_f64,
+    vdupq_n_s64, vdupq_n_u64, vld1q_f64, vmaxnmq_f64, vmulq_f64, vreinterpretq_f64_u64,
+    vreinterpretq_s64_u64, vreinterpretq_u64_f64, vshlq_n_u64, vshrq_n_u64, vst1q_f64, vst1q_s64,
+    vsubq_s64, vsubq_u64,
 };
 
 use crate::layout::{LANES, Layout};
@@ -87,6 +90,35 @@ fn store_block(out: &mut [f64], values: [float64x2_t; 4]) {
     let out: &mut [f64; BLOCK] = out.try_into().expect("a block");
     for (out, value) in out.chunks_exact_mut(2).zip(values) {
         store(out, value);
+    }
+}
+
+/// The same exponent extraction as `scaling::factors`, two patterns at a time.
+pub(super) fn scale_factors(maxima: &mut [f64], exponents: &mut [i64]) {
+    assert_eq!(maxima.len(), exponents.len());
+    assert_eq!(maxima.len() % 2, 0);
+    for (m, e) in maxima
+        .chunks_exact_mut(2)
+        .zip(exponents.chunks_exact_mut(2))
+    {
+        let maximum = load(m);
+        // SAFETY: NEON is enabled. Both chunks contain two elements; the
+        // exponent store writes exactly those two i64 values.
+        unsafe {
+            let valid = vandq_u64(
+                vcgtq_f64(maximum, vdupq_n_f64(0.0)),
+                vcltq_f64(maximum, vdupq_n_f64(f64::INFINITY)),
+            );
+            let raw = vshrq_n_u64::<52>(vreinterpretq_u64_f64(maximum));
+            let capped = vbslq_u64(vcgtq_u64(raw, vdupq_n_u64(2045)), vdupq_n_u64(2045), raw);
+            let biased = vbslq_u64(valid, capped, vdupq_n_u64(1023));
+            vst1q_s64(
+                e.as_mut_ptr(),
+                vsubq_s64(vreinterpretq_s64_u64(biased), vdupq_n_s64(1023)),
+            );
+            let reciprocal = vshlq_n_u64::<52>(vsubq_u64(vdupq_n_u64(2046), biased));
+            store(m, vreinterpretq_f64_u64(reciprocal));
+        }
     }
 }
 

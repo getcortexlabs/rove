@@ -1,0 +1,33 @@
+--- a/src/kernel/mod.rs
++++ b/src/kernel/mod.rs
+@@ -304,13 +304,6 @@
+         };
+         if self.scaling == Scaling::Always {
+             self.rescale(&mut dst, out, maxima);
+-            let mut exponents = std::mem::take(&mut self.exponents[out]);
+-            let first = &self.exponents[self.partials_buffer(child1)];
+-            let second = &self.exponents[self.partials_buffer(child2)];
+-            for ((total, a), b) in exponents.iter_mut().zip(first).zip(second) {
+-                *total += a + b;
+-            }
+-            self.exponents[out] = exponents;
+         }
+         self.partials[out] = dst;
+     }
+@@ -445,9 +438,14 @@
+         let l = self.layout;
+         assert_eq!(category_weights.len(), l.categories);
+         let src = &self.partials[self.partials_buffer(root)];
++        self.root_exponents.fill(0);
+         if self.scaling == Scaling::Always {
+-            let buffer = self.partials_buffer(root);
+-            self.root_exponents.copy_from_slice(&self.exponents[buffer]);
++            for node in 0..self.node_count {
++                let buffer = self.partials_buffer(node);
++                for (total, exponent) in self.root_exponents.iter_mut().zip(&self.exponents[buffer]) {
++                    *total += exponent;
++                }
++            }
+         }
+         self.root_partials.fill(0.0);
+         for (c, &w) in category_weights.iter().enumerate() {

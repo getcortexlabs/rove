@@ -4,10 +4,13 @@ use crate::model::Mk;
 mod checkpoint;
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 mod neon;
+mod scaling;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Scaling {
     None,
+    /// Power-of-two scaling after every node update, shared by all states
+    /// and rate categories of a pattern.
     Always,
 }
 
@@ -23,8 +26,8 @@ pub enum Backend {
     /// Plain Rust for any target, which the compiler may vectorize loop by
     /// loop. The reference for the others.
     Portable,
-    /// An aarch64 NEON kernel for the Mk node update; everything else as in
-    /// `Portable`.
+    /// aarch64 NEON for the Mk node update and scaling exponent extraction;
+    /// everything else as in `Portable`.
     Neon,
 }
 
@@ -76,7 +79,9 @@ pub struct LikelihoodCore {
     transition: Transition,
     partials: Vec<Vec<f64>>,
     transitions: Vec<Vec<f64>>,
-    log_scalers: Vec<Vec<f64>>,
+    // Subtree totals, paired with partials so rollback needs no arithmetic.
+    exponents: Vec<Vec<i64>>,
+    root_exponents: Vec<i64>,
     current_partials: Vec<u8>,
     stored_partials: Vec<u8>,
     current_transitions: Vec<u8>,
@@ -133,7 +138,8 @@ impl LikelihoodCore {
                 .map(|_| vec![0.0; transition.len(&layout)])
                 .collect(),
             transition,
-            log_scalers: (0..buffers).map(|_| vec![0.0; layout.stride]).collect(),
+            exponents: (0..buffers).map(|_| vec![0; layout.stride]).collect(),
+            root_exponents: vec![0; layout.stride],
             current_partials: vec![0; node_count],
             stored_partials: vec![0; node_count],
             current_transitions: vec![0; node_count],
@@ -186,6 +192,7 @@ impl LikelihoodCore {
         let l = self.layout;
         assert_eq!(states.len(), l.patterns);
         for buffer in [node * 2, node * 2 + 1] {
+            self.exponents[buffer].fill(0);
             let partials = &mut self.partials[buffer];
             partials.fill(0.0);
             for category in 0..l.categories {
@@ -207,6 +214,7 @@ impl LikelihoodCore {
         let l = self.layout;
         assert_eq!(tip_partials.len(), l.patterns * l.states);
         for buffer in [node * 2, node * 2 + 1] {
+            self.exponents[buffer].fill(0);
             let partials = &mut self.partials[buffer];
             partials.fill(0.0);
             for category in 0..l.categories {
@@ -296,6 +304,13 @@ impl LikelihoodCore {
         };
         if self.scaling == Scaling::Always {
             self.rescale(&mut dst, out, maxima);
+            let mut exponents = std::mem::take(&mut self.exponents[out]);
+            let first = &self.exponents[self.partials_buffer(child1)];
+            let second = &self.exponents[self.partials_buffer(child2)];
+            for ((total, a), b) in exponents.iter_mut().zip(first).zip(second) {
+                *total += a + b;
+            }
+            self.exponents[out] = exponents;
         }
         self.partials[out] = dst;
     }
@@ -399,9 +414,8 @@ impl LikelihoodCore {
         }
     }
 
-    /// Divides each pattern's partials by their largest value over states and
-    /// categories, and keeps its logarithm. With `maxima`, `scale` already
-    /// holds those values.
+    /// Rescales by a power of two chosen from each pattern's maximum over
+    /// states and categories. With `maxima`, `scale` already holds those values.
     fn rescale(&mut self, partials: &mut [f64], buffer: usize, maxima: bool) {
         let l = self.layout;
         let stride = l.stride;
@@ -416,15 +430,7 @@ impl LikelihoodCore {
                 }
             }
         }
-        for (m, log) in self.scale.iter_mut().zip(&mut self.log_scalers[buffer]) {
-            if *m > 0.0 {
-                *log = m.ln();
-                *m = 1.0 / *m;
-            } else {
-                *log = 0.0;
-                *m = 1.0;
-            }
-        }
+        scaling::factors(&mut self.scale, &mut self.exponents[buffer], self.backend);
         for c in 0..l.categories {
             for s in 0..l.states {
                 let o = l.offset(c, s);
@@ -439,6 +445,10 @@ impl LikelihoodCore {
         let l = self.layout;
         assert_eq!(category_weights.len(), l.categories);
         let src = &self.partials[self.partials_buffer(root)];
+        if self.scaling == Scaling::Always {
+            let buffer = self.partials_buffer(root);
+            self.root_exponents.copy_from_slice(&self.exponents[buffer]);
+        }
         self.root_partials.fill(0.0);
         for (c, &w) in category_weights.iter().enumerate() {
             for s in 0..l.states {
@@ -465,12 +475,12 @@ impl LikelihoodCore {
             *ll = x.ln();
         }
         if self.scaling == Scaling::Always {
-            for node in 0..self.node_count {
-                let buffer = self.partials_buffer(node);
-                let scalers = &self.log_scalers[buffer];
-                for (ll, s) in self.pattern_log_likelihoods.iter_mut().zip(scalers) {
-                    *ll += s;
-                }
+            for (ll, &exponent) in self
+                .pattern_log_likelihoods
+                .iter_mut()
+                .zip(&self.root_exponents)
+            {
+                *ll += exponent as f64 * std::f64::consts::LN_2;
             }
         }
         &self.pattern_log_likelihoods

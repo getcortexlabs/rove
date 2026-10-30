@@ -29,9 +29,9 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Explorador nativo de árvores anotadas e figuras SVG | Implementado, #33 |
 | Diagnósticos de amostragem e inspeção do burn-in no app | Implementado, #34 |
 | Cadeias paralelas e relatórios de convergência | Implementado, #23 |
-| Reescalonamento por potências de dois | Planejado, #18 |
+| Reescalonamento por potências de dois | Implementado, #18 |
 | Checkpoints e retomada de execuções | Implementado na CLI e no Histórico nativo, #22 |
-| Partições por número de estados | Planejado, #19 |
+| Partições por número de estados | Implementado, #19 |
 | Condicionamento a caracteres informativos para parcimônia | Planejado, #20 |
 | Caracteres ordenados | Planejado, #21 |
 | Verossimilhanças marginais para comparar modelos | Planejado, #24 |
@@ -50,7 +50,7 @@ O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/ben
 
 O Mkv condiciona a verossimilhança ao processo de observação em matrizes só com caracteres variáveis. Ele reproduz os dois estados arquivados do BEAST, e seus padrões constantes ficam separados dos pesos dos padrões observados.
 
-O caminho direto do Mk substitui o produto genérico de matrizes nos modelos Mk. Num Apple M4 Max, o caminho de matrizes levou 1,25 vez o tempo do caminho Mk numa avaliação completa da matriz de referência, e 2,66 vezes com oito estados ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). Depois, o backend NEON fundiu a atualização de nó do Mk numa única passada por blocos de oito padrões. Na mesma máquina, o código portátil levou 1,48 vez o tempo do NEON numa avaliação completa da matriz de referência, de 1,10 a 1,32 vez nos casos 90 × 250 com 250 padrões e de 1,08 a 1,11 vez numa execução do amostrador ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)). O logaritmo do reescalonamento, uma chamada escalar por padrão e por nó, passou a ocupar cerca de dois quintos do tempo das atualizações de nó numa execução do amostrador. A implementação portátil continua como referência e fallback. Cada otimização precisa de uma medição antes/depois, não só de uma contagem de operações aritméticas.
+O caminho direto do Mk e o backend NEON estão implementados e medidos nos relatórios de [Mk](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md) e [NEON](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md). O reescalonamento por potências de dois remove os logaritmos por nó e guarda os totais de expoentes por subárvore. A [comparação](https://github.com/getcortexlabs/rove/blob/main/benchmarks/scaling/2026-10-30/README.md) separa as duas mudanças nos dois backends, inclui execuções do amostrador e registra os casos mais lentos. A implementação portátil continua como referência e fallback.
 
 ## Inferência independente
 

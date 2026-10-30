@@ -29,9 +29,9 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Explorador nativo de árboles anotados y figuras SVG | Implementado, #33 |
 | Diagnósticos de muestreo e inspección del burn-in en la app | Implementado, #34 |
 | Cadenas en paralelo e informes de convergencia | Implementado, #23 |
-| Reescalado por potencias de dos | Planificado, #18 |
+| Reescalado por potencias de dos | Implementado, #18 |
 | Checkpoints y reanudación de ejecuciones | Implementado en CLI y History nativo, #22 |
-| Particiones por número de estados | Planificado, #19 |
+| Particiones por número de estados | Implementado, #19 |
 | Condicionamiento a caracteres informativos para parsimonia | Planificado, #20 |
 | Caracteres ordenados | Planificado, #21 |
 | Verosimilitudes marginales para comparar modelos | Planificado, #24 |
@@ -50,7 +50,7 @@ La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main
 
 Mkv condiciona la verosimilitud al proceso de observación para matrices con solo caracteres variables. Reproduce los dos estados archivados de BEAST, y sus patrones constantes se mantienen separados de los pesos de los patrones observados.
 
-La ruta directa de Mk sustituye el producto genérico de matrices en los modelos Mk. En un Apple M4 Max, la ruta de matrices tardó 1,25 veces lo que la ruta Mk en una evaluación completa de la matriz de referencia, y 2,66 veces con ocho estados ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). Después, el backend NEON fusionó la actualización de nodo de Mk en una sola pasada por bloques de ocho patrones. En la misma máquina, el código portable tardó 1,48 veces lo que NEON en una evaluación completa de la matriz de referencia, entre 1,10 y 1,32 veces en los casos 90 × 250 con 250 patrones y entre 1,08 y 1,11 veces en una ejecución del muestreador ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)). El logaritmo del reescalado, una llamada escalar por patrón y nodo, ocupa ahora cerca de dos quintos del tiempo de las actualizaciones de nodo en una ejecución del muestreador. La implementación portable sigue siendo la referencia y el respaldo. Cada optimización necesita una medición antes y después, no solo un recuento de operaciones aritméticas.
+La ruta directa de Mk y el backend NEON están implementados y medidos en los informes de [Mk](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md) y [NEON](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md). El reescalado por potencias de dos elimina los logaritmos por nodo y guarda los totales de exponentes por subárbol. Su [comparación](https://github.com/getcortexlabs/rove/blob/main/benchmarks/scaling/2026-10-30/README.md) separa ambas mejoras en los dos backends, incluye ejecuciones del muestreador y registra los casos más lentos. La implementación portable sigue siendo la referencia y alternativa.
 
 ## Inferencia independiente
 

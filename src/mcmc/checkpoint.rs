@@ -7,7 +7,7 @@ use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation, RelaxedClock};
 use crate::tree::Tree;
 
-const MAGIC: &[u8; 8] = b"ROVECP02";
+const MAGIC: &[u8; 8] = b"ROVECP03";
 
 impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.

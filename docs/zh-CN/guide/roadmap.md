@@ -29,9 +29,9 @@ Rove 处于早期。没有发布版本，没有发布的 crate，也没有日期
 | 原生注释树查看器与 SVG 图形 | 已实现，#33 |
 | 原生采样诊断与 burn-in 检查 | 已实现，#34 |
 | 并行链与收敛报告 | 已实现，#23 |
-| 二次幂缩放 | 计划中，#18 |
+| 二次幂缩放 | 已实现，#18 |
 | 检查点与恢复运行 | 已在 CLI 和原生 History 中实现，#22 |
-| 按状态数划分分区 | 计划中，#19 |
+| 按状态数划分分区 | 已实现，#19 |
 | 以简约信息性状为条件 | 计划中，#20 |
 | 有序性状 | 计划中，#21 |
 | 用于模型比较的边际似然 | 计划中，#24 |
@@ -50,7 +50,7 @@ Rove 处于早期。没有发布版本，没有发布的 crate，也没有日期
 
 Mkv 把似然条件化于仅含可变性状的矩阵的观测过程。它重现了两个存档的 BEAST 状态，其恒定模式与观测到的模式权重保持分开。
 
-对 Mk 模型，直接 Mk 路径取代了通用矩阵乘积。在 Apple M4 Max 上，对参考矩阵做一次完整求值，矩阵路径用时是 Mk 路径的 1.25 倍，八个状态时为 2.66 倍（[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)）。之后，NEON 后端把 Mk 的节点更新合并为以八个模式为一块的一次遍历。在同一台机器上，对参考矩阵做一次完整求值，可移植代码的用时是 NEON 的 1.48 倍；在 250 个模式的 90 × 250 用例上为 1.10 到 1.32 倍，一次采样器运行为 1.08 到 1.11 倍（[报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)）。重缩放中的对数是每个模式、每个节点一次的标量调用，在一次采样器运行中现在约占节点更新时间的五分之二。可移植实现仍是参考和回退。每项优化都需要前后对比的测量，而不只是算术运算的计数。
+直接 Mk 路径和 NEON 后端已实现，测量结果见 [Mk 报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)和 [NEON 报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)。二次幂重缩放消除了逐节点对数计算，并缓存各子树的指数总和。[对比报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/scaling/2026-10-30/README.md)在两种后端上分别测量这两项改动，包括采样器运行及变慢的用例。可移植实现仍是参考和回退路径。
 
 ## 独立推断
 

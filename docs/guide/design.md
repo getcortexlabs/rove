@@ -32,7 +32,7 @@ Every optimised path added later has to pass the same tests. The reference stays
 
 Each node owns two buffers for partials and two for its branch: transition matrices, or Mk distances. Before a proposal overwrites a node, `set_node_partials_for_update` or `set_node_matrix_for_update` flips that node to its other buffer, so the previous values survive. `store` records which buffers are current. `restore` brings that set back by swapping, `unstore` by copying. Accepting a move costs nothing. This is what an MCMC sampler needs to reject a move cheaply.
 
-With `Scaling::Always`, each internal node's partials are divided by their per-pattern maximum after they are computed, and the logarithm of that maximum is kept per node. The log likelihood adds the scalers back. Without scaling, deep trees underflow.
+With `Scaling::Always`, each node rescales by a power of two chosen from the maximum over states and categories of each pattern. Its buffer stores an integer exponent for the entire subtree: the local exponent plus both children’s totals. The root restores the scale with `E * ln(2)` once per pattern, without traversing every node. Exponents roll back with the partials buffers. See the [exact convention](./kernel#rescaling).
 
 ## Constant patterns in the same core
 
@@ -46,7 +46,7 @@ The reference preset adds gamma shape, clock sigma and explicit branch rates to 
 
 ## NEON first, AVX2 second
 
-The layout exists so that the inner loops can be vectorised across patterns. In release builds the compiler already vectorises the portable loops, one loop at a time: a node update zeroes two accumulators, adds each state's contribution to them, combines them with the children's partials, and rescaling rereads the results to find each pattern's maximum. The [NEON backend](./kernel#backends) runs the Mk node update as one pass over blocks of eight patterns instead, with the sums and the maxima in registers. Per pattern it performs the same operations in the same order, so it reproduces the portable code's results bit for bit except for the payload of a NaN, and the tests require it. On Apple M4 Max, the portable code took 1.48 times as long for a full evaluation of the reference matrix ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)). The logarithm of rescaling remains a scalar call per pattern and node. There is no AVX2 path.
+The layout exists so that the inner loops can be vectorised across patterns. In release builds the compiler already vectorises the portable loops, one loop at a time: a node update zeroes two accumulators, adds each state's contribution to them, combines them with the children's partials, and rescaling rereads the results to find each pattern's maximum. The [NEON backend](./kernel#backends) runs the Mk node update as one pass over blocks of eight patterns instead, with the sums and the maxima in registers. Per pattern it performs the same operations in the same order, so it reproduces the portable code's results bit for bit except for the payload of a NaN, and the tests require it. On Apple M4 Max, the portable code took 1.48 times as long for a full evaluation of the reference matrix ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)). Rescaling now extracts binary exponents with integer operations; NEON handles two patterns per register. There is no AVX2 path.
 
 ## One crate
 

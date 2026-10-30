@@ -29,9 +29,9 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Native annotated-tree explorer and SVG figures | Implemented, #33 |
 | Native trace diagnostics and burn-in inspection | Implemented, #34 |
 | Parallel chains and convergence reports | Implemented, #23 |
-| Power-of-two rescaling | Planned, #18 |
+| Power-of-two rescaling | Implemented, #18 |
 | Checkpoints and resumed runs | Implemented in CLI and native History, #22 |
-| Partitions by number of states | Planned, #19 |
+| Partitions by number of states | Implemented, #19 |
 | Conditioning on parsimony-informative characters | Planned, #20 |
 | Ordered characters | Planned, #21 |
 | Marginal likelihoods for model comparison | Planned, #24 |
@@ -50,7 +50,7 @@ The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benc
 
 Mkv conditions the likelihood on the observation process for variable-only matrices. It reproduces both archived BEAST states, and its constant patterns stay separate from the observed pattern weights.
 
-The direct Mk path replaces the generic matrix product for Mk models. On Apple M4 Max, the matrix path took 1.25 times as long for a full evaluation of the reference matrix, and 2.66 times as long with eight states ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md)). The NEON backend then fused the Mk node update into one pass over blocks of eight patterns. On the same machine, the portable code took 1.48 times as long for a full evaluation of the reference matrix, 1.10 to 1.32 times as long on the 90 × 250 cases with 250 patterns and 1.08 to 1.11 times as long for a sampler run ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md)). The logarithm of rescaling, one scalar call per pattern and node, now takes about two fifths of the node-update time in a sampler run. The portable implementation remains the reference and fallback. Each optimization needs a before/after measurement, not just a count of arithmetic operations.
+The direct Mk path and the NEON backend are implemented and measured in the [Mk](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-28/README.md) and [NEON](https://github.com/getcortexlabs/rove/blob/main/benchmarks/neon/2026-10-28/README.md) reports. Power-of-two rescaling now removes per-node logarithms and caches subtree exponent totals. Its [comparison](https://github.com/getcortexlabs/rove/blob/main/benchmarks/scaling/2026-10-30/README.md) separates the two changes on both backends, includes sampler runs and reports slower cases. The portable implementation remains the reference and fallback.
 
 ## Standalone inference
 

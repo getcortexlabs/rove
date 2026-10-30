@@ -1,0 +1,2225 @@
+{
+  "subtree_vs_before": [
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "compress",
+      "before_ns": 22104.8203125,
+      "after_ns": 22674.640625,
+      "after_over_before": 1.025778101990622
+    },
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 9953.0029296875,
+      "after_ns": 10139.2421875,
+      "after_over_before": 1.018711866069786
+    },
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "store",
+      "before_ns": 8.766810417175293,
+      "after_ns": 8.775551795959473,
+      "after_over_before": 1.0009970991008377
+    },
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "store_restore",
+      "before_ns": 9.017348289489746,
+      "after_ns": 9.49716567993164,
+      "after_over_before": 1.0532104755231813
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "parse",
+      "before_ns": 24050.45703125,
+      "after_ns": 24062.3359375,
+      "after_over_before": 1.0004939160297273
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "compress",
+      "before_ns": 22094.40234375,
+      "after_ns": 22850.09765625,
+      "after_over_before": 1.034203021233284
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 10090.25,
+      "after_ns": 10215.494140625,
+      "after_over_before": 1.0124123922226902
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "store",
+      "before_ns": 8.70541763305664,
+      "after_ns": 8.873581886291504,
+      "after_over_before": 1.0193171953745563
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "store_restore",
+      "before_ns": 8.961081504821777,
+      "after_ns": 9.01905632019043,
+      "after_over_before": 1.0064696225938194
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "parse",
+      "before_ns": 24315.265625,
+      "after_ns": 24549.4765625,
+      "after_over_before": 1.0096322590553646
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "compress",
+      "before_ns": 22234.5390625,
+      "after_ns": 22610.67578125,
+      "after_over_before": 1.0169167760884408
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "core_setup",
+      "before_ns": 9398.92578125,
+      "after_ns": 9406.25,
+      "after_over_before": 1.0007792612603252
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "store",
+      "before_ns": 8.75528621673584,
+      "after_ns": 8.781790733337402,
+      "after_over_before": 1.0030272587263793
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "store_restore",
+      "before_ns": 9.023228645324707,
+      "after_ns": 9.665410041809082,
+      "after_over_before": 1.0711698020438742
+    },
+    {
+      "case": "reference_20x50/mk/neon",
+      "metric": "parse",
+      "before_ns": 24234.21484375,
+      "after_ns": 24723.47265625,
+      "after_over_before": 1.0201887214277205
+    },
+    {
+      "case": "reference_20x50/mk/neon",
+      "metric": "core_setup",
+      "before_ns": 9172.607421875,
+      "after_ns": 9353.677734375,
+      "after_over_before": 1.0197403316387639
+    },
+    {
+      "case": "reference_20x50/mk/neon",
+      "metric": "store",
+      "before_ns": 8.686383247375488,
+      "after_ns": 8.740425109863281,
+      "after_over_before": 1.0062214457903549
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "parse",
+      "before_ns": 24349.28515625,
+      "after_ns": 24792.96875,
+      "after_over_before": 1.0182216270786955
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "compress",
+      "before_ns": 22286.9453125,
+      "after_ns": 22326.984375,
+      "after_over_before": 1.0017965253622059
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 11193.279296875,
+      "after_ns": 11363.76953125,
+      "after_over_before": 1.0152314822004485
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "store",
+      "before_ns": 8.670926094055176,
+      "after_ns": 8.720913887023926,
+      "after_over_before": 1.0057649889327303
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "store_restore",
+      "before_ns": 9.128649711608887,
+      "after_ns": 9.516399383544922,
+      "after_over_before": 1.042476125624903
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "parse",
+      "before_ns": 24113.76953125,
+      "after_ns": 24453.61328125,
+      "after_over_before": 1.0140933481826466
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "compress",
+      "before_ns": 22333.66015625,
+      "after_ns": 22628.74609375,
+      "after_over_before": 1.0132126098201337
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 11177.65234375,
+      "after_ns": 11267.4140625,
+      "after_over_before": 1.0080304625684828
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "store",
+      "before_ns": 8.655071258544922,
+      "after_ns": 8.82705020904541,
+      "after_over_before": 1.0198703101757478
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "store_restore",
+      "before_ns": 9.15340518951416,
+      "after_ns": 9.453654289245605,
+      "after_over_before": 1.0328019019714543
+    },
+    {
+      "case": "reference_20x50_mkv/mk/portable",
+      "metric": "parse",
+      "before_ns": 24264.97265625,
+      "after_ns": 24449.0546875,
+      "after_over_before": 1.0075863275783492
+    },
+    {
+      "case": "reference_20x50_mkv/mk/portable",
+      "metric": "store",
+      "before_ns": 8.644580841064453,
+      "after_ns": 8.721429824829102,
+      "after_over_before": 1.0088898449997241
+    },
+    {
+      "case": "reference_20x50_mkv/mk/portable",
+      "metric": "store_restore",
+      "before_ns": 8.946537971496582,
+      "after_ns": 9.064634323120117,
+      "after_over_before": 1.0132002291836
+    },
+    {
+      "case": "reference_20x50_mkv/mk/neon",
+      "metric": "parse",
+      "before_ns": 24405.59765625,
+      "after_ns": 24622.234375,
+      "after_over_before": 1.0088765176662051
+    },
+    {
+      "case": "reference_20x50_mkv/mk/neon",
+      "metric": "compress",
+      "before_ns": 22167.31640625,
+      "after_ns": 22726.40234375,
+      "after_over_before": 1.0252211827202669
+    },
+    {
+      "case": "reference_20x50_mkv/mk/neon",
+      "metric": "store_restore",
+      "before_ns": 9.01186466217041,
+      "after_ns": 9.639382362365723,
+      "after_over_before": 1.0696323928198208
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "parse",
+      "before_ns": 366372.375,
+      "after_ns": 367466.1875,
+      "after_over_before": 1.002985521220043
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "compress",
+      "before_ns": 634625.0,
+      "after_ns": 635916.625,
+      "after_over_before": 1.00203525704156
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 264851.5625,
+      "after_ns": 277641.9375,
+      "after_over_before": 1.0482926167369695
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "store",
+      "before_ns": 7.3763532638549805,
+      "after_ns": 7.464051246643066,
+      "after_over_before": 1.0118890703374819
+    },
+    {
+      "case": "morphology_90x250/matrices/neon",
+      "metric": "parse",
+      "before_ns": 362796.875,
+      "after_ns": 368484.375,
+      "after_over_before": 1.0156768164003618
+    },
+    {
+      "case": "morphology_90x250/matrices/neon",
+      "metric": "compress",
+      "before_ns": 636812.5,
+      "after_ns": 641859.375,
+      "after_over_before": 1.007925213465502
+    },
+    {
+      "case": "morphology_90x250/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 261493.5,
+      "after_ns": 279333.3125,
+      "after_over_before": 1.0682227760919487
+    },
+    {
+      "case": "morphology_90x250/mk/portable",
+      "metric": "core_setup",
+      "before_ns": 260869.78125,
+      "after_ns": 268182.28125,
+      "after_over_before": 1.0280312267866403
+    },
+    {
+      "case": "morphology_90x250/mk/neon",
+      "metric": "parse",
+      "before_ns": 366776.0,
+      "after_ns": 369414.0625,
+      "after_over_before": 1.0071925712151286
+    },
+    {
+      "case": "morphology_90x250/mk/neon",
+      "metric": "compress",
+      "before_ns": 631270.875,
+      "after_ns": 639380.125,
+      "after_over_before": 1.0128459118282622
+    },
+    {
+      "case": "morphology_90x250/mk/neon",
+      "metric": "store",
+      "before_ns": 7.381399154663086,
+      "after_ns": 7.501046180725098,
+      "after_over_before": 1.0162092610838456
+    },
+    {
+      "case": "binary_one_rate/matrices/portable",
+      "metric": "compress",
+      "before_ns": 668234.375,
+      "after_ns": 679786.5,
+      "after_over_before": 1.0172875347814905
+    },
+    {
+      "case": "binary_one_rate/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 94517.578125,
+      "after_ns": 103349.609375,
+      "after_over_before": 1.0934432665881428
+    },
+    {
+      "case": "binary_one_rate/matrices/portable",
+      "metric": "store",
+      "before_ns": 7.3206024169921875,
+      "after_ns": 7.390856742858887,
+      "after_over_before": 1.0095967957095482
+    },
+    {
+      "case": "binary_one_rate/matrices/neon",
+      "metric": "parse",
+      "before_ns": 371315.125,
+      "after_ns": 378289.0625,
+      "after_over_before": 1.018781722128879
+    },
+    {
+      "case": "binary_one_rate/matrices/neon",
+      "metric": "compress",
+      "before_ns": 663755.25,
+      "after_ns": 671198.0,
+      "after_over_before": 1.0112130939830608
+    },
+    {
+      "case": "binary_one_rate/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 93625.0,
+      "after_ns": 98216.140625,
+      "after_over_before": 1.0490375500667557
+    },
+    {
+      "case": "binary_one_rate/matrices/neon",
+      "metric": "store",
+      "before_ns": 7.379571914672852,
+      "after_ns": 7.462580680847168,
+      "after_over_before": 1.0112484527739705
+    },
+    {
+      "case": "binary_one_rate/mk/portable",
+      "metric": "compress",
+      "before_ns": 686474.0,
+      "after_ns": 687828.125,
+      "after_over_before": 1.0019725801705528
+    },
+    {
+      "case": "binary_one_rate/mk/portable",
+      "metric": "core_setup",
+      "before_ns": 96875.65625,
+      "after_ns": 98548.828125,
+      "after_over_before": 1.0172713346135398
+    },
+    {
+      "case": "binary_one_rate/mk/neon",
+      "metric": "core_setup",
+      "before_ns": 93171.875,
+      "after_ns": 95458.328125,
+      "after_over_before": 1.0245401643468053
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "parse",
+      "before_ns": 370622.375,
+      "after_ns": 372304.6875,
+      "after_over_before": 1.004539155252027
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "compress",
+      "before_ns": 670729.125,
+      "after_ns": 678380.125,
+      "after_over_before": 1.0114069893714546
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 276442.6875,
+      "after_ns": 278046.875,
+      "after_over_before": 1.005802965940273
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "store",
+      "before_ns": 7.340431213378906,
+      "after_ns": 7.413308143615723,
+      "after_over_before": 1.009928153826166
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "store_restore",
+      "before_ns": 13.51555061340332,
+      "after_ns": 13.617912292480469,
+      "after_over_before": 1.007573622563008
+    },
+    {
+      "case": "binary_four_rates/matrices/neon",
+      "metric": "parse",
+      "before_ns": 377148.4375,
+      "after_ns": 379515.625,
+      "after_over_before": 1.0062765406525116
+    },
+    {
+      "case": "binary_four_rates/matrices/neon",
+      "metric": "compress",
+      "before_ns": 667968.75,
+      "after_ns": 685911.5,
+      "after_over_before": 1.0268616608187136
+    },
+    {
+      "case": "binary_four_rates/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 258862.0,
+      "after_ns": 280526.03125,
+      "after_over_before": 1.0836894996175568
+    },
+    {
+      "case": "binary_four_rates/mk/portable",
+      "metric": "compress",
+      "before_ns": 676838.5,
+      "after_ns": 686505.125,
+      "after_over_before": 1.014282025919034
+    },
+    {
+      "case": "binary_four_rates/mk/portable",
+      "metric": "core_setup",
+      "before_ns": 258243.5,
+      "after_ns": 276402.34375,
+      "after_over_before": 1.0703167504700022
+    },
+    {
+      "case": "binary_four_rates/mk/neon",
+      "metric": "core_setup",
+      "before_ns": 258798.15625,
+      "after_ns": 275471.34375,
+      "after_over_before": 1.0644254493215695
+    },
+    {
+      "case": "binary_four_rates/mk/neon",
+      "metric": "store",
+      "before_ns": 7.399757385253906,
+      "after_ns": 7.425466537475586,
+      "after_over_before": 1.0034743236680856
+    },
+    {
+      "case": "ternary_four_rates/matrices/portable",
+      "metric": "compress",
+      "before_ns": 700359.375,
+      "after_ns": 717947.875,
+      "after_over_before": 1.025113535461705
+    },
+    {
+      "case": "ternary_four_rates/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 355833.3125,
+      "after_ns": 394911.4375,
+      "after_over_before": 1.109821435001255
+    },
+    {
+      "case": "ternary_four_rates/matrices/neon",
+      "metric": "compress",
+      "before_ns": 712817.625,
+      "after_ns": 714250.0,
+      "after_over_before": 1.002009455083269
+    },
+    {
+      "case": "ternary_four_rates/mk/portable",
+      "metric": "compress",
+      "before_ns": 705619.875,
+      "after_ns": 721166.625,
+      "after_over_before": 1.022032755242332
+    },
+    {
+      "case": "ternary_four_rates/mk/portable",
+      "metric": "core_setup",
+      "before_ns": 364739.625,
+      "after_ns": 370960.9375,
+      "after_over_before": 1.0170568593966176
+    },
+    {
+      "case": "ternary_four_rates/mk/neon",
+      "metric": "parse",
+      "before_ns": 377781.25,
+      "after_ns": 379372.375,
+      "after_over_before": 1.0042117627595335
+    },
+    {
+      "case": "ternary_four_rates/mk/neon",
+      "metric": "core_setup",
+      "before_ns": 363119.8125,
+      "after_ns": 368237.0,
+      "after_over_before": 1.014092283934521
+    },
+    {
+      "case": "ternary_four_rates/mk/neon",
+      "metric": "store",
+      "before_ns": 7.383823394775391,
+      "after_ns": 7.466952323913574,
+      "after_over_before": 1.0112582499192768
+    },
+    {
+      "case": "eight_states/matrices/portable",
+      "metric": "parse",
+      "before_ns": 415429.6875,
+      "after_ns": 416695.3125,
+      "after_over_before": 1.0030465444287728
+    },
+    {
+      "case": "eight_states/matrices/portable",
+      "metric": "compress",
+      "before_ns": 702979.25,
+      "after_ns": 705416.625,
+      "after_over_before": 1.0034672076025004
+    },
+    {
+      "case": "eight_states/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 786796.875,
+      "after_ns": 829323.0,
+      "after_over_before": 1.0540496872207328
+    },
+    {
+      "case": "eight_states/matrices/neon",
+      "metric": "compress",
+      "before_ns": 681010.5,
+      "after_ns": 685182.375,
+      "after_over_before": 1.0061260068677356
+    },
+    {
+      "case": "eight_states/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 784901.125,
+      "after_ns": 875338.5,
+      "after_over_before": 1.1152213598878458
+    },
+    {
+      "case": "eight_states/mk/portable",
+      "metric": "parse",
+      "before_ns": 404036.4375,
+      "after_ns": 404606.75,
+      "after_over_before": 1.0014115372948262
+    },
+    {
+      "case": "eight_states/mk/portable",
+      "metric": "compress",
+      "before_ns": 690630.25,
+      "after_ns": 724531.25,
+      "after_over_before": 1.0490870476640721
+    },
+    {
+      "case": "eight_states/mk/neon",
+      "metric": "parse",
+      "before_ns": 400247.375,
+      "after_ns": 410244.8125,
+      "after_over_before": 1.0249781463276304
+    },
+    {
+      "case": "eight_states/mk/neon",
+      "metric": "compress",
+      "before_ns": 700588.5,
+      "after_ns": 708369.875,
+      "after_over_before": 1.0111069122601928
+    },
+    {
+      "case": "eight_states/mk/neon",
+      "metric": "core_setup",
+      "before_ns": 829536.5,
+      "after_ns": 836432.25,
+      "after_over_before": 1.0083127746639238
+    },
+    {
+      "case": "missing_20_percent/matrices/portable",
+      "metric": "parse",
+      "before_ns": 364507.8125,
+      "after_ns": 371541.6875,
+      "after_over_before": 1.019296911503097
+    },
+    {
+      "case": "missing_20_percent/matrices/portable",
+      "metric": "compress",
+      "before_ns": 639364.625,
+      "after_ns": 670195.3125,
+      "after_over_before": 1.0482208215695388
+    },
+    {
+      "case": "missing_20_percent/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 261985.6875,
+      "after_ns": 266011.71875,
+      "after_over_before": 1.0153673709751796
+    },
+    {
+      "case": "missing_20_percent/matrices/neon",
+      "metric": "parse",
+      "before_ns": 360570.3125,
+      "after_ns": 368447.9375,
+      "after_over_before": 1.0218476805408099
+    },
+    {
+      "case": "missing_20_percent/matrices/neon",
+      "metric": "compress",
+      "before_ns": 637484.375,
+      "after_ns": 646760.375,
+      "after_over_before": 1.0145509448760999
+    },
+    {
+      "case": "missing_20_percent/mk/portable",
+      "metric": "compress",
+      "before_ns": 617804.6875,
+      "after_ns": 669354.25,
+      "after_over_before": 1.0834399018702816
+    },
+    {
+      "case": "missing_20_percent/mk/portable",
+      "metric": "core_setup",
+      "before_ns": 257423.15625,
+      "after_ns": 276294.25,
+      "after_over_before": 1.0733076776188428
+    },
+    {
+      "case": "repeated_columns/matrices/portable",
+      "metric": "parse",
+      "before_ns": 323052.0625,
+      "after_ns": 333408.875,
+      "after_over_before": 1.0320592675367921
+    },
+    {
+      "case": "repeated_columns/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 50565.75,
+      "after_ns": 52055.6640625,
+      "after_over_before": 1.0294648860641837
+    },
+    {
+      "case": "repeated_columns/matrices/portable",
+      "metric": "store",
+      "before_ns": 7.3805646896362305,
+      "after_ns": 7.534265518188477,
+      "after_over_before": 1.0208250770795455
+    },
+    {
+      "case": "repeated_columns/matrices/portable",
+      "metric": "store_restore",
+      "before_ns": 13.562601089477539,
+      "after_ns": 13.598918914794922,
+      "after_over_before": 1.0026777920457721
+    },
+    {
+      "case": "repeated_columns/matrices/neon",
+      "metric": "parse",
+      "before_ns": 323135.4375,
+      "after_ns": 333523.4375,
+      "after_over_before": 1.0321475109024525
+    },
+    {
+      "case": "repeated_columns/matrices/neon",
+      "metric": "compress",
+      "before_ns": 323213.5625,
+      "after_ns": 325177.125,
+      "after_over_before": 1.0060751240907473
+    },
+    {
+      "case": "repeated_columns/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 50694.3359375,
+      "after_ns": 51648.4375,
+      "after_over_before": 1.0188206738456205
+    },
+    {
+      "case": "repeated_columns/matrices/neon",
+      "metric": "store",
+      "before_ns": 7.375995635986328,
+      "after_ns": 7.508437156677246,
+      "after_over_before": 1.0179557482443125
+    },
+    {
+      "case": "repeated_columns/mk/portable",
+      "metric": "compress",
+      "before_ns": 322059.9375,
+      "after_ns": 327153.6875,
+      "after_over_before": 1.0158161553390974
+    },
+    {
+      "case": "repeated_columns/mk/portable",
+      "metric": "store",
+      "before_ns": 7.37154483795166,
+      "after_ns": 7.397731781005859,
+      "after_over_before": 1.003552436243673
+    },
+    {
+      "case": "repeated_columns/mk/neon",
+      "metric": "parse",
+      "before_ns": 327591.1875,
+      "after_ns": 332307.3125,
+      "after_over_before": 1.0143963732235624
+    },
+    {
+      "case": "repeated_columns/mk/neon",
+      "metric": "compress",
+      "before_ns": 322492.1875,
+      "after_ns": 326041.6875,
+      "after_over_before": 1.0110064681799462
+    },
+    {
+      "case": "repeated_columns/mk/neon",
+      "metric": "store",
+      "before_ns": 7.35660457611084,
+      "after_ns": 7.468700408935547,
+      "after_over_before": 1.0152374416301668
+    },
+    {
+      "case": "ladder/matrices/portable",
+      "metric": "parse",
+      "before_ns": 367515.625,
+      "after_ns": 373359.375,
+      "after_over_before": 1.015900684494707
+    },
+    {
+      "case": "ladder/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 258768.21875,
+      "after_ns": 280279.9375,
+      "after_over_before": 1.083131223972998
+    },
+    {
+      "case": "ladder/matrices/portable",
+      "metric": "store",
+      "before_ns": 7.3699951171875,
+      "after_ns": 7.450222969055176,
+      "after_over_before": 1.0108857401656315
+    },
+    {
+      "case": "ladder/matrices/neon",
+      "metric": "compress",
+      "before_ns": 665781.25,
+      "after_ns": 679093.75,
+      "after_over_before": 1.0199953062661347
+    },
+    {
+      "case": "ladder/matrices/neon",
+      "metric": "store",
+      "before_ns": 7.376590728759766,
+      "after_ns": 7.4770050048828125,
+      "after_over_before": 1.013612558946988
+    },
+    {
+      "case": "ladder/mk/portable",
+      "metric": "parse",
+      "before_ns": 367979.1875,
+      "after_ns": 367984.375,
+      "after_over_before": 1.000014097264672
+    },
+    {
+      "case": "ladder/mk/portable",
+      "metric": "core_setup",
+      "before_ns": 268102.84375,
+      "after_ns": 275251.28125,
+      "after_over_before": 1.0266630424355578
+    },
+    {
+      "case": "ladder/mk/portable",
+      "metric": "store",
+      "before_ns": 7.421930313110352,
+      "after_ns": 7.448474884033203,
+      "after_over_before": 1.003576505006516
+    },
+    {
+      "case": "ladder/mk/portable",
+      "metric": "store_restore",
+      "before_ns": 13.587474822998047,
+      "after_ns": 13.61306381225586,
+      "after_over_before": 1.0018832777680295
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "parse",
+      "before_ns": 364781.25,
+      "after_ns": 371257.8125,
+      "after_over_before": 1.0177546474770838
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "compress",
+      "before_ns": 663244.75,
+      "after_ns": 686838.625,
+      "after_over_before": 1.035573406348109
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "core_setup",
+      "before_ns": 259768.21875,
+      "after_ns": 271884.125,
+      "after_over_before": 1.046641218499713
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "store",
+      "before_ns": 7.319608688354492,
+      "after_ns": 7.415334701538086,
+      "after_over_before": 1.0130780233287462
+    },
+    {
+      "case": "small_unpadded/matrices/portable",
+      "metric": "parse",
+      "before_ns": 3726.33837890625,
+      "after_ns": 3866.455078125,
+      "after_over_before": 1.037601711109198
+    },
+    {
+      "case": "small_unpadded/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 1840.22021484375,
+      "after_ns": 1866.495849609375,
+      "after_over_before": 1.0142785274032304
+    },
+    {
+      "case": "small_unpadded/matrices/portable",
+      "metric": "store",
+      "before_ns": 4.653692245483398,
+      "after_ns": 5.0761308670043945,
+      "after_over_before": 1.0907749372406372
+    },
+    {
+      "case": "small_unpadded/matrices/neon",
+      "metric": "parse",
+      "before_ns": 3753.82470703125,
+      "after_ns": 3824.5439453125,
+      "after_over_before": 1.018839248979524
+    },
+    {
+      "case": "small_unpadded/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 1807.454345703125,
+      "after_ns": 1809.865478515625,
+      "after_over_before": 1.001333993756596
+    },
+    {
+      "case": "small_unpadded/mk/portable",
+      "metric": "parse",
+      "before_ns": 3794.39306640625,
+      "after_ns": 3812.66259765625,
+      "after_over_before": 1.0048148757733482
+    },
+    {
+      "case": "small_unpadded/mk/portable",
+      "metric": "compress",
+      "before_ns": 3877.46142578125,
+      "after_ns": 3916.21923828125,
+      "after_over_before": 1.0099956668149679
+    },
+    {
+      "case": "small_unpadded/mk/portable",
+      "metric": "store",
+      "before_ns": 4.473348140716553,
+      "after_ns": 4.519501686096191,
+      "after_over_before": 1.0103174499117447
+    },
+    {
+      "case": "small_unpadded/mk/neon",
+      "metric": "parse",
+      "before_ns": 3816.3046875,
+      "after_ns": 3825.68359375,
+      "after_over_before": 1.0024575884312172
+    },
+    {
+      "case": "small_unpadded/mk/neon",
+      "metric": "store",
+      "before_ns": 4.52733039855957,
+      "after_ns": 4.551072597503662,
+      "after_over_before": 1.0052441940070567
+    },
+    {
+      "case": "small_padded/matrices/portable",
+      "metric": "core_setup",
+      "before_ns": 2012.786865234375,
+      "after_ns": 2097.5341796875,
+      "after_over_before": 1.0421044651656433
+    },
+    {
+      "case": "small_padded/matrices/portable",
+      "metric": "store_restore",
+      "before_ns": 5.167564392089844,
+      "after_ns": 5.208015441894531,
+      "after_over_before": 1.0078278753268382
+    },
+    {
+      "case": "small_padded/matrices/neon",
+      "metric": "parse",
+      "before_ns": 4286.62109375,
+      "after_ns": 4334.06591796875,
+      "after_over_before": 1.0110681170976192
+    },
+    {
+      "case": "small_padded/matrices/neon",
+      "metric": "compress",
+      "before_ns": 4391.3984375,
+      "after_ns": 4490.3564453125,
+      "after_over_before": 1.0225345090455595
+    },
+    {
+      "case": "small_padded/matrices/neon",
+      "metric": "core_setup",
+      "before_ns": 2023.468017578125,
+      "after_ns": 2080.820556640625,
+      "after_over_before": 1.0283436844883493
+    },
+    {
+      "case": "small_padded/mk/portable",
+      "metric": "parse",
+      "before_ns": 4267.6796875,
+      "after_ns": 4293.15185546875,
+      "after_over_before": 1.0059686222570448
+    },
+    {
+      "case": "small_padded/mk/portable",
+      "metric": "core_setup",
+      "before_ns": 1882.73095703125,
+      "after_ns": 1931.68115234375,
+      "after_over_before": 1.025999570002124
+    },
+    {
+      "case": "small_padded/mk/portable",
+      "metric": "store",
+      "before_ns": 5.126774311065674,
+      "after_ns": 5.214571952819824,
+      "after_over_before": 1.0171253182658435
+    },
+    {
+      "case": "small_padded/mk/portable",
+      "metric": "store_restore",
+      "before_ns": 5.156159400939941,
+      "after_ns": 5.248069763183594,
+      "after_over_before": 1.0178253531546946
+    },
+    {
+      "case": "small_padded/mk/neon",
+      "metric": "parse",
+      "before_ns": 4336.58837890625,
+      "after_ns": 4349.28369140625,
+      "after_over_before": 1.0029274884749846
+    },
+    {
+      "case": "small_padded/mk/neon",
+      "metric": "compress",
+      "before_ns": 4416.66650390625,
+      "after_ns": 4423.15673828125,
+      "after_over_before": 1.0014694870824545
+    },
+    {
+      "case": "small_padded/mk/neon",
+      "metric": "core_setup",
+      "before_ns": 1905.070068359375,
+      "after_ns": 1956.77685546875,
+      "after_over_before": 1.0271416720928823
+    },
+    {
+      "case": "small_padded/mk/neon",
+      "metric": "store",
+      "before_ns": 4.754265308380127,
+      "after_ns": 5.067030906677246,
+      "after_over_before": 1.06578631565761
+    }
+  ],
+  "subtree_vs_local_exponents": [
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 24367.3515625,
+      "subtree_ns": 24447.91796875,
+      "subtree_over_local": 1.00330632592727
+    },
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "compress",
+      "local_sum_ns": 22302.8984375,
+      "subtree_ns": 22674.640625,
+      "subtree_over_local": 1.0166678868462655
+    },
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 9998.37109375,
+      "subtree_ns": 10139.2421875,
+      "subtree_over_local": 1.0140894044068898
+    },
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "store",
+      "local_sum_ns": 8.660356521606445,
+      "subtree_ns": 8.775551795959473,
+      "subtree_over_local": 1.0133014471246802
+    },
+    {
+      "case": "reference_20x50/matrices/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 9.021322250366211,
+      "subtree_ns": 9.49716567993164,
+      "subtree_over_local": 1.0527465283202928
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 24026.203125,
+      "subtree_ns": 24062.3359375,
+      "subtree_over_local": 1.0015038919096793
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "compress",
+      "local_sum_ns": 22645.34765625,
+      "subtree_ns": 22850.09765625,
+      "subtree_over_local": 1.0090415922558598
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "store",
+      "local_sum_ns": 8.66230297088623,
+      "subtree_ns": 8.873581886291504,
+      "subtree_over_local": 1.0243906171505863
+    },
+    {
+      "case": "reference_20x50/matrices/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 8.991122245788574,
+      "subtree_ns": 9.01905632019043,
+      "subtree_over_local": 1.0031068506954113
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "parse",
+      "local_sum_ns": 24482.74609375,
+      "subtree_ns": 24549.4765625,
+      "subtree_over_local": 1.0027256120900194
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 22271.484375,
+      "subtree_ns": 22610.67578125,
+      "subtree_over_local": 1.0152298517933878
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 9297.6884765625,
+      "subtree_ns": 9406.25,
+      "subtree_over_local": 1.011676184216234
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "store",
+      "local_sum_ns": 8.68193244934082,
+      "subtree_ns": 8.781790733337402,
+      "subtree_over_local": 1.0115018499140895
+    },
+    {
+      "case": "reference_20x50/mk/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 9.507020950317383,
+      "subtree_ns": 9.665410041809082,
+      "subtree_over_local": 1.0166602232517865
+    },
+    {
+      "case": "reference_20x50/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 24312.98828125,
+      "subtree_ns": 24723.47265625,
+      "subtree_over_local": 1.016883337015243
+    },
+    {
+      "case": "reference_20x50/mk/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 9165.52734375,
+      "subtree_ns": 9353.677734375,
+      "subtree_over_local": 1.020528048585584
+    },
+    {
+      "case": "reference_20x50/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 8.7050199508667,
+      "subtree_ns": 8.740425109863281,
+      "subtree_over_local": 1.0040672117004232
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 24035.15625,
+      "subtree_ns": 24792.96875,
+      "subtree_over_local": 1.0315293352836015
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "compress",
+      "local_sum_ns": 22285.3203125,
+      "subtree_ns": 22326.984375,
+      "subtree_over_local": 1.0018695743168937
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "store",
+      "local_sum_ns": 8.694608688354492,
+      "subtree_ns": 8.720913887023926,
+      "subtree_over_local": 1.0030254609048326
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 9.265741348266602,
+      "subtree_ns": 9.516399383544922,
+      "subtree_over_local": 1.0270521295444117
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 24336.09765625,
+      "subtree_ns": 24453.61328125,
+      "subtree_over_local": 1.0048288606768399
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "compress",
+      "local_sum_ns": 22432.12890625,
+      "subtree_ns": 22628.74609375,
+      "subtree_over_local": 1.0087649811715025
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 11146.564453125,
+      "subtree_ns": 11267.4140625,
+      "subtree_over_local": 1.0108418705945865
+    },
+    {
+      "case": "reference_20x50_mkv/matrices/neon",
+      "metric": "store",
+      "local_sum_ns": 8.72619915008545,
+      "subtree_ns": 8.82705020904541,
+      "subtree_over_local": 1.011557272212722
+    },
+    {
+      "case": "reference_20x50_mkv/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 22161.29296875,
+      "subtree_ns": 22395.99609375,
+      "subtree_over_local": 1.0105906783205727
+    },
+    {
+      "case": "reference_20x50_mkv/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 10247.0703125,
+      "subtree_ns": 10514.16015625,
+      "subtree_over_local": 1.0260649957114267
+    },
+    {
+      "case": "reference_20x50_mkv/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 24406.0859375,
+      "subtree_ns": 24622.234375,
+      "subtree_over_local": 1.0088563335412946
+    },
+    {
+      "case": "reference_20x50_mkv/mk/neon",
+      "metric": "compress",
+      "local_sum_ns": 22277.015625,
+      "subtree_ns": 22726.40234375,
+      "subtree_over_local": 1.0201726625466692
+    },
+    {
+      "case": "reference_20x50_mkv/mk/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 10279.458984375,
+      "subtree_ns": 10444.904296875,
+      "subtree_over_local": 1.0160947490282786
+    },
+    {
+      "case": "reference_20x50_mkv/mk/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 8.97447395324707,
+      "subtree_ns": 9.639382362365723,
+      "subtree_over_local": 1.0740888449376
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 355330.75,
+      "subtree_ns": 367466.1875,
+      "subtree_over_local": 1.0341525114277332
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "compress",
+      "local_sum_ns": 633979.125,
+      "subtree_ns": 635916.625,
+      "subtree_over_local": 1.0030560943154083
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 264507.8125,
+      "subtree_ns": 277641.9375,
+      "subtree_over_local": 1.0496549605694538
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "full_cached",
+      "local_sum_ns": 186610.6875,
+      "subtree_ns": 186756.5,
+      "subtree_over_local": 1.0007813727174657
+    },
+    {
+      "case": "morphology_90x250/matrices/portable",
+      "metric": "store",
+      "local_sum_ns": 7.453958511352539,
+      "subtree_ns": 7.464051246643066,
+      "subtree_over_local": 1.001354010124306
+    },
+    {
+      "case": "morphology_90x250/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 358184.875,
+      "subtree_ns": 368484.375,
+      "subtree_over_local": 1.028754703838346
+    },
+    {
+      "case": "morphology_90x250/matrices/neon",
+      "metric": "compress",
+      "local_sum_ns": 629963.625,
+      "subtree_ns": 641859.375,
+      "subtree_over_local": 1.0188832331390563
+    },
+    {
+      "case": "morphology_90x250/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 266212.25,
+      "subtree_ns": 279333.3125,
+      "subtree_over_local": 1.0492879741634729
+    },
+    {
+      "case": "morphology_90x250/matrices/neon",
+      "metric": "store",
+      "local_sum_ns": 7.360060691833496,
+      "subtree_ns": 7.441043853759766,
+      "subtree_over_local": 1.011003056267746
+    },
+    {
+      "case": "morphology_90x250/matrices/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.569831848144531,
+      "subtree_ns": 13.641834259033203,
+      "subtree_over_local": 1.0053060650783612
+    },
+    {
+      "case": "morphology_90x250/mk/portable",
+      "metric": "parse",
+      "local_sum_ns": 362487.0,
+      "subtree_ns": 366059.875,
+      "subtree_over_local": 1.0098565603731995
+    },
+    {
+      "case": "morphology_90x250/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 637744.875,
+      "subtree_ns": 643244.75,
+      "subtree_over_local": 1.0086239422935386
+    },
+    {
+      "case": "morphology_90x250/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 265854.1875,
+      "subtree_ns": 268182.28125,
+      "subtree_over_local": 1.0087570324616384
+    },
+    {
+      "case": "morphology_90x250/mk/portable",
+      "metric": "store",
+      "local_sum_ns": 7.437348365783691,
+      "subtree_ns": 7.498225212097168,
+      "subtree_over_local": 1.0081852890733944
+    },
+    {
+      "case": "morphology_90x250/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 361369.75,
+      "subtree_ns": 369414.0625,
+      "subtree_over_local": 1.0222606139556507
+    },
+    {
+      "case": "morphology_90x250/mk/neon",
+      "metric": "compress",
+      "local_sum_ns": 634468.75,
+      "subtree_ns": 639380.125,
+      "subtree_over_local": 1.0077409249864553
+    },
+    {
+      "case": "morphology_90x250/mk/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 253281.25,
+      "subtree_ns": 256535.15625,
+      "subtree_over_local": 1.012847008019741
+    },
+    {
+      "case": "morphology_90x250/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 7.336616516113281,
+      "subtree_ns": 7.501046180725098,
+      "subtree_over_local": 1.0224121929026389
+    },
+    {
+      "case": "morphology_90x250/mk/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.513326644897461,
+      "subtree_ns": 13.596138000488281,
+      "subtree_over_local": 1.006128125055135
+    },
+    {
+      "case": "binary_one_rate/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 369674.5,
+      "subtree_ns": 372700.5,
+      "subtree_over_local": 1.0081855794759984
+    },
+    {
+      "case": "binary_one_rate/matrices/portable",
+      "metric": "compress",
+      "local_sum_ns": 674921.875,
+      "subtree_ns": 679786.5,
+      "subtree_over_local": 1.0072076860747772
+    },
+    {
+      "case": "binary_one_rate/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 99865.234375,
+      "subtree_ns": 103349.609375,
+      "subtree_over_local": 1.0348907707652892
+    },
+    {
+      "case": "binary_one_rate/matrices/portable",
+      "metric": "store",
+      "local_sum_ns": 7.316669464111328,
+      "subtree_ns": 7.390856742858887,
+      "subtree_over_local": 1.0101394875238592
+    },
+    {
+      "case": "binary_one_rate/matrices/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 13.50625228881836,
+      "subtree_ns": 13.51785659790039,
+      "subtree_over_local": 1.000859180536087
+    },
+    {
+      "case": "binary_one_rate/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 359992.1875,
+      "subtree_ns": 378289.0625,
+      "subtree_over_local": 1.0508257557672693
+    },
+    {
+      "case": "binary_one_rate/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 96188.8125,
+      "subtree_ns": 98216.140625,
+      "subtree_over_local": 1.021076548013315
+    },
+    {
+      "case": "binary_one_rate/matrices/neon",
+      "metric": "store",
+      "local_sum_ns": 7.419864654541016,
+      "subtree_ns": 7.462580680847168,
+      "subtree_over_local": 1.0057569818716317
+    },
+    {
+      "case": "binary_one_rate/mk/portable",
+      "metric": "parse",
+      "local_sum_ns": 362421.875,
+      "subtree_ns": 367281.25,
+      "subtree_over_local": 1.0134080620823454
+    },
+    {
+      "case": "binary_one_rate/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 680541.75,
+      "subtree_ns": 687828.125,
+      "subtree_over_local": 1.0107067273976946
+    },
+    {
+      "case": "binary_one_rate/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 96438.140625,
+      "subtree_ns": 98548.828125,
+      "subtree_over_local": 1.0218864391860003
+    },
+    {
+      "case": "binary_one_rate/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 358354.1875,
+      "subtree_ns": 377575.5,
+      "subtree_over_local": 1.053637750500683
+    },
+    {
+      "case": "binary_one_rate/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 7.332880973815918,
+      "subtree_ns": 7.373730659484863,
+      "subtree_over_local": 1.0055707553163362
+    },
+    {
+      "case": "binary_one_rate/mk/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.529619216918945,
+      "subtree_ns": 13.56363296508789,
+      "subtree_over_local": 1.0025140210987173
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 363268.1875,
+      "subtree_ns": 372304.6875,
+      "subtree_over_local": 1.0248755611169502
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "compress",
+      "local_sum_ns": 670734.375,
+      "subtree_ns": 678380.125,
+      "subtree_over_local": 1.0113990728445967
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 276106.78125,
+      "subtree_ns": 278046.875,
+      "subtree_over_local": 1.0070266066672349
+    },
+    {
+      "case": "binary_four_rates/matrices/portable",
+      "metric": "full_with_branches",
+      "local_sum_ns": 193692.71875,
+      "subtree_ns": 194365.90625,
+      "subtree_over_local": 1.003475543656697
+    },
+    {
+      "case": "binary_four_rates/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 354231.75,
+      "subtree_ns": 379515.625,
+      "subtree_over_local": 1.0713766481971196
+    },
+    {
+      "case": "binary_four_rates/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 270990.90625,
+      "subtree_ns": 280526.03125,
+      "subtree_over_local": 1.0351861438154808
+    },
+    {
+      "case": "binary_four_rates/mk/portable",
+      "metric": "parse",
+      "local_sum_ns": 362174.5,
+      "subtree_ns": 374169.25,
+      "subtree_over_local": 1.0331187038292315
+    },
+    {
+      "case": "binary_four_rates/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 674750.0,
+      "subtree_ns": 686505.125,
+      "subtree_over_local": 1.017421452389774
+    },
+    {
+      "case": "binary_four_rates/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 274177.09375,
+      "subtree_ns": 276402.34375,
+      "subtree_over_local": 1.0081161047028568
+    },
+    {
+      "case": "binary_four_rates/mk/portable",
+      "metric": "full_cached",
+      "local_sum_ns": 160260.40625,
+      "subtree_ns": 161082.03125,
+      "subtree_over_local": 1.0051268121629386
+    },
+    {
+      "case": "binary_four_rates/mk/portable",
+      "metric": "store",
+      "local_sum_ns": 7.41716194152832,
+      "subtree_ns": 7.448554039001465,
+      "subtree_over_local": 1.0042323597247327
+    },
+    {
+      "case": "binary_four_rates/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 363247.375,
+      "subtree_ns": 370710.9375,
+      "subtree_over_local": 1.0205467761466962
+    },
+    {
+      "case": "binary_four_rates/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 7.398565292358398,
+      "subtree_ns": 7.425466537475586,
+      "subtree_over_local": 1.0036360083413702
+    },
+    {
+      "case": "binary_four_rates/mk/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.623159408569336,
+      "subtree_ns": 13.684432983398438,
+      "subtree_over_local": 1.0044977507046242
+    },
+    {
+      "case": "ternary_four_rates/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 374156.25,
+      "subtree_ns": 381802.0625,
+      "subtree_over_local": 1.0204348116595674
+    },
+    {
+      "case": "ternary_four_rates/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 378250.0,
+      "subtree_ns": 394911.4375,
+      "subtree_over_local": 1.0440487442167878
+    },
+    {
+      "case": "ternary_four_rates/matrices/portable",
+      "metric": "full_cached",
+      "local_sum_ns": 322309.9375,
+      "subtree_ns": 324726.5625,
+      "subtree_over_local": 1.0074978296317656
+    },
+    {
+      "case": "ternary_four_rates/matrices/portable",
+      "metric": "full_with_branches",
+      "local_sum_ns": 331216.125,
+      "subtree_ns": 331268.25,
+      "subtree_over_local": 1.0001573745843444
+    },
+    {
+      "case": "ternary_four_rates/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 375992.1875,
+      "subtree_ns": 381635.375,
+      "subtree_over_local": 1.0150087892451223
+    },
+    {
+      "case": "ternary_four_rates/matrices/neon",
+      "metric": "compress",
+      "local_sum_ns": 708703.125,
+      "subtree_ns": 714250.0,
+      "subtree_over_local": 1.0078267963048702
+    },
+    {
+      "case": "ternary_four_rates/matrices/neon",
+      "metric": "full_cached",
+      "local_sum_ns": 314157.53125,
+      "subtree_ns": 315713.5625,
+      "subtree_over_local": 1.0049530286407864
+    },
+    {
+      "case": "ternary_four_rates/mk/portable",
+      "metric": "parse",
+      "local_sum_ns": 370317.6875,
+      "subtree_ns": 378929.6875,
+      "subtree_over_local": 1.0232557079791118
+    },
+    {
+      "case": "ternary_four_rates/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 713244.75,
+      "subtree_ns": 721166.625,
+      "subtree_over_local": 1.0111068115117567
+    },
+    {
+      "case": "ternary_four_rates/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 351466.125,
+      "subtree_ns": 370960.9375,
+      "subtree_over_local": 1.0554671164966467
+    },
+    {
+      "case": "ternary_four_rates/mk/portable",
+      "metric": "store",
+      "local_sum_ns": 7.4187517166137695,
+      "subtree_ns": 7.516145706176758,
+      "subtree_over_local": 1.0131280831713079
+    },
+    {
+      "case": "ternary_four_rates/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 375638.0625,
+      "subtree_ns": 379372.375,
+      "subtree_over_local": 1.0099412516270232
+    },
+    {
+      "case": "ternary_four_rates/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 7.390618324279785,
+      "subtree_ns": 7.466952323913574,
+      "subtree_over_local": 1.0103284997661177
+    },
+    {
+      "case": "ternary_four_rates/mk/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.589620590209961,
+      "subtree_ns": 13.64366340637207,
+      "subtree_over_local": 1.0039767715223074
+    },
+    {
+      "case": "eight_states/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 400414.0625,
+      "subtree_ns": 416695.3125,
+      "subtree_over_local": 1.0406610344760308
+    },
+    {
+      "case": "eight_states/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 800036.375,
+      "subtree_ns": 829323.0,
+      "subtree_over_local": 1.0366066167928927
+    },
+    {
+      "case": "eight_states/matrices/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 13.595184326171875,
+      "subtree_ns": 13.674020767211914,
+      "subtree_over_local": 1.0057988504715065
+    },
+    {
+      "case": "eight_states/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 386867.1875,
+      "subtree_ns": 398544.3125,
+      "subtree_over_local": 1.0301838082352228
+    },
+    {
+      "case": "eight_states/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 792447.875,
+      "subtree_ns": 875338.5,
+      "subtree_over_local": 1.1046007284706265
+    },
+    {
+      "case": "eight_states/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 692307.25,
+      "subtree_ns": 724531.25,
+      "subtree_over_local": 1.046545807515377
+    },
+    {
+      "case": "eight_states/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 771281.25,
+      "subtree_ns": 788343.75,
+      "subtree_over_local": 1.0221222802965844
+    },
+    {
+      "case": "eight_states/mk/portable",
+      "metric": "full_cached",
+      "local_sum_ns": 544127.625,
+      "subtree_ns": 544612.0,
+      "subtree_over_local": 1.0008901863786093
+    },
+    {
+      "case": "eight_states/mk/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 13.597726821899414,
+      "subtree_ns": 13.65208625793457,
+      "subtree_over_local": 1.0039976855504709
+    },
+    {
+      "case": "eight_states/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 384151.0625,
+      "subtree_ns": 410244.8125,
+      "subtree_over_local": 1.0679257525156527
+    },
+    {
+      "case": "eight_states/mk/neon",
+      "metric": "compress",
+      "local_sum_ns": 694838.625,
+      "subtree_ns": 708369.875,
+      "subtree_over_local": 1.0194739461986586
+    },
+    {
+      "case": "eight_states/mk/neon",
+      "metric": "full_with_branches",
+      "local_sum_ns": 419580.75,
+      "subtree_ns": 424682.3125,
+      "subtree_over_local": 1.0121587143833457
+    },
+    {
+      "case": "missing_20_percent/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 365726.5625,
+      "subtree_ns": 371541.6875,
+      "subtree_over_local": 1.0159001986627647
+    },
+    {
+      "case": "missing_20_percent/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 261270.84375,
+      "subtree_ns": 266011.71875,
+      "subtree_over_local": 1.0181454422236886
+    },
+    {
+      "case": "missing_20_percent/matrices/portable",
+      "metric": "full_cached",
+      "local_sum_ns": 188395.84375,
+      "subtree_ns": 189582.03125,
+      "subtree_over_local": 1.0062962508959277
+    },
+    {
+      "case": "missing_20_percent/matrices/portable",
+      "metric": "store",
+      "local_sum_ns": 7.347783088684082,
+      "subtree_ns": 7.35910701751709,
+      "subtree_over_local": 1.0015411354276975
+    },
+    {
+      "case": "missing_20_percent/matrices/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 13.58000373840332,
+      "subtree_ns": 13.583183288574219,
+      "subtree_over_local": 1.0002341347051258
+    },
+    {
+      "case": "missing_20_percent/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 349401.0625,
+      "subtree_ns": 368447.9375,
+      "subtree_over_local": 1.0545129281053631
+    },
+    {
+      "case": "missing_20_percent/matrices/neon",
+      "metric": "compress",
+      "local_sum_ns": 644375.0,
+      "subtree_ns": 646760.375,
+      "subtree_over_local": 1.003701842870999
+    },
+    {
+      "case": "missing_20_percent/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 273002.59375,
+      "subtree_ns": 274554.6875,
+      "subtree_over_local": 1.0056852710762936
+    },
+    {
+      "case": "missing_20_percent/matrices/neon",
+      "metric": "full_with_branches",
+      "local_sum_ns": 188873.6875,
+      "subtree_ns": 189341.125,
+      "subtree_over_local": 1.0024748682899518
+    },
+    {
+      "case": "missing_20_percent/mk/portable",
+      "metric": "parse",
+      "local_sum_ns": 347468.75,
+      "subtree_ns": 360291.625,
+      "subtree_over_local": 1.0369036783883443
+    },
+    {
+      "case": "missing_20_percent/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 655869.875,
+      "subtree_ns": 669354.25,
+      "subtree_over_local": 1.0205595279094042
+    },
+    {
+      "case": "missing_20_percent/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 274072.90625,
+      "subtree_ns": 276294.25,
+      "subtree_over_local": 1.0081049374065956
+    },
+    {
+      "case": "missing_20_percent/mk/portable",
+      "metric": "full_with_branches",
+      "local_sum_ns": 163846.34375,
+      "subtree_ns": 164736.96875,
+      "subtree_over_local": 1.0054357331364008
+    },
+    {
+      "case": "missing_20_percent/mk/portable",
+      "metric": "store",
+      "local_sum_ns": 7.37607479095459,
+      "subtree_ns": 7.382392883300781,
+      "subtree_over_local": 1.0008565656565656
+    },
+    {
+      "case": "missing_20_percent/mk/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 13.59073257446289,
+      "subtree_ns": 13.640403747558594,
+      "subtree_over_local": 1.0036547826118687
+    },
+    {
+      "case": "missing_20_percent/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 7.365505218505859,
+      "subtree_ns": 7.404367446899414,
+      "subtree_over_local": 1.0052762474861756
+    },
+    {
+      "case": "missing_20_percent/mk/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.503393173217773,
+      "subtree_ns": 13.509193420410156,
+      "subtree_over_local": 1.000429539976951
+    },
+    {
+      "case": "repeated_columns/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 324067.6875,
+      "subtree_ns": 333408.875,
+      "subtree_over_local": 1.0288248037688115
+    },
+    {
+      "case": "repeated_columns/matrices/portable",
+      "metric": "compress",
+      "local_sum_ns": 326724.0,
+      "subtree_ns": 326760.4375,
+      "subtree_over_local": 1.0001115237937832
+    },
+    {
+      "case": "repeated_columns/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 52040.0390625,
+      "subtree_ns": 52055.6640625,
+      "subtree_over_local": 1.0003002495824653
+    },
+    {
+      "case": "repeated_columns/matrices/portable",
+      "metric": "store",
+      "local_sum_ns": 7.400115013122559,
+      "subtree_ns": 7.534265518188477,
+      "subtree_over_local": 1.0181281648769012
+    },
+    {
+      "case": "repeated_columns/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 320703.125,
+      "subtree_ns": 333523.4375,
+      "subtree_over_local": 1.0399756394640682
+    },
+    {
+      "case": "repeated_columns/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 51298.1796875,
+      "subtree_ns": 51648.4375,
+      "subtree_over_local": 1.0068278799488346
+    },
+    {
+      "case": "repeated_columns/matrices/neon",
+      "metric": "store",
+      "local_sum_ns": 7.477441787719727,
+      "subtree_ns": 7.508437156677246,
+      "subtree_over_local": 1.00414518358517
+    },
+    {
+      "case": "repeated_columns/matrices/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.570150375366211,
+      "subtree_ns": 13.598203659057617,
+      "subtree_over_local": 1.0020672787637144
+    },
+    {
+      "case": "repeated_columns/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 323018.1875,
+      "subtree_ns": 327153.6875,
+      "subtree_over_local": 1.0128026846785523
+    },
+    {
+      "case": "repeated_columns/mk/portable",
+      "metric": "store",
+      "local_sum_ns": 7.353504180908203,
+      "subtree_ns": 7.397731781005859,
+      "subtree_over_local": 1.0060144930919444
+    },
+    {
+      "case": "repeated_columns/mk/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 13.551950454711914,
+      "subtree_ns": 13.610523223876953,
+      "subtree_over_local": 1.0043220914480744
+    },
+    {
+      "case": "repeated_columns/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 324140.625,
+      "subtree_ns": 332307.3125,
+      "subtree_over_local": 1.0251948903350205
+    },
+    {
+      "case": "repeated_columns/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 7.448275566101074,
+      "subtree_ns": 7.468700408935547,
+      "subtree_over_local": 1.0027422243784092
+    },
+    {
+      "case": "repeated_columns/mk/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.528745651245117,
+      "subtree_ns": 13.630708694458008,
+      "subtree_over_local": 1.0075367699150666
+    },
+    {
+      "case": "ladder/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 365794.25,
+      "subtree_ns": 373359.375,
+      "subtree_over_local": 1.0206813666425867
+    },
+    {
+      "case": "ladder/matrices/portable",
+      "metric": "compress",
+      "local_sum_ns": 672583.375,
+      "subtree_ns": 674338.5,
+      "subtree_over_local": 1.002609527777876
+    },
+    {
+      "case": "ladder/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 268795.5625,
+      "subtree_ns": 280279.9375,
+      "subtree_over_local": 1.0427253147082738
+    },
+    {
+      "case": "ladder/matrices/portable",
+      "metric": "store",
+      "local_sum_ns": 7.421931266784668,
+      "subtree_ns": 7.450222969055176,
+      "subtree_over_local": 1.003811905722857
+    },
+    {
+      "case": "ladder/matrices/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 13.480344772338867,
+      "subtree_ns": 13.643819808959961,
+      "subtree_over_local": 1.0121269180708596
+    },
+    {
+      "case": "ladder/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 364260.4375,
+      "subtree_ns": 369598.9375,
+      "subtree_over_local": 1.0146557228027269
+    },
+    {
+      "case": "ladder/matrices/neon",
+      "metric": "compress",
+      "local_sum_ns": 670979.25,
+      "subtree_ns": 679093.75,
+      "subtree_over_local": 1.0120935185402529
+    },
+    {
+      "case": "ladder/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 256498.6875,
+      "subtree_ns": 257384.125,
+      "subtree_over_local": 1.0034520157145053
+    },
+    {
+      "case": "ladder/matrices/neon",
+      "metric": "store",
+      "local_sum_ns": 7.421056747436523,
+      "subtree_ns": 7.4770050048828125,
+      "subtree_over_local": 1.007539122708584
+    },
+    {
+      "case": "ladder/matrices/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.630468368530273,
+      "subtree_ns": 13.638973236083984,
+      "subtree_over_local": 1.0006239600374516
+    },
+    {
+      "case": "ladder/mk/portable",
+      "metric": "parse",
+      "local_sum_ns": 365877.625,
+      "subtree_ns": 367984.375,
+      "subtree_over_local": 1.0057580727982478
+    },
+    {
+      "case": "ladder/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 269332.03125,
+      "subtree_ns": 275251.28125,
+      "subtree_over_local": 1.021977519615948
+    },
+    {
+      "case": "ladder/mk/portable",
+      "metric": "store",
+      "local_sum_ns": 7.3551740646362305,
+      "subtree_ns": 7.448474884033203,
+      "subtree_over_local": 1.0126850593306234
+    },
+    {
+      "case": "ladder/mk/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 13.533273696899414,
+      "subtree_ns": 13.61306381225586,
+      "subtree_over_local": 1.0058958473125927
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 357679.6875,
+      "subtree_ns": 371257.8125,
+      "subtree_over_local": 1.0379616888364678
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "compress",
+      "local_sum_ns": 668895.875,
+      "subtree_ns": 686838.625,
+      "subtree_over_local": 1.026824429138541
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 265375.0,
+      "subtree_ns": 271884.125,
+      "subtree_over_local": 1.0245280263777674
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 7.37623405456543,
+      "subtree_ns": 7.415334701538086,
+      "subtree_over_local": 1.0053008956444998
+    },
+    {
+      "case": "ladder/mk/neon",
+      "metric": "store_restore",
+      "local_sum_ns": 13.521512985229492,
+      "subtree_ns": 13.581275939941406,
+      "subtree_over_local": 1.0044198422748398
+    },
+    {
+      "case": "small_unpadded/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 3841.755859375,
+      "subtree_ns": 3866.455078125,
+      "subtree_over_local": 1.0064291484555759
+    },
+    {
+      "case": "small_unpadded/matrices/portable",
+      "metric": "store",
+      "local_sum_ns": 4.443725109100342,
+      "subtree_ns": 5.0761308670043945,
+      "subtree_over_local": 1.1423143291669737
+    },
+    {
+      "case": "small_unpadded/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 3824.23876953125,
+      "subtree_ns": 3824.5439453125,
+      "subtree_over_local": 1.0000798003994105
+    },
+    {
+      "case": "small_unpadded/matrices/neon",
+      "metric": "compress",
+      "local_sum_ns": 3916.4833984375,
+      "subtree_ns": 3929.28076171875,
+      "subtree_over_local": 1.0032675647971228
+    },
+    {
+      "case": "small_unpadded/mk/portable",
+      "metric": "parse",
+      "local_sum_ns": 3773.82421875,
+      "subtree_ns": 3812.66259765625,
+      "subtree_over_local": 1.0102915177430056
+    },
+    {
+      "case": "small_unpadded/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 3914.8154296875,
+      "subtree_ns": 3916.21923828125,
+      "subtree_over_local": 1.000358588704618
+    },
+    {
+      "case": "small_unpadded/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 1679.341552734375,
+      "subtree_ns": 1680.033447265625,
+      "subtree_over_local": 1.0004120034605966
+    },
+    {
+      "case": "small_unpadded/mk/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 5.186836242675781,
+      "subtree_ns": 5.204558372497559,
+      "subtree_over_local": 1.0034167513668477
+    },
+    {
+      "case": "small_unpadded/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 3786.70263671875,
+      "subtree_ns": 3825.68359375,
+      "subtree_over_local": 1.0102941690359473
+    },
+    {
+      "case": "small_unpadded/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 4.49738883972168,
+      "subtree_ns": 4.551072597503662,
+      "subtree_over_local": 1.0119366502864593
+    },
+    {
+      "case": "small_padded/matrices/portable",
+      "metric": "parse",
+      "local_sum_ns": 4263.00048828125,
+      "subtree_ns": 4292.37841796875,
+      "subtree_over_local": 1.0068913737561744
+    },
+    {
+      "case": "small_padded/matrices/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 2080.729248046875,
+      "subtree_ns": 2097.5341796875,
+      "subtree_over_local": 1.0080764624500758
+    },
+    {
+      "case": "small_padded/matrices/neon",
+      "metric": "parse",
+      "local_sum_ns": 4255.0458984375,
+      "subtree_ns": 4334.06591796875,
+      "subtree_over_local": 1.0185708970989635
+    },
+    {
+      "case": "small_padded/matrices/neon",
+      "metric": "compress",
+      "local_sum_ns": 4408.1015625,
+      "subtree_ns": 4490.3564453125,
+      "subtree_over_local": 1.0186599336803506
+    },
+    {
+      "case": "small_padded/matrices/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 2073.5576171875,
+      "subtree_ns": 2080.820556640625,
+      "subtree_over_local": 1.0035026465591905
+    },
+    {
+      "case": "small_padded/matrices/neon",
+      "metric": "store",
+      "local_sum_ns": 4.836976528167725,
+      "subtree_ns": 4.9796905517578125,
+      "subtree_over_local": 1.029504799694397
+    },
+    {
+      "case": "small_padded/mk/portable",
+      "metric": "compress",
+      "local_sum_ns": 4430.0126953125,
+      "subtree_ns": 4439.7177734375,
+      "subtree_over_local": 1.0021907562782537
+    },
+    {
+      "case": "small_padded/mk/portable",
+      "metric": "core_setup",
+      "local_sum_ns": 1901.499267578125,
+      "subtree_ns": 1931.68115234375,
+      "subtree_over_local": 1.01587267756567
+    },
+    {
+      "case": "small_padded/mk/portable",
+      "metric": "store",
+      "local_sum_ns": 4.478713035583496,
+      "subtree_ns": 5.214571952819824,
+      "subtree_over_local": 1.164301421276583
+    },
+    {
+      "case": "small_padded/mk/portable",
+      "metric": "store_restore",
+      "local_sum_ns": 5.2284393310546875,
+      "subtree_ns": 5.248069763183594,
+      "subtree_over_local": 1.0037545490893065
+    },
+    {
+      "case": "small_padded/mk/neon",
+      "metric": "parse",
+      "local_sum_ns": 4317.7900390625,
+      "subtree_ns": 4349.28369140625,
+      "subtree_over_local": 1.0072939286206208
+    },
+    {
+      "case": "small_padded/mk/neon",
+      "metric": "core_setup",
+      "local_sum_ns": 1931.84423828125,
+      "subtree_ns": 1956.77685546875,
+      "subtree_over_local": 1.0129061218774462
+    },
+    {
+      "case": "small_padded/mk/neon",
+      "metric": "store",
+      "local_sum_ns": 4.630704879760742,
+      "subtree_ns": 5.067030906677246,
+      "subtree_over_local": 1.0942245377854976
+    }
+  ]
+}
