@@ -1,0 +1,156 @@
+package rove.reference;
+
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.alignment.Sequence;
+import beast.base.evolution.branchratemodel.BranchRateModel;
+import beast.base.evolution.branchratemodel.StrictClockModel;
+import beast.base.evolution.branchratemodel.UCRelaxedClockModel;
+import beast.base.evolution.datatype.StandardData;
+import beast.base.evolution.likelihood.TreeLikelihood;
+import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.inference.distribution.LogNormalDistributionModel;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.parser.NexusParser;
+import beast.pkgmgmt.PackageManager;
+import morphmodels.evolution.substitutionmodel.LewisMK;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+/** Fixed-state partition oracle using BEAST 2.7.8 and MM 1.2.1. */
+public final class PartitionLikelihood {
+    private static final double[] HEIGHTS = {0, 0, 0, 0, 0, 0, .12, .18, .2, .43, .7};
+    private static final int[][] CHILDREN = {{0, 1}, {2, 3}, {4, 5}, {6, 7}, {9, 8}};
+    private static final double[] RATES = {.25, 1.8, .9, 1.2, 2.1, .7, 1.4, .6, 1.1, .8};
+
+    private record Character(int site, List<Integer> states) {}
+
+    private static Map<Integer, List<Character>> partitions(Alignment data) {
+        Map<Integer, List<Character>> groups = new TreeMap<>();
+        for (int site = 0; site < data.getSiteCount(); site++) {
+            TreeSet<Integer> states = new TreeSet<>();
+            for (int code : data.getPattern(data.getPatternIndex(site))) {
+                String symbol = data.getDataType().getCode(code);
+                if (!symbol.equals("?") && !symbol.equals("-")) {
+                    for (int state : data.getDataType().getStatesForCode(code)) states.add(state);
+                }
+            }
+            if (states.size() < 2) throw new IllegalArgumentException("Unknown state count at " + site);
+            groups.computeIfAbsent(states.size(), k -> new ArrayList<>())
+                .add(new Character(site, new ArrayList<>(states)));
+        }
+        return groups;
+    }
+
+    private static Alignment alignment(Alignment input, int k, List<Character> sites, boolean variable) throws Exception {
+        List<Sequence> sequences = new ArrayList<>();
+        TreeSet<String> ambiguities = new TreeSet<>();
+        for (int taxon = 0; taxon < input.getTaxonCount(); taxon++) {
+            StringBuilder value = new StringBuilder();
+            for (Character character : sites) {
+                int code = input.getPattern(input.getPatternIndex(character.site()))[taxon];
+                String symbol = input.getDataType().getCode(code);
+                if (symbol.equals("?") || symbol.equals("-")) {
+                    value.append('?');
+                    continue;
+                }
+                StringBuilder allowed = new StringBuilder();
+                for (int state : input.getDataType().getStatesForCode(code)) {
+                    allowed.append(character.states().indexOf(state));
+                }
+                if (allowed.length() > 1) {
+                    ambiguities.add(allowed.toString());
+                    value.append('{').append(allowed).append('}');
+                } else value.append(allowed);
+            }
+            if (variable) for (int state = 0; state < k; state++) value.append(state);
+            Sequence sequence = new Sequence();
+            sequence.initByName("taxon", input.getTaxaNames().get(taxon), "totalcount", k, "value", value.toString());
+            sequences.add(sequence);
+        }
+        StandardData type = new StandardData();
+        type.initByName("nrOfStates", k, "ambiguities", String.join(" ", ambiguities));
+        Alignment result = new Alignment();
+        result.initByName("sequence", sequences, "userDataType", type, "ascertained", variable,
+            "excludefrom", variable ? sites.size() : 0, "excludeto", variable ? sites.size() + k : 0);
+        return result;
+    }
+
+    private static Tree tree(List<String> taxa, double scale) {
+        Node[] nodes = new Node[HEIGHTS.length];
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i] = new Node();
+            nodes[i].setNr(i);
+            nodes[i].setHeight(HEIGHTS[i] * scale);
+            if (i < 6) nodes[i].setID(taxa.get(i));
+            else for (int child : CHILDREN[i - 6]) nodes[i].addChild(nodes[child]);
+        }
+        return new Tree(nodes[10]);
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.setProperty("java.only", "true");
+        PackageManager.loadExternalJars();
+        NexusParser parser = new NexusParser();
+        parser.parseFile(new File(args[0]));
+        Alignment input = parser.m_alignment;
+        if (input.getTaxonCount() != 6) throw new IllegalArgumentException("Expected the six-taxon fixture");
+        Map<Integer, List<Character>> groups = partitions(input);
+        JSONArray cases = new JSONArray();
+        for (double scale : new double[]{.01, 1, 10}) {
+            for (boolean relaxed : new boolean[]{false, true}) {
+                for (boolean variable : new boolean[]{false, true}) {
+                    Tree tree = tree(input.getTaxaNames(), scale);
+                    BranchRateModel clock;
+                    if (relaxed) {
+                        LogNormalDistributionModel distribution = new LogNormalDistributionModel();
+                        distribution.initByName("M", new RealParameter("1"), "S", new RealParameter("0.2"), "meanInRealSpace", true);
+                        UCRelaxedClockModel model = new UCRelaxedClockModel();
+                        Double[] values = java.util.Arrays.stream(RATES).boxed().toArray(Double[]::new);
+                        model.initByName("tree", tree, "rates", new RealParameter(values), "distr", distribution);
+                        clock = model;
+                    } else {
+                        StrictClockModel model = new StrictClockModel();
+                        model.initAndValidate();
+                        clock = model;
+                    }
+                    JSONArray contributions = new JSONArray();
+                    double total = 0;
+                    for (var entry : groups.entrySet()) {
+                        int k = entry.getKey();
+                        Alignment data = alignment(input, k, entry.getValue(), variable);
+                        LewisMK substitution = new LewisMK();
+                        substitution.initByName("stateNumber", k);
+                        SiteModel siteModel = new SiteModel();
+                        siteModel.initByName("substModel", substitution, "gammaCategoryCount", relaxed ? 4 : 1,
+                            "shape", new RealParameter("1"));
+                        TreeLikelihood likelihood = new TreeLikelihood();
+                        likelihood.initByName("tree", tree, "data", data, "siteModel", siteModel,
+                            "branchRateModel", clock, "useAmbiguities", true, "scaling", "always");
+                        double logL = likelihood.calculateLogP();
+                        if (!Double.isFinite(logL)) throw new IllegalStateException("Nonfinite likelihood");
+                        total += logL;
+                        contributions.put(new JSONObject().put("states", k).put("log_likelihood", logL)
+                            .put("sites", new JSONArray(entry.getValue().stream().map(c -> c.site() + 1).toList())));
+                    }
+                    cases.put(new JSONObject().put("scale", scale).put("relaxed", relaxed).put("variable", variable)
+                        .put("partitions", contributions).put("log_likelihood", total));
+                }
+            }
+        }
+        JSONObject result = new JSONObject().put("beast", "2.7.8").put("mm", "1.2.1")
+            .put("taxa", new JSONArray(input.getTaxaNames())).put("heights", new JSONArray(HEIGHTS)).put("children", new JSONArray(CHILDREN))
+            .put("branch_rates", new JSONArray(RATES)).put("gamma_shape", 1).put("clock_sigma", .2).put("cases", cases);
+        Files.writeString(Path.of(args[1]), result.toString(2) + "\n");
+    }
+}

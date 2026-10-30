@@ -256,7 +256,7 @@ fn inspection_separates_import_support_from_sampler_support() {
     let report = String::from_utf8(result.stdout).unwrap();
     assert!(report.contains("\"taxon_count\": 3"));
     assert!(report.contains("\"pattern_count\": 2"));
-    assert!(!report.contains("\"sampler_error\": null"));
+    assert!(report.contains("\"sampler_error\": null"));
     fs::write(&matrix, "#NEXUS\nBEGIN DATA; DIMENSIONS NTAX=3 NCHAR=2; FORMAT DATATYPE=STANDARD SYMBOLS=\"01\"; MATRIX\nA 00\nB 01\nC 01\n; END;").unwrap();
     let result = rove(&["inspect", matrix.to_str().unwrap()]);
     let report = String::from_utf8(result.stdout).unwrap();
@@ -547,7 +547,11 @@ fn unsupported_inputs_and_settings_are_rejected() {
             .contains("unsupported option --clock")
     );
     assert!(
-        run(&["--gaps", "missing"], ternary.to_str().unwrap()).contains("binary characters only")
+        run(
+            &["--gaps", "missing", "--partitioning", "unknown"],
+            ternary.to_str().unwrap()
+        )
+        .contains("--partitioning must be")
     );
     let uneven = rove(&[
         "sample",

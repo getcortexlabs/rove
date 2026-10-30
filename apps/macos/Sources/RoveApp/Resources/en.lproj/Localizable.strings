@@ -545,3 +545,22 @@
 "Saving at the next shared sampling point. Keep Rove open until the analysis is paused." = "Saving at the next shared sampling point. Keep Rove open until the analysis is paused.";
 
 "The chain comparison will be available when this group finishes. You can inspect each chain's partial samples below." = "The chain comparison will be available when this group finishes. You can inspect each chain's partial samples below.";
+
+"State partitions" = "State partitions";
+
+"By observed states" = "By observed states";
+
+"Declared alphabet" = "Declared alphabet";
+
+"%@ states · %@ characters" = "%@ states · %@ characters";
+
+"Mkv · variable characters" = "Mkv · variable characters";
+
+"Mk · all characters" = "Mk · all characters";
+
+"Characters with two, three or more states get separate Mk models. Binary alphabets keep both possible states." = "Characters with two, three or more states get separate Mk models. Binary alphabets keep both possible states.";
+
+"Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character." = "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character.";
+
+"%@ states · 1 character" = "%@ states · 1 character";
+"Distinct patterns within partitions" = "Distinct patterns within partitions";

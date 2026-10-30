@@ -33,7 +33,7 @@ provides the [native Mac preview](./macos-preview) for matrix import, reviewed s
 - `ascertainment::VariableCharacters`: the Mkv correction for matrices of variable characters, checked against two fixed BEAST 2.7.8 states.
 - `reference::Problem`: a plain recursive implementation kept as the reference in tests.
 - `rates::GammaRates`, `rates::RelaxedClock`: [Mk + gamma, lognormal](./reference-model).
-- `mcmc::Sampler` and the `rove sample` command: a Metropolis–Hastings sampler for binary characters under Mk or Mkv, a strict or lognormal relaxed clock and a birth–death tree prior, with monophyly constraints. See [Sampling trees](./sampler).
+- `mcmc::Sampler` and the `rove sample` command: a Metropolis–Hastings sampler for binary and multistate characters under partitioned Mk or Mkv, a strict or lognormal relaxed clock and a birth–death tree prior, with monophyly constraints. See [Sampling trees](./sampler).
 - `nexus::parse` and `data::Matrix::compress`: morphological input, preserved observations, explicit partitions and weighted site patterns. See [Reading NEXUS](./nexus).
 - Property tests that compare both kinds of core against the reference on random trees with 2 to 10 tips, 2 to 6 states and 1 to 4 rate categories, including branch lengths from 10⁻⁹ to 100 and sequences of accepted and rejected changes.
 - A synthetic positive-control matrix of 20 taxa and 50 binary characters, with the script that generates it and degraded variants.

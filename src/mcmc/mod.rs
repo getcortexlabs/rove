@@ -1,4 +1,4 @@
-//! A Metropolis–Hastings sampler for binary morphological characters on a
+//! A Metropolis–Hastings sampler for partitioned morphological characters on a
 //! time tree.
 //!
 //! The model is Mk, optionally conditioned on variable characters (Mkv),
@@ -30,8 +30,10 @@ pub use moves::Move;
 pub enum Error {
     /// A tree needs at least two taxa.
     TooFewTaxa(usize),
-    /// Only binary characters are supported.
+    /// Mk needs at least two states.
     States(usize),
+    /// Partitions must be nonempty and contain the same taxa in the same order.
+    Partitions,
     Ascertainment(ascertainment::Error),
     /// A monophyly constraint has fewer than two tips, an unknown tip, or
     /// overlaps another without nesting. The index is the constraint's.
@@ -56,10 +58,8 @@ impl fmt::Display for Error {
             Self::Rates(error) => error.fmt(f),
             Self::RateMove(kind) => write!(f, "{} needs its rate model to be enabled", kind.name()),
             Self::TooFewTaxa(taxa) => write!(f, "a tree needs at least two taxa, not {taxa}"),
-            Self::States(states) => write!(
-                f,
-                "the sampler supports binary characters only, not {states} states"
-            ),
+            Self::States(states) => write!(f, "Mk needs at least two states, not {states}"),
+            Self::Partitions => write!(f, "partitions must be nonempty and contain the same taxa"),
             Self::Ascertainment(error) => error.fmt(f),
             Self::Constraint(index) => write!(
                 f,
@@ -238,7 +238,8 @@ impl Likelihood {
         tree: &Tree,
         rates: &RateVariation,
     ) -> Result<Self, Error> {
-        let model = Mk::uniform(2);
+        let states = patterns.symbols().len();
+        let model = Mk::uniform(states);
         let variable = match conditioning {
             Conditioning::Variable => {
                 Some(VariableCharacters::new(patterns).map_err(Error::Ascertainment)?)
@@ -250,7 +251,7 @@ impl Likelihood {
             .map_or(patterns.tip_partials(), VariableCharacters::tip_partials);
         let mut core = LikelihoodCore::mk(
             &model,
-            tips[0].len() / 2,
+            tips[0].len() / states,
             rates.category_rates().len(),
             tree.nodes(),
             Scaling::Always,
@@ -356,8 +357,8 @@ pub struct Sampler {
     stored_rates: RateVariation,
     birth_death: BirthDeath,
     stored_tree: Tree,
-    likelihood: Option<Likelihood>,
-    patterns: Patterns,
+    likelihoods: Vec<Likelihood>,
+    patterns: Vec<Patterns>,
     conditioning: Conditioning,
     backend: Backend,
     posterior: Posterior,
@@ -375,9 +376,18 @@ pub struct Sampler {
 
 impl Sampler {
     /// A chain from a random tree that satisfies the constraints.
-    pub fn new(patterns: &Patterns, settings: &Settings, seed: u64) -> Result<Self, Error> {
+    pub fn new(
+        patterns: impl AsRef<[Patterns]>,
+        settings: &Settings,
+        seed: u64,
+    ) -> Result<Self, Error> {
+        let patterns = patterns.as_ref();
         let mut random = Random::new(seed);
-        let tips = patterns.tip_partials().len();
+        let tips = patterns
+            .first()
+            .ok_or(Error::Partitions)?
+            .tip_partials()
+            .len();
         if tips < 2 {
             return Err(Error::TooFewTaxa(tips));
         }
@@ -391,39 +401,46 @@ impl Sampler {
 
     /// A chain that starts from `tree`, whose tips must be at height zero.
     pub fn with_tree(
-        patterns: &Patterns,
+        patterns: impl AsRef<[Patterns]>,
         settings: &Settings,
         tree: Tree,
         seed: u64,
     ) -> Result<Self, Error> {
-        Self::from_tree(patterns, settings, tree, None, Random::new(seed))
+        Self::from_tree(patterns.as_ref(), settings, tree, None, Random::new(seed))
     }
 
     /// A fixed rate state, for resuming model calculations and numerical
     /// comparisons. Rate-component presence must match the settings.
     pub fn with_rates(
-        patterns: &Patterns,
+        patterns: impl AsRef<[Patterns]>,
         settings: &Settings,
         tree: Tree,
         rates: RateVariation,
         seed: u64,
     ) -> Result<Self, Error> {
-        Self::from_tree(patterns, settings, tree, Some(rates), Random::new(seed))
+        Self::from_tree(
+            patterns.as_ref(),
+            settings,
+            tree,
+            Some(rates),
+            Random::new(seed),
+        )
     }
 
     fn from_tree(
-        patterns: &Patterns,
+        patterns: &[Patterns],
         settings: &Settings,
         tree: Tree,
         given_rates: Option<RateVariation>,
         random: Random,
     ) -> Result<Self, Error> {
-        let states = patterns.symbols().len();
-        if states != 2 {
-            return Err(Error::States(states));
-        }
         let tips = tree.tips();
-        assert_eq!(tips, patterns.tip_partials().len(), "one tip per taxon");
+        if patterns.is_empty() || patterns.iter().any(|p| p.tip_partials().len() != tips) {
+            return Err(Error::Partitions);
+        }
+        if let Some(p) = patterns.iter().find(|p| p.symbols().len() < 2) {
+            return Err(Error::States(p.symbols().len()));
+        }
         assert!(
             (0..tips).all(|t| tree.height(t) == 0.0),
             "tips must be at height zero"
@@ -512,16 +529,13 @@ impl Sampler {
         if !settings.backend.is_available() {
             return Err(Error::Backend(settings.backend));
         }
-        let likelihood = if settings.sample_from_prior {
-            None
+        let likelihoods = if settings.sample_from_prior {
+            Vec::new()
         } else {
-            Some(Likelihood::new(
-                patterns,
-                settings.conditioning,
-                settings.backend,
-                &tree,
-                &rates,
-            )?)
+            patterns
+                .iter()
+                .map(|p| Likelihood::new(p, settings.conditioning, settings.backend, &tree, &rates))
+                .collect::<Result<Vec<_>, _>>()?
         };
         let mut sampler = Self {
             stored_tree: tree.clone(),
@@ -529,8 +543,8 @@ impl Sampler {
             rates,
             tree,
             birth_death: settings.initial,
-            likelihood,
-            patterns: patterns.clone(),
+            likelihoods,
+            patterns: patterns.to_vec(),
             conditioning: settings.conditioning,
             backend: settings.backend,
             posterior: Posterior {
@@ -626,17 +640,18 @@ impl Sampler {
     /// Every posterior component evaluated from scratch, with a new core.
     pub fn recompute(&self) -> Result<Posterior, Error> {
         let mut posterior = self.priors();
-        posterior.likelihood = match &self.likelihood {
-            None => 0.0,
-            Some(_) => Likelihood::new(
-                &self.patterns,
-                self.conditioning,
-                self.backend,
-                &self.tree,
-                &self.rates,
-            )?
-            .evaluate(self.tree.root(), &self.rates),
-        };
+        if !self.likelihoods.is_empty() {
+            for patterns in &self.patterns {
+                posterior.likelihood += Likelihood::new(
+                    patterns,
+                    self.conditioning,
+                    self.backend,
+                    &self.tree,
+                    &self.rates,
+                )?
+                .evaluate(self.tree.root(), &self.rates);
+            }
+        }
         Ok(posterior)
     }
 
@@ -648,7 +663,7 @@ impl Sampler {
         let stored_birth_death = self.birth_death;
         self.stored_tree.clone_from(&self.tree);
         self.stored_rates.clone_from(&self.rates);
-        if let Some(likelihood) = &mut self.likelihood {
+        for likelihood in &mut self.likelihoods {
             likelihood.core.store();
         }
         let proposal = kind.propose(
@@ -667,13 +682,17 @@ impl Sampler {
         let mut accepted = false;
         if let Some(log_hastings) = valid {
             let mut proposed = self.priors();
-            proposed.likelihood = match &mut self.likelihood {
-                _ if !kind.changes_likelihood() => self.posterior.likelihood,
-                Some(l) if proposed.prior().is_finite() => {
-                    l.update(&self.tree, &self.stored_tree, &self.rates)
-                }
-                Some(_) => f64::NEG_INFINITY,
-                None => 0.0,
+            proposed.likelihood = if !kind.changes_likelihood() {
+                self.posterior.likelihood
+            } else if self.likelihoods.is_empty() {
+                0.0
+            } else if proposed.prior().is_finite() {
+                self.likelihoods
+                    .iter_mut()
+                    .map(|l| l.update(&self.tree, &self.stored_tree, &self.rates))
+                    .sum()
+            } else {
+                f64::NEG_INFINITY
             };
             log_alpha = proposed.total() - self.posterior.total() + log_hastings;
             accepted = log_alpha >= 0.0
@@ -692,7 +711,7 @@ impl Sampler {
             std::mem::swap(&mut self.tree, &mut self.stored_tree);
             self.birth_death = stored_birth_death;
             std::mem::swap(&mut self.rates, &mut self.stored_rates);
-            if let Some(likelihood) = &mut self.likelihood {
+            for likelihood in &mut self.likelihoods {
                 likelihood.core.restore();
             }
         }
@@ -781,7 +800,7 @@ mod tests {
     }
 
     fn sampler(settings: &Settings) -> Sampler {
-        Sampler::new(&patterns(), settings, 1).unwrap()
+        Sampler::new(patterns(), settings, 1).unwrap()
     }
 
     #[test]
@@ -858,7 +877,7 @@ mod tests {
                 ..Settings::default()
             };
             assert!(
-                Sampler::new(&patterns(), &bad, 1).is_err(),
+                Sampler::new(patterns(), &bad, 1).is_err(),
                 "{kind:?} = {value}"
             );
         }

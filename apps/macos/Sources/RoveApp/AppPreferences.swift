@@ -75,6 +75,11 @@ struct AppStrings: Sendable {
 
   func number(_ value: Int) -> String { value.formatted(.number.locale(locale)) }
 
+  func partitionSummary(states: Int, characters: Int) -> String {
+    if characters == 1 { return self("%@ states · 1 character", number(states)) }
+    return self("%@ states · %@ characters", number(states), number(characters))
+  }
+
   func matrixSummary(taxa: Int, characters: Int, patterns: Int? = nil) -> String {
     var parts = [
       self(taxa == 1 ? "%@ terminal" : "%@ terminals", number(taxa)),

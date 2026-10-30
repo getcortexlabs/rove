@@ -12,7 +12,7 @@ Rove is an ARM-first phylogenetic inference project written in Rust, starting
 with a likelihood kernel for morphological data. The name comes from exploring,
 wandering, and discovering paths.
 
-The crate computes tree likelihoods and samples trees under binary morphological
+The crate computes tree likelihoods and samples trees under partitioned morphological
 models without depending on BEAST. Broader model support remains future work.
 BEAST is a reference for validation and benchmarking. Optional BEAST 2 and BEAGLE
 integration remains a possible compatibility path.
@@ -21,7 +21,7 @@ integration remains a possible compatibility path.
 
 Early. The likelihood core with its direct Mk path and a NEON kernel for it,
 the Mkv correction, the morphological NEXUS reader, pattern compression,
-numerical tests and a standalone binary-character sampler are implemented.
+numerical tests and a standalone binary and multistate sampler are implemented.
 The supplied reference model runs with four gamma categories and a lognormal
 relaxed clock. Posterior summaries and clade frequencies agree with BEAST 2.7.8
 under predeclared criteria in six constructed 20-taxon cases. Optional integrations
@@ -145,8 +145,8 @@ it does not certify topology convergence. See the [sampler guide](https://rove.g
 10. Run independent chains in parallel and compare them. Done.
 11. Add checkpoints and resume in the engine and native app. Done.
 12. Rescale by powers of two.
-13. Partition characters by number of states, condition on
-    parsimony-informative characters and support ordered characters.
+13. Partition characters by number of states. Done. Conditioning on
+    parsimony-informative characters and ordered models remain planned.
 14. Add marginal likelihoods, the fossilized birth–death prior with tip dates
     and posterior predictive checks.
 15. Evaluate subtree repeats.
@@ -160,10 +160,15 @@ cargo run --release --bin rove -- sample fixtures/reference/20x50/matrix.nex \
   --monophyly T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19
 ```
 
-The sampler supports one partition of binary characters under Mk or Mkv,
+The sampler supports binary and multistate characters under partitioned Mk or Mkv,
 a strict clock with rate 1 and the birth–death tree prior, with monophyly
 constraints. Add `--model reference` for the supplied XML's four gamma categories
-and explicit lognormal relaxed clock. Its [model guide](docs/guide/reference-model.md)
+and explicit lognormal relaxed clock. Partitions share that tree, clock and gamma shape.
+Automatic state-count partitioning is the default; `--partitioning declared`
+uses the full declared alphabet. See the [partition rules](docs/guide/nexus.md#partitions-by-state-count)
+and [multistate fixed-state checks](fixtures/validation/multistate/README.md).
+The [partition benchmark](benchmarks/partitions/2026-10-29/README.md) records binary
+regression timings and a short 500 × 759 functionality check. Its [model guide](docs/guide/reference-model.md)
 records every parameter, the numerical checks and the differences from ORC's
 sampling proposals. The [sampling guide](docs/guide/sampler.md)
 describes the model, the output files and the checks. With the strict-clock model, the same moves and

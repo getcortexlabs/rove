@@ -264,7 +264,7 @@ fn the_rate_parameters_keep_their_uniform_priors() {
         tuning: false,
         ..Settings::default()
     };
-    let mut sampler = Sampler::new(&five_taxa(), &settings, 2).unwrap();
+    let mut sampler = Sampler::new(five_taxa(), &settings, 2).unwrap();
     let (mut r, mut a, mut root, mut samples) = (0.0, 0.0, 0.0, 0.0);
     for step in 1..=2_000_000u64 {
         sampler.step();

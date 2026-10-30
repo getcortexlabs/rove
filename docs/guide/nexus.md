@@ -59,7 +59,7 @@ Uncertainty vectors are likelihood masks, not probability distributions: `{01}` 
 
 ## Compressing repeated columns
 
-Partition ranges are zero-based, contiguous, nonempty, and must cover the matrix once in order. Pass separate ranges whenever characters use different models or parameters. Every partition retains the full declared alphabet; the reader never infers per-character state counts or ordered models from the observations.
+`Matrix::compress` retains its original behavior: contiguous, nonempty, zero-based ranges must cover the matrix once in order, and each uses the full declared alphabet. Automatic state-count partitioning and explicit character sets are described below.
 
 ```rust
 use rove::{data::GapTreatment, nexus};
@@ -81,3 +81,15 @@ Compression compares complete cell observations, including their kind. Missing a
 Only observed columns are compressed. Constant and missing-only columns remain present, and no artificial ascertainment patterns are added. The [Mkv correction](./kernel#conditioning-on-variable-characters) appends its constant patterns separately and rejects characters that could be constant.
 
 Tests read both [20 × 50 fixtures](./fixtures), reconstruct their columns from the pattern mapping, and compare compressed and uncompressed likelihoods on generated matrices with uncertain and missing data.
+
+## Partitions by state count
+
+`Matrix::partition_by_states(gaps)` groups characters by the number of distinct states in their observations. Explicit uncertainty sets contribute their allowed states; missing values and gaps do not add states. A character using `0`, `2` and `3` therefore has three states. Each character is recoded to a dense model alphabet in declared symbol order. This is an unordered Mk model; numerical labels do not imply ordered changes.
+
+A declared two-state alphabet keeps both states, including for constant or missing-only characters. With a larger alphabet, a column with fewer than two observed/possible states cannot determine its model: automatic partitioning rejects it. Use an explicit `CharacterSet { sites, symbols }` with `Matrix::compress_sets`, or `--partitioning declared` if the full matrix alphabet is possible for every character. `CHARSTATELABELS` remains descriptive and does not set these model alphabets. NEXUS `SETS` blocks are still rejected.
+
+`compress_sets` accepts sorted, non-contiguous, zero-based character indices. Sets must cover every character exactly once and include every observed/possible state. `Patterns::sites()` lists original matrix positions; `state_symbols()` records each character’s original labels in model-state order. Compression happens after recoding, within partitions, and preserves total character weight.
+
+`rove inspect` and `rove sample` default to `--partitioning observed`; both accept `--partitioning declared`. The Mac app exposes this choice under **State partitions** and shows each partition’s character count. Gaps still require explicit treatment. Mkv still rejects any character that could be constant, even if its state count is known.
+
+Each partition has its own constant patterns and Mkv correction on the shared tree, clock and gamma categories. `run.json` records the mode, state counts, one-based character indices, state mappings and observed pattern counts. Checkpoints preserve all partition caches. Twelve fixed-state cases, including three branch-length scales, match BEAST 2.7.8 / MM 1.2.1 with a maximum absolute log-likelihood difference of `1.34e-9`; see the [validation fixture](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate).

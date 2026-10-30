@@ -1,0 +1,471 @@
+{
+  "beast": "2.7.8",
+  "mm": "1.2.1",
+  "taxa": [
+    "Canella-A",
+    "Canella-B",
+    "C",
+    "D",
+    "E",
+    "F"
+  ],
+  "heights": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0.12,
+    0.18,
+    0.2,
+    0.43,
+    0.7
+  ],
+  "children": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      6,
+      7
+    ],
+    [
+      9,
+      8
+    ]
+  ],
+  "branch_rates": [
+    0.25,
+    1.8,
+    0.9,
+    1.2,
+    2.1,
+    0.7,
+    1.4,
+    0.6,
+    1.1,
+    0.8
+  ],
+  "gamma_shape": 1,
+  "clock_sigma": 0.2,
+  "cases": [
+    {
+      "scale": 0.01,
+      "relaxed": false,
+      "variable": false,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -43.48499667680595,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -99.83319279744197,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -29.34916654879729,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -172.6673560230452
+    },
+    {
+      "scale": 0.01,
+      "relaxed": false,
+      "variable": true,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -32.16630328012971,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -84.74554116842903,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -25.577581654131258,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -142.48942610269
+    },
+    {
+      "scale": 0.01,
+      "relaxed": true,
+      "variable": false,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -40.15721050648675,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -91.05474674739256,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -27.789396654094617,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -159.0013539079739
+    },
+    {
+      "scale": 0.01,
+      "relaxed": true,
+      "variable": true,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -29.0583150818942,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -76.26329246459257,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -24.092121816017027,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -129.4137293625038
+    },
+    {
+      "scale": 1,
+      "relaxed": false,
+      "variable": false,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -14.847878850994846,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -36.148530714320955,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -11.95664860954813,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -62.95305817486393
+    },
+    {
+      "scale": 1,
+      "relaxed": false,
+      "variable": true,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -14.306724322714011,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -35.59786037259506,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -11.831710010722919,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -61.736294706031984
+    },
+    {
+      "scale": 1,
+      "relaxed": true,
+      "variable": false,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -14.563357220232794,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -33.05046292125479,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -10.935999041428044,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -58.54981918291563
+    },
+    {
+      "scale": 1,
+      "relaxed": true,
+      "variable": true,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -13.483214570262998,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -31.752604874695393,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -10.6213063471994,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -55.857125792157795
+    },
+    {
+      "scale": 10,
+      "relaxed": false,
+      "variable": false,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -12.468781989379423,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -24.709269358886623,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -8.372517839947218,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -45.55056918821326
+    },
+    {
+      "scale": 10,
+      "relaxed": false,
+      "variable": true,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -12.372633717961952,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -24.691626021458966,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -8.37137771880475,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -45.43563745822567
+    },
+    {
+      "scale": 10,
+      "relaxed": true,
+      "variable": false,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -12.48484518501754,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -25.775478830506664,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -8.679426805366447,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -46.93975082089065
+    },
+    {
+      "scale": 10,
+      "relaxed": true,
+      "variable": true,
+      "partitions": [
+        {
+          "states": 2,
+          "log_likelihood": -12.340407008081248,
+          "sites": [
+            1,
+            4,
+            6
+          ]
+        },
+        {
+          "states": 3,
+          "log_likelihood": -25.70819921661243,
+          "sites": [
+            2,
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "states": 4,
+          "log_likelihood": -8.667951214718448,
+          "sites": [
+            3
+          ]
+        }
+      ],
+      "log_likelihood": -46.71655743941213
+    }
+  ]
+}

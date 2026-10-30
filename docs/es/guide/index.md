@@ -33,7 +33,7 @@ separado ofrece la [vista previa nativa para Mac](./macos-preview) para importar
 - `ascertainment::VariableCharacters`: la corrección Mkv para matrices de caracteres variables, comprobada contra dos estados fijos de BEAST 2.7.8.
 - `reference::Problem`: una implementación recursiva simple que se conserva como referencia en las pruebas.
 - `rates::GammaRates`, `rates::RelaxedClock`: [Mk + gamma, lognormal](./reference-model).
-- `mcmc::Sampler` y el comando `rove sample`: un muestreador de Metropolis–Hastings para caracteres binarios bajo Mk o Mkv, un reloj estricto o relajado lognormal y un prior de nacimiento–muerte para el árbol, con restricciones de monofilia. Ver [Muestreo de árboles](./sampler).
+- `mcmc::Sampler` y el comando `rove sample`: un muestreador de Metropolis–Hastings para caracteres binarios y multiestado bajo Mk o Mkv particionado, un reloj estricto o relajado lognormal y un prior de nacimiento–muerte para el árbol, con restricciones de monofilia. Ver [Muestreo de árboles](./sampler).
 - `nexus::parse` y `data::Matrix::compress`: entrada morfológica, observaciones preservadas, particiones explícitas y patrones de sitio ponderados. Ver [Lectura de NEXUS](./nexus).
 - Pruebas de propiedades que comparan los dos tipos de núcleo con la referencia en árboles aleatorios de 2 a 10 terminales, 2 a 6 estados y 1 a 4 categorías de tasa, incluidas longitudes de rama de 10⁻⁹ a 100 y secuencias de cambios aceptados y rechazados.
 - Una matriz sintética de control positivo de 20 taxones y 50 caracteres binarios, con el script que la genera y variantes degradadas.

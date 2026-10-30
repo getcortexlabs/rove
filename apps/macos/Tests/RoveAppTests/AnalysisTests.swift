@@ -82,6 +82,50 @@ struct AnalysisTests {
     #expect(decoded.settings == AnalysisSettings())
   }
 
+  @Test @MainActor func multistateImportAndPartitionPolicyPersistThroughSetup() async throws {
+    let matrix = root.appendingPathComponent("fixtures/validation/multistate/matrix.nex")
+    let report = try await MatrixInspector.inspect(
+      matrix, gapsAsMissing: false, executable: executable)
+    #expect(report.samplerError == nil)
+    #expect(report.variableError == nil)
+    #expect(report.partitions?.map(\.states) == [2, 3, 4])
+    #expect(report.partitions?.map(\.characters) == [3, 4, 1])
+    #expect(report.allTaxa.first == "Canella-A")
+    let declared = try await MatrixInspector.inspect(
+      matrix, gapsAsMissing: false, partitioning: "declared", executable: executable)
+    #expect(declared.partitions?.map(\.states) == [4])
+    let draft = AnalysisDraft(matrix: matrix, report: report, settings: AnalysisSettings())
+    let encoded = try JSONEncoder().encode(draft)
+    let decoded = try JSONDecoder().decode(AnalysisDraft.self, from: encoded)
+    #expect(decoded.settings.partitioning == "observed")
+    var legacy = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+    var settings = try #require(legacy["settings"] as? [String: Any])
+    settings.removeValue(forKey: "partitioning")
+    legacy["settings"] = settings
+    let old = try JSONDecoder().decode(
+      AnalysisDraft.self, from: JSONSerialization.data(withJSONObject: legacy))
+    #expect(old.settings.partitioning == "declared")
+
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let unknown = directory.appendingPathComponent("missing.nex")
+    try
+      "#NEXUS BEGIN DATA; DIMENSIONS NTAX=3 NCHAR=2; FORMAT SYMBOLS=\"012\"; MATRIX a ?0 b ?1 c ?2; END;"
+      .write(to: unknown, atomically: true, encoding: .utf8)
+    let workspace = Workspace(executable: executable)
+    workspace.load(unknown)
+    try await finishImport(workspace)
+    #expect(workspace.report?.samplerError != nil)
+    workspace.settings.partitioning = "declared"
+    workspace.reloadGapPolicy()
+    try await finishImport(workspace)
+    #expect(workspace.report?.samplerError == nil)
+    #expect(workspace.report?.variableError != nil)
+    workspace.settings.conditioning = "none"
+    #expect(workspace.canOpen(.review))
+  }
+
   @Test @MainActor func importFailurePreservesThePreviousMatrixAndResetRejectsStaleImports()
     async throws
   {

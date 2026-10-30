@@ -49,8 +49,9 @@ missing cells. Click a cell to see its taxon, character and observation.
 Statistics cover the full matrix; the scrollable preview shows up to 200 taxa
 and 120 characters. The app accepts files up to 32 MB.
 
-Import support and sampling support are separate. A readable multistate matrix
-can be viewed, but the current sampler accepts only binary characters.
+Binary and multistate matrices can be sampled. **State partitions** groups
+characters by observed/possible states, or explicitly uses the declared alphabet.
+The matrix and review views show the partition counts.
 Unsupported inputs show an explanation. Gaps need an explicit decision to
 treat them as missing; potentially constant characters cannot use Mkv.
 

@@ -17,6 +17,7 @@ struct MatrixReport: Decodable, Sendable {
   let taxonNames: [String]?
   let characterLabels: [String?]
   let cells: [[String]]
+  let partitions: [CharacterPartition]?
   var allTaxa: [String] { taxonNames ?? taxa }
 
   var missingPercent: Double {
@@ -37,6 +38,14 @@ struct MatrixReport: Decodable, Sendable {
   }
 }
 
+struct CharacterPartition: Decodable, Sendable {
+  let states: Int
+  let characters: Int
+  let observedPatterns: Int
+  let sites: [Int]
+  let stateSymbols: [String]
+}
+
 enum ImportError: LocalizedError {
   case message(String)
   case readerFailed(String)
@@ -53,7 +62,9 @@ enum MatrixInspector {
     Bundle.main.bundleURL.appendingPathComponent("Contents/Helpers/rove")
   }
 
-  static func inspect(_ url: URL, gapsAsMissing: Bool, executable: URL = executable) async throws
+  static func inspect(
+    _ url: URL, gapsAsMissing: Bool, partitioning: String = "observed", executable: URL = executable
+  ) async throws
     -> MatrixReport
   {
     try await Task.detached(priority: .userInitiated) {
@@ -73,7 +84,10 @@ enum MatrixInspector {
       }
       let process = Process()
       process.executableURL = executable
-      process.arguments = ["inspect", url.path, "--gaps", gapsAsMissing ? "missing" : "reject"]
+      process.arguments = [
+        "inspect", url.path, "--gaps", gapsAsMissing ? "missing" : "reject", "--partitioning",
+        partitioning,
+      ]
       process.standardOutput = stdout
       process.standardError = stderr
       do { try process.run() } catch {
@@ -94,6 +108,7 @@ enum MatrixInspector {
 struct AnalysisSettings: Codable, Equatable, Sendable {
   var clock = "reference"
   var conditioning = "variable"
+  var partitioning = "observed"
   var steps = 10_000_000
   var sampleEvery = 1_000
   var seed = "42"
@@ -104,13 +119,15 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   init() {}
 
   private enum CodingKeys: String, CodingKey {
-    case clock, conditioning, steps, sampleEvery, seed, gapsAsMissing, chains, stopWhenConverged
+    case clock, conditioning, partitioning, steps, sampleEvery, seed, gapsAsMissing, chains,
+      stopWhenConverged
   }
 
   init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     clock = try values.decode(String.self, forKey: .clock)
     conditioning = try values.decode(String.self, forKey: .conditioning)
+    partitioning = try values.decodeIfPresent(String.self, forKey: .partitioning) ?? "declared"
     steps = try values.decode(Int.self, forKey: .steps)
     sampleEvery = try values.decode(Int.self, forKey: .sampleEvery)
     seed = try values.decode(String.self, forKey: .seed)
@@ -120,7 +137,8 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   }
 
   var validationError: String? {
-    guard ["strict", "reference"].contains(clock), ["variable", "none"].contains(conditioning)
+    guard ["strict", "reference"].contains(clock), ["variable", "none"].contains(conditioning),
+      ["observed", "declared"].contains(partitioning)
     else {
       return "This setup uses an unsupported model."
     }
@@ -142,6 +160,7 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       "--steps", String(steps), "--sample-every", String(sampleEvery),
       "--model", clock, "--conditioning", conditioning,
       "--gaps", gapsAsMissing ? "missing" : "reject",
+      "--partitioning", partitioning,
     ] + (chains > 1 ? ["--chains", String(chains)] : [])
       + (stopWhenConverged ? ["--stop-when-converged"] : [])
       + monophyly.flatMap { ["--monophyly", $0.joined(separator: ",")] }

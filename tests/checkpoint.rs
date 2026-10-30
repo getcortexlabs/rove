@@ -74,65 +74,76 @@ fn interrupt(mut cmd: Command, step: u64, kill: bool) {
 }
 #[test]
 fn pause_crash_and_resume_preserve_all_samples_and_moves() {
-    for chains in [1, 4] {
-        let root = scratch(&format!("checkpoint-{chains}"));
-        assert!(
-            command(&root, "full", chains)
-                .stdout(Stdio::null())
-                .stderr(Stdio::null())
-                .status()
-                .unwrap()
-                .success()
-        );
-        for (i, kill) in [false, true].into_iter().enumerate() {
-            let name = format!("restart-{i}");
-            interrupt(command(&root, &name, chains), 230, kill);
-            let output = root.join(&name);
-            let manifest: Value =
-                serde_json::from_slice(&fs::read(output.join("checkpoint.json")).unwrap()).unwrap();
-            for c in 0..chains {
-                let dir = if chains == 1 {
-                    output.clone()
-                } else {
-                    output.join(format!("chain-{:02}", c + 1))
-                };
-                for file in ["trace.log", "trees.nexus"] {
-                    // Simulate a crash after writing past the committed offsets.
-                    fs::OpenOptions::new()
-                        .append(true)
-                        .open(dir.join(file))
-                        .unwrap()
-                        .write_all(b"uncommitted tail\n")
-                        .unwrap();
-                }
-                assert!(manifest["chains"][c]["step"].as_u64().unwrap() < 6000);
-            }
-            let resumed = Command::new(BIN)
-                .args(["sample", "--resume"])
-                .arg(&output)
-                .output()
-                .unwrap();
+    for (kind, matrix) in [
+        ("binary", MATRIX),
+        (
+            "multistate",
+            include_str!("../fixtures/validation/multistate/matrix.nex"),
+        ),
+    ] {
+        for chains in [1, 4] {
+            let root = scratch(&format!("checkpoint-{kind}-{chains}"));
+            fs::write(root.join("matrix.nex"), matrix).unwrap();
             assert!(
-                resumed.status.success(),
-                "{}",
-                String::from_utf8_lossy(&resumed.stderr)
+                command(&root, "full", chains)
+                    .stdout(Stdio::null())
+                    .stderr(Stdio::null())
+                    .status()
+                    .unwrap()
+                    .success()
             );
-            for c in 0..chains {
-                let member = if chains == 1 {
-                    String::new()
-                } else {
-                    format!("chain-{:02}", c + 1)
-                };
-                let full = root.join("full").join(&member);
-                let actual = output.join(member);
-                for file in ["trace.log", "trees.nexus"] {
-                    assert_eq!(content(&full.join(file)), content(&actual.join(file)));
+            for (i, kill) in [false, true].into_iter().enumerate() {
+                let name = format!("restart-{i}");
+                interrupt(command(&root, &name, chains), 230, kill);
+                let output = root.join(&name);
+                let manifest: Value =
+                    serde_json::from_slice(&fs::read(output.join("checkpoint.json")).unwrap())
+                        .unwrap();
+                for c in 0..chains {
+                    let dir = if chains == 1 {
+                        output.clone()
+                    } else {
+                        output.join(format!("chain-{:02}", c + 1))
+                    };
+                    for file in ["trace.log", "trees.nexus"] {
+                        // Simulate a crash after writing past the committed offsets.
+                        fs::OpenOptions::new()
+                            .append(true)
+                            .open(dir.join(file))
+                            .unwrap()
+                            .write_all(b"uncommitted tail\n")
+                            .unwrap();
+                    }
+                    assert!(manifest["chains"][c]["step"].as_u64().unwrap() < 6000);
                 }
-                let read = |p: &Path| {
-                    serde_json::from_slice::<Value>(&fs::read(p.join("run.json")).unwrap()).unwrap()
-                };
-                assert_eq!(read(&full)["moves"], read(&actual)["moves"]);
-                assert_eq!(read(&full)["final_state"], read(&actual)["final_state"]);
+                let resumed = Command::new(BIN)
+                    .args(["sample", "--resume"])
+                    .arg(&output)
+                    .output()
+                    .unwrap();
+                assert!(
+                    resumed.status.success(),
+                    "{}",
+                    String::from_utf8_lossy(&resumed.stderr)
+                );
+                for c in 0..chains {
+                    let member = if chains == 1 {
+                        String::new()
+                    } else {
+                        format!("chain-{:02}", c + 1)
+                    };
+                    let full = root.join("full").join(&member);
+                    let actual = output.join(member);
+                    for file in ["trace.log", "trees.nexus"] {
+                        assert_eq!(content(&full.join(file)), content(&actual.join(file)));
+                    }
+                    let read = |p: &Path| {
+                        serde_json::from_slice::<Value>(&fs::read(p.join("run.json")).unwrap())
+                            .unwrap()
+                    };
+                    assert_eq!(read(&full)["moves"], read(&actual)["moves"]);
+                    assert_eq!(read(&full)["final_state"], read(&actual)["final_state"]);
+                }
             }
         }
     }

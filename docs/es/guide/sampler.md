@@ -1,14 +1,14 @@
 ---
-description: "Cómo ejecutar el primer muestreador independiente de Rove sobre una matriz morfológica binaria: el modelo, el comando, los archivos que escribe, las propuestas y las comprobaciones que las respaldan."
+description: "Cómo ejecutar el primer muestreador independiente de Rove sobre una matriz morfológica con caracteres binarios y multiestado: el modelo, el comando, los archivos que escribe, las propuestas y las comprobaciones que las respaldan."
 ---
 
 # Muestreo de árboles
 
-`rove sample` ejecuta un análisis de Monte Carlo mediante cadenas de Markov sobre una matriz morfológica binaria, sin BEAST. La configuración predeterminada usa reloj estricto y una categoría de tasa. `--model reference` activa el [modelo de referencia](./reference-model), con cuatro categorías gamma y tasas lognormales explícitas por rama.
+`rove sample` ejecuta un análisis de Monte Carlo mediante cadenas de Markov sobre una matriz morfológica con caracteres binarios y multiestado, sin BEAST. La configuración predeterminada usa reloj estricto y una categoría de tasa. `--model reference` activa el [modelo de referencia](./reference-model), con cuatro categorías gamma y tasas lognormales explícitas por rama.
 
 ## El modelo predeterminado
 
-- **Caracteres.** Una partición de caracteres binarios bajo Mk con frecuencias iguales y una categoría de tasa. Por defecto, la verosimilitud se condiciona a caracteres variables con la [corrección Mkv](./kernel#condicionar-a-caracteres-variables); `--conditioning none` usa Mk sin condicionar.
+- **Caracteres.** Los caracteres se agrupan por número de estados, con un modelo Mk de frecuencias iguales por partición y una categoría de tasa compartida. Por defecto, la verosimilitud se condiciona a caracteres variables con la [corrección Mkv](./kernel#condicionar-a-caracteres-variables); `--conditioning none` usa Mk sin condicionar.
 - **Reloj.** Estricto, con la tasa fija en 1. Por eso las alturas de los nodos están en cambios esperados por carácter, la convención del análisis de referencia, que no tiene calibraciones. Todos los terminales están a altura cero.
 - **Prior del árbol.** El prior de nacimiento–muerte de Gernhard (2008), calculado como BEAST 2.7 calcula `BirthDeathGernhard08Model` con `type="unscaled"`: todos los linajes están muestreados y la densidad se condiciona al número de terminales, pero no a la altura de la raíz. Sus parámetros son r = λ − μ, con prior Uniform(0, 1000), y a = μ/λ, con prior Uniform(0, 1). Son las definiciones del XML de referencia, donde los parámetros se llaman `BDBirthRate` y `BDDeathRate`.
 - **Restricciones.** Cada opción `--monophyly` enumera taxones que deben formar un clado. Las propuestas que violarían una restricción se rechazan. Las restricciones deben estar anidadas o ser disjuntas.
@@ -31,6 +31,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--monophyly <taxones>` | Nombres de taxones, separados por comas, que deben formar un clado; como en la matriz, `_` equivale a un espacio. Se puede repetir. |
 | `--gaps reject\|missing` | Rechazar las matrices con gaps (por defecto) o leer los gaps como datos faltantes. |
 | `--model strict\|reference` | Reloj estricto con una categoría (predeterminado), o el modelo de referencia con gamma y reloj relajado. |
+| `--partitioning observed\|declared` | Agrupa por estados observados/posibles (predeterminado) o usa el alfabeto declarado completo para cada carácter. |
 | `--conditioning variable\|none` | Mkv (por defecto) o Mk. |
 | `--sample-from-prior` | Ignorar los caracteres y muestrear el prior. |
 | `--no-tuning` | Mantener fijos todos los tamaños de desplazamiento y factores de escala. |
@@ -39,7 +40,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--backend portable\|neon` | El [backend](./kernel#backends) de la verosimilitud: el código portable o el kernel NEON (por defecto en aarch64). Ambos dan las mismas muestras. |
 | `--print-every <n>` | Pasos entre líneas de progreso en la salida de error estándar; por defecto, una vigésima parte de la cadena. |
 
-El comando se detiene con un mensaje ante entradas que no admite: caracteres con más de dos estados, particiones o bloques de modelo en el archivo NEXUS, caracteres que podrían ser constantes bajo Mkv, nombres de taxones con caracteres distintos de letras, dígitos, espacios, `_`, `.` y `-` (o con espacios y `_` a la vez), taxones desconocidos en una restricción, restricciones solapadas que no están anidadas, valores de ajuste fuera de rango, un backend que la compilación no incluya y opciones que no conoce o que aparecen dos veces.
+El comando se detiene con un mensaje ante entradas que no admite: particiones o bloques de modelo en el archivo NEXUS, caracteres que podrían ser constantes bajo Mkv, nombres de taxones con caracteres distintos de letras, dígitos, espacios, `_`, `.` y `-` (o con espacios y `_` a la vez), taxones desconocidos en una restricción, restricciones solapadas que no están anidadas, valores de ajuste fuera de rango, un backend que la compilación no incluya y opciones que no conoce o que aparecen dos veces.
 
 Con el mismo ejecutable, la misma entrada, la misma configuración y la misma semilla, en la misma plataforma, una ejecución produce las mismas muestras, sea cual sea el backend. Los logaritmos y las exponenciales vienen de la biblioteca matemática de la plataforma, así que otra plataforma puede diferir en los últimos dígitos y, a partir de ahí, divergir.
 
@@ -96,7 +97,7 @@ La matriz no tiene homoplasia, así que con Mkv la verosimilitud no penaliza los
 
 ## Limitaciones
 
-- Una partición de caracteres binarios. Fechas de terminales, calibraciones, otras distribuciones de reloj y otros priors de árbol no están implementados.
+- Todas las particiones comparten árbol, reloj y forma gamma; las tasas independientes por partición y los caracteres ordenados aún no están implementados. Fechas de terminales, calibraciones, otras distribuciones de reloj y otros priors de árbol no están implementados.
 - El árbol inicial es aleatorio, con tiempos de nodo parecidos a los de un coalescente, y cumple las restricciones.
 - Cada cadena independiente usa un hilo. Los checkpoints conservan todas las cadenas en el mismo paso muestreado.
 

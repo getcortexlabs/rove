@@ -27,9 +27,14 @@ struct PreviewTests {
     let report = try await MatrixInspector.inspect(
       root.appendingPathComponent("fixtures/reference/20x50/matrix.nex"), gapsAsMissing: false,
       executable: root.appendingPathComponent("target/release/rove"))
+    let multistate = try await MatrixInspector.inspect(
+      root.appendingPathComponent("fixtures/validation/multistate/matrix.nex"),
+      gapsAsMissing: false,
+      executable: root.appendingPathComponent("target/release/rove"))
     let states: [(String, WorkspacePage?, CGFloat, CGFloat)] = [
       ("welcome", nil, 1240, 850), ("matrix", .matrix, 1240, 850),
       ("model", .model, 1240, 850), ("review", .review, 1240, 850),
+      ("multistate-matrix", .matrix, 1240, 850), ("multistate-review", .review, 1240, 850),
       ("welcome-compact", nil, 1080, 700), ("model-compact", .model, 1080, 700),
       ("outgroup-model", .model, 1240, 850), ("outgroup-review", .review, 1240, 850),
       ("outgroup-model-compact", .model, 1080, 700),
@@ -39,10 +44,15 @@ struct PreviewTests {
     for (name, page, width, height) in states {
       workspace.showingHistory = name.hasPrefix("history")
       workspace.outgroup = name.hasPrefix("outgroup") ? "T20" : nil
-      workspace.report = page == nil ? nil : report
+      let isMultistate = name.hasPrefix("multistate")
+      workspace.report = page == nil ? nil : (isMultistate ? multistate : report)
       workspace.file =
-        page == nil ? nil : root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
-      workspace.isExample = page != nil
+        page == nil
+        ? nil
+        : root.appendingPathComponent(
+          isMultistate
+            ? "fixtures/validation/multistate/matrix.nex" : "fixtures/reference/20x50/matrix.nex")
+      workspace.isExample = page != nil && !isMultistate
       workspace.page = page ?? .matrix
       let view = NSHostingView(rootView: RootView(workspace: workspace))
       let window = NSWindow(

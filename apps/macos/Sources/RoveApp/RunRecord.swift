@@ -40,6 +40,8 @@ struct EngineRecord: Decodable, Sendable {
   struct Model: Decodable, Sendable {
     let monophyly: [[String]]
     let preset: String
+    let partitioning: String?
+    let partitions: [CharacterPartition]?
   }
   let status: String
   let completedSteps: UInt64
@@ -75,6 +77,7 @@ struct EngineRecord: Decodable, Sendable {
     return draft.settings.validationError == nil && input.sha256 == draft.matrixSHA256
       && input.gaps == (draft.settings.gapsAsMissing ? "missing" : "reject")
       && model.preset == draft.settings.clock
+      && (model.partitioning ?? "declared") == draft.settings.partitioning
       && command[conditioningIndex + 1] == draft.settings.conditioning
       && settings.steps == UInt64(draft.settings.steps)
       && settings.sampleEvery == UInt64(draft.settings.sampleEvery)

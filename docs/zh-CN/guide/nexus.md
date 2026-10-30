@@ -59,7 +59,7 @@ cargo run --release --example read_nexus -- fixtures/reference/20x50/matrix.nex
 
 ## 压缩重复列
 
-分区范围从 0 开始计数、连续、非空，并且必须按顺序恰好覆盖矩阵一次。只要性状使用不同的模型或参数，就传入单独的范围。每个分区都保留完整的声明字母表；读取器从不根据观测推断每个性状的状态数或有序模型。
+`Matrix::compress` 保持原有行为：从零开始、连续且非空的范围必须按顺序覆盖矩阵一次，每个分区使用完整声明字母表。自动状态数分区和显式性状集合见下文。
 
 ```rust
 use rove::{data::GapTreatment, nexus};
@@ -81,3 +81,15 @@ assert_eq!(patterns.weights().iter().sum::<usize>(), 50);
 只有观测到的列会被压缩。恒定列和仅含缺失的列仍然保留，也不会添加用于确认偏差校正的人造模式。[Mkv 校正](./kernel#以可变性状为条件)会单独追加它的恒定模式，并拒绝可能为恒定的性状。
 
 测试读取两份 [20 × 50 fixture](./fixtures)，根据模式映射重建它们的列，并在带有不确定和缺失数据的生成矩阵上比较压缩前后的似然。
+
+## 按状态数划分分区
+
+`Matrix::partition_by_states(gaps)` 按观测中不同状态的数量对性状分组。显式不确定集合提供其允许的状态；缺失值和 gap 不增加状态。因此，使用 `0`、`2` 和 `3` 的性状有三个状态。每个性状按声明符号顺序重编码到紧凑字母表。这是无序 Mk 模型，数字标签不表示变化必须按顺序发生。
+
+声明为二态的字母表保留两个状态，包括恒定或全缺失性状。若字母表更大，观测/可能状态不足两个的列无法确定其模型，自动分区会拒绝该列。可通过 `Matrix::compress_sets` 使用显式 `CharacterSet { sites, symbols }`，或在全部声明状态对每个性状都可能时使用 `--partitioning declared`。`CHARSTATELABELS` 仍只用于描述，不设置这些模型字母表。NEXUS `SETS` 块仍被拒绝。
+
+`compress_sets` 接受从零开始、已排序但不必连续的性状索引。集合必须恰好覆盖每个性状一次，并包含全部观测/可能状态。`Patterns::sites()` 列出原矩阵位置；`state_symbols()` 按模型状态顺序记录每个性状的原始标签。重编码后在各分区内部压缩，保留性状总权重。
+
+`rove inspect` 和 `rove sample` 默认使用 `--partitioning observed`，也接受 `--partitioning declared`。Mac 应用在 **State partitions** 中提供此选项并显示各分区的性状数量。gap 仍需明确处理。即使状态数已知，Mkv 也拒绝可能为恒定的性状。
+
+各分区在共享的树、时钟和 gamma 类别上有各自的恒定模式及 Mkv 校正。`run.json` 记录模式、状态数、从一开始的性状索引、状态映射和观测模式数。检查点保留全部分区缓存。十二个固定状态案例涵盖三种枝长尺度，与 BEAST 2.7.8 / MM 1.2.1 的对数似然最大绝对差为 `1.34e-9`；参见[验证数据](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate)。

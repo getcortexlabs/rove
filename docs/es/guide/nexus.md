@@ -59,7 +59,7 @@ Los vectores de incertidumbre son máscaras de verosimilitud, no distribuciones 
 
 ## Compresión de columnas repetidas
 
-Los rangos de partición se cuentan desde cero, son contiguos y no vacíos, y deben cubrir la matriz una sola vez y en orden. Pasa rangos separados siempre que los caracteres usen modelos o parámetros distintos. Cada partición conserva el alfabeto declarado completo; el lector nunca infiere recuentos de estados por carácter ni modelos ordenados a partir de las observaciones.
+`Matrix::compress` conserva su comportamiento original: rangos contiguos, no vacíos y contados desde cero que cubren la matriz una vez en orden; cada partición usa el alfabeto declarado completo. La partición automática y los conjuntos explícitos se describen abajo.
 
 ```rust
 use rove::{data::GapTreatment, nexus};
@@ -81,3 +81,15 @@ La compresión compara las observaciones completas de las celdas, incluido su ti
 Solo se comprimen las columnas observadas. Las columnas constantes y las que solo tienen datos faltantes permanecen, y no se añaden patrones artificiales de ascertainment. La [corrección Mkv](./kernel#condicionar-a-caracteres-variables) añade sus patrones constantes por separado y rechaza los caracteres que podrían ser constantes.
 
 Las pruebas leen ambos [fixtures de 20 × 50](./fixtures), reconstruyen sus columnas a partir de la correspondencia de patrones y comparan verosimilitudes comprimidas y sin comprimir sobre matrices generadas con datos inciertos y faltantes.
+
+## Particiones por número de estados
+
+`Matrix::partition_by_states(gaps)` agrupa los caracteres por el número de estados distintos en sus observaciones. Los conjuntos explícitos de incertidumbre aportan sus estados posibles; los datos ausentes y gaps no añaden estados. Un carácter con `0`, `2` y `3` tiene tres estados. Cada carácter se recodifica en un alfabeto compacto siguiendo el orden declarado. El modelo Mk es no ordenado; las etiquetas numéricas no exigen cambios ordenados.
+
+Un alfabeto declarado de dos estados conserva ambos, incluso en caracteres constantes o totalmente ausentes. Con un alfabeto mayor, una columna con menos de dos estados observados/posibles no determina su modelo y se rechaza en la partición automática. Usa `CharacterSet { sites, symbols }` con `Matrix::compress_sets`, o `--partitioning declared` si todos los estados de la matriz son posibles para cada carácter. `CHARSTATELABELS` sigue siendo descriptivo y no define estos alfabetos. Los bloques NEXUS `SETS` siguen rechazándose.
+
+`compress_sets` admite índices ordenados, no necesariamente contiguos, contados desde cero. Los conjuntos deben cubrir cada carácter exactamente una vez e incluir todos los estados observados/posibles. `Patterns::sites()` enumera las posiciones originales; `state_symbols()` registra las etiquetas originales de cada carácter en el orden del modelo. La compresión se realiza tras recodificar, dentro de cada partición, conservando el peso total.
+
+`rove inspect` y `rove sample` usan `--partitioning observed` por defecto; ambos aceptan `--partitioning declared`. La app permite elegirlo en **State partitions** y muestra el número de caracteres por partición. Los gaps siguen requiriendo una decisión explícita. Mkv rechaza cualquier carácter que pueda ser constante, aunque se conozca su número de estados.
+
+Cada partición tiene sus propios patrones constantes y corrección Mkv sobre el árbol, reloj y categorías gamma compartidos. `run.json` registra modo, estados, índices contados desde uno, correspondencias y patrones observados. Los checkpoints conservan las cachés de todas las particiones. Doce casos de estado fijo, con tres escalas de longitud de rama, concuerdan con BEAST 2.7.8 / MM 1.2.1 con diferencia absoluta máxima de log-verosimilitud de `1,34e-9`; consulta el [caso de validación](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate).

@@ -118,7 +118,7 @@ pub(super) fn lex(input: &str) -> Result<Vec<Token>, Error> {
 }
 
 fn punctuation(c: char) -> bool {
-    "(){}]/\\,;:=*`<>^+-".contains(c)
+    "(){}]/\\,;:=*`<>^+".contains(c)
 }
 
 struct Lexer<'a> {

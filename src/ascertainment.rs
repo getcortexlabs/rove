@@ -75,8 +75,8 @@ impl VariableCharacters {
                     .position(|&p| p == pattern)
                     .expect("every pattern represents a site");
                 return Err(Error::ConstantCharacter {
-                    site: patterns.sites().start + site,
-                    state: patterns.symbols()[state],
+                    site: patterns.sites()[site],
+                    state: patterns.state_symbols()[site][state],
                 });
             }
         }

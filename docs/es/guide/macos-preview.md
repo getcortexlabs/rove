@@ -50,8 +50,9 @@ ausentes. Haz clic en una celda para ver su taxón, carácter y observación.
 Las estadísticas abarcan toda la matriz; la vista desplazable muestra hasta
 200 taxones y 120 caracteres. La aplicación admite archivos de hasta 32 MB.
 
-Poder importar no implica poder analizar. Una matriz multiestado puede
-visualizarse, pero el muestreador actual solo acepta caracteres binarios.
+Se pueden analizar matrices binarias y multiestado. **State partitions** agrupa
+los caracteres por estados observados/posibles o usa explícitamente el alfabeto
+declarado. La matriz y la revisión muestran los recuentos por partición.
 Las entradas incompatibles muestran una explicación. Tratar los gaps como
 datos ausentes requiere una decisión explícita; los caracteres potencialmente
 constantes no pueden usar Mkv.

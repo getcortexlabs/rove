@@ -120,7 +120,7 @@ fn invalid_rate_states_are_rejected() {
         weights: vec![(Move::BranchRateScale, 1.0)],
         ..Settings::default()
     };
-    assert!(Sampler::new(&small(), &settings, 1).is_err());
+    assert!(Sampler::new(small(), &settings, 1).is_err());
 }
 
 #[test]

@@ -115,6 +115,7 @@ final class Workspace {
     errorDetails = nil
     notice = nil
     let gaps = preserveSettings ? settings.gapsAsMissing : false
+    let partitioning = preserveSettings ? settings.partitioning : "observed"
     Task {
       let scoped = url.startAccessingSecurityScopedResource()
       defer { if scoped { url.stopAccessingSecurityScopedResource() } }
@@ -130,7 +131,7 @@ final class Workspace {
           throw ImportError.message("The matrix preview supports files up to 32 MB.")
         }
         let imported = try await MatrixInspector.inspect(
-          url, gapsAsMissing: gaps, executable: executable)
+          url, gapsAsMissing: gaps, partitioning: partitioning, executable: executable)
         guard importID == id else { return }
         if !preserveSettings {
           settings = AnalysisSettings()
@@ -272,7 +273,8 @@ final class Workspace {
           throw ImportError.message("The matrix preview supports files up to 32 MB.")
         }
         let imported = try await MatrixInspector.inspect(
-          matrix, gapsAsMissing: draft.settings.gapsAsMissing, executable: executable)
+          matrix, gapsAsMissing: draft.settings.gapsAsMissing,
+          partitioning: draft.settings.partitioning, executable: executable)
         guard imported.inputSha256 == draft.matrixSHA256 else { throw RunFailure.changedInput }
         try draft.validateTaxa(imported.allTaxa)
         guard importID == id else { return }

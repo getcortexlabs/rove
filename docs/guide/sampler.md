@@ -1,14 +1,14 @@
 ---
-description: "How to run Rove's first standalone sampler on a binary morphological matrix: the model, the command, the files it writes, the proposals and the checks behind them."
+description: "How to run Rove's first standalone sampler on a morphological matrix with binary and multistate characters: the model, the command, the files it writes, the proposals and the checks behind them."
 ---
 
 # Sampling trees
 
-`rove sample` runs a Markov chain Monte Carlo analysis of a binary morphological matrix without BEAST. The default preset uses a strict clock and one rate category. `--model reference` enables the [reference model](./reference-model), with four gamma categories and explicit lognormal branch rates.
+`rove sample` runs a Markov chain Monte Carlo analysis of a morphological matrix with binary and multistate characters without BEAST. The default preset uses a strict clock and one rate category. `--model reference` enables the [reference model](./reference-model), with four gamma categories and explicit lognormal branch rates.
 
 ## The default model
 
-- **Characters.** One partition of binary characters under Mk with equal frequencies and one rate category. By default the likelihood is conditioned on variable characters with the [Mkv correction](./kernel#conditioning-on-variable-characters); `--conditioning none` uses plain Mk.
+- **Characters.** Characters are partitioned by their number of states, with one equal-frequency Mk model per partition and a shared rate category. By default the likelihood is conditioned on variable characters with the [Mkv correction](./kernel#conditioning-on-variable-characters); `--conditioning none` uses plain Mk.
 - **Clock.** Strict, with the rate fixed at 1. Node heights are therefore in expected changes per character, the convention of the reference analysis, which has no calibrations. All tips are at height zero.
 - **Tree prior.** The birth–death prior of Gernhard (2008), computed as BEAST 2.7 computes `BirthDeathGernhard08Model` with `type="unscaled"`: every lineage is sampled, and the density is conditioned on the number of tips but not on the root height. Its parameters are r = λ − μ, with a Uniform(0, 1000) prior, and a = μ/λ, with a Uniform(0, 1) prior. These are the definitions of the reference XML, where the parameters are named `BDBirthRate` and `BDDeathRate`.
 - **Constraints.** Each `--monophyly` option lists taxa that must form a clade. Proposals that would break a constraint are rejected. Constraints must be nested or disjoint.
@@ -31,6 +31,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--monophyly <taxa>` | Comma-separated names of taxa that must form a clade; as in the matrix, `_` stands for a space. Can be repeated. |
 | `--gaps reject\|missing` | Reject matrices with gaps (the default), or read gaps as missing data. |
 | `--model strict\|reference` | Strict clock with one category (default), or the gamma and relaxed-clock reference model. |
+| `--partitioning observed\|declared` | Group by observed/possible state count (default), or use the full declared alphabet for every character. |
 | `--conditioning variable\|none` | Mkv (the default) or Mk. |
 | `--sample-from-prior` | Ignore the characters and sample the prior. |
 | `--no-tuning` | Keep every slide size and scale factor fixed. |
@@ -39,7 +40,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--backend portable\|neon` | The likelihood [backend](./kernel#backends): the portable code, or the NEON kernel (the default on aarch64). Both give the same samples. |
 | `--print-every <n>` | Steps between progress lines on standard error; by default, a twentieth of the chain. |
 
-The command stops with a message on input it does not support: characters with more than two states, partitions or model blocks in the NEXUS file, characters that could be constant under Mkv, taxon labels with characters other than letters, digits, spaces, `_`, `.` and `-` (or with both spaces and `_`), unknown taxa in a constraint, overlapping constraints that are not nested, out-of-range tuning values, a backend that the build does not include, and options it does not know or that are given twice.
+The command stops with a message on input it does not support: partitions or model blocks in the NEXUS file, characters that could be constant under Mkv, taxon labels with characters other than letters, digits, spaces, `_`, `.` and `-` (or with both spaces and `_`), unknown taxa in a constraint, overlapping constraints that are not nested, out-of-range tuning values, a backend that the build does not include, and options it does not know or that are given twice.
 
 Given the same executable, input, settings and seed on the same platform, a run produces the same samples, whichever the backend. The logarithms and exponentials come from the platform's math library, so another platform can differ in the last digits and then diverge.
 
@@ -96,7 +97,7 @@ The matrix has no homoplasy, so under Mkv the likelihood does not penalize short
 
 ## Limitations
 
-- One partition of binary characters. Tip dates, calibrations, other clock distributions and other tree priors are not implemented.
+- All partitions share the tree, clock and gamma shape; separate partition rates and ordered characters are not implemented. Tip dates, calibrations, other clock distributions and other tree priors are not implemented.
 - The starting tree is random, with coalescent-like node times, and satisfies the constraints.
 - Each independent chain uses one thread. Checkpoints preserve all chains at the same sampled step.
 

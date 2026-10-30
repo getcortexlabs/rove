@@ -233,7 +233,14 @@ struct ReviewView: View {
           row(
             "Character model",
             workspace.settings.conditioning == "variable"
-              ? "Binary Mkv · variable characters" : "Binary Mk · all characters")
+              ? "Mkv · variable characters" : "Mk · all characters")
+          if let partitions = report.partitions {
+            row(
+              "State partitions",
+              partitions.map {
+                strings.partitionSummary(states: $0.states, characters: $0.characters)
+              }.joined(separator: " / "))
+          }
           row(
             "Evolutionary clock",
             workspace.settings.clock == "reference"

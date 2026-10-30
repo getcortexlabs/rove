@@ -545,3 +545,22 @@
 "Saving at the next shared sampling point. Keep Rove open until the analysis is paused." = "Salvando no próximo ponto de amostragem comum. Mantenha o Rove aberto até a análise ficar pausada.";
 
 "The chain comparison will be available when this group finishes. You can inspect each chain's partial samples below." = "A comparação ficará disponível quando este grupo terminar. Você pode consultar as amostras parciais de cada cadeia abaixo.";
+
+"State partitions" = "Partições por estados";
+
+"By observed states" = "Pelos estados observados";
+
+"Declared alphabet" = "Alfabeto declarado";
+
+"%@ states · %@ characters" = "%@ estados · %@ caracteres";
+
+"Mkv · variable characters" = "Mkv · caracteres variáveis";
+
+"Mk · all characters" = "Mk · todos os caracteres";
+
+"Characters with two, three or more states get separate Mk models. Binary alphabets keep both possible states." = "Caracteres com dois, três ou mais estados usam modelos Mk separados. Alfabetos binários mantêm os dois estados possíveis.";
+
+"Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character." = "Cada caráter usa todos os estados declarados em SYMBOLS. Escolha isso apenas se eles forem possíveis para todos os caracteres.";
+
+"%@ states · 1 character" = "%@ estados · 1 caráter";
+"Distinct patterns within partitions" = "Padrões distintos por partição";

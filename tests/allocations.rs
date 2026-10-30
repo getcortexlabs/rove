@@ -62,6 +62,33 @@ fn steps_do_not_allocate() {
             }
             COUNTING.store(false, Ordering::Relaxed);
             assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "{conditioning:?}");
+            let multistate =
+                nexus::parse(include_str!("../fixtures/validation/multistate/matrix.nex"))
+                    .unwrap()
+                    .partition_by_states(GapTreatment::Reject)
+                    .unwrap();
+            let mut sampler = Sampler::new(
+                &multistate,
+                &Settings {
+                    monophyly: Vec::new(),
+                    ..settings.clone()
+                },
+                11,
+            )
+            .unwrap();
+            for _ in 0..1000 {
+                sampler.step();
+            }
+            COUNTING.store(true, Ordering::Relaxed);
+            for _ in 0..20_000 {
+                sampler.step();
+            }
+            COUNTING.store(false, Ordering::Relaxed);
+            assert_eq!(
+                CALLS.swap(0, Ordering::Relaxed),
+                0,
+                "multistate {conditioning:?}"
+            );
         }
     }
 }

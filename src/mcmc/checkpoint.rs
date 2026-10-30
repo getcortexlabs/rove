@@ -7,7 +7,7 @@ use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation, RelaxedClock};
 use crate::tree::Tree;
 
-const MAGIC: &[u8; 8] = b"ROVECP01";
+const MAGIC: &[u8; 8] = b"ROVECP02";
 
 impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.
@@ -19,6 +19,7 @@ impl Sampler {
         let signature = format!("{settings:?}");
         write_u64(&mut out, signature.len() as u64)?;
         out.write_all(signature.as_bytes())?;
+        write_partitions(&mut out, &self.patterns)?;
         write_u64(&mut out, self.steps)?;
         write_u64(&mut out, self.tunable_proposals)?;
         for value in self.random.state() {
@@ -64,7 +65,7 @@ impl Sampler {
                 write_u64(&mut out, count)?;
             }
         }
-        if let Some(likelihood) = &self.likelihood {
+        for likelihood in &self.likelihoods {
             likelihood.core.save(&mut out)?;
         }
         Ok(out)
@@ -72,7 +73,12 @@ impl Sampler {
 
     /// Restores with the same patterns and settings. The caller must verify
     /// the executable and input fingerprints before accepting a checkpoint.
-    pub fn resume(patterns: &Patterns, settings: &Settings, bytes: &[u8]) -> io::Result<Self> {
+    pub fn resume(
+        patterns: impl AsRef<[Patterns]>,
+        settings: &Settings,
+        bytes: &[u8],
+    ) -> io::Result<Self> {
+        let patterns = patterns.as_ref();
         let mut input = Cursor::new(bytes);
         let mut magic = [0; 8];
         input.read_exact(&mut magic)?;
@@ -88,6 +94,13 @@ impl Sampler {
         if saved != signature.as_bytes() {
             return Err(invalid());
         }
+        let mut partitions = Vec::new();
+        write_partitions(&mut partitions, patterns)?;
+        let mut saved = vec![0; partitions.len()];
+        input.read_exact(&mut saved)?;
+        if saved != partitions {
+            return Err(invalid());
+        }
         let steps = read_u64(&mut input)?;
         let tunable_proposals = read_u64(&mut input)?;
         let mut state = [0; 4];
@@ -95,7 +108,7 @@ impl Sampler {
             *value = read_u64(&mut input)?;
         }
         let random = Random::from_state(state).ok_or_else(invalid)?;
-        let tips = patterns.tip_partials().len();
+        let tips = patterns.first().ok_or_else(invalid)?.tip_partials().len();
         let nodes = tips
             .checked_mul(2)
             .and_then(|n| n.checked_sub(1))
@@ -185,7 +198,7 @@ impl Sampler {
         {
             return Err(invalid());
         }
-        if let Some(likelihood) = &mut sampler.likelihood {
+        for likelihood in &mut sampler.likelihoods {
             likelihood.core.load(&mut input)?;
         }
         if input.position() != bytes.len() as u64 {
@@ -195,6 +208,29 @@ impl Sampler {
         sampler.tunable_proposals = tunable_proposals;
         Ok(sampler)
     }
+}
+
+fn write_partitions(out: &mut impl Write, patterns: &[Patterns]) -> io::Result<()> {
+    write_u64(out, patterns.len() as u64)?;
+    for partition in patterns {
+        write_u64(out, partition.symbols().len() as u64)?;
+        write_u64(out, partition.sites().len() as u64)?;
+        write_u64(out, partition.weights().len() as u64)?;
+        write_u64(out, partition.tip_partials().len() as u64)?;
+        for ((&site, symbols), &pattern) in partition
+            .sites()
+            .iter()
+            .zip(partition.state_symbols())
+            .zip(partition.site_to_pattern())
+        {
+            write_u64(out, site as u64)?;
+            write_u64(out, pattern as u64)?;
+            for &symbol in symbols {
+                write_u64(out, symbol as u64)?;
+            }
+        }
+    }
+    Ok(())
 }
 
 #[cfg(test)]

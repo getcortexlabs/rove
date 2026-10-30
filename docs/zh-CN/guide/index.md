@@ -32,7 +32,7 @@ Rove 则从数据出发：一种沿位点模式向量化的布局，以及针对
 - `ascertainment::VariableCharacters`：针对可变性状矩阵的 Mkv 校正，已与两个固定的 BEAST 2.7.8 状态核对。
 - `reference::Problem`：一个朴素的递归实现，在测试中作为参考保留。
 - `rates::GammaRates`, `rates::RelaxedClock`: [Mk + gamma、对数正态速率](./reference-model).
-- `mcmc::Sampler` 与 `rove sample` 命令：针对二态性状的 Metropolis–Hastings 采样器，采用 Mk 或 Mkv、严格或对数正态松弛时钟和生灭树先验，支持单系约束。见[树的采样](./sampler)。
+- `mcmc::Sampler` 与 `rove sample` 命令：针对二态和多态性状的 Metropolis–Hastings 采样器，采用分区 Mk 或 Mkv、严格或对数正态松弛时钟和生灭树先验，支持单系约束。见[树的采样](./sampler)。
 - `nexus::parse` 与 `data::Matrix::compress`：形态学输入、保留的观测、显式分区和带权重的位点模式。见[读取 NEXUS](./nexus)。
 - 属性测试，在 2 到 10 个末端节点、2 到 6 个状态和 1 到 4 个速率类别的随机树上把两种核心都与参考实现比较，包括 10⁻⁹ 到 100 的枝长，以及被接受和被拒绝的变化序列。
 - 一个 20 个分类单元、50 个二态性状的合成阳性对照矩阵，以及生成它和降级变体的脚本。

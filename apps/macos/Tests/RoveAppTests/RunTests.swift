@@ -19,10 +19,14 @@ struct RunTests {
     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
     return url
   }
-  private func request(in directory: URL, steps: Int = 1_000, engine: URL? = nil) async throws
+  private func request(
+    in directory: URL, steps: Int = 1_000, engine: URL? = nil, multistate: Bool = false
+  ) async throws
     -> RunRequest
   {
-    let matrix = root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
+    let matrix = root.appendingPathComponent(
+      multistate
+        ? "fixtures/validation/multistate/matrix.nex" : "fixtures/reference/20x50/matrix.nex")
     let report = try await MatrixInspector.inspect(
       matrix, gapsAsMissing: false, executable: executable)
     var settings = AnalysisSettings()
@@ -33,13 +37,15 @@ struct RunTests {
       directory: directory.appendingPathComponent("session"),
       draft: AnalysisDraft(
         matrix: matrix, report: report, settings: settings,
-        monophyly: [Array(report.allTaxa.prefix(19))]))
+        monophyly: multistate ? [] : [Array(report.allTaxa.prefix(19))]))
   }
 
-  @Test func appAndDirectCLIPreserveScientificSamples() async throws {
+  @Test(arguments: [false, true]) func appAndDirectCLIPreserveScientificSamples(multistate: Bool)
+    async throws
+  {
     let directory = try temporary()
     defer { try? FileManager.default.removeItem(at: directory) }
-    let request = try await request(in: directory)
+    let request = try await request(in: directory, multistate: multistate)
     let result = await RunProcess().execute(request) { _ in }
     #expect(result.status == .completed, "\(String(describing: result))")
     let direct = directory.appendingPathComponent("direct")
@@ -65,6 +71,8 @@ struct RunTests {
     #expect(session.contains("\"completed\""))
     let draft = try AnalysisDraft.read(request.directory.appendingPathComponent("setup.rove.json"))
     #expect(draft.monophyly == request.draft.monophyly)
+    let record = try EngineRecord.verify(directory: request.directory, draft: draft)
+    #expect(record.model.partitions?.map(\.states) == (multistate ? [2, 3, 4] : [2]))
   }
 
   @Test @MainActor func liveProgressCancellationAndClosingReapTheEngine() async throws {

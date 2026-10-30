@@ -267,7 +267,12 @@ private struct HistoryDetail: View {
               "Character model",
               strings(
                 draft.settings.conditioning == "variable"
-                  ? "Binary Mkv · variable characters" : "Binary Mk · all characters"))
+                  ? "Mkv · variable characters" : "Mk · all characters"))
+            field(
+              "State partitions",
+              strings(
+                draft.settings.partitioning == "observed"
+                  ? "By observed states" : "Declared alphabet"))
             field("Independent chains", String(draft.settings.chains))
             field("Sampling", strings("Every %@ steps", strings.number(draft.settings.sampleEvery)))
             field("Gaps", strings(draft.settings.gapsAsMissing ? "Treat as missing" : "Reject"))

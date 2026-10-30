@@ -195,7 +195,7 @@ fn compression_preserves_partition_boundaries_and_constant_sites() {
     assert_eq!(all.site_to_pattern(), &[0, 0, 1, 0, 0, 1]);
     let split = data.compress(&[0..3, 3..6], GapTreatment::Reject).unwrap();
     for (i, patterns) in split.iter().enumerate() {
-        assert_eq!(patterns.sites(), i * 3..i * 3 + 3);
+        assert_eq!(patterns.sites(), &(i * 3..i * 3 + 3).collect::<Vec<_>>());
         assert_eq!(patterns.weights(), &[2, 1]);
         assert_eq!(patterns.site_to_pattern(), &[0, 0, 1]);
         assert_eq!(patterns.symbols(), &['0', '1', '2']);

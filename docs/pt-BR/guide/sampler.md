@@ -1,14 +1,14 @@
 ---
-description: "Como executar o primeiro amostrador independente do Rove numa matriz morfológica binária: o modelo, o comando, os arquivos que ele grava, as propostas e as verificações por trás delas."
+description: "Como executar o primeiro amostrador independente do Rove numa matriz morfológica com caracteres binários e multiestado: o modelo, o comando, os arquivos que ele grava, as propostas e as verificações por trás delas."
 ---
 
 # Amostrando árvores
 
-`rove sample` executa uma análise de Monte Carlo via cadeias de Markov numa matriz morfológica binária, sem o BEAST. A configuração padrão usa relógio estrito e uma categoria de taxa. `--model reference` ativa o [modelo de referência](./reference-model), com quatro categorias gama e taxas lognormais explícitas nos ramos.
+`rove sample` executa uma análise de Monte Carlo via cadeias de Markov numa matriz morfológica com caracteres binários e multiestado, sem o BEAST. A configuração padrão usa relógio estrito e uma categoria de taxa. `--model reference` ativa o [modelo de referência](./reference-model), com quatro categorias gama e taxas lognormais explícitas nos ramos.
 
 ## O modelo padrão
 
-- **Caracteres.** Uma partição de caracteres binários sob Mk com frequências iguais e uma categoria de taxa. Por padrão, a verossimilhança é condicionada a caracteres variáveis com a [correção Mkv](./kernel#condicionando-a-caracteres-variaveis); `--conditioning none` usa o Mk simples.
+- **Caracteres.** Os caracteres são separados pelo número de estados, com um modelo Mk de frequências iguais por partição e uma categoria de taxa compartilhada. Por padrão, a verossimilhança é condicionada a caracteres variáveis com a [correção Mkv](./kernel#condicionando-a-caracteres-variaveis); `--conditioning none` usa o Mk simples.
 - **Relógio.** Estrito, com a taxa fixa em 1. As alturas dos nós ficam, portanto, em mudanças esperadas por caractere, a convenção da análise de referência, que não tem calibrações. Todos os terminais estão na altura zero.
 - **Prior da árvore.** O prior de nascimento–morte de Gernhard (2008), calculado como o BEAST 2.7 calcula o `BirthDeathGernhard08Model` com `type="unscaled"`: todas as linhagens são amostradas, e a densidade é condicionada ao número de terminais, mas não à altura da raiz. Seus parâmetros são r = λ − μ, com prior Uniform(0, 1000), e a = μ/λ, com prior Uniform(0, 1). Estas são as definições do XML de referência, onde os parâmetros se chamam `BDBirthRate` e `BDDeathRate`.
 - **Restrições.** Cada opção `--monophyly` lista táxons que precisam formar um clado. Propostas que violariam uma restrição são rejeitadas. As restrições precisam ser aninhadas ou disjuntas.
@@ -31,6 +31,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--monophyly <táxons>` | Nomes de táxons, separados por vírgula, que precisam formar um clado; como na matriz, `_` representa um espaço. Pode ser repetida. |
 | `--gaps reject\|missing` | Rejeitar matrizes com gaps (o padrão) ou ler os gaps como dados faltantes. |
 | `--model strict\|reference` | Relógio estrito com uma categoria (padrão) ou o modelo de referência com gama e relógio relaxado. |
+| `--partitioning observed\|declared` | Agrupa pelo número de estados observados/possíveis (padrão) ou usa o alfabeto declarado completo para cada caráter. |
 | `--conditioning variable\|none` | Mkv (o padrão) ou Mk. |
 | `--sample-from-prior` | Ignorar os caracteres e amostrar o prior. |
 | `--no-tuning` | Manter fixos todos os tamanhos de deslocamento e fatores de escala. |
@@ -39,7 +40,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--backend portable\|neon` | O [backend](./kernel#backends) da verossimilhança: o código portátil ou o kernel NEON (o padrão em aarch64). Os dois dão as mesmas amostras. |
 | `--print-every <n>` | Passos entre as linhas de progresso na saída de erro padrão; por padrão, um vigésimo da cadeia. |
 
-O comando se encerra com uma mensagem quando recebe algo que não suporta: caracteres com mais de dois estados, partições ou blocos de modelo no arquivo NEXUS, caracteres que poderiam ser constantes sob Mkv, nomes de táxons com caracteres além de letras, dígitos, espaços, `_`, `.` e `-` (ou com espaços e `_` ao mesmo tempo), táxons desconhecidos numa restrição, restrições sobrepostas que não são aninhadas, valores de ajuste fora do intervalo, um backend que o build não inclua e opções que ele não conhece ou que aparecem duas vezes.
+O comando se encerra com uma mensagem quando recebe algo que não suporta: partições ou blocos de modelo no arquivo NEXUS, caracteres que poderiam ser constantes sob Mkv, nomes de táxons com caracteres além de letras, dígitos, espaços, `_`, `.` e `-` (ou com espaços e `_` ao mesmo tempo), táxons desconhecidos numa restrição, restrições sobrepostas que não são aninhadas, valores de ajuste fora do intervalo, um backend que o build não inclua e opções que ele não conhece ou que aparecem duas vezes.
 
 Com o mesmo executável, a mesma entrada, as mesmas configurações e a mesma semente, na mesma plataforma, uma execução produz as mesmas amostras, qualquer que seja o backend. Os logaritmos e as exponenciais vêm da biblioteca matemática da plataforma, então outra plataforma pode diferir nos últimos dígitos e, a partir daí, divergir.
 
@@ -96,7 +97,7 @@ A matriz não tem homoplasia, então sob Mkv a verossimilhança não penaliza á
 
 ## Limitações
 
-- Uma partição de caracteres binários. Datas de terminais, calibrações, outras distribuições de relógio e outros priors de árvore não estão implementados.
+- Todas as partições compartilham árvore, relógio e forma gama; taxas separadas por partição e caracteres ordenados ainda não estão implementados. Datas de terminais, calibrações, outras distribuições de relógio e outros priors de árvore não estão implementados.
 - A árvore inicial é aleatória, com tempos de nós parecidos com os de um coalescente, e satisfaz as restrições.
 - Cada cadeia independente usa uma thread. Os checkpoints preservam todas as cadeias no mesmo passo amostrado.
 

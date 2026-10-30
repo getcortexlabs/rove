@@ -33,7 +33,7 @@ struct MatrixView: View {
         metric("CHARACTERS", value: strings.number(report.characterCount), note: "Observed traits")
         metric(
           "PATTERNS", value: report.patternCount.map(strings.number) ?? "—",
-          note: "Unique character columns")
+          note: "Distinct patterns within partitions")
         metric(
           "MISSING",
           value: (report.missingPercent / 100).formatted(
@@ -42,6 +42,35 @@ struct MatrixView: View {
       }.padding(.vertical, 20)
         .background(Lab.surface, in: RoundedRectangle(cornerRadius: 15))
         .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(Lab.border.opacity(0.7)))
+
+      LabPanel {
+        VStack(alignment: .leading, spacing: 12) {
+          HStack {
+            Text(strings("State partitions")).font(.system(size: 13, weight: .semibold))
+            Spacer()
+            Picker(strings("State partitions"), selection: $workspace.settings.partitioning) {
+              Text(strings("By observed states")).tag("observed")
+              Text(strings("Declared alphabet")).tag("declared")
+            }.labelsHidden().frame(width: 210)
+              .disabled(workspace.loading)
+              .onChange(of: workspace.settings.partitioning) { workspace.reloadGapPolicy() }
+          }
+          Text(
+            strings(
+              workspace.settings.partitioning == "observed"
+                ? "Characters with two, three or more states get separate Mk models. Binary alphabets keep both possible states."
+                : "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character."
+            )
+          )
+          .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
+          if let partitions = report.partitions {
+            ViewThatFits(in: .horizontal) {
+              HStack(spacing: 16) { partitionCounts(partitions) }
+              VStack(alignment: .leading, spacing: 8) { partitionCounts(partitions) }
+            }
+          }
+        }
+      }
 
       VStack(alignment: .leading, spacing: 0) {
         HStack {
@@ -90,6 +119,15 @@ struct MatrixView: View {
         )
         .font(.system(size: 11)).foregroundStyle(Lab.secondary)
       }
+    }
+  }
+
+  @ViewBuilder private func partitionCounts(_ partitions: [CharacterPartition]) -> some View {
+    ForEach(Array(partitions.enumerated()), id: \.offset) { _, partition in
+      Text(
+        strings.partitionSummary(states: partition.states, characters: partition.characters)
+      )
+      .font(.system(size: 11, weight: .medium)).foregroundStyle(Lab.lilac)
     }
   }
 

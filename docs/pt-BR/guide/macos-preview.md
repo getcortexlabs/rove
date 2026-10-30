@@ -50,8 +50,9 @@ ausentes. Clique numa célula para ver o táxon, o caráter e a observação.
 As estatísticas cobrem a matriz inteira; a prévia com rolagem mostra até
 200 táxons e 120 caracteres. O aplicativo aceita arquivos de até 32 MB.
 
-Conseguir importar não significa conseguir analisar. Uma matriz multiestado
-pode ser visualizada, mas o amostrador atual aceita apenas caracteres binários.
+Matrizes binárias e multiestado podem ser analisadas. **Partições por estados**
+agrupa os caracteres pelos estados observados/possíveis ou usa explicitamente
+o alfabeto declarado. A matriz e a revisão mostram as quantidades por partição.
 Entradas incompatíveis recebem uma explicação. Gaps exigem uma escolha
 explícita para serem tratados como ausentes; caracteres potencialmente
 constantes não podem usar Mkv.

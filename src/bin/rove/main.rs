@@ -5,6 +5,7 @@ mod events;
 mod inspect;
 mod inspect_tree;
 mod parallel;
+mod partitions;
 mod sha256;
 mod summarize;
 
@@ -16,6 +17,7 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
+use partitions::Partitioning;
 use rove::data::GapTreatment;
 use rove::mcmc::output::{TraceWriter, TreeWriter, is_plain_label};
 use rove::mcmc::{Conditioning, Move, Sampler, Settings};
@@ -25,6 +27,7 @@ const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|none] [--sample-from-prior]
+                   [--partitioning observed|declared]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
                    [--stop-when-converged] [--min-ess <n>] [--max-rhat <n>] [--check-every <n>]
@@ -32,7 +35,7 @@ const USAGE: &str =
                    [--expect-input-sha256 <hash>] [--checkpoint-every <n>]
        rove sample --resume <run-directory> [--events-json] [--cancel-on-stdin-close]
        rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
-       rove inspect <matrix.nex> [--gaps reject|missing]
+       rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared]
        rove inspect-tree <summary-directory>
        rove diagnose <trace.log> --burnin-percent <0..99> [--output <new-directory>]
        rove summarize <trees.nexus> --output <directory> --burnin-percent <0..99> --heights keep|ca";
@@ -61,6 +64,7 @@ struct Options {
     expected_input: Option<String>,
     monophyly: Vec<Vec<String>>,
     gaps: GapTreatment,
+    partitioning: Partitioning,
     conditioning: Conditioning,
     reference_model: bool,
     sample_from_prior: bool,
@@ -90,6 +94,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut cancel_on_stdin_close = false;
     let mut expected_input = None;
     let mut gaps = GapTreatment::Reject;
+    let mut partitioning = Partitioning::Observed;
     let mut conditioning = Conditioning::Variable;
     let mut reference_model = false;
     let mut sample_from_prior = false;
@@ -165,6 +170,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                     .map(|taxon| taxon.trim().to_string())
                     .collect(),
             ),
+            "--partitioning" => partitioning = Partitioning::parse(&value("--partitioning")?)?,
             "--gaps" => {
                 gaps = match value("--gaps")?.as_str() {
                     "reject" => GapTreatment::Reject,
@@ -251,6 +257,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         expected_input,
         monophyly,
         gaps,
+        partitioning,
         conditioning,
         reference_model,
         sample_from_prior,
@@ -444,10 +451,7 @@ fn run_chain(
     }
     options.expected_input = Some(input.clone());
     let data = nexus::parse(std::str::from_utf8(&bytes)?)?;
-    let sites = 0..data.character_count();
-    let patterns = data
-        .compress(std::slice::from_ref(&sites), options.gaps)?
-        .remove(0);
+    let patterns = options.partitioning.compress(&data, options.gaps)?;
     let taxa = data.taxa();
     if let Some(name) = taxa.iter().find(|name| !is_plain_label(name)) {
         return Err(format!(
@@ -745,7 +749,7 @@ fn run_chain(
                 ("characters", Json::Integer(data.character_count() as u64)),
                 (
                     "observed_patterns",
-                    Json::Integer(patterns.weights().len() as u64),
+                    Json::Integer(patterns.iter().map(|p| p.weights().len() as u64).sum()),
                 ),
                 (
                     "gaps",
@@ -759,12 +763,14 @@ fn run_chain(
         (
             "model",
             Json::Object(vec![
+                ("partitioning", Json::text(options.partitioning.name())),
+                ("partitions", partitions::describe(&patterns)),
                 (
                     "substitution",
                     Json::text(if options.reference_model {
-                        "Mk, two states, equal frequencies, four midpoint gamma categories normalized to mean one"
+                        "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
                     } else {
-                        "Mk, two states, equal frequencies, one rate category"
+                        "Mk per partition, equal frequencies, one rate category"
                     }),
                 ),
                 (
