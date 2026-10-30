@@ -209,7 +209,7 @@ struct AnalysisDraft: Codable, Sendable {
     matrix: URL, report: MatrixReport, settings: AnalysisSettings,
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
-    formatVersion = settings.dating.enabled ? 3 : 2
+    formatVersion = settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -233,7 +233,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard [1, 2, 3].contains(formatVersion),
+    guard [1, 2, 3, 4].contains(formatVersion),
+      formatVersion >= 4 || !settings.dating.estimatesProcess,
       formatVersion >= 3 || !settings.dating.enabled, (matrixPath as NSString).isAbsolutePath,
       matrixSHA256.count == 64,
       matrixSHA256.utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) })

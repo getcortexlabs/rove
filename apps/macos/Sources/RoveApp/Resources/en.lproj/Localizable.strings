@@ -783,3 +783,29 @@
 "Present-day sampling must be positive when any terminal is present-day." = "Present-day sampling must be positive when any terminal is present-day.";
 "Terminal fossils require extinction or incomplete present-day sampling in this FBD model." = "Terminal fossils require extinction or incomplete present-day sampling in this FBD model.";
 "These process values exceed the numerical range. Check their time units." = "These process values exceed the numerical range. Check their time units.";
+
+// Process parameter estimation
+"Every estimated rate and origin excess needs a positive exponential prior mean." = "Every estimated rate and origin excess needs a positive exponential prior mean.";
+"Enter beta prior shapes from 0.001 to 1,000 for present-day sampling." = "Enter beta prior shapes from 0.001 to 1,000 for present-day sampling.";
+"An estimated death rate needs a positive starting value." = "An estimated death rate needs a positive starting value.";
+"Estimated present-day sampling must start strictly between 0 and 1." = "Estimated present-day sampling must start strictly between 0 and 1.";
+"Fossilized birth–death · estimated parameters" = "Fossilized birth–death · estimated parameters";
+"Fossils are constrained to terminal tips. Sampled ancestors and species occurrence ranges are not supported." = "Fossils are constrained to terminal tips. Sampled ancestors and species occurrence ranges are not supported.";
+"Initial value" = "Initial value";
+"Fixed value" = "Fixed value";
+"Beta prior · α, β" = "Beta prior · α, β";
+"Mean origin excess" = "Mean origin excess";
+"Origin prior offset" = "Origin prior offset";
+"Sample counts, age evidence and imposed terminal/clade constraints inform the estimated process parameters." = "Sample counts, age evidence and imposed terminal/clade constraints inform the estimated process parameters.";
+"Choose which values stay fixed and which Rove estimates. Each estimated parameter needs a starting value and a prior." = "Choose which values stay fixed and which Rove estimates. Each estimated parameter needs a starting value and a prior.";
+"Rates are per lineage, per time unit. A fixed death rate can be zero; estimated rates must start positive." = "Rates are per lineage, per time unit. A fixed death rate can be zero; estimated rates must start positive.";
+"Initial probability" = "Initial probability";
+"Fixed probability" = "Fixed probability";
+"Beta prior · α" = "Beta prior · α";
+"Beta prior · β" = "Beta prior · β";
+"Sampling is the fraction of living lineages observed. A beta prior describes uncertainty between zero and one; its mean is α / (α + β)." = "Sampling is the fraction of living lineages observed. A beta prior describes uncertainty between zero and one; its mean is α / (α + β).";
+"The origin prior is exponential on the extra time before the oldest allowed tip age. Its mean is that oldest bound plus the mean excess. The origin must also stay older than the root." = "The origin prior is exponential on the extra time before the oldest allowed tip age. Its mean is that oldest bound plus the mean excess. The origin must also stay older than the root.";
+"Oldest allowed tip age: %@ %@" = "Oldest allowed tip age: %@ %@";
+"The origin must be older than the root and every allowed tip age, including interval maxima." = "The origin must be older than the root and every allowed tip age, including interval maxima.";
+"How the fossils inform the process" = "How the fossils inform the process";
+"The observed sample count, fossil age evidence and imposed terminal/clade constraints inform the estimated rates and origin. A run without character data still uses that information." = "The observed sample count, fossil age evidence and imposed terminal/clade constraints inform the estimated rates and origin. A run without character data still uses that information.";

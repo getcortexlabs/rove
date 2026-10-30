@@ -56,6 +56,12 @@ struct DatingSettings: Codable, Equatable, Sendable {
   var clock = Clock.estimated
   var clockPriorMean = ""
   var ages: [String: TipAgeInput] = [:]
+  var processEstimation: ProcessEstimation? = nil
+  var estimation: ProcessEstimation {
+    get { processEstimation ?? ProcessEstimation() }
+    set { processEstimation = newValue }
+  }
+  var estimatesProcess: Bool { enabled && estimation.hasEstimated }
 
   var unit: String { timeUnit.trimmingCharacters(in: .whitespacesAndNewlines) }
   var fossilCount: Int { ages.values.filter { $0.kind != .present }.count }
@@ -73,6 +79,13 @@ struct DatingSettings: Codable, Equatable, Sendable {
     else { return "Enter positive birth and fossil sampling rates, and a nonnegative death rate." }
     guard let rho = DatingNumber.parse(presentSampling), (0...1).contains(rho) else {
       return "Present-day sampling must be a probability from 0 to 1."
+    }
+    if let issue = estimation.validationError { return issue }
+    if estimation.death.estimated && death <= 0 {
+      return "An estimated death rate needs a positive starting value."
+    }
+    if estimation.estimateSampling && !(rho > 0 && rho < 1) {
+      return "Estimated present-day sampling must start strictly between 0 and 1."
     }
     guard let start = DatingNumber.parse(origin), start > 0 else {
       return "Enter a positive origin age in the selected time unit."
@@ -120,7 +133,9 @@ struct DatingSettings: Codable, Equatable, Sendable {
       presentSampling: DatingNumber.parse(presentSampling)!, origin: DatingNumber.parse(origin)!,
       clockRate: DatingNumber.parse(clockRate)!,
       clockPriorMean: clock == .estimated ? DatingNumber.parse(clockPriorMean) : nil,
-      ages: ages.mapValues { $0.age! })
+      ages: ages.mapValues { $0.age! },
+      processModel: estimatesProcess ? "joint_sampling_v1" : nil,
+      processPriors: estimation.model())
   }
 }
 
@@ -136,6 +151,8 @@ struct EngineDatingModel: Codable, Equatable, Sendable {
   let clockRate: Double
   let clockPriorMean: Double?
   let ages: [String: EngineTipAge]
+  var processModel: String? = nil
+  var processPriors: EngineProcessPriors? = nil
 
   func json() throws -> String {
     let encoder = JSONEncoder()

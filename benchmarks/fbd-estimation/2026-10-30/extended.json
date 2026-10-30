@@ -1,0 +1,1735 @@
+{
+  "protocol": "fbd-estimation-4x8-v1",
+  "matrix_sha256": "83ffbda4f604f4c5bb7e92fde0e94cc92d12cdd71e64272614127cf82c6394f3",
+  "settings_sha256": {
+    "fixed": "af58e93ec187ad96d5e7aa1ca0293d7c160e742acdadc793595697dad9350593",
+    "estimated": "55b872be1678afc3fe7640f7d62761686d2e4fb561e2311f18ede2ad72fab519"
+  },
+  "binary_sha256": "eb1ca567bde565beccc8dce7909838d28e493a7bcf59e5e7410774e4cc90c8eb",
+  "base_commit": "bf35cddc81fb68dc9c9eafd7a2cde1118b6b677c",
+  "engine_source_sha256": {
+    "src/ascertainment/informative.rs": "4fa0f54e03cdccb29cbf031c35378beaacb84c9d48683adbf4097b54224e942b",
+    "src/ascertainment.rs": "718336c0b9f4233b4b5a19e48cce43de2ef2a71c4612f4f76ea2faf75bfc9994",
+    "src/bin/rove/benchmark.rs": "3f15e0797bfd9c0b4991d872ab1a9cf169d51f1b1388fabe59a9c592f9064a14",
+    "src/bin/rove/checkpoint.rs": "2172ffdffeac0136a30d63e035d63f6dae6f629f543976a2abbaf34db014689d",
+    "src/bin/rove/compare.rs": "dfa2f94d7981c6d8ed82451fa87b5d8ec09c7209148effb36b63d8e8d711b834",
+    "src/bin/rove/dating.rs": "ad607871d742d0f576257ac4125b92fe5b056b88375d2416fce657242bd79d0f",
+    "src/bin/rove/diagnose.rs": "7a5b2ec1b19d87abbaf2c0e742712d78663faa8d735b6b700d3d4c35ac6b25be",
+    "src/bin/rove/events.rs": "6ffaccc31435f317fccede9bed08270e2313070b176f5d712ab6349fa21d4a5f",
+    "src/bin/rove/inspect.rs": "e8ae094c04ef2764cfc9b9f71a5a0206fdaac1a5c81c03aab6b28ce22d704a43",
+    "src/bin/rove/inspect_tree.rs": "5ad3b5b16f07acd686e6b32c820a7d3b62c9de1235d91608dba50d3c96b0e266",
+    "src/bin/rove/main.rs": "43ac67523cdf5a80805d1671833038b0886e77f582697955f75d601b56ba1ae3",
+    "src/bin/rove/parallel.rs": "220d089deab1d6a2722409f5c7d1fd578ac1c640aa150f052161c474354e1ce7",
+    "src/bin/rove/partitions.rs": "af09ff187346936aeccce755c869886f295a882d789ace27ea170c555327db4b",
+    "src/bin/rove/predict.rs": "9de24e8f25486ae99d6bc2aacbbe16b64f6a3def7950df1c503f2fd0ee263e93",
+    "src/bin/rove/sha256.rs": "7ff030cf4a08345b3a91040cc797d94ac73a752d49d0d89eafc16f54f03565a0",
+    "src/bin/rove/summarize.rs": "ff872a8d732a8944ae89bccee112d997fa4dc9b6a3faa6a9e5ad86a8fc62e3c8",
+    "src/checkpoint.rs": "92754223984d687adccecbad772703ed8245d51f0204fbcbc365bb4c0b7416d8",
+    "src/data.rs": "553253aba41bac7c2dd21ae0f89499efdc866e76517b3c9475f4e1136293853a",
+    "src/dating/process.rs": "4118881560520b0011487809ad49bee8b75ce0f5310cf7bc99025cc239cc0126",
+    "src/dating.rs": "0edca96a222abe75560dfb32de82d857ac19d2da537eeb8f415b5f0e5bd2823b",
+    "src/diagnostics/convergence.rs": "22698302643ccd25526e1eb440c947a417fe1e094465efc3cd4979362a948132",
+    "src/diagnostics/mod.rs": "563e9ac7be7b04414f39eccd73981701e48b0eb251a6668519b0316e7e29e8a6",
+    "src/diagnostics/spectrum.rs": "f9e66419a884306fbb261fc02a2c02d1359fda36abbbfc375e8c6639e30356d2",
+    "src/diagnostics/trace.rs": "e01ff291892d74b28e88370ba267ad2a4ada60b2c1db42908f86f0178f0a3e27",
+    "src/kernel/checkpoint.rs": "c499ad7eca95d3fe8c230baa0ab343f25eddb38c02b2add8a9bd251d90e9c2a2",
+    "src/kernel/mk.rs": "55fe69f9586fcbea4397a344cacebf9009d4014ed1db1169fb4544c8d0a8e796",
+    "src/kernel/mod.rs": "ef2ff00064dbb69b5a599447675e027502d69c851cb50c2b65146337a614a487",
+    "src/kernel/neon.rs": "23d4b99e59174a4123bb3b302cb5d13f214cb9c310b099dfefdf77490037627d",
+    "src/kernel/repeats.rs": "31d89e0ca3c65df4f433035497b8a5175acdf46639f7613c7a70637845b90932",
+    "src/kernel/scaling.rs": "0e0fe06dbc4a988bdb38a44c17aac0fb9b1be06f108c2de2bdb33dbba7ee1507",
+    "src/layout.rs": "009082f02bfa33458086bb29f70d47422019ddcd9cc8b475dfddb2051c91b48b",
+    "src/lib.rs": "5545d1ceb7c42ffd82cccb2daf343f87e56eac10275474c1adaa6d20385db43a",
+    "src/mcmc/checkpoint.rs": "b1cc21e0c6485e861b10d380a33e3eae0119848c52c301a95d28a5baff314a29",
+    "src/mcmc/coupled.rs": "8474a09c9cb4f61a365d6f90a22eb7aadb860be2e09980ef58702e0fc29331d7",
+    "src/mcmc/mod.rs": "18cb55152600b7ff231de774dabbac80bfe2c815abf2eec328a3604a7402d9f8",
+    "src/mcmc/moves.rs": "4d6c61ad86e265a0f8548c915eb3b99aff14ccf91ec71024b61bb9c64caea219",
+    "src/mcmc/output.rs": "4870a9417694d7db15d385c7e07bd0fc3bb2291a5d3dd22144235415e8fbcba9",
+    "src/model/ordered.rs": "d7d87c9f00bbbcca182e982146a07bab074561ab366aa178e91ed9683aa805a6",
+    "src/model.rs": "11163ec5cfb7710bf6762a1a16f658fb6a36cb0f1b65ffdd07248543936dacb4",
+    "src/nexus/assumptions.rs": "011be5a2aafdd2b169d9c76b2ad2f37e0a2a049ce42cd7142abc5b8a09f8a71f",
+    "src/nexus/lexer.rs": "82ea20dea9b303d8331f5dc58c77e5ff1e282cfe7db2140b6d638cccd9416a04",
+    "src/nexus/matrix.rs": "73795ca85e3b02ea7ad9e489ba6a8cf953dbf1c60e686ff7c770acc21d3076a9",
+    "src/nexus/mod.rs": "17fb0e91f98a462201c807106abea76a74d5a122845f39efe02feb142de9cdc4",
+    "src/predictive/mod.rs": "9e7340056262ce5f4845821851102fc402215bd15fa3b9811813ffe7248fbe61",
+    "src/predictive/statistics.rs": "4dae894b74cbfbf07c9c0b1b6b975022fc4210e78e60736a6c45ddb7453199e1",
+    "src/random.rs": "fb93f4f6aa27f6cc8ee331e300ab2c83fa0f3327b2501832a09833cccd5e9d37",
+    "src/rates.rs": "c3f8251900c9fe0dc02dd94e6039f92e75d6a4894b714721adcc3339d91ee471",
+    "src/reference.rs": "b94952ebfd6be28bfacecbf5d977ce6025448add45cabc36cef421a20d608def",
+    "src/speciation.rs": "ac0f12a586d18bf6f3b1e643c2b63c5777d9786a2da86981170672cd3cee9388",
+    "src/summary/mod.rs": "4fdab0066f4784e75c38c63439a12d1fd59b91ddcd91664f02aaa55099478f01",
+    "src/summary/nexus.rs": "19c8eefc8c72cb57cef3127c6b2b5e81921438fc8ac8fc96711ad6d4bc02ae04",
+    "src/tree.rs": "04764bea55480d93b2aa0597c75950ff4fb368a8bc13992869eef8c84890a69f",
+    "Cargo.toml": "419aa2bd98923ad8f3b49d72e17188a10583f06951b164634e791528c2ddf420",
+    "Cargo.lock": "9c5333915c8e065a1a6f57194e5ab56268e156aa902f93ccb5fe0bd79e028159"
+  },
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "cpu": "Apple M4 Max",
+  "processors": "proc 16:12:4:0",
+  "memory": "64 GB",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1",
+  "build": "cargo build --release --bin rove; fat LTO, one codegen unit; default target features; NEON runtime backend",
+  "method": "Sequential groups of four concurrent chains, alternating workload order across repetitions; no separate warmup. External wall time includes startup, trace/tree IO, checkpoints and final comparison. Burn-in 10% by sample count. No BEAST timing comparison.",
+  "results": [
+    {
+      "mode": "fixed",
+      "preset": "reference",
+      "repetition": 1,
+      "command": [
+        "sample",
+        "fixtures/validation/dating/matrix.nex",
+        "--dating",
+        "fixtures/validation/dating/dating.json",
+        "--output",
+        "<local-output>",
+        "--model",
+        "reference",
+        "--seed",
+        "41",
+        "--steps",
+        "10000000",
+        "--sample-every",
+        "100",
+        "--chains",
+        "4"
+      ],
+      "chain_seeds": [
+        41,
+        42,
+        43,
+        44
+      ],
+      "group_wall_seconds": 14.209,
+      "retained_per_chain": 90001,
+      "burnin_percent": 10,
+      "minimum_ess_per_chain": 150.23655404777574,
+      "minimum_ess_per_group_wall_second": 10.57333760629008,
+      "max_rhat": 1.004820093944738,
+      "unavailable_sampled_diagnostics": [],
+      "max_unconstrained_clade_difference": 0.005066610370995872,
+      "pearson_correlations_per_chain": {
+        "clock_rate:tree_height": [
+          -0.10561230809878544,
+          -0.11206572074494313,
+          -0.10095808224251021,
+          -0.10881294938437407
+        ],
+        "clock_rate:tip_age_2": [
+          -0.012740944786185062,
+          -0.007693302230121851,
+          -0.014834702165234684,
+          -0.009814817348903153
+        ]
+      },
+      "statistics": [
+        {
+          "ess": [
+            1794.0538080968818,
+            1856.8887979608576,
+            2213.149766591281,
+            1804.245491200005
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -48.0428444270377,
+            -48.25289008588581,
+            -48.0648856143234,
+            -48.195873872193644
+          ],
+          "name": "posterior",
+          "rhat": 1.0007673579108687,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            8147.028410221127,
+            6526.427575091004,
+            6999.703752300865,
+            9805.512269649182
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -18.52264705807025,
+            -18.504159387868313,
+            -18.508487508094873,
+            -18.496451818592384
+          ],
+          "name": "likelihood",
+          "rhat": 1.0002027148274972,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            1736.4744148750776,
+            1765.0762530136985,
+            2088.7349624909257,
+            1612.3283803557142
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -29.52019736896745,
+            -29.7487306980175,
+            -29.556398106228528,
+            -29.699422053601264
+          ],
+          "name": "prior",
+          "rhat": 1.0007675386242807,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            44881.50612140333,
+            47670.238591733076,
+            44781.270330711195,
+            46541.81610838433
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -24.5513336008553,
+            -24.552768372091307,
+            -24.542541161836724,
+            -24.553909533116517
+          ],
+          "name": "fossilized_birth_death",
+          "rhat": 1.0000129692772501,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            5962.714863096698,
+            7277.433624925703,
+            7403.434811414929,
+            6896.649986770263
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.015383305001506538,
+            0.0156794560855395,
+            0.015459932197270106,
+            0.015533191081674363
+          ],
+          "name": "clock_rate",
+          "rhat": 1.0001284151519096,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            5962.714863096698,
+            7277.433624925704,
+            7403.434811414927,
+            6896.649986770263
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            1.680545324717547,
+            1.6509302163142499,
+            1.67288260514119,
+            1.6655567167007637
+          ],
+          "name": "dating_parameter_prior",
+          "rhat": 1.0001284151519096,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            34949.94267510935,
+            37532.36548176263,
+            31931.902217539635,
+            39240.279918986846
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            32.89505394948761,
+            32.83357518320101,
+            32.832477709012466,
+            32.87304201435969
+          ],
+          "name": "tree_height",
+          "rhat": 1.0000248336894186,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            41122.10162597685,
+            43870.820610561575,
+            41094.045986124176,
+            43920.96452085973
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            77.93371899672992,
+            77.8892891020484,
+            77.76833082095001,
+            77.94257163971402
+          ],
+          "name": "tree_length",
+          "rhat": 1.0000161732140085,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            150.23655404777574,
+            234.25036093878185,
+            239.28997908880046,
+            153.47431093054072
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            true,
+            false,
+            false,
+            true
+          ],
+          "means": [
+            0.7924903753349009,
+            0.841163291895551,
+            0.8094057517671436,
+            0.8619558280281292
+          ],
+          "name": "gamma_shape",
+          "rhat": 1.004820093944738,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            150.23655404777574,
+            234.25036093878185,
+            239.28997908880046,
+            153.47431093054072
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            true,
+            false,
+            false,
+            true
+          ],
+          "means": [
+            -0.7924903753349009,
+            -0.841163291895551,
+            -0.8094057517671436,
+            -0.8619558280281292
+          ],
+          "name": "gamma_prior",
+          "rhat": 1.004820093944738,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            3199.973862144127,
+            3572.998609614171,
+            3662.69600143382,
+            3688.8443950209275
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.9532303838597429,
+            0.9719399527479342,
+            0.9655874531632761,
+            0.9734080083224985
+          ],
+          "name": "clock_sigma",
+          "rhat": 1.0003424676461856,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            5307.306885092441,
+            5836.19283395304,
+            5135.004940733163,
+            5600.103420358066
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -5.400925540815808,
+            -5.547378812054346,
+            -5.425643318916643,
+            -5.501888692800368
+          ],
+          "name": "clock_rate_prior",
+          "rhat": 1.0002749409982123,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            5505.657228630542,
+            5636.885111664233,
+            5464.539826095629,
+            5164.7574804611
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -0.4559931766789913,
+            -0.4583504382905441,
+            -0.45169047884920843,
+            -0.447224716357014
+          ],
+          "name": "clock_sigma_prior",
+          "rhat": 1.000056024079754,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            6135.344408583298,
+            4793.667374009816,
+            3885.5470750677723,
+            5477.934097742979
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            1.248277618789615,
+            1.2450232521081972,
+            1.2015564375732666,
+            1.200965240744722
+          ],
+          "name": "mean_branch_rate",
+          "rhat": 1.0002281881460866,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "ess_reasons": [
+            "constant",
+            "constant",
+            "constant",
+            "constant"
+          ],
+          "fixed_by_model": true,
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "name": "tip_age_1",
+          "rhat": null,
+          "rhat_reason": "constant"
+        },
+        {
+          "ess": [
+            56760.9725650872,
+            59844.373476601504,
+            57177.41472229759,
+            58945.594652655906
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            6.893266763847255,
+            6.900804943353346,
+            6.8866107790261575,
+            6.8978018672467405
+          ],
+          "name": "tip_age_2",
+          "rhat": 1.000033071154241,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "ess_reasons": [
+            "constant",
+            "constant",
+            "constant",
+            "constant"
+          ],
+          "fixed_by_model": true,
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "name": "tip_age_3",
+          "rhat": null,
+          "rhat_reason": "constant"
+        },
+        {
+          "ess": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "ess_reasons": [
+            "constant",
+            "constant",
+            "constant",
+            "constant"
+          ],
+          "fixed_by_model": true,
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            12.0,
+            12.0,
+            12.0,
+            12.0
+          ],
+          "name": "tip_age_4",
+          "rhat": null,
+          "rhat_reason": "constant"
+        }
+      ],
+      "clades": [
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.005066610370995872,
+          "frequencies": [
+            0.9346451706092155,
+            0.9329007455472716,
+            0.9363451517205365,
+            0.9379673559182675
+          ],
+          "taxa": [
+            "Living A",
+            "Fossil B"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.004088843457294877,
+          "frequencies": [
+            0.8154798280019111,
+            0.8165575938045133,
+            0.819568671459206,
+            0.8192353418295353
+          ],
+          "taxa": [
+            "Living C",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0030666325929711857,
+          "frequencies": [
+            0.09933222964189287,
+            0.09766558149353896,
+            0.09626559704892168,
+            0.09734336285152387
+          ],
+          "taxa": [
+            "Living A",
+            "Fossil B",
+            "Living C"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.002333307407695471,
+          "frequencies": [
+            0.013744291730091888,
+            0.013066521483094633,
+            0.01252208308796569,
+            0.011410984322396418
+          ],
+          "taxa": [
+            "Living A",
+            "Living C"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0021999755558271585,
+          "frequencies": [
+            0.018722014199842225,
+            0.020921989755669383,
+            0.019388673459183787,
+            0.019010899878890236
+          ],
+          "taxa": [
+            "Fossil B",
+            "Living C",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0016777591360095968,
+          "frequencies": [
+            0.025699714447617247,
+            0.026988589015677602,
+            0.025733047410584325,
+            0.025310829879668005
+          ],
+          "taxa": [
+            "Living A",
+            "Living C",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.001266652592748968,
+          "frequencies": [
+            0.012388751236097376,
+            0.011577649137231808,
+            0.011155431606315486,
+            0.011122098643348408
+          ],
+          "taxa": [
+            "Fossil B",
+            "Living C"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.001244430617437578,
+          "frequencies": [
+            0.06868812568749236,
+            0.06922145309496561,
+            0.06797702247752803,
+            0.06821035321829758
+          ],
+          "taxa": [
+            "Living A",
+            "Fossil B",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0005777713580960206,
+          "frequencies": [
+            0.00388884567949245,
+            0.0037444028399684446,
+            0.003944400617770913,
+            0.0033666292596748926
+          ],
+          "taxa": [
+            "Fossil B",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.00038888456794924486,
+          "frequencies": [
+            0.007411028766347041,
+            0.007355473828068577,
+            0.007099921111987644,
+            0.007022144198397796
+          ],
+          "taxa": [
+            "Living A",
+            "Fossil D"
+          ]
+        }
+      ],
+      "topology_convergence_assessed": false,
+      "trace_sha256": [
+        "914e62fa865d67d7afbeb8135c9092e1038ef5a997a93bade04278866b27acd3",
+        "9e3384026dea4012157123fd8857064b244cb52794299bbea8f6062054a7df21",
+        "4bc5824b7fbf99c86993f778faa9f207f1c1a8d87f6ae5e7b0dc0e295b12f8aa",
+        "a031c4f783016be7b69411fc64d41cdcdb322ad24016b01a40f37ad115058706"
+      ],
+      "tree_sha256": [
+        "16af96e6e2b55b5cf49ca02d88ae665ad543b26130d47d3df23543c59964211b",
+        "237a316a44ea4ace4e6cdda17984dd70faa55d94da58775c005a6d658cead526",
+        "f0793acc319621ee619df376004c54c80c864f4489d7c5c42cfe38d0a5ab88c2",
+        "fc04819460634bc85e9423ee3888de67b1ec25a3d897fd55aaadc5b9fd699ca4"
+      ],
+      "wall_time_resolution_seconds": 0.001
+    },
+    {
+      "mode": "estimated",
+      "preset": "reference",
+      "repetition": 1,
+      "command": [
+        "sample",
+        "fixtures/validation/dating/matrix.nex",
+        "--dating",
+        "fixtures/validation/fbd-estimation/dating.json",
+        "--output",
+        "<local-output>",
+        "--model",
+        "reference",
+        "--seed",
+        "41",
+        "--steps",
+        "10000000",
+        "--sample-every",
+        "100",
+        "--chains",
+        "4"
+      ],
+      "chain_seeds": [
+        41,
+        42,
+        43,
+        44
+      ],
+      "group_wall_seconds": 17.443,
+      "retained_per_chain": 90001,
+      "burnin_percent": 10,
+      "minimum_ess_per_chain": 118.72616437162874,
+      "minimum_ess_per_group_wall_second": 6.806522064531832,
+      "max_rhat": 1.0036987581423351,
+      "unavailable_sampled_diagnostics": [],
+      "max_unconstrained_clade_difference": 0.012366529260785963,
+      "pearson_correlations_per_chain": {
+        "clock_rate:tree_height": [
+          -0.13179573669358294,
+          -0.13250652747573893,
+          -0.1460928788731228,
+          -0.14910752581089837
+        ],
+        "clock_rate:tip_age_2": [
+          -0.01526650379692029,
+          -0.013947263923999512,
+          -0.012193015276768462,
+          -0.0011401342730016015
+        ],
+        "fbd_origin:tree_height": [
+          0.8069298482463465,
+          0.8062356660418438,
+          0.8072411600758542,
+          0.8102337882468879
+        ],
+        "fbd_birth_rate:fbd_origin": [
+          -0.41061519494072996,
+          -0.4132374788400262,
+          -0.4229553287732056,
+          -0.42078137212848693
+        ],
+        "fbd_death_rate:fbd_fossil_sampling_rate": [
+          0.04606707822672682,
+          0.06262704244716778,
+          0.0609751988977213,
+          0.059152420950363584
+        ]
+      },
+      "statistics": [
+        {
+          "ess": [
+            1850.4872342935394,
+            3160.955865624069,
+            2412.5997529576352,
+            1490.8887738754436
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -43.21916931523169,
+            -43.298105142114494,
+            -43.31567761648412,
+            -43.36577927964032
+          ],
+          "name": "posterior",
+          "rhat": 1.0002240231012467,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            6145.579173697853,
+            6526.984297092156,
+            7711.763671051115,
+            6730.866852385408
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -18.772359985772557,
+            -18.710219732506644,
+            -18.744640152614206,
+            -18.710395765658138
+          ],
+          "name": "likelihood",
+          "rhat": 1.000171150569343,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            1749.6183463493605,
+            2845.8723580906535,
+            2270.205924965439,
+            1435.7149857014977
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -24.446809329459136,
+            -24.58788540960785,
+            -24.571037463869917,
+            -24.655383513982187
+          ],
+          "name": "prior",
+          "rhat": 1.0002671761456545,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            4329.1574103196,
+            4383.930499047835,
+            4467.2159792876955,
+            4629.539924107514
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -22.385236537232945,
+            -22.42975208241631,
+            -22.416291033640853,
+            -22.424942565460775
+          ],
+          "name": "fossilized_birth_death",
+          "rhat": 1.0000765523696775,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            7134.597675011611,
+            6966.967404522376,
+            7460.458108604445,
+            6358.17841822108
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.01574529140539322,
+            0.015485920190350437,
+            0.015926251036417732,
+            0.01572368057294162
+          ],
+          "name": "clock_rate",
+          "rhat": 1.0001380898655459,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            7312.943445341519,
+            7375.914635320186,
+            7022.655851968637,
+            7588.127451639072
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            4.84599132770494,
+            4.866681678581204,
+            4.815847016595237,
+            4.828784943635284
+          ],
+          "name": "dating_parameter_prior",
+          "rhat": 1.0001383005660436,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            3584.509810197883,
+            3853.0239486459627,
+            3867.58661309533,
+            3555.811403329546
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            31.562445626513814,
+            31.759620702283698,
+            31.641559989079752,
+            31.924895903698513
+          ],
+          "name": "tree_height",
+          "rhat": 1.0000718210029567,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            3759.4191752091147,
+            3944.4216350069487,
+            3976.685814184879,
+            3500.5523641397185
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            77.54618313864108,
+            78.16120463174494,
+            77.70995439381349,
+            78.50063777844545
+          ],
+          "name": "tree_length",
+          "rhat": 1.000080686400351,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            118.72616437162874,
+            255.3742391816515,
+            172.68877362496664,
+            151.77090165634564
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.7677929028894033,
+            0.7763223293746517,
+            0.8282982234569589,
+            0.8412364586901946
+          ],
+          "name": "gamma_shape",
+          "rhat": 1.0036987581423351,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            118.72616437162874,
+            255.3742391816515,
+            172.68877362496664,
+            151.77090165634564
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -0.7677929028894033,
+            -0.7763223293746517,
+            -0.8282982234569589,
+            -0.8412364586901946
+          ],
+          "name": "gamma_prior",
+          "rhat": 1.0036987581423351,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            2865.7358704170665,
+            3122.076658074117,
+            2884.155944415212,
+            3066.269302384482
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            1.003015083358082,
+            1.0112179230612677,
+            0.9932868031589173,
+            1.0044547998642135
+          ],
+          "name": "clock_sigma",
+          "rhat": 1.0003887012211683,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            4891.310844838765,
+            4876.615270425939,
+            4669.143369699186,
+            4850.420631197693
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -5.664578011866309,
+            -5.773298044940286,
+            -5.677470144789291,
+            -5.742295397994073
+          ],
+          "name": "clock_rate_prior",
+          "rhat": 1.0000896332918603,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            3949.1916581624323,
+            4967.892998680294,
+            4507.10743158543,
+            4392.478396663782
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            -0.47519320517541663,
+            -0.47519463145780483,
+            -0.46482507857805233,
+            -0.4756940354724297
+          ],
+          "name": "clock_sigma_prior",
+          "rhat": 1.0001791553938222,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            4498.7508531907215,
+            4451.553063021528,
+            5339.414633786087,
+            4673.042126368618
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            1.2507888255991872,
+            1.298463855608432,
+            1.3052477136543104,
+            1.3087463720691943
+          ],
+          "name": "mean_branch_rate",
+          "rhat": 1.0000738753458682,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            5641.143941771935,
+            5105.74085913096,
+            5376.3937037550795,
+            5084.0121215332665
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.07199720101995105,
+            0.0713292931045725,
+            0.0720230028588394,
+            0.07215143571028865
+          ],
+          "name": "fbd_birth_rate",
+          "rhat": 1.0000330495384264,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            5222.429526448067,
+            5288.788409165417,
+            5231.461708349039,
+            5212.810279062637
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.022786958340990177,
+            0.022774177314368357,
+            0.022840770090715,
+            0.022936791402012255
+          ],
+          "name": "fbd_death_rate",
+          "rhat": 1.000088145915027,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            6268.007870920007,
+            6721.048164801768,
+            6196.120016638382,
+            5994.040045415762
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.01484827661653166,
+            0.014949756860186764,
+            0.015049622953488065,
+            0.014681069165365657
+          ],
+          "name": "fbd_fossil_sampling_rate",
+          "rhat": 1.0001799066362829,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            16374.617588066052,
+            15896.869271866462,
+            16279.292681653104,
+            16416.229920189475
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.34336974558536526,
+            0.3435742167406415,
+            0.3447468272851393,
+            0.34070834203752637
+          ],
+          "name": "fbd_present_sampling",
+          "rhat": 1.0000796562919474,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            3046.0051875737345,
+            3208.8160901976103,
+            3200.880656124263,
+            2975.6645549041996
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            42.08086667487011,
+            42.42390963444831,
+            42.19867304777941,
+            42.68098282973115
+          ],
+          "name": "fbd_origin",
+          "rhat": 1.0001015543373306,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "ess_reasons": [
+            "constant",
+            "constant",
+            "constant",
+            "constant"
+          ],
+          "fixed_by_model": true,
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "name": "tip_age_1",
+          "rhat": null,
+          "rhat_reason": "constant"
+        },
+        {
+          "ess": [
+            53499.9687188498,
+            51694.16505887177,
+            48516.116000934,
+            49213.30528225932
+          ],
+          "ess_reasons": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            6.8046440011626785,
+            6.808876022768374,
+            6.814833756122626,
+            6.805115567041337
+          ],
+          "name": "tip_age_2",
+          "rhat": 1.0000070323064587,
+          "rhat_reason": null
+        },
+        {
+          "ess": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "ess_reasons": [
+            "constant",
+            "constant",
+            "constant",
+            "constant"
+          ],
+          "fixed_by_model": true,
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "name": "tip_age_3",
+          "rhat": null,
+          "rhat_reason": "constant"
+        },
+        {
+          "ess": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "ess_reasons": [
+            "constant",
+            "constant",
+            "constant",
+            "constant"
+          ],
+          "fixed_by_model": true,
+          "lag_limit_reached": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "means": [
+            12.0,
+            12.0,
+            12.0,
+            12.0
+          ],
+          "name": "tip_age_4",
+          "rhat": null,
+          "rhat_reason": "constant"
+        }
+      ],
+      "clades": [
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.012366529260785963,
+          "frequencies": [
+            0.754013844290619,
+            0.7622804191064544,
+            0.766380373551405,
+            0.7629470783657959
+          ],
+          "taxa": [
+            "Living C",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.008122131976311384,
+          "frequencies": [
+            0.13200964433728515,
+            0.12667637026255263,
+            0.12388751236097377,
+            0.12638748458350463
+          ],
+          "taxa": [
+            "Living A",
+            "Fossil B",
+            "Living C"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.004455506049932834,
+          "frequencies": [
+            0.9092121198653348,
+            0.9136676259152676,
+            0.9119343118409795,
+            0.9132009644337286
+          ],
+          "taxa": [
+            "Living A",
+            "Fossil B"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.002488861234875168,
+          "frequencies": [
+            0.016488705681047988,
+            0.01399984444617282,
+            0.014477616915367607,
+            0.014755391606759925
+          ],
+          "taxa": [
+            "Fossil B",
+            "Living C"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0023999733336296254,
+          "frequencies": [
+            0.01678870234775169,
+            0.015244275063610405,
+            0.016033155187164586,
+            0.014388729014122066
+          ],
+          "taxa": [
+            "Living A",
+            "Living C"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0017777580249108346,
+          "frequencies": [
+            0.011677648026133042,
+            0.009899890001222208,
+            0.01011099876668037,
+            0.010944322840857324
+          ],
+          "taxa": [
+            "Living A",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0016666481483539053,
+          "frequencies": [
+            0.08988789013455406,
+            0.0898434461839313,
+            0.08822124198620016,
+            0.08904345507272142
+          ],
+          "taxa": [
+            "Living A",
+            "Fossil B",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0012333196297818916,
+          "frequencies": [
+            0.006577704692170087,
+            0.005344385062388195,
+            0.00585549049455006,
+            0.005488827901912201
+          ],
+          "taxa": [
+            "Fossil B",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0008555460494883392,
+          "frequencies": [
+            0.028133020744213953,
+            0.027655248275019167,
+            0.02758858234908501,
+            0.027277474694725613
+          ],
+          "taxa": [
+            "Fossil B",
+            "Living C",
+            "Fossil D"
+          ]
+        },
+        {
+          "constant_in_every_chain": false,
+          "constrained": false,
+          "difference": 0.0003555516049821711,
+          "frequencies": [
+            0.03521071988089021,
+            0.035388495683381295,
+            0.03551071654759391,
+            0.03556627148587238
+          ],
+          "taxa": [
+            "Living A",
+            "Living C",
+            "Fossil D"
+          ]
+        }
+      ],
+      "topology_convergence_assessed": false,
+      "trace_sha256": [
+        "d3124557d707fc7bdf795bc8bb1417828b3888bde93088dd3410a6e3b4a5b3eb",
+        "3a5731375367ce18ba0b7fbe5d8f842bb132037f99b28a7ace22ab7d0495eaad",
+        "3429e07c25cd933f389f72ae04e04cfc592c5f6ce0f2ba3fa6d054f03c2280c4",
+        "a3f65dc07674ea3a89e02ced5c312188aff82efb991abaaa0f32662d132dbeb8"
+      ],
+      "tree_sha256": [
+        "ce1b8dbee9ac883e150d7170b00d0cdac76c2cbd2d46451aa7763f15ab5ae3c2",
+        "bf9020daa7701844ffec402addd5492fb487919f7cbc4b335891f773e0e8948f",
+        "02cb7e538a13ab6aba7522081451e0dff9c061cc36894fdd97a6427f4d94db20",
+        "99124b046d7093a9f2c6bbbfcab4062a1c99855fbb85473303d6feabb4d0986d"
+      ],
+      "wall_time_resolution_seconds": 0.001
+    }
+  ],
+  "timing_note": "Recovered from completed runs and external wall times printed to 0.001 s. Final report assembly originally failed on a sandbox-denied sysctl query; the script now obtains hardware via system_profiler and saves each result as it completes. No runs or measurements were dropped."
+}

@@ -1246,3 +1246,152 @@ fn dated_chain_comparison_distinguishes_fixed_and_sampled_parameters() {
     let external: serde_json::Value = serde_json::from_slice(&compared.stdout).unwrap();
     assert_eq!(comparison["statistics"], external["statistics"]);
 }
+
+#[test]
+fn estimated_processes_preserve_live_values_and_fixed_diagnostics() {
+    let directory = scratch("fbd-estimation");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let config = serde_json::json!({
+        "time_unit":"Ma", "birth_rate":0.8, "death_rate":0.3,
+        "fossil_sampling_rate":0.2, "present_sampling":0.7, "origin":4.0,
+        "clock_rate":0.1, "process_model":"joint_sampling_v1",
+        "process_priors":{"birth_rate_mean":1.1,"death_rate_mean":0.6,
+            "fossil_sampling_rate_mean":0.3,"origin_excess_mean":2.0},
+        "ages":{"A":0,"B":[0.4,1.2],"C":0,"D":0.7,"E e":0}
+    });
+    for model in ["strict", "reference"] {
+        let output = directory.join(model);
+        let result = rove(&[
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            output.to_str().unwrap(),
+            "--dating-json",
+            &config.to_string(),
+            "--seed",
+            "41",
+            "--steps",
+            "10000",
+            "--sample-every",
+            "10",
+            "--gaps",
+            "missing",
+            "--conditioning",
+            "none",
+            "--model",
+            model,
+            "--chains",
+            "2",
+        ]);
+        assert!(result.status.success(), "{}", error_text(&result));
+        let record: serde_json::Value =
+            serde_json::from_slice(&fs::read(output.join("run.json")).unwrap()).unwrap();
+        assert_eq!(record["model"]["dating"], config);
+        assert_eq!(
+            record["model"]["dating_density_convention"],
+            "joint_sampling_v1"
+        );
+        let comparison: serde_json::Value =
+            serde_json::from_slice(&fs::read(output.join("comparison.json")).unwrap()).unwrap();
+        for col in comparison["statistics"].as_array().unwrap() {
+            let name = col["name"].as_str().unwrap();
+            if name.starts_with("fbd_") || name == "dating_parameter_prior" {
+                assert_eq!(
+                    col["fixed_by_model"] == true,
+                    name == "fbd_present_sampling",
+                    "{name}"
+                );
+            }
+        }
+        let chain = output.join("chain-01");
+        let trace = fs::read_to_string(chain.join("trace.log")).unwrap();
+        let mut rows = trace.lines().filter(|l| !l.starts_with('#'));
+        let names: Vec<_> = rows.next().unwrap().split('\t').collect();
+        let states: Vec<Vec<f64>> = rows
+            .map(|r| r.split('\t').map(|v| v.parse().unwrap()).collect())
+            .collect();
+        for name in [
+            "fbd_birth_rate",
+            "fbd_death_rate",
+            "fbd_fossil_sampling_rate",
+            "fbd_origin",
+        ] {
+            let i = names.iter().position(|n| *n == name).unwrap();
+            assert!(
+                states.iter().any(|v| v[i] != states[0][i]),
+                "{name} did not move"
+            );
+        }
+        let predict = rove(&[
+            "predict",
+            chain.to_str().unwrap(),
+            "--matrix",
+            matrix.to_str().unwrap(),
+            "--output",
+            output.join("predict").to_str().unwrap(),
+            "--seed",
+            "99",
+            "--replicates",
+            "8",
+            "--burnin-percent",
+            "10",
+        ]);
+        assert!(predict.status.success(), "{}", error_text(&predict));
+    }
+    for change in [
+        serde_json::json!({"process_model":"unknown"}),
+        serde_json::json!({"process_priors":{}}),
+        serde_json::json!({"process_priors":{"unknown":1}}),
+        serde_json::json!({"process_priors":{"birth_rate_mean":0}}),
+        serde_json::json!({"process_priors":{"present_sampling_beta":[0,1]}}),
+        serde_json::json!({"death_rate":0}),
+    ] {
+        let mut bad = config.clone();
+        for (k, v) in change.as_object().unwrap() {
+            bad[k] = v.clone();
+        }
+        let out = directory.join("invalid");
+        let run = rove(&[
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            out.to_str().unwrap(),
+            "--dating-json",
+            &bad.to_string(),
+            "--seed",
+            "41",
+            "--steps",
+            "10",
+            "--sample-every",
+            "1",
+            "--gaps",
+            "missing",
+            "--conditioning",
+            "none",
+        ]);
+        assert!(!run.status.success());
+        assert!(!out.exists());
+    }
+    let mut no_mode = config.clone();
+    no_mode.as_object_mut().unwrap().remove("process_model");
+    let run = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--output",
+        directory.join("no-mode").to_str().unwrap(),
+        "--dating-json",
+        &no_mode.to_string(),
+        "--seed",
+        "1",
+        "--steps",
+        "10",
+        "--sample-every",
+        "1",
+        "--gaps",
+        "missing",
+        "--conditioning",
+        "none",
+    ]);
+    assert!(error(&run).contains("joint_sampling_v1"));
+}

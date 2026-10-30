@@ -7,7 +7,7 @@ use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation, RelaxedClock};
 use crate::tree::Tree;
 
-const MAGIC: &[u8; 8] = b"ROVECP05";
+const MAGIC: &[u8; 8] = b"ROVECP06";
 
 impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.
@@ -41,6 +41,17 @@ impl Sampler {
             write_f64(&mut out, clock.sigma())?;
             for &rate in clock.rates() {
                 write_f64(&mut out, rate)?;
+            }
+        }
+        if let Some(p) = self.fbd {
+            for v in [
+                p.birth,
+                p.death,
+                p.fossil_sampling,
+                p.present_sampling,
+                p.origin,
+            ] {
+                write_f64(&mut out, v)?;
             }
         }
         for value in [
@@ -157,6 +168,17 @@ impl Sampler {
         } else {
             None
         };
+        let process = if settings.dating.is_some() {
+            Some(crate::dating::FossilizedBirthDeath {
+                birth: read_f64(&mut input)?,
+                death: read_f64(&mut input)?,
+                fossil_sampling: read_f64(&mut input)?,
+                present_sampling: read_f64(&mut input)?,
+                origin: read_f64(&mut input)?,
+            })
+        } else {
+            None
+        };
         let mut initial = settings.clone();
         initial.initial.birth_difference = read_f64(&mut input)?;
         initial.initial.relative_death = read_f64(&mut input)?;
@@ -165,6 +187,7 @@ impl Sampler {
             &initial,
             tree,
             Some(RateVariation { mean, gamma, clock }),
+            process,
             random,
         )
         .map_err(|_| invalid())?;

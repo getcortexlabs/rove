@@ -1,0 +1,33 @@
+{
+  "reference": {
+    "BEAST.base": "2.7.8",
+    "SA": "2.1.1",
+    "SA_commit": "3f01d8f045190585e984fab1d26b216c14c2e042",
+    "SA_download": "https://github.com/CompEvol/sampled-ancestors/releases/download/v2.1.1/SA.v2.1.1.zip"
+  },
+  "java": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Temurin-17.0.15+6 (build 17.0.15+6)\nOpenJDK 64-Bit Server VM Temurin-17.0.15+6 (build 17.0.15+6, mixed mode, sharing)\n",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "sha256": {
+    "beast_base_jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+    "sa_jar": "8575b806f51d714c1a40a8089c6dc367a009e843a53ee77b6ef6736752f5da94",
+    "oracle_source": "6b42b2d57a34a7d9187406dfca789804704836a9e57d78a88ec5beecc5a043da",
+    "oracle_output": "bc67aede0c219120f2b41d4219315dca6838cb7257ccc37e6a6b8c55a469b0af"
+  },
+  "tree": "(A,B); A age 0, B age 0.7, root heights in oracle rows; terminal fossils only",
+  "removal_probability": 0,
+  "condition_on_root": false,
+  "condition_on_sampling": false,
+  "condition_on_rho_sampling": false,
+  "process_model": "joint_sampling_v1",
+  "hyperpriors": {
+    "birth_rate_mean": 1.1,
+    "death_rate_mean": 0.6,
+    "fossil_sampling_rate_mean": 0.3,
+    "present_sampling_beta": [
+      2,
+      3
+    ],
+    "origin_excess_mean": 2,
+    "origin_offset": 0.7
+  }
+}

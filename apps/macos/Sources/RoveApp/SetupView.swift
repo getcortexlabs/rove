@@ -264,8 +264,11 @@ struct ReviewView: View {
               ? "Lognormal relaxed clock · 4 gamma categories" : "Strict clock · 1 rate category")
           row(
             "Tree prior",
-            workspace.settings.dating.enabled
-              ? "Fossilized birth–death · fixed process" : "Birth–death · all tips at height zero")
+            workspace.settings.dating.estimatesProcess
+              ? "Fossilized birth–death · estimated parameters"
+              : workspace.settings.dating.enabled
+                ? "Fossilized birth–death · fixed process" : "Birth–death · all tips at height zero"
+          )
           rule
           row(
             "Chain",

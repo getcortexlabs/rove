@@ -15,6 +15,7 @@ fn patterns(tips: usize) -> Vec<Patterns> {
 }
 fn model(ages: &[(f64, f64)]) -> Dating {
     Dating {
+        process_priors: None,
         process: FossilizedBirthDeath {
             birth: 0.8,
             death: 0.3,

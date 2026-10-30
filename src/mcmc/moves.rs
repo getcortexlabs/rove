@@ -11,6 +11,11 @@ use crate::tree::Tree;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Move {
+    FbdBirthScale,
+    FbdDeathScale,
+    FbdSamplingScale,
+    FbdRhoLogit,
+    FbdOriginScale,
     TipAge,
     ClockRateScale,
     /// `Uniform`: a new height for a non-root internal node, uniform between
@@ -44,7 +49,12 @@ pub enum Move {
 }
 
 impl Move {
-    pub const ALL: [Move; 17] = [
+    pub const ALL: [Move; 22] = [
+        Move::FbdBirthScale,
+        Move::FbdDeathScale,
+        Move::FbdSamplingScale,
+        Move::FbdRhoLogit,
+        Move::FbdOriginScale,
         Move::TipAge,
         Move::ClockRateScale,
         Move::NodeHeight,
@@ -66,6 +76,11 @@ impl Move {
 
     pub fn name(self) -> &'static str {
         match self {
+            Self::FbdBirthScale => "fbd_birth_scale",
+            Self::FbdDeathScale => "fbd_death_scale",
+            Self::FbdSamplingScale => "fbd_sampling_scale",
+            Self::FbdRhoLogit => "fbd_rho_logit",
+            Self::FbdOriginScale => "fbd_origin_scale",
             Self::TipAge => "tip_age",
             Self::ClockRateScale => "clock_rate_scale",
             Self::NodeHeight => "node_height",
@@ -90,7 +105,12 @@ impl Move {
     pub fn initial_tuning(self) -> Option<f64> {
         match self {
             Self::SubtreeSlide => Some(1.0),
-            Self::ClockRateScale
+            Self::FbdBirthScale
+            | Self::FbdDeathScale
+            | Self::FbdSamplingScale
+            | Self::FbdRhoLogit
+            | Self::FbdOriginScale
+            | Self::ClockRateScale
             | Self::RootScale
             | Self::TreeScale
             | Self::BirthDifferenceScale
@@ -102,6 +122,17 @@ impl Move {
             | Self::ClockSigmaRates => Some(0.5),
             _ => None,
         }
+    }
+
+    pub fn changes_fbd(self) -> bool {
+        matches!(
+            self,
+            Self::FbdBirthScale
+                | Self::FbdDeathScale
+                | Self::FbdSamplingScale
+                | Self::FbdRhoLogit
+                | Self::FbdOriginScale
+        )
     }
 
     pub fn changes_tree(self) -> bool {
@@ -157,7 +188,12 @@ impl Move {
     ) -> Option<f64> {
         let tuning = tuning.unwrap_or(f64::NAN);
         match self {
-            Self::TipAge => None, // Age constraints are owned by the sampler.
+            Self::FbdBirthScale
+            | Self::FbdDeathScale
+            | Self::FbdSamplingScale
+            | Self::FbdRhoLogit
+            | Self::FbdOriginScale
+            | Self::TipAge => None, // Dating proposals are handled by the sampler.
             Self::ClockRateScale => scale(rates.mean.as_mut()?, f64::MAX, tuning, random),
             Self::NodeHeight => node_height(tree, random),
             Self::SubtreeSlide => subtree_slide(tree, tuning, random),

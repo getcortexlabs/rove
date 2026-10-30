@@ -371,7 +371,46 @@ pub(super) fn run(args: &[String]) -> Result<()> {
                 }
             };
             if let Some(dating) = &dating {
-                settings.set_dating(dating.clone());
+                let mut live = dating.clone();
+                if let Some(priors) = dating.process_priors {
+                    let p = &mut live.process;
+                    for (field, name, estimated) in [
+                        (
+                            &mut p.birth,
+                            "fbd_birth_rate",
+                            priors.birth_rate_mean.is_some(),
+                        ),
+                        (
+                            &mut p.death,
+                            "fbd_death_rate",
+                            priors.death_rate_mean.is_some(),
+                        ),
+                        (
+                            &mut p.fossil_sampling,
+                            "fbd_fossil_sampling_rate",
+                            priors.fossil_sampling_rate_mean.is_some(),
+                        ),
+                        (
+                            &mut p.present_sampling,
+                            "fbd_present_sampling",
+                            priors.present_sampling_beta.is_some(),
+                        ),
+                        (
+                            &mut p.origin,
+                            "fbd_origin",
+                            priors.origin_excess_mean.is_some(),
+                        ),
+                    ] {
+                        let value = column(&trace, name, row)?;
+                        if !estimated && value != *field {
+                            return Err(
+                                format!("fixed {name} disagrees with dating settings").into()
+                            );
+                        }
+                        *field = value;
+                    }
+                }
+                settings.set_dating(live);
             }
             let check =
                 Sampler::with_rates(&partitions, &settings, tree.clone(), rates.clone(), 0)?;

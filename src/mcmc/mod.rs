@@ -175,19 +175,28 @@ impl Default for Settings {
 impl Settings {
     pub fn set_dating(&mut self, dating: crate::dating::Dating) {
         self.weights.retain(|(m, _)| {
-            !matches!(
-                m,
-                Move::BirthDifferenceScale
-                    | Move::RelativeDeathScale
-                    | Move::TipAge
-                    | Move::ClockRateScale
-            )
+            !m.changes_fbd()
+                && !matches!(
+                    m,
+                    Move::BirthDifferenceScale
+                        | Move::RelativeDeathScale
+                        | Move::TipAge
+                        | Move::ClockRateScale
+                )
         });
         if dating.ages.iter().any(|a| a.minimum < a.maximum) {
             self.weights.push((Move::TipAge, 10.0));
         }
         if dating.clock_prior_mean.is_some() {
             self.weights.push((Move::ClockRateScale, 3.0));
+        }
+        if let Some(priors) = dating.process_priors {
+            self.weights.extend(
+                Move::ALL
+                    .into_iter()
+                    .filter(|m| priors.estimates(*m))
+                    .map(|m| (m, 3.0)),
+            );
         }
         self.dating = Some(dating);
     }
@@ -419,6 +428,7 @@ fn category_distance(distance: f64, rate: f64) -> f64 {
 
 pub struct Sampler {
     dating: Option<crate::dating::Dating>,
+    fbd: Option<crate::dating::FossilizedBirthDeath>,
     tree: Tree,
     rates: RateVariation,
     stored_rates: RateVariation,
@@ -467,7 +477,7 @@ impl Sampler {
             dating.validate(tips).map_err(Error::Dating)?;
             dating.initialize(&mut tree);
         }
-        Self::from_tree(patterns, settings, tree, None, random)
+        Self::from_tree(patterns, settings, tree, None, None, random)
     }
 
     /// A chain from `tree`; nonzero tips require matching dating settings.
@@ -477,7 +487,14 @@ impl Sampler {
         tree: Tree,
         seed: u64,
     ) -> Result<Self, Error> {
-        Self::from_tree(patterns.as_ref(), settings, tree, None, Random::new(seed))
+        Self::from_tree(
+            patterns.as_ref(),
+            settings,
+            tree,
+            None,
+            None,
+            Random::new(seed),
+        )
     }
 
     /// A fixed rate state, for resuming model calculations and numerical
@@ -494,6 +511,7 @@ impl Sampler {
             settings,
             tree,
             Some(rates),
+            None,
             Random::new(seed),
         )
     }
@@ -503,6 +521,7 @@ impl Sampler {
         settings: &Settings,
         tree: Tree,
         given_rates: Option<RateVariation>,
+        given_process: Option<crate::dating::FossilizedBirthDeath>,
         random: Random,
     ) -> Result<Self, Error> {
         let tips = tree.tips();
@@ -554,6 +573,19 @@ impl Sampler {
             return Err(Error::Rates(rates::Error::BranchRates));
         }
         for &(kind, weight) in &settings.weights {
+            if weight > 0.0
+                && kind.changes_fbd()
+                && settings
+                    .dating
+                    .as_ref()
+                    .and_then(|d| d.process_priors)
+                    .is_none_or(|p| !p.estimates(kind))
+            {
+                return Err(Error::Dating(format!(
+                    "{} requires an estimated FBD parameter",
+                    kind.name()
+                )));
+            }
             if weight > 0.0
                 && ((settings.dating.is_some()
                     && matches!(kind, Move::BirthDifferenceScale | Move::RelativeDeathScale))
@@ -636,6 +668,7 @@ impl Sampler {
         };
         let mut sampler = Self {
             dating: settings.dating.clone(),
+            fbd: given_process.or_else(|| settings.dating.as_ref().map(|d| d.process)),
             stored_tree: tree.clone(),
             stored_rates: rates.clone(),
             rates,
@@ -683,6 +716,10 @@ impl Sampler {
         &self.tree
     }
 
+    pub fn dating_process(&self) -> Option<crate::dating::FossilizedBirthDeath> {
+        self.fbd
+    }
+
     pub fn birth_death(&self) -> BirthDeath {
         self.birth_death
     }
@@ -714,10 +751,14 @@ impl Sampler {
             likelihood: 0.0,
             tree_prior: self.dating.as_ref().map_or_else(
                 || self.birth_death.log_density(&self.tree),
-                |d| d.process.log_density(&self.tree),
+                |_| self.fbd.unwrap().log_density(&self.tree),
             ),
             parameter_prior: self.dating.as_ref().map_or(parameters, |d| {
-                d.log_parameter_prior(&self.tree, self.rates.mean.unwrap_or(1.0))
+                d.log_prior_at(
+                    &self.tree,
+                    self.rates.mean.unwrap_or(1.0),
+                    self.fbd.unwrap(),
+                )
             }),
             gamma_prior: self.rates.gamma.as_ref().map_or(0.0, GammaRates::log_prior),
             clock_rate_prior: self
@@ -768,6 +809,7 @@ impl Sampler {
         let index = self.choose();
         let kind = self.operators[index].kind;
         let stored_birth_death = self.birth_death;
+        let stored_fbd = self.fbd;
         self.stored_tree.clone_from(&self.tree);
         self.stored_rates.clone_from(&self.rates);
         for likelihood in &mut self.likelihoods {
@@ -776,7 +818,18 @@ impl Sampler {
                 correction.store();
             }
         }
-        let proposal = if kind == Move::TipAge {
+        let proposal = if kind.changes_fbd() {
+            let dating = self.dating.as_ref().unwrap();
+            dating.process_priors.and_then(|p| {
+                p.propose(
+                    kind,
+                    self.fbd.as_mut().unwrap(),
+                    dating.origin_offset(),
+                    self.operators[index].tuning.unwrap(),
+                    &mut self.random,
+                )
+            })
+        } else if kind == Move::TipAge {
             self.dating
                 .as_ref()
                 .and_then(|d| d.propose_age(&mut self.tree, &mut self.random))
@@ -826,6 +879,7 @@ impl Sampler {
         if !accepted {
             std::mem::swap(&mut self.tree, &mut self.stored_tree);
             self.birth_death = stored_birth_death;
+            self.fbd = stored_fbd;
             std::mem::swap(&mut self.rates, &mut self.stored_rates);
             for likelihood in &mut self.likelihoods {
                 likelihood.core.restore();

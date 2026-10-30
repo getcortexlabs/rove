@@ -50,8 +50,15 @@ Process rates, present-day sampling, origin and clock fields start empty. The ap
 validates decimal input and age bounds before review, writes a per-run `dating.json`
 and passes it to the bundled engine. Copied terminal commands embed the same JSON.
 
-Dated setups use format 3; older apps reject them instead of silently dropping ages.
-Undated setups still use format 2, and formats 1 and 2 remain readable. Review,
+Each process parameter can stay fixed or be estimated with an explicit prior.
+Rates use exponential priors, present-day sampling uses beta, and origin uses an
+exponential excess above the oldest allowed tip age. Estimation selects the joint
+sampling model; sample counts, age evidence and imposed constraints inform the
+process, including in runs without character likelihoods.
+
+Estimated-process setups use format 4; fixed-process dating uses format 3. Older
+apps reject unsupported formats instead of silently dropping model choices.
+Undated setups still use format 2, and formats 1–3 remain readable. Review,
 History and setup reuse preserve the full dating configuration. Completion checks
 compare that configuration with `run.json`; checkpoint recovery checks the embedded
 configuration and does not depend on the original `dating.json`. Annotated tree

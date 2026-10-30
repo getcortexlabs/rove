@@ -21,6 +21,43 @@ struct DatingTests {
     ]
     return dating
   }
+  static var estimatedExample: DatingSettings {
+    var dating = example
+    dating.estimation.birth = ProcessRateInput(estimated: true, mean: "0.08")
+    dating.estimation.death = ProcessRateInput(estimated: true, mean: "0.03")
+    dating.estimation.fossilSampling = ProcessRateInput(estimated: true, mean: "0.02")
+    dating.estimation.estimateSampling = true
+    dating.estimation.samplingAlpha = "2"
+    dating.estimation.samplingBeta = "2"
+    dating.estimation.origin = ProcessRateInput(estimated: true, mean: "30")
+    return dating
+  }
+
+  @Test func estimatedInputsHaveExplicitPriorsAndModelSemantics() throws {
+    let valid = Self.estimatedExample
+    #expect(valid.validationError() == nil)
+    let encoded = try #require(try valid.model())
+    #expect(encoded.processModel == "joint_sampling_v1")
+    #expect(encoded.processPriors?.presentSamplingBeta == [2, 2])
+    #expect(try EngineDatingModel.decode(encoded.json()) == encoded)
+    let changes: [(inout DatingSettings) -> Void] = [
+      { $0.estimation.birth.mean = "" }, { $0.estimation.origin.mean = "-1" },
+      { $0.estimation.samplingAlpha = "0" }, { $0.estimation.samplingBeta = "1001" },
+      { $0.deathRate = "0" }, { $0.presentSampling = "1" },
+    ]
+    for change in changes {
+      var invalid = valid
+      change(&invalid)
+      #expect(invalid.validationError() != nil)
+      #expect(throws: (any Error).self) { try invalid.model() }
+    }
+    var mixed = valid
+    mixed.estimation.death.estimated = false
+    mixed.deathRate = "0"
+    #expect(mixed.validationError() == nil)
+    #expect(try mixed.model()?.processPriors?.deathRateMean == nil)
+  }
+
   private var root: URL {
     URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
@@ -98,6 +135,19 @@ struct DatingTests {
     try draft.write(to: saved)
     #expect(try AnalysisDraft.read(saved).settings.dating == Self.example)
     #expect(draft.formatVersion == 3)
+    var estimated = workspace.settings
+    estimated.dating = Self.estimatedExample
+    let newer = AnalysisDraft(matrix: matrix, report: report, settings: estimated)
+    #expect(newer.formatVersion == 4)
+    let newerFile = directory.appendingPathComponent("estimated.rove.json")
+    try newer.write(to: newerFile)
+    #expect(try AnalysisDraft.read(newerFile).settings.dating == Self.estimatedExample)
+    var oldVersion = try #require(
+      JSONSerialization.jsonObject(with: Data(contentsOf: newerFile)) as? [String: Any])
+    oldVersion["formatVersion"] = 3
+    try JSONSerialization.data(withJSONObject: oldVersion).write(to: newerFile)
+    #expect(throws: (any Error).self) { try AnalysisDraft.read(newerFile) }
+
     workspace.loadSetup(saved)
     while workspace.loading { try await Task.sleep(for: .milliseconds(10)) }
     #expect(workspace.settings.dating == Self.example)
@@ -116,7 +166,8 @@ struct DatingTests {
     #expect(!workspace.settings.dating.enabled && workspace.settings.dating.ages.isEmpty)
   }
 
-  @Test @MainActor func appRunsPreserveDatingInHistoryDiagnosticsAndTreeUnits() async throws {
+  @Test(arguments: [false, true]) @MainActor
+  func appRunsPreserveDatingInHistoryDiagnosticsAndTreeUnits(estimated: Bool) async throws {
     let parent = FileManager.default.temporaryDirectory.appendingPathComponent(
       "rove-dated-\(UUID())")
     defer { try? FileManager.default.removeItem(at: parent) }
@@ -131,7 +182,7 @@ struct DatingTests {
       settings.steps = 10_000
       settings.sampleEvery = 100
       settings.chains = clock == "strict" ? 1 : 2
-      settings.dating = Self.example
+      settings.dating = estimated ? Self.estimatedExample : Self.example
       settings.dating.clock = clock == "strict" ? .estimated : .fixed
       let draft = AnalysisDraft(matrix: matrix, report: report, settings: settings)
       let request = RunRequest(
@@ -180,7 +231,9 @@ struct DatingTests {
     }
   }
 
-  @Test func datedCheckpointsResumeWithoutTheConfigurationFile() async throws {
+  @Test(arguments: [false, true]) func datedCheckpointsResumeWithoutTheConfigurationFile(
+    estimated: Bool
+  ) async throws {
     let parent = FileManager.default.temporaryDirectory.appendingPathComponent(
       "rove-dated-resume-\(UUID())")
     defer { try? FileManager.default.removeItem(at: parent) }
@@ -190,7 +243,7 @@ struct DatingTests {
       settings.steps = 100_000
       settings.sampleEvery = 100
       settings.chains = chains
-      settings.dating = Self.example
+      settings.dating = estimated ? Self.estimatedExample : Self.example
       let draft = AnalysisDraft(matrix: matrix, report: report, settings: settings)
       let directory = parent.appendingPathComponent("paused-\(chains)")
       let request = RunRequest(id: UUID(), executable: engine, directory: directory, draft: draft)

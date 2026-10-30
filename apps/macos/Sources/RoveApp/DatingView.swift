@@ -60,42 +60,7 @@ struct DatingSection: View {
           )
           .font(.system(size: 11)).foregroundStyle(Lab.secondary)
           Divider().overlay(Lab.border)
-          VStack(alignment: .leading, spacing: 12) {
-            Text(strings("Fossilized birth–death process")).font(
-              .system(size: 13, weight: .semibold))
-            Text(
-              strings(
-                "These process parameters stay fixed during the run. Choose values appropriate to your data and time unit."
-              )
-            )
-            .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3).fixedSize(
-              horizontal: false, vertical: true)
-            HStack(alignment: .top, spacing: 16) {
-              field("Birth rate · λ", text: $workspace.settings.dating.birthRate)
-              field("Death rate · μ", text: $workspace.settings.dating.deathRate)
-              field("Fossil sampling · ψ", text: $workspace.settings.dating.fossilSamplingRate)
-            }
-            Text(
-              strings(
-                "Rates are per lineage, per time unit. Birth and fossil sampling must be positive; death can be zero."
-              )
-            )
-            .font(.system(size: 11)).foregroundStyle(Lab.muted).lineSpacing(3).fixedSize(
-              horizontal: false, vertical: true)
-            HStack(alignment: .top, spacing: 16) {
-              field(
-                "Present-day sampling · ρ", text: $workspace.settings.dating.presentSampling,
-                placeholder: "0 … 1")
-              field("Origin age", text: $workspace.settings.dating.origin)
-            }
-            Text(
-              strings(
-                "Sampling is the fraction of living lineages observed. The origin is fixed and must be older than the root and every allowed tip age."
-              )
-            )
-            .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3).fixedSize(
-              horizontal: false, vertical: true)
-          }
+          ProcessSettingsView(workspace: workspace)
           Divider().overlay(Lab.border)
           VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -125,7 +90,7 @@ struct DatingSection: View {
           }
           Text(
             strings(
-              "Fossils are terminal tips in this model. Sampled ancestors and estimated process parameters are not supported yet."
+              "Fossils are constrained to terminal tips. Sampled ancestors and species occurrence ranges are not supported."
             )
           )
           .font(.system(size: 11)).foregroundStyle(Lab.muted).lineSpacing(3).fixedSize(
@@ -278,16 +243,30 @@ struct DatingSummary: View {
           .font(.system(size: 13, weight: .semibold)).foregroundStyle(Lab.ice)
         row("Time unit", dating.unit)
         row("Fossils", strings.number(dating.fossilCount))
-        row("Birth rate · λ", dating.birthRate)
-        row("Death rate · μ", dating.deathRate)
-        row("Fossil sampling · ψ", dating.fossilSamplingRate)
-        row("Present-day sampling · ρ", dating.presentSampling)
-        row("Origin age", "\(dating.origin) \(dating.unit)")
+        processRow("Birth rate · λ", value: dating.birthRate, prior: dating.estimation.birth)
+        processRow("Death rate · μ", value: dating.deathRate, prior: dating.estimation.death)
+        processRow(
+          "Fossil sampling · ψ", value: dating.fossilSamplingRate,
+          prior: dating.estimation.fossilSampling)
+        row(
+          "Present-day sampling · ρ",
+          dating.presentSampling + " · "
+            + strings(dating.estimation.estimateSampling ? "Initial value" : "Fixed"))
+        if dating.estimation.estimateSampling {
+          row(
+            "Beta prior · α, β",
+            "\(dating.estimation.samplingAlpha), \(dating.estimation.samplingBeta)")
+        }
+        processRow(
+          "Origin age", value: "\(dating.origin) \(dating.unit)", prior: dating.estimation.origin,
+          origin: true)
         row(dating.clock == .fixed ? "Fixed clock rate" : "Initial clock rate", dating.clockRate)
         if dating.clock == .estimated { row("Exponential prior mean", dating.clockPriorMean) }
         Text(
           strings(
-            "FBD rates and origin are fixed. Ages in intervals and an estimated clock rate are sampled during the run."
+            dating.estimatesProcess
+              ? "Sample counts, age evidence and imposed terminal/clade constraints inform the estimated process parameters."
+              : "FBD rates and origin are fixed. Ages in intervals and an estimated clock rate are sampled during the run."
           )
         )
         .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3).fixedSize(
@@ -307,6 +286,19 @@ struct DatingSummary: View {
             }.padding(.top, 10)
           }.frame(height: min(230, CGFloat(dating.ages.count * 25 + 10)))
         }.font(.system(size: 12))
+      }
+    }
+  }
+  private func processRow(
+    _ title: String, value: String, prior: ProcessRateInput, origin: Bool = false
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      row(title, value + " · " + strings(prior.estimated ? "Initial value" : "Fixed"))
+      if prior.estimated {
+        row(origin ? "Mean origin excess" : "Exponential prior mean", prior.mean)
+        if origin, let oldest = dating.oldestAge {
+          row("Origin prior offset", "\(TreeFigure.number(oldest)) \(dating.unit)")
+        }
       }
     }
   }

@@ -151,6 +151,7 @@ fn steps_do_not_allocate() {
     }
     let mut dated = Settings::reference();
     dated.set_dating(rove::dating::Dating {
+        process_priors: None,
         process: rove::dating::FossilizedBirthDeath {
             birth: 0.8,
             death: 0.3,
@@ -167,16 +168,33 @@ fn steps_do_not_allocate() {
         clock_rate: 0.1,
         clock_prior_mean: Some(0.1),
     });
-    let mut sampler = Sampler::new(&patterns, &dated, 17).unwrap();
-    for _ in 0..100 {
-        sampler.step();
+    for estimated in [false, true] {
+        if estimated {
+            let mut dating = dated.dating.clone().unwrap();
+            dating.process_priors = Some(rove::dating::ProcessPriors {
+                birth_rate_mean: Some(1.1),
+                death_rate_mean: Some(0.6),
+                fossil_sampling_rate_mean: Some(0.3),
+                present_sampling_beta: Some((2.0, 3.0)),
+                origin_excess_mean: Some(2.0),
+            });
+            dated.set_dating(dating);
+        }
+        let mut sampler = Sampler::new(&patterns, &dated, 17).unwrap();
+        for _ in 0..100 {
+            sampler.step();
+        }
+        COUNTING.store(true, Ordering::Relaxed);
+        for _ in 0..20_000 {
+            sampler.step();
+        }
+        COUNTING.store(false, Ordering::Relaxed);
+        assert_eq!(
+            CALLS.swap(0, Ordering::Relaxed),
+            0,
+            "dated relaxed clock; estimated process {estimated}"
+        );
     }
-    COUNTING.store(true, Ordering::Relaxed);
-    for _ in 0..20_000 {
-        sampler.step();
-    }
-    COUNTING.store(false, Ordering::Relaxed);
-    assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "dated relaxed clock");
     let ordered = nexus::parse(include_str!("../fixtures/validation/ordered/matrix.nex"))
         .unwrap()
         .partition_by_states(GapTreatment::Reject)

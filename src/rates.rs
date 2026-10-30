@@ -75,7 +75,7 @@ impl GammaRates {
 /// Log Gamma for positive arguments, by recurrence and Stirling's series
 /// (DLMF 5.5.1 and 5.11.1). Shifting to at least 16 makes the first omitted
 /// term smaller than 2e-18; rounding dominates that truncation error.
-fn log_gamma(mut x: f64) -> f64 {
+pub(crate) fn log_gamma(mut x: f64) -> f64 {
     let mut shift = 0.0;
     while x < 16.0 {
         shift += x.ln();

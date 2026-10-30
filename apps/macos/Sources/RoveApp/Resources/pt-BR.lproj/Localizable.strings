@@ -783,3 +783,29 @@
 "Present-day sampling must be positive when any terminal is present-day." = "A amostragem atual deve ser positiva quando houver terminais atuais.";
 "Terminal fossils require extinction or incomplete present-day sampling in this FBD model." = "Fósseis terminais exigem extinção ou amostragem atual incompleta neste modelo FBD.";
 "These process values exceed the numerical range. Check their time units." = "Estes valores excedem a faixa numérica. Confira as unidades de tempo.";
+
+// Process parameter estimation
+"Every estimated rate and origin excess needs a positive exponential prior mean." = "Cada taxa estimada e o tempo adicional da origem precisam de uma média positiva para o prior exponencial.";
+"Enter beta prior shapes from 0.001 to 1,000 for present-day sampling." = "Informe parâmetros de forma do prior beta entre 0,001 e 1000 para a amostragem atual.";
+"An estimated death rate needs a positive starting value." = "Uma taxa de morte estimada precisa começar com um valor positivo.";
+"Estimated present-day sampling must start strictly between 0 and 1." = "A amostragem atual estimada deve começar entre 0 e 1, sem incluir os extremos.";
+"Fossilized birth–death · estimated parameters" = "Nascimento e morte com fósseis · parâmetros estimados";
+"Fossils are constrained to terminal tips. Sampled ancestors and species occurrence ranges are not supported." = "Os fósseis são restritos aos terminais da árvore. Ancestrais amostrados e intervalos de ocorrência de espécies não são suportados.";
+"Initial value" = "Valor inicial";
+"Fixed value" = "Valor fixo";
+"Beta prior · α, β" = "Prior beta · α, β";
+"Mean origin excess" = "Média do tempo adicional da origem";
+"Origin prior offset" = "Limite inferior do prior da origem";
+"Sample counts, age evidence and imposed terminal/clade constraints inform the estimated process parameters." = "A quantidade de amostras, as informações de idade e as restrições impostas aos terminais e clados informam os parâmetros estimados do processo.";
+"Choose which values stay fixed and which Rove estimates. Each estimated parameter needs a starting value and a prior." = "Escolha quais valores ficam fixos e quais o Rove estima. Cada parâmetro estimado precisa de um valor inicial e de um prior.";
+"Rates are per lineage, per time unit. A fixed death rate can be zero; estimated rates must start positive." = "As taxas são por linhagem e por unidade de tempo. Uma taxa de morte fixa pode ser zero; taxas estimadas precisam começar positivas.";
+"Initial probability" = "Probabilidade inicial";
+"Fixed probability" = "Probabilidade fixa";
+"Beta prior · α" = "Prior beta · α";
+"Beta prior · β" = "Prior beta · β";
+"Sampling is the fraction of living lineages observed. A beta prior describes uncertainty between zero and one; its mean is α / (α + β)." = "A amostragem é a fração de linhagens vivas observadas. O prior beta descreve a incerteza entre zero e um; sua média é α / (α + β).";
+"The origin prior is exponential on the extra time before the oldest allowed tip age. Its mean is that oldest bound plus the mean excess. The origin must also stay older than the root." = "O prior da origem é exponencial sobre o tempo adicional antes da idade mais antiga permitida para os terminais. Sua média é esse limite mais a média do tempo adicional. A origem também precisa ser mais antiga que a raiz.";
+"Oldest allowed tip age: %@ %@" = "Idade mais antiga permitida: %@ %@";
+"The origin must be older than the root and every allowed tip age, including interval maxima." = "A origem deve ser mais antiga que a raiz e todas as idades permitidas para os terminais, incluindo os máximos dos intervalos.";
+"How the fossils inform the process" = "Como os fósseis informam o processo";
+"The observed sample count, fossil age evidence and imposed terminal/clade constraints inform the estimated rates and origin. A run without character data still uses that information." = "A quantidade de amostras observadas, as informações de idade e as restrições impostas aos terminais e clados informam as taxas e a origem estimadas. Uma execução sem dados de caracteres ainda usa essas informações.";

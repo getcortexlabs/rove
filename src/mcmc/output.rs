@@ -25,6 +25,7 @@ pub struct TraceWriter<W: Write> {
     clock: bool,
     dated: bool,
     ages: usize,
+    process: bool,
 }
 
 impl<W: Write> TraceWriter<W> {
@@ -36,12 +37,14 @@ impl<W: Write> TraceWriter<W> {
             clock: rates.clock.is_some(),
             dated: rates.mean.is_some(),
             ages: 0,
+            process: false,
         }
     }
 
     pub fn resume_sampler(out: W, sampler: &Sampler) -> Self {
         let mut writer = Self::resume(out, sampler.rates());
         writer.ages = sampler.dating().map_or(0, |d| d.ages.len());
+        writer.process = sampler.dating().is_some_and(|d| d.process_priors.is_some());
         writer
     }
 
@@ -51,6 +54,7 @@ impl<W: Write> TraceWriter<W> {
             comments,
             sampler.rates(),
             sampler.dating().map_or(0, |d| d.ages.len()),
+            sampler.dating().is_some_and(|d| d.process_priors.is_some()),
         )
     }
 
@@ -59,7 +63,7 @@ impl<W: Write> TraceWriter<W> {
     }
 
     pub fn with_rates(out: W, comments: &[String], rates: &RateVariation) -> io::Result<Self> {
-        Self::header(out, comments, rates, 0)
+        Self::header(out, comments, rates, 0, false)
     }
 
     fn header(
@@ -67,6 +71,7 @@ impl<W: Write> TraceWriter<W> {
         comments: &[String],
         rates: &RateVariation,
         ages: usize,
+        process: bool,
     ) -> io::Result<Self> {
         for comment in comments {
             writeln!(out, "# {comment}")?;
@@ -88,6 +93,12 @@ impl<W: Write> TraceWriter<W> {
                 "\tclock_sigma\tclock_rate_prior\tclock_sigma_prior\tmean_branch_rate"
             )?;
         }
+        if process {
+            write!(
+                out,
+                "\tfbd_birth_rate\tfbd_death_rate\tfbd_fossil_sampling_rate\tfbd_present_sampling\tfbd_origin"
+            )?;
+        }
         for tip in 0..ages {
             write!(out, "\ttip_age_{}", tip + 1)?;
         }
@@ -98,6 +109,7 @@ impl<W: Write> TraceWriter<W> {
             clock: rates.clock.is_some(),
             dated: rates.mean.is_some(),
             ages,
+            process,
         })
     }
 
@@ -142,6 +154,14 @@ impl<W: Write> TraceWriter<W> {
                 posterior.clock_rate_prior,
                 posterior.clock_sigma_prior,
                 mean
+            )?;
+        }
+        if self.process {
+            let p = sampler.dating_process().unwrap();
+            write!(
+                self.out,
+                "\t{}\t{}\t{}\t{}\t{}",
+                p.birth, p.death, p.fossil_sampling, p.present_sampling, p.origin
             )?;
         }
         for tip in 0..self.ages {

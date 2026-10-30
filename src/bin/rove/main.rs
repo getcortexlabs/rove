@@ -846,6 +846,16 @@ fn run_chain(
                     options.dating.clone().map_or(Json::Null, Json::Value),
                 ),
                 (
+                    "dating_density_convention",
+                    options.dating.as_ref().map_or(Json::Null, |d| {
+                        Json::text(if d.get("process_priors").is_some() {
+                            "joint_sampling_v1"
+                        } else {
+                            "fixed_process_restriction_v1"
+                        })
+                    }),
+                ),
+                (
                     "dating_sha256",
                     options.dating.as_ref().map_or(Json::Null, |v| {
                         Json::text(sha256::hex(v.to_string().as_bytes()))
@@ -901,11 +911,19 @@ fn run_chain(
                 ),
                 (
                     "tree_prior",
-                    Json::text(if settings.dating.is_some() {
-                        "FBD, fixed origin and process parameters, removal probability zero, restricted to terminal fossils and supplied age bounds; unnormalized restricted density, not model evidence"
-                    } else {
-                        "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips"
-                    }),
+                    Json::text(
+                        if settings
+                            .dating
+                            .as_ref()
+                            .is_some_and(|d| d.process_priors.is_some())
+                        {
+                            "FBD joint sampling density, origin-conditioned, removal probability zero, no survival conditioning; observed specimen count, age evidence and imposed terminal/clade constraints inform process parameters; not a parameter-wise normalized restricted tree prior or marginal likelihood"
+                        } else if settings.dating.is_some() {
+                            "FBD, fixed origin and process parameters, removal probability zero, restricted to terminal fossils and supplied age bounds; unnormalized restricted density, not model evidence"
+                        } else {
+                            "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips"
+                        },
+                    ),
                 ),
                 (
                     "birth_difference_rate_prior",

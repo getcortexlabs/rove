@@ -26,27 +26,31 @@ struct DatingPreviewTests {
     workspace.report = try await MatrixInspector.inspect(
       matrix, gapsAsMissing: false, executable: engine)
     workspace.settings.dating = DatingTests.example
-    for language in [AppLanguage.english, .portuguese] {
-      preferences.language = language
-      workspace.page = .model
-      try await capture(
-        RootView(workspace: workspace), size: CGSize(width: 1080, height: 700),
-        to: directory.appendingPathComponent("model-\(language.rawValue).png"))
-      try await capture(
-        DatingSection(workspace: workspace).padding(24).background(Lab.background),
-        size: CGSize(width: 800, height: 820),
-        to: directory.appendingPathComponent("controls-\(language.rawValue).png"))
-      try await capture(
-        TipAgeEditor(workspace: workspace), size: CGSize(width: 730, height: 620),
-        to: directory.appendingPathComponent("ages-\(language.rawValue).png"))
-      workspace.page = .review
-      try await capture(
-        RootView(workspace: workspace), size: CGSize(width: 1080, height: 700),
-        to: directory.appendingPathComponent("review-\(language.rawValue).png"))
-      try await capture(
-        LabPanel { DatingSummary(dating: workspace.settings.dating, strings: workspace.strings) }
-          .padding(24).background(Lab.background), size: CGSize(width: 700, height: 500),
-        to: directory.appendingPathComponent("summary-\(language.rawValue).png"))
+    for estimated in [false, true] {
+      workspace.settings.dating = estimated ? DatingTests.estimatedExample : DatingTests.example
+      for language in [AppLanguage.english, .portuguese] {
+        preferences.language = language
+        workspace.page = .model
+        try await capture(
+          RootView(workspace: workspace), size: CGSize(width: 1080, height: 700),
+          to: directory.appendingPathComponent("model-\(estimated)-\(language.rawValue).png"))
+        try await capture(
+          LabPanel { ProcessSettingsView(workspace: workspace) }.padding(24).background(
+            Lab.background),
+          size: CGSize(width: 780, height: estimated ? 1000 : 780),
+          to: directory.appendingPathComponent("process-\(estimated)-\(language.rawValue).png"))
+        try await capture(
+          TipAgeEditor(workspace: workspace), size: CGSize(width: 730, height: 620),
+          to: directory.appendingPathComponent("ages-\(estimated)-\(language.rawValue).png"))
+        workspace.page = .review
+        try await capture(
+          RootView(workspace: workspace), size: CGSize(width: 1080, height: 700),
+          to: directory.appendingPathComponent("review-\(estimated)-\(language.rawValue).png"))
+        try await capture(
+          LabPanel { DatingSummary(dating: workspace.settings.dating, strings: workspace.strings) }
+            .padding(24).background(Lab.background), size: CGSize(width: 780, height: 820),
+          to: directory.appendingPathComponent("summary-\(estimated)-\(language.rawValue).png"))
+      }
     }
   }
   @MainActor private func capture<V: View>(_ content: V, size: CGSize, to url: URL) async throws {

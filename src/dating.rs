@@ -1,9 +1,13 @@
 //! Tip dating with a constant-rate fossilized birth–death process.
 //!
-//! Process rates, present-day sampling and origin are fixed. The sampler
-//! restricts the FBD density to binary trees without sampled ancestors and
-//! the supplied age bounds. Its normalization is constant in this state
-//! space; the reported density omits this restriction normalizer.
+//! With fixed process parameters, the restricted tree density has a constant
+//! omitted normalizer. Optional process priors instead define a joint sampling
+//! model: specimen counts, age evidence and imposed terminal/clade restrictions
+//! inform the process. This is not a per-process normalized conditional tree
+//! prior. Both modes exclude sampled ancestors from the tree state space.
+
+mod process;
+pub use process::ProcessPriors;
 
 use crate::{random::Random, tree::Tree};
 
@@ -107,6 +111,9 @@ pub struct TipAge {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Dating {
     pub process: FossilizedBirthDeath,
+    /// None preserves the legacy fixed-process conditional analysis.
+    /// Some enables the explicit joint sampling model described in ProcessPriors.
+    pub process_priors: Option<ProcessPriors>,
     /// One age constraint per tip, in the matrix's taxon order.
     pub ages: Vec<TipAge>,
     /// Expected changes per character per unit time.
@@ -118,6 +125,15 @@ pub struct Dating {
 impl Dating {
     pub fn validate(&self, tips: usize) -> Result<(), String> {
         self.process.validate()?;
+        if let Some(priors) = self.process_priors {
+            priors.validate()?;
+            if !priors
+                .log_density(self.process, self.process, self.origin_offset())
+                .is_finite()
+            {
+                return Err("initial FBD values must lie inside their prior support".into());
+            }
+        }
         if self.ages.len() != tips
             || self.ages.iter().any(|a| {
                 !a.minimum.is_finite()
@@ -159,7 +175,23 @@ impl Dating {
         }
     }
 
+    pub fn origin_offset(&self) -> f64 {
+        self.ages.iter().map(|a| a.maximum).fold(0.0, f64::max)
+    }
+
     pub fn log_parameter_prior(&self, tree: &Tree, clock: f64) -> f64 {
+        self.log_prior_at(tree, clock, self.process)
+    }
+
+    pub fn log_prior_at(&self, tree: &Tree, clock: f64, process: FossilizedBirthDeath) -> f64 {
+        if process.validate().is_err() || process.origin <= self.origin_offset() {
+            return f64::NEG_INFINITY;
+        }
+        let process_prior = match self.process_priors {
+            Some(priors) => priors.log_density(process, self.process, self.origin_offset()),
+            None if process == self.process => 0.0,
+            None => return f64::NEG_INFINITY,
+        };
         if !clock.is_finite()
             || clock <= 0.0
             || (self.clock_prior_mean.is_none() && clock != self.clock_rate)
@@ -175,7 +207,7 @@ impl Dating {
                 log -= (age.maximum - age.minimum).ln();
             }
         }
-        log
+        log + process_prior
     }
 
     pub(crate) fn propose_age(&self, tree: &mut Tree, random: &mut Random) -> Option<f64> {
@@ -199,6 +231,7 @@ mod tests {
     #[test]
     fn tip_age_move_samples_a_polynomial_target_with_parent_truncation() {
         let dating = Dating {
+            process_priors: None,
             process: FossilizedBirthDeath {
                 birth: 0.8,
                 death: 0.3,

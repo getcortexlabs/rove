@@ -151,7 +151,10 @@ pub(super) fn summarize(
             let name = first.columns[i].name.as_str();
             let expected = if name == "clock_rate" && config.get("clock_prior_mean").is_none() {
                 config["clock_rate"].as_f64()
-            } else if name == "dating_parameter_prior" && config.get("clock_prior_mean").is_none() {
+            } else if name == "dating_parameter_prior"
+                && config.get("clock_prior_mean").is_none()
+                && config.get("process_priors").is_none()
+            {
                 let d = super::dating::parse(config, &taxa)?;
                 Some(
                     -d.ages
@@ -160,6 +163,20 @@ pub(super) fn summarize(
                         .map(|a| (a.maximum - a.minimum).ln())
                         .sum::<f64>(),
                 )
+            } else if let Some(key) = name.strip_prefix("fbd_") {
+                let prior = match key {
+                    "birth_rate" => "birth_rate_mean",
+                    "death_rate" => "death_rate_mean",
+                    "fossil_sampling_rate" => "fossil_sampling_rate_mean",
+                    "present_sampling" => "present_sampling_beta",
+                    "origin" => "origin_excess_mean",
+                    _ => "",
+                };
+                if !prior.is_empty() && config["process_priors"].get(prior).is_none() {
+                    config[key].as_f64()
+                } else {
+                    None
+                }
             } else if let Some(tip) = name
                 .strip_prefix("tip_age_")
                 .and_then(|s| s.parse::<usize>().ok())

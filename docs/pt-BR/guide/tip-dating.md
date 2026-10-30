@@ -10,7 +10,7 @@ description: "Date fósseis com idades fixas ou intervalos, escala de tempo expl
 
 1. Importe a matriz, abra **Modelo** e ative **Datar fósseis** em **Um lugar no tempo**.
 2. Escolha a unidade de tempo e abra **Editar idades**. Todos os terminais começam como atuais (zero). Busque cada fóssil e escolha uma idade fixa ou um intervalo do mais recente ao mais antigo; depois, **Aplicar idades**. O editor exige limites distintos nos intervalos; se forem iguais, use **Idade fixa**.
-3. Preencha as taxas de nascimento, morte e amostragem fóssil, a probabilidade de amostragem atual e a idade da origem. Os campos começam vazios. Os valores do exemplo abaixo verificam o software; não são recomendações para os seus dados.
+3. Para cada parâmetro do processo, escolha **Manter fixa** ou **Estimar**. Informe um valor fixo ou um valor inicial e um prior. As taxas usam a média de um prior exponencial; a amostragem atual usa os parâmetros α e β do prior beta; a origem usa a média do tempo adicional antes da maior idade permitida. Os campos começam vazios. Os exemplos verificam o software; não são recomendações biológicas.
 4. Escolha **Estimar** a taxa global do relógio (taxa inicial e média do prior exponencial) ou **Manter fixa** (apenas a taxa). Os cartões do relógio evolutivo continuam escolhendo entre taxas estritas e relaxadas nos ramos.
 5. Confira tudo em **Revisão** e inicie a análise. O histórico guarda as idades, unidade, parâmetros do processo e modo do relógio. Configurações salvas e execuções pausadas também preservam essas escolhas.
 
@@ -55,15 +55,42 @@ O exemplo verifica o software. Não é uma análise biológica nem uma garantia 
 }
 ```
 
-Nascimento, morte e amostragem de fósseis são taxas por linhagem por unidade de tempo. present_sampling é uma probabilidade, não uma taxa. origin é a idade em que começou a linhagem ancestral, anterior à raiz e a todas as idades permitidas nas pontas. Esses cinco valores ficam fixos. Escolha-os conforme a pergunta científica e examine a sensibilidade a eles; os valores do exemplo não são padrões biológicos.
+Nascimento, morte e amostragem de fósseis são taxas por linhagem por unidade de tempo. present_sampling é uma probabilidade, não uma taxa. origin é a idade em que começou a linhagem ancestral, anterior à raiz e a todas as idades permitidas nas pontas. Neste exemplo, esses cinco valores ficam fixos. Os priors opcionais abaixo permitem estimá-los individualmente. Escolha-os conforme a pergunta científica e examine a sensibilidade a eles; os valores do exemplo não são padrões biológicos.
 
-Com clock_prior_mean, clock_rate é o valor inicial e o relógio é estimado com prior exponencial daquela média. Omita clock_prior_mean para fixar clock_rate. Use `--model reference` para categorias gama e relógio relaxado, ou `--sample-from-prior` para examinar o prior conjunto sem a verossimilhança dos caracteres.
+Com clock_prior_mean, clock_rate é o valor inicial e o relógio é estimado com prior exponencial daquela média. Omita clock_prior_mean para fixar clock_rate. Use `--model reference` para categorias gama e relógio relaxado, ou `--sample-from-prior` para retirar a verossimilhança dos caracteres. A quantidade de amostras, as informações de idade e as restrições impostas continuam informando os parâmetros estimados.
+
+## Parâmetros do processo fixos ou estimados
+
+Acrescente estes dois campos ao JSON de datação para estimar os cinco parâmetros. É um trecho, não uma configuração completa. A versão pronta está em `fixtures/validation/fbd-estimation/dating.json`:
+
+```json
+{
+  "process_model": "joint_sampling_v1",
+  "process_priors": {
+    "birth_rate_mean": 0.08,
+    "death_rate_mean": 0.03,
+    "fossil_sampling_rate_mean": 0.02,
+    "present_sampling_beta": [2, 2],
+    "origin_excess_mean": 30
+  }
+}
+```
+
+Omita o prior de um parâmetro para mantê-lo fixo; deixe pelo menos um prior em `process_priors`. O identificador explícito do modelo e o objeto de priors são obrigatórios juntos. Os valores correspondentes no início do JSON passam a ser valores iniciais dos parâmetros estimados. Arquivos antigos sem esses dois campos continuam com o processo fixo.
+
+As médias exponenciais precisam ser positivas e finitas. Taxas estimadas começam acima de zero; a taxa de morte fixa pode ser zero. Os parâmetros beta precisam estar em [0.001, 1000], com probabilidade inicial de amostragem estritamente entre zero e um. A média do prior beta é α / (α + β).
+
+`origin_excess_mean` é a média de uma exponencial sobre **a origem menos a maior idade permitida nas pontas**. Aqui, esse limite é 12 Ma: um tempo adicional médio de 30 Ma dá média nominal de 42 Ma para o prior da origem. A origem também precisa ser mais antiga que a raiz atual. Esse limite conjunto é respeitado sem renormalizar o prior da origem a cada altura da raiz.
+
+Taxas, tempo, origem e relógio podem compensar uns aos outros. Estimar tudo pode produzir distribuições amplas, correlacionadas e mais lentas de explorar. Examine os traces, diagnósticos entre cadeias e sensibilidade a priors justificados para a pesquisa. ESS alto sozinho não mostra que os dados identificam todos os parâmetros.
 
 ## O que o prior pressupõe
 
-O processo FBD inclui nascimento, extinção, amostragem de fósseis e amostragem incompleta no presente. Esta implementação restringe as árvores a **fósseis terminais**, sem ancestrais amostrados. Amostrar um fóssil não obriga a linhagem a morrer: a probabilidade de remoção é zero. Origem e parâmetros do processo ficam fixos para que a normalização desse espaço restrito permaneça constante durante a amostragem.
+O FBD inclui nascimento, extinção, amostragem fóssil e amostragem incompleta no presente. As árvores ficam restritas a **fósseis terminais**, sem ancestrais amostrados. Isso é uma restrição imposta, não uma descoberta do Rove. Amostrar um fóssil não obriga a linhagem a morrer: a probabilidade de remoção é zero.
 
-A log-densidade FBD segue a convenção de origem fixa, sem condicionamento à sobrevivência, do [BEAST 2 SA](https://www.beast2.org/xml/sa.evolution.speciation.SABirthDeathModel.html), nos estados validados. É uma **densidade restrita não normalizada**, inadequada para verossimilhanças marginais ou fatores de Bayes. Esta versão não estima parâmetros do processo ou origem, não amostra ancestrais e não modela períodos de ocorrência de espécies. Um intervalo de idade é uma restrição da análise; recuperá-lo não é evidência independente para a idade do fóssil.
+Com todos os parâmetros do processo fixos, a densidade restrita da árvore tem um normalizador constante omitido. Estimar seleciona explicitamente `joint_sampling_v1`: a quantidade observada de espécimes, as informações de idade e as restrições a terminais e clados informam tanto o processo quanto a árvore. O Rove multiplica a densidade de amostragem FBD pelos priors próprios e pelos fatores das observações. A massa do espaço restrito depende dos parâmetros e é mantida como informação; **não** é considerada cancelada nem dividida separadamente a cada valor dos parâmetros. Isso difere de um prior de árvore condicionado e normalizado para cada processo.
+
+A densidade FBD usa condicionamento à origem, sem condicionamento à sobrevivência nem à amostragem no presente, coincidindo com [BEAST 2 SA](https://www.beast2.org/xml/sa.evolution.speciation.SABirthDeathModel.html) nos estados validados. A [derivação e validação](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/fbd-estimation) detalha esse modelo conjunto. Verossimilhanças marginais, ancestrais amostrados e períodos de ocorrência de espécies continuam sem suporte. Idades e clados impostos não são recuperação independente pelos caracteres.
 
 ## Arquivos e verificações
 
@@ -72,3 +99,7 @@ O trace contém fossilized_birth_death, clock_rate, dating_parameter_prior e tip
 `run.json` guarda a configuração completa e sua impressão digital. O checkpoint incorpora a configuração, então retomar não depende do JSON original. As árvores preservam alturas explícitas e durações dos ramos. As taxas relativas anotadas não incluem o relógio global, salvo no trace. `rove summarize`, `inspect-tree`, `diagnose`, `compare` e `predict` aceitam essas saídas. Os resumos preservam a unidade quando o registro da execução está disponível. Um arquivo de árvore isolado não identifica sozinho a unidade física de tempo.
 
 A validação compara oito densidades fixas com BEAST 2.7.8 / SA 2.1.1, confere distribuições pequenas do prior com um limite analítico e integração independente de equações diferenciais, e verifica restauração da verossimilhança, troca de unidade, retomada, exportações e propostas sem alocações. Isso verifica o comportamento implementado; não demonstra convergência nem desempenho em dados empíricos de fósseis. O [material de validação](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/dating) registra fórmulas, fontes, versões e comandos de reprodução.
+
+Quando há algum parâmetro do processo estimado, o trace também registra `fbd_birth_rate`, `fbd_death_rate`, `fbd_fossil_sampling_rate`, `fbd_present_sampling` e `fbd_origin`. Os membros fixos também aparecem e são verificados na comparação de cadeias. `run.json` registra `dating_density_convention` e os priors completos. As configurações do app usam formato 4 para estimar o processo, formato 3 para datação com processo fixo e formato 2 para análises sem datas; apps antigos rejeitam formatos desconhecidos. Retomar um checkpoint exige o mesmo executável do motor.
+
+A validação da estimação acrescenta oito estados completos do prior comparados com BEAST 2.7.8 / SA 2.1.1, distribuições condicionais analíticas, integração conjunta independente, combinações de valores fixos e estimados e retomada exata. O [relatório com dados construídos](https://github.com/getcortexlabs/rove/tree/main/benchmarks/fbd-estimation/2026-10-30) registra tempo, ESS, R-hat, diferenças de clados e correlações. Ele não demonstra precisão, identificabilidade nem desempenho em fósseis empíricos.
