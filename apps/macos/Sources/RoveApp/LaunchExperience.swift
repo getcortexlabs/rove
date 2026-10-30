@@ -74,7 +74,10 @@ struct RoveRelease: Identifiable {
     var id: String { rawValue }
   }
   enum TourAction { case workspace, example, importMatrix }
+  enum EntryStage { case beta, dedication, tour, workspace }
   private(set) var completed: Bool
+  private(set) var dedicationAcknowledged: Bool
+  var ready: Bool { dedicationAcknowledged && completed }
   var presentation: Presentation?
   var pendingURL: URL?
   private let defaults: UserDefaults
@@ -92,7 +95,20 @@ struct RoveRelease: Identifiable {
     installedVersion = version
     self.releases = releases
     completed = defaults.bool(forKey: "onboardingCompleted")
+    dedicationAcknowledged = defaults.bool(forKey: "dedicationAcknowledged")
     acknowledgedVersion = defaults.string(forKey: "releaseNotesAcknowledged")
+  }
+
+  func entryStage(allowed: Bool, running: Bool = false) -> EntryStage {
+    if running { return .workspace }
+    guard allowed else { return .beta }
+    if !dedicationAcknowledged { return .dedication }
+    return completed ? .workspace : .tour
+  }
+
+  func acknowledgeDedication() {
+    dedicationAcknowledged = true
+    defaults.set(true, forKey: "dedicationAcknowledged")
   }
 
   var availableReleases: [RoveRelease] {
@@ -105,7 +121,7 @@ struct RoveRelease: Identifiable {
   var currentRelease: RoveRelease? { availableReleases.first { $0.version == installedVersion } }
 
   func presentNewsIfNeeded(allowed: Bool, idle: Bool) {
-    guard allowed, idle, completed, presentation == nil, let current = currentRelease,
+    guard allowed, idle, ready, presentation == nil, let current = currentRelease,
       let version = ReleaseVersion(current.version)
     else { return }
     if let seen = acknowledgedVersion.flatMap(ReleaseVersion.init), seen >= version { return }

@@ -17,7 +17,12 @@ Use an approved email to request an eight-digit code; it expires in ten minutes.
 Joining the list also verifies your email, but only records your interest. It does
 not grant access. Invitation approval is managed by the project team.
 
-After signing in, a four-part introduction covers the workspace, matrices,
+After access is confirmed, a letter from Rafael thanks Thiago J. Silva before
+the introduction. Choosing **Continue** marks it as read on this Mac; signing out
+or updating will not show it again. It follows the app language. Existing users
+see the letter once without repeating their completed tour.
+
+A four-part introduction then covers the workspace, matrices,
 outgroups and results. Skip it, explore the example, or choose your own matrix;
 no analysis starts automatically. Reopen it with **Help → Take the Rove tour**.
 **Help → What's new in Rove** shows versioned highlights and previous notes.

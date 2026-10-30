@@ -17,7 +17,12 @@ Usa un correo aprobado para solicitar un código de ocho dígitos, válido duran
 diez minutos. Unirse a la lista también requiere verificar el correo, pero solo
 registra tu interés. No concede acceso. El equipo del proyecto aprueba las invitaciones.
 
-Después de iniciar sesión, una introducción de cuatro pasos presenta el espacio
+Después de confirmar el acceso, una carta de Rafael agradece a Thiago J. Silva
+antes de la introducción. **Continue** la marca como leída en este Mac; cerrar
+sesión o actualizar no vuelve a mostrarla. La carta sigue el idioma de la app.
+Quienes ya usan Rove también la ven una vez, sin repetir el recorrido completado.
+
+Después, una introducción de cuatro pasos presenta el espacio
 de trabajo, las matrices, los grupos externos y los resultados. Puedes omitirla,
 probar el ejemplo o abrir tu matriz; ningún análisis comienza automáticamente.
 Ábrela de nuevo en **Help → Take the Rove tour**. **Help → What's new in Rove**

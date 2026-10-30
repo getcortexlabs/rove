@@ -672,3 +672,12 @@
 "Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations." = "Use Mkparsinf apenas se os caracteres constantes e os demais não informativos para parcimônia foram excluídos ao montar a matriz. Cada caráter incluído precisa continuar informativo mesmo com observações ausentes ou incertas.";
 "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected." = "Cada caráter precisa ter pelo menos dois estados presentes em dois ou mais táxons cada. Confira a matriz e como os caracteres foram selecionados.";
 "Mkparsinf · informative characters" = "Mkparsinf · caracteres informativos";
+
+// A note from Rafael
+"BEFORE WE BEGIN" = "ANTES DE COMEÇAR";
+"Thanks, Thiago." = "Valeu, Thiago.";
+"Rove wouldn’t exist without you. I wanted everyone opening the app to know that right from the start." = "O Rove não existiria sem você. E eu queria que quem abrisse o programa soubesse disso logo de cara.";
+"I came into this wanting to make the analyses run faster. You brought your knowledge of biology and research, and our conversations helped shape the project. We just wanted to spend less time waiting. Apparently, that required building an entire app." = "Eu comecei querendo fazer as análises rodarem mais rápido. Você trouxe seu conhecimento de biologia e pesquisa, e nossas conversas foram dando forma ao projeto. A ideia era esperar menos. Aparentemente, a gente precisava criar um software inteiro pra isso.";
+"Thank you for sharing what you know and for building this with me. There’s a lot here I couldn’t have done on my own." = "Obrigado por dividir o que você sabe e por topar construir isso comigo. Tem muita coisa aqui que eu não teria conseguido fazer sozinho.";
+"I really want to see Rove in other people’s hands, helping with research we haven’t even heard of yet. There’s still plenty of work ahead, and I’m excited to keep working on it with you." = "Quero muito ver o Rove nas mãos de outras pessoas, ajudando em pesquisas que a gente ainda nem conhece. Ainda tem bastante trabalho pela frente, e eu tô animado pra continuar fazendo isso com você.";
+"Let’s keep going." = "Bora continuar.";

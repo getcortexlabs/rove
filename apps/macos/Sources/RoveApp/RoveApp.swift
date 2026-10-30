@@ -24,7 +24,7 @@ struct RoveApp: App {
         .ignoresSafeArea(.container, edges: .top)
         .background(WindowSetup(workspace: workspace))
         .onOpenURL {
-          if access.canUse && experience.completed {
+          if access.canUse && experience.ready {
             workspace.open($0)
           } else {
             experience.pendingURL = $0
@@ -44,40 +44,40 @@ struct RoveApp: App {
       }
       CommandGroup(replacing: .newItem) {
         Button(strings("New Analysis"), action: workspace.reset).keyboardShortcut("n").disabled(
-          workspace.isRunning || !access.canUse)
+          workspace.isRunning || !access.canUse || !experience.ready)
         Button(strings("Open Matrix…"), action: workspace.chooseFile).keyboardShortcut("o")
-          .disabled(workspace.isRunning || !access.canUse)
+          .disabled(workspace.isRunning || !access.canUse || !experience.ready)
         Button(strings("Open Setup…"), action: workspace.chooseSetup).keyboardShortcut(
           "o", modifiers: [.command, .shift]
-        ).disabled(workspace.isRunning || !access.canUse)
+        ).disabled(workspace.isRunning || !access.canUse || !experience.ready)
         Button(strings("Try Example Matrix"), action: workspace.loadExample).disabled(
-          workspace.isRunning || !access.canUse)
+          workspace.isRunning || !access.canUse || !experience.ready)
         Divider()
         Button(strings("Save Setup…"), action: workspace.saveDraft).keyboardShortcut("s")
           .disabled(
-            !access.canUse || workspace.report == nil || workspace.issue != nil
+            !access.canUse || !experience.ready || workspace.report == nil || workspace.issue != nil
               || workspace.isRunning
               || workspace.showingHistory)
         Divider()
         Button(strings("Start analysis"), action: workspace.startRun).keyboardShortcut(
           .return, modifiers: .command
-        ).disabled(!workspace.canStartRun)
+        ).disabled(!workspace.canStartRun || !experience.ready)
         Divider()
         Button(strings("History"), action: workspace.openHistory).keyboardShortcut(
           "h", modifiers: [.command, .shift]
-        ).disabled(!access.canUse)
+        ).disabled(!access.canUse || !experience.ready)
         Button(strings("Back to workspace"), action: workspace.returnToWorkspace).keyboardShortcut(
           "r", modifiers: [.command, .shift]
-        ).disabled(!workspace.showingHistory || !access.canUse)
+        ).disabled(!workspace.showingHistory || !access.canUse || !experience.ready)
       }
       CommandGroup(replacing: .help) {
         Button(strings("Take the Rove tour")) { experience.presentation = .tour }
           .disabled(
-            !access.canUse || !experience.completed || workspace.isRunning || workspace.loading
+            !access.canUse || !experience.ready || workspace.isRunning || workspace.loading
               || workspace.treeSummary != nil)
         Button(strings("What's new in Rove")) { experience.presentation = .news }
           .disabled(
-            !access.canUse || !experience.completed || workspace.isRunning || workspace.loading
+            !access.canUse || !experience.ready || workspace.isRunning || workspace.loading
               || workspace.treeSummary != nil || experience.availableReleases.isEmpty)
         Divider()
         Button(strings("Rove Field Guide")) {

@@ -62,6 +62,13 @@ The standalone Rust CLI remains independent of these services, Java and BEAST.
 See the [beta service](https://github.com/getcortexlabs/getcontexlabs-site/tree/main/src/server/rove)
 for deployment, invitation management and data handling.
 
+After beta access is confirmed, a letter from Rafael thanks Thiago J. Silva in
+the selected app language. Continue records `dedicationAcknowledged` in local
+UserDefaults, independently of onboarding and release notes. The letter appears
+once per Mac user profile; signing out or updating does not reset it. Existing
+users see it once without repeating their completed tour. Closing before Continue
+leaves it unread, and an active analysis keeps its controls.
+
 A skippable first-run tour introduces the app and can open the example or file
 picker without starting an analysis. Help reopens the tour and versioned release
 notes. Update notes wait for an idle workspace and do not stack after the first

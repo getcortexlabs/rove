@@ -17,7 +17,13 @@ aprovado para pedir um código de oito dígitos, válido por dez minutos. Entrar
 lista também exige confirmar o e-mail, mas registra apenas seu interesse. Isso não
 libera o aplicativo. A equipe do projeto aprova os convites.
 
-Depois de entrar, uma apresentação em quatro partes mostra o aplicativo, as
+Depois de confirmar o acesso, uma carta do Rafael agradece ao Thiago J. Silva
+antes da apresentação. Ao clicar em **Continuar**, ela fica marcada como lida
+neste Mac e não reaparece ao sair da conta ou atualizar o app. A carta acompanha
+o idioma do aplicativo. Quem já usa o Rove também a vê uma vez, sem repetir a
+apresentação que já concluiu.
+
+Em seguida, uma apresentação em quatro partes mostra o aplicativo, as
 matrizes, os grupos externos e os resultados. Você pode pular, testar o exemplo ou
 abrir sua matriz; nenhuma análise começa sozinha. Reabra em **Ajuda → Conhecer o
 Rove**. **Ajuda → Novidades do Rove** reúne os destaques por versão e as notas

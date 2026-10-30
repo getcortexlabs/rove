@@ -7,7 +7,7 @@ struct EntryView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-  private var ready: Bool { access.canUse && experience.completed }
+  private var ready: Bool { access.canUse && experience.ready }
   private var idle: Bool {
     !workspace.isRunning && !workspace.loading && workspace.treeSummary == nil
   }
@@ -16,11 +16,15 @@ struct EntryView: View {
   var body: some View {
     Group {
       // Access renewal never replaces controls for a chain already running.
-      if workspace.isRunning || ready {
+      switch experience.entryStage(allowed: access.canUse, running: workspace.isRunning) {
+      case .workspace:
         RootView(workspace: workspace)
-      } else if access.canUse {
+      case .dedication:
+        DedicationView(
+          preferences: workspace.preferences, onContinue: experience.acknowledgeDedication)
+      case .tour:
         OnboardingView(preferences: workspace.preferences, onFinish: finishTour)
-      } else {
+      case .beta:
         BetaEntryView(access: access, preferences: workspace.preferences)
       }
     }
@@ -52,10 +56,11 @@ struct EntryView: View {
       }
     }
     .onChange(of: access.phase) { _, _ in route() }
+    .onChange(of: experience.ready) { _, _ in route() }
     .onChange(of: workspace.isRunning) { _, _ in route() }
     .onChange(of: workspace.loading) { _, _ in route() }
     .onChange(of: workspace.treeSummary == nil) { _, _ in route() }
-    .sheet(item: $experience.presentation, onDismiss: { experience.acknowledgeNews() }) {
+    .sheet(item: $experience.presentation, onDismiss: experience.acknowledgeNews) {
       presentation in
       Group {
         switch presentation {

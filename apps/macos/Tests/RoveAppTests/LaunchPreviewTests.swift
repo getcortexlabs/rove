@@ -25,6 +25,12 @@ struct LaunchPreviewTests {
         client: TestBetaClient(session: BetaAccessTests.session(at: Date())),
         store: MemoryBetaStore(), now: Date.init)
       await access.restore()
+      for size in [NSSize(width: 1080, height: 700), NSSize(width: 1240, height: 850)] {
+        try await capture(
+          DedicationView(preferences: preferences, onContinue: {}), size: size,
+          to: directory.appendingPathComponent(
+            "\(language.rawValue)-dedication-\(Int(size.height)).png"))
+      }
       for name in ["invitation", "waitlist", "code", "confirmed"] {
         if name == "waitlist" { access.begin(.waitlist) }
         if name == "code" {

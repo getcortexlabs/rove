@@ -672,3 +672,12 @@
 "Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations." = "Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations.";
 "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected." = "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected.";
 "Mkparsinf · informative characters" = "Mkparsinf · informative characters";
+
+// A note from Rafael
+"BEFORE WE BEGIN" = "BEFORE WE BEGIN";
+"Thanks, Thiago." = "Thanks, Thiago.";
+"Rove wouldn’t exist without you. I wanted everyone opening the app to know that right from the start." = "Rove wouldn’t exist without you. I wanted everyone opening the app to know that right from the start.";
+"I came into this wanting to make the analyses run faster. You brought your knowledge of biology and research, and our conversations helped shape the project. We just wanted to spend less time waiting. Apparently, that required building an entire app." = "I came into this wanting to make the analyses run faster. You brought your knowledge of biology and research, and our conversations helped shape the project. We just wanted to spend less time waiting. Apparently, that required building an entire app.";
+"Thank you for sharing what you know and for building this with me. There’s a lot here I couldn’t have done on my own." = "Thank you for sharing what you know and for building this with me. There’s a lot here I couldn’t have done on my own.";
+"I really want to see Rove in other people’s hands, helping with research we haven’t even heard of yet. There’s still plenty of work ahead, and I’m excited to keep working on it with you." = "I really want to see Rove in other people’s hands, helping with research we haven’t even heard of yet. There’s still plenty of work ahead, and I’m excited to keep working on it with you.";
+"Let’s keep going." = "Let’s keep going.";
