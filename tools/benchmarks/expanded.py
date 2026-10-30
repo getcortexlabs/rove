@@ -156,8 +156,11 @@ def prepare(args):
                 str(output / "kernel-input.json"), backend, str(output / f"kernel-{backend}-check.json"), "0", "0", "10"],
                 ROOT, output / f"kernel-{backend}-check.console.log")
     inputs = {"reference": ROOT / "fixtures/reference/20x50/matrix.nex",
-              "morphology90": ROOT / "fixtures/benchmarks/morphology_90x250.nex", "zilla": args.zilla.resolve()}
-    for name, settings in CASES.items():
+              "morphology90": ROOT / "fixtures/benchmarks/morphology_90x250.nex"}
+    if args.zilla:
+        inputs["zilla"] = args.zilla.resolve()
+    for name in args.case or list(inputs):
+        settings = CASES[name]
         directory = output / name
         directory.mkdir()
         matrix = directory / "matrix.nex"
@@ -270,10 +273,14 @@ def main():
     parser.add_argument("--java-home", type=Path)
     parser.add_argument("--beagle-lib", type=Path)
     parser.add_argument("--zilla", type=Path)
+    parser.add_argument("--case", choices=list(CASES), action="append",
+                        help="Prepare selected cases; by default use both public cases and zilla if supplied")
     args = parser.parse_args()
     if args.mode == "prepare":
-        if any(getattr(args, field) is None for field in ["packages", "launcher", "java_home", "beagle_lib", "zilla"]):
-            parser.error("Preparation requires package, launcher, Java, BEAGLE and private matrix paths")
+        if any(getattr(args, field) is None for field in ["packages", "launcher", "java_home", "beagle_lib"]):
+            parser.error("Preparation requires package, launcher, Java and BEAGLE paths")
+        if args.case and (len(set(args.case)) != len(args.case) or ("zilla" in args.case and args.zilla is None)):
+            parser.error("Use distinct cases and supply --zilla when selecting the private case")
         prepare(args)
     elif args.mode == "measure":
         measure(args.output.resolve())

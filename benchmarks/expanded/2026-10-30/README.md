@@ -163,6 +163,12 @@ The diagnostic helper was corrected after timing to decode quoted Newick names a
 
 Use the [protocol commands](../PROTOCOL.md#commands). [metadata.json](metadata.json) records commands, build settings, toolchains, package/binary/input hashes, hardware and power state. `$REPO`, `$RUN` and `$HOME` replace local paths in the public record. [beagle-build.json](beagle-build.json) records the upstream tag, effective flags and local build. The private 500-taxon case requires the matching input fingerprint; the public cases and kernel inputs are available in this repository.
 
+The current driver can reproduce the public cases without the private input: omit `--zilla` during preparation. Use `--case reference` or `--case morphology90` to select one. The measured experiment supplied `--zilla` and ran all three cases. Use a new report directory rather than the already archived path in the original protocol, for example:
+
+```sh
+python3 tools/benchmarks/report_expanded.py .local/expanded --output .local/expanded-report
+```
+
 This is one M4 Max, one BEAST 2 configuration, and one BEAGLE CPU adapter. It says nothing measured about BEAST X, GPUs, M1 Air or M1 Pro. The full-chain ratios include different proposal schedules, initialization and output costs. Kernel ratios do not predict posterior ESS per second. Larger converged comparisons and measurements on the M1 machines remain separate experiments.
 
 ## Validation
