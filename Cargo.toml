@@ -9,6 +9,9 @@ repository = "https://github.com/getcortexlabs/rove"
 keywords = ["phylogenetics", "likelihood", "simd", "bioinformatics"]
 categories = ["science"]
 
+[features]
+experimental-repeats = []
+
 [dependencies]
 serde_json = { version = "1.0.145", features = ["float_roundtrip"] }
 
@@ -28,4 +31,8 @@ harness = false
 
 [[bench]]
 name = "proposals"
+harness = false
+
+[[bench]]
+name = "repeats"
 harness = false

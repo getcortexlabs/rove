@@ -37,7 +37,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Verossimilhanças marginais para comparar modelos | Planejado, #24 |
 | Prior de nascimento–morte fossilizado com datas de terminais | Planejado, #25 |
 | Checagens preditivas posteriores | Planejado, #26 |
-| Avaliação de repetições dentro de subárvores | Planejado, #17 |
+| Avaliação de repetições dentro de subárvores | Avaliado; experimental, desligado por padrão, #17 |
 | Adaptadores opcionais BEAST 2 JNI e BEAGLE C ABI | Possível, #6 e #7 |
 
 ## Estabelecer o baseline

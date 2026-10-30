@@ -37,7 +37,7 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Marginal likelihoods for model comparison | Planned, #24 |
 | Fossilized birth–death prior with tip dates | Planned, #25 |
 | Posterior predictive checks | Planned, #26 |
-| Evaluation of repeats within subtrees | Planned, #17 |
+| Evaluation of repeats within subtrees | Evaluated; experimental, off by default, #17 |
 | Optional BEAST 2 JNI and BEAGLE C ABI adapters | Possible, #6 and #7 |
 
 ## Establish the baseline

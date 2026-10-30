@@ -37,7 +37,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Verosimilitudes marginales para comparar modelos | Planificado, #24 |
 | Prior de nacimiento-muerte fosilizado con fechas de terminales | Planificado, #25 |
 | Comprobaciones predictivas posteriores | Planificado, #26 |
-| Evaluación de repeticiones dentro de subárboles | Planificado, #17 |
+| Evaluación de repeticiones dentro de subárboles | Evaluado; experimental, desactivado por defecto, #17 |
 | Adaptadores opcionales de JNI para BEAST 2 y de C ABI para BEAGLE | Posible, #6 y #7 |
 
 ## Establecer la línea base

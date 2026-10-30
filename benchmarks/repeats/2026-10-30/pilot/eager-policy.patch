@@ -1,0 +1,30 @@
+--- a/src/kernel/mod.rs
++++ b/src/kernel/mod.rs
+@@ -136,7 +136,7 @@
+         let buffers = node_count * 2;
+         Self {
+             #[cfg(feature = "experimental-repeats")]
+-            repeats: (matches!(transition, Transition::Mk(_)) && layout.patterns >= 64)
++            repeats: matches!(transition, Transition::Mk(_))
+                 .then(|| repeats::Repeats::new(layout, node_count)),
+             layout,
+             node_count,
+--- a/src/kernel/repeats.rs
++++ b/src/kernel/repeats.rs
+@@ -257,14 +257,10 @@
+         self.prepare(a, b, parent, l.patterns);
+         let index = &self.indices[self.buffer(parent)];
+         let packed = Layout::new(l.states, l.categories, index.count);
+-        // Packing both children and expanding the result costs more than the
+-        // arithmetic saved when few patterns repeat. Retain the dense kernel
+-        // unless at least half of its padded lanes can be omitted.
+-        if packed.stride > l.stride / 2 {
+-            self.stats.evaluated_pattern_lanes += l.stride as u64;
++        self.stats.evaluated_pattern_lanes += packed.stride as u64;
++        if packed.stride >= l.stride {
+             return false;
+         }
+-        self.stats.evaluated_pattern_lanes += packed.stride as u64;
+         self.stats.packed_updates += 1;
+         let a_buffer = core.partials_buffer(a);
+         let b_buffer = core.partials_buffer(b);

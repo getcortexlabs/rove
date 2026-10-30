@@ -14,5 +14,7 @@ pub mod speciation;
 pub mod summary;
 pub mod tree;
 
+#[cfg(feature = "experimental-repeats")]
+pub use kernel::RepeatStats;
 pub use kernel::{Backend, LikelihoodCore, Scaling};
 pub use layout::{LANES, Layout};

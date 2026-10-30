@@ -7,6 +7,10 @@ use rove::data::GapTreatment;
 use rove::mcmc::{Conditioning, Sampler, Settings};
 use rove::nexus;
 
+#[cfg(feature = "experimental-repeats")]
+#[path = "support/repeat_matrix.rs"]
+mod repeat_matrix;
+
 struct Counting;
 
 static COUNTING: AtomicBool = AtomicBool::new(false);
@@ -89,6 +93,34 @@ fn steps_do_not_allocate() {
                 0,
                 "multistate {conditioning:?}"
             );
+            #[cfg(feature = "experimental-repeats")]
+            {
+                let partitions = nexus::parse(&repeat_matrix::matrix())
+                    .unwrap()
+                    .partition_by_states(GapTreatment::Reject)
+                    .unwrap();
+                for backend in rove::Backend::ALL.into_iter().filter(|b| b.is_available()) {
+                    let mut sampler = Sampler::new(
+                        &partitions,
+                        &Settings {
+                            backend,
+                            monophyly: Vec::new(),
+                            ..settings.clone()
+                        },
+                        11,
+                    )
+                    .unwrap();
+                    for _ in 0..1000 {
+                        sampler.step();
+                    }
+                    COUNTING.store(true, Ordering::Relaxed);
+                    for _ in 0..2000 {
+                        sampler.step();
+                    }
+                    COUNTING.store(false, Ordering::Relaxed);
+                    assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "repeat indices");
+                }
+            }
         }
     }
 }

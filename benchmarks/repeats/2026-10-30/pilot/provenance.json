@@ -1,0 +1,14 @@
+{
+  "scope": "Preliminary one-process runs, before choosing the selective policy. See eager-policy.patch to reproduce the original policy.",
+  "sha256": {
+    "rove-before": "f9f17a197cd2536287bb18023054a150661b5a2f591fcc32afd8f5eb08e4e80b",
+    "likelihood-before": "aba948ebf79632871d08f4fde9bda76b6904cdd96a3a27a18bdc4ccd072454c9",
+    "rove-eager": "a1d0b4d804780cd144fd558da885ad041ff0789221d460620f03a4b5e13ee3a6",
+    "likelihood-eager": "7ad8b54c9e0440a88253dab66c5c74163f859a6ad7712e4b6172d96bb7373a5a",
+    "eager-mod.rs": "e4db748043bad3c20349eb54a9701cad2da8d57f9d129c7c900cef1174eb94f2",
+    "eager-repeats.rs": "0ef7f0a92c8b79ba925c0668807c6c496e3ec676723f7fdb365db9f779a9239b"
+  },
+  "samples": 5,
+  "sample_ms": 5,
+  "warmup_ms": 10
+}

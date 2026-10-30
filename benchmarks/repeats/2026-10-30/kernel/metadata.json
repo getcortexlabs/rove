@@ -1,0 +1,153 @@
+{
+  "hardware": {
+    "architecture": "arm64",
+    "system": "Darwin",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+    "machdep.cpu.brand_string": null,
+    "hw.memsize": null,
+    "hw.physicalcpu": null,
+    "hw.logicalcpu": null,
+    "hw.perflevel0.physicalcpu": null,
+    "hw.perflevel1.physicalcpu": null,
+    "system_profiler": {
+      "machine_name": "MacBook Pro",
+      "machine_model": "Mac16,6",
+      "chip_type": "Apple M4 Max",
+      "number_processors": "proc 16:12:4:0",
+      "physical_memory": "64 GB"
+    }
+  },
+  "power_before": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t23%; discharging; 0:27 remaining present: true",
+    "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+  },
+  "load_before": [
+    5.8203125,
+    5.7578125,
+    4.73095703125
+  ],
+  "source_commit": "1b2e5a8fb6f9ee4ebdf06a318f6fa5a294f1b637",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1\n",
+  "build": "release; default target CPU; fat LTO, 1 codegen unit; gated adds --features experimental-repeats",
+  "source_sha256": {
+    "Cargo.toml": "74d521215b3dc511be2bb4147ac9af6ddb381fee8e29f7486be457864edd66e4",
+    "Cargo.lock": "9c5333915c8e065a1a6f57194e5ab56268e156aa902f93ccb5fe0bd79e028159",
+    "tools/benchmarks/repeats.py": "58839c87ca2864dff8611531f88050e8a039e2a881558383f0f5058aa33b6fdd",
+    "src/ascertainment.rs": "c18133ae88c81572d22dce4c2714c64b538daf00d86f5b06073d2bf303301703",
+    "src/bin/rove/checkpoint.rs": "84891932c5ffc4eb8ef22a9ade42eb740ad32219c5c5fabc87354a08347df90d",
+    "src/bin/rove/compare.rs": "5140d66ed1db76b82a6d59954fbb0f1fe6a9645ae1873b6a643d951648fc3e0d",
+    "src/bin/rove/diagnose.rs": "7a5b2ec1b19d87abbaf2c0e742712d78663faa8d735b6b700d3d4c35ac6b25be",
+    "src/bin/rove/events.rs": "6ffaccc31435f317fccede9bed08270e2313070b176f5d712ab6349fa21d4a5f",
+    "src/bin/rove/inspect.rs": "4ff4c54f3f105ffe305837e3fbf44be014f75286e45f11251542880fe6225be6",
+    "src/bin/rove/inspect_tree.rs": "ce515805729dae80aacf7c7f4ced5476c014f56ed272b1b718188c48f2dc52a7",
+    "src/bin/rove/main.rs": "c6bf12482e575bbcbad83edfa2d49ccdef5984c1e1bc48b23d843b98771f7a99",
+    "src/bin/rove/parallel.rs": "9bbefd75b3cf5fece55d674e4a67e5ac0ede4ec907424050277903f927f6e2ce",
+    "src/bin/rove/partitions.rs": "cd3ed8f1ecb4c7540e44537d64978e5000d8580ddfe63d4baeba5946c7ef5791",
+    "src/bin/rove/sha256.rs": "7ff030cf4a08345b3a91040cc797d94ac73a752d49d0d89eafc16f54f03565a0",
+    "src/bin/rove/summarize.rs": "2dfd11911d97f1cea74e74f0bb1ed52e1f2bdf67f41173afb59edfb0df58686d",
+    "src/checkpoint.rs": "92754223984d687adccecbad772703ed8245d51f0204fbcbc365bb4c0b7416d8",
+    "src/data.rs": "9f6c0b9959d3084495c83d830812a8b8c12b594d1586665f2444292e644a7b3c",
+    "src/diagnostics/convergence.rs": "22698302643ccd25526e1eb440c947a417fe1e094465efc3cd4979362a948132",
+    "src/diagnostics/mod.rs": "563e9ac7be7b04414f39eccd73981701e48b0eb251a6668519b0316e7e29e8a6",
+    "src/diagnostics/spectrum.rs": "f9e66419a884306fbb261fc02a2c02d1359fda36abbbfc375e8c6639e30356d2",
+    "src/diagnostics/trace.rs": "e01ff291892d74b28e88370ba267ad2a4ada60b2c1db42908f86f0178f0a3e27",
+    "src/kernel/checkpoint.rs": "c499ad7eca95d3fe8c230baa0ab343f25eddb38c02b2add8a9bd251d90e9c2a2",
+    "src/kernel/mk.rs": "55fe69f9586fcbea4397a344cacebf9009d4014ed1db1169fb4544c8d0a8e796",
+    "src/kernel/mod.rs": "98bbd39cccde474522cb20d41fc320ea8e8f2161bbb6093bfc58c77799656791",
+    "src/kernel/neon.rs": "23d4b99e59174a4123bb3b302cb5d13f214cb9c310b099dfefdf77490037627d",
+    "src/kernel/repeats.rs": "3898f3609727821abc7a4e0a0db398b6fe2ce99e59818ea3cf45afd02b0a46bf",
+    "src/kernel/scaling.rs": "0e0fe06dbc4a988bdb38a44c17aac0fb9b1be06f108c2de2bdb33dbba7ee1507",
+    "src/layout.rs": "009082f02bfa33458086bb29f70d47422019ddcd9cc8b475dfddb2051c91b48b",
+    "src/lib.rs": "187a05065fbb7a3466b4df720689dd7002bc2e643cd953d3f8c8d174978952f6",
+    "src/mcmc/checkpoint.rs": "021b28155ca9fec80b9c7452a47a07243532b2205882b9e565184e0faa2992e2",
+    "src/mcmc/coupled.rs": "8474a09c9cb4f61a365d6f90a22eb7aadb860be2e09980ef58702e0fc29331d7",
+    "src/mcmc/mod.rs": "5fc046c1aeeebb47a53021715a7f42bfb92785e80f59d83de412fca9e3eee7e9",
+    "src/mcmc/moves.rs": "1a25359d06b40450b3eb6040ac7b4cef17ec6fac388794e729c538ec7d5d6cf7",
+    "src/mcmc/output.rs": "bdc01e849d468de0228f46d3594987de51c77773f69a22f8ed0cf0a4dc950392",
+    "src/model.rs": "48ff38fce6f2a6f199b382f662e711797ceabcc168e208ff5ccba40508544ec1",
+    "src/nexus/lexer.rs": "82ea20dea9b303d8331f5dc58c77e5ff1e282cfe7db2140b6d638cccd9416a04",
+    "src/nexus/matrix.rs": "73795ca85e3b02ea7ad9e489ba6a8cf953dbf1c60e686ff7c770acc21d3076a9",
+    "src/nexus/mod.rs": "acc9974bd2ae85439b16685ffa2dd9a523b8048c4afff348f03e695510174549",
+    "src/random.rs": "fb93f4f6aa27f6cc8ee331e300ab2c83fa0f3327b2501832a09833cccd5e9d37",
+    "src/rates.rs": "2d9b6be6d16a5cfbaf7f7903fe139268e3b291985d89c1f5959000c1d51d4454",
+    "src/reference.rs": "b94952ebfd6be28bfacecbf5d977ce6025448add45cabc36cef421a20d608def",
+    "src/speciation.rs": "ac0f12a586d18bf6f3b1e643c2b63c5777d9786a2da86981170672cd3cee9388",
+    "src/summary/mod.rs": "4fdab0066f4784e75c38c63439a12d1fd59b91ddcd91664f02aaa55099478f01",
+    "src/summary/nexus.rs": "30accc2a964fb3483944f57cd4f6d2ceac4f03930fff22df0784bad7efe96c1d",
+    "src/tree.rs": "d865bafc111fee836beff63b5a39a86f153ba63878b7af4c81504490cc267f1c",
+    "benches/likelihood.rs": "8354f20ddca1e8922ae185ad72ead2cc471238f8ba8d97d80b564145befeb234",
+    "benches/proposals.rs": "6bb0b705afcea9dbe22a2747a61284db98e45fac273581f587b9555ec60de197",
+    "benches/repeats.rs": "8f0fbc7e774001c841f623f82109d9198de23c99975f0f82fe811d1feb82ac46",
+    "benches/support/allocations.rs": "3d31f77929bc9256543737089018bb8f68ebdc8edd0953c3ac8c805869110df6",
+    "benches/support/reference_state.rs": "55438327d2620f4095928e5912dddac18cac75a39191eada4648c47253e0582d",
+    "benches/support/timing.rs": "b3b97ccceee347c40f5a29fb8f21e384efc5f97d3e8003b2b95895a5b9d4029f",
+    "benches/support/workload.rs": "a3bfb74c82b6e887d4a20f5d935ae9791e130225913d169e68e6256a0939c04a",
+    "fixtures/benchmarks/morphology_90x250.nex": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f"
+  },
+  "executable_sha256": {
+    "rove-dense": "c870a7096d86e26bcd8faa69cffb7a177dd3e2d5c0040377bf9874df2df04203",
+    "bench-dense": "7b5424b5816f8d1df8589c2bca7371e990dafb3ec6fe26a6916262cc7d90bfd2",
+    "rove-gated": "5e7aeee6116bcb59acd67f8663f7d46578b2e81e55f1ee0c2787f8b9eb7f3939",
+    "bench-gated": "00771b8b488baeb42313b0e68cbbb708919a3901c7509f6fadc7b2e5c4fe8726"
+  },
+  "repetitions": 3,
+  "background_load_controlled": false,
+  "processes_in_parallel": 1,
+  "rows": [
+    {
+      "variant": "dense",
+      "repetition": 1,
+      "file": "dense-1.json",
+      "sha256": "b1eabe3afbed95f94c381cc4f68821f0803ee496d0b7d38a02251e56ef8e402f",
+      "arguments": []
+    },
+    {
+      "variant": "gated",
+      "repetition": 1,
+      "file": "gated-1.json",
+      "sha256": "ae57f55af140eefd8b185feb44603e8522b9789a915d3102df90b70778b3f14b",
+      "arguments": []
+    },
+    {
+      "variant": "gated",
+      "repetition": 2,
+      "file": "gated-2.json",
+      "sha256": "8b620d749a14e986828de2666acb553462aeedb9e88c5143feab684f93436859",
+      "arguments": [
+        "--reverse"
+      ]
+    },
+    {
+      "variant": "dense",
+      "repetition": 2,
+      "file": "dense-2.json",
+      "sha256": "e477453307872d1365d3d6deaf3168db8c60fc18daffa80de54f96585f35463e",
+      "arguments": [
+        "--reverse"
+      ]
+    },
+    {
+      "variant": "dense",
+      "repetition": 3,
+      "file": "dense-3.json",
+      "sha256": "83bff7082120ce7f6e10e075aa7f1daea404a92093bac08b9c29c60f72fbc8cb",
+      "arguments": []
+    },
+    {
+      "variant": "gated",
+      "repetition": 3,
+      "file": "gated-3.json",
+      "sha256": "365a5463d5d0ddb689b4b40adef88da7c861dbb265cb962b16b485ed9a50e7e7",
+      "arguments": []
+    }
+  ],
+  "power_after": {
+    "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t22%; discharging; 0:25 remaining present: true",
+    "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+  },
+  "load_after": [
+    10.455078125,
+    6.9384765625,
+    5.25048828125
+  ]
+}

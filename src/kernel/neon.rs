@@ -21,18 +21,12 @@ use core::arch::aarch64::{
     vsubq_s64, vsubq_u64,
 };
 
+use super::mk::Child;
 use crate::layout::{LANES, Layout};
 
 /// Patterns per iteration: four registers of two lanes.
 const BLOCK: usize = 8;
 const _: () = assert!(LANES % BLOCK == 0, "the stride must hold whole blocks");
-
-/// One child of the node being updated.
-pub struct Child<'a> {
-    pub partials: &'a [f64],
-    /// The distance, `e` and `1 − e` of each rate category.
-    pub transition: &'a [f64],
-}
 
 #[inline(always)]
 fn load(x: &[f64]) -> float64x2_t {

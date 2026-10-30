@@ -61,6 +61,12 @@ jobs:
         run: cargo test --locked
       - name: Run numerical and rate-model tests in an optimized build
         run: cargo test --locked --release --test equality --test rates --test inference --test diagnostics --test partitions --test ascertainment --test scaling
+      - name: Validate the experimental repeat path
+        run: |
+          cargo clippy --locked --features experimental-repeats --all-targets -- -D warnings
+          cargo test --locked --features experimental-repeats
+          cargo test --locked --release --features experimental-repeats --test repeats --test scaling --test ascertainment
+          cargo bench --locked --features experimental-repeats --bench repeats -- --check
 
   msrv:
     name: Rust 1.85 (minimum supported)
@@ -84,6 +90,9 @@ jobs:
           key: ubuntu-24.04
       - name: Run tests
         run: cargo test --locked
+
+      - name: Check the experimental feature on the minimum Rust version
+        run: cargo test --locked --features experimental-repeats --test repeats
 
   docs:
     name: Documentation build

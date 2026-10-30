@@ -2,9 +2,15 @@ use crate::layout::Layout;
 use crate::model::Mk;
 
 mod checkpoint;
+mod mk;
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 mod neon;
+#[cfg(feature = "experimental-repeats")]
+mod repeats;
 mod scaling;
+
+#[cfg(feature = "experimental-repeats")]
+pub use repeats::RepeatStats;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Scaling {
@@ -91,6 +97,8 @@ pub struct LikelihoodCore {
     acc1: Vec<f64>,
     acc2: Vec<f64>,
     scale: Vec<f64>,
+    #[cfg(feature = "experimental-repeats")]
+    repeats: Option<repeats::Repeats>,
 }
 
 impl LikelihoodCore {
@@ -127,6 +135,9 @@ impl LikelihoodCore {
     ) -> Self {
         let buffers = node_count * 2;
         Self {
+            #[cfg(feature = "experimental-repeats")]
+            repeats: (matches!(transition, Transition::Mk(_)) && layout.patterns >= 64)
+                .then(|| repeats::Repeats::new(layout, node_count)),
             layout,
             node_count,
             scaling,
@@ -166,6 +177,18 @@ impl LikelihoodCore {
 
     pub fn backend(&self) -> Backend {
         self.backend
+    }
+
+    /// Disables the experimental repeat index and packed Mk updates.
+    /// Subsequent updates use the dense path; existing partials remain valid.
+    #[cfg(feature = "experimental-repeats")]
+    pub fn disable_site_repeats(&mut self) {
+        self.repeats = None;
+    }
+
+    #[cfg(feature = "experimental-repeats")]
+    pub fn repeat_stats(&self) -> Option<RepeatStats> {
+        self.repeats.as_ref().map(repeats::Repeats::stats)
     }
 
     /// Runs later calculations with `backend`, which this build must include.
@@ -208,6 +231,10 @@ impl LikelihoodCore {
                 }
             }
         }
+        #[cfg(feature = "experimental-repeats")]
+        if let Some(repeats) = &mut self.repeats {
+            repeats.set_tip(node, &self.partials[node * 2], l);
+        }
     }
 
     pub fn set_tip_partials(&mut self, node: usize, tip_partials: &[f64]) {
@@ -225,6 +252,10 @@ impl LikelihoodCore {
                     }
                 }
             }
+        }
+        #[cfg(feature = "experimental-repeats")]
+        if let Some(repeats) = &mut self.repeats {
+            repeats.set_tip(node, &self.partials[node * 2], l);
         }
     }
 
@@ -286,6 +317,14 @@ impl LikelihoodCore {
 
     pub fn calculate_partials(&mut self, child1: usize, child2: usize, parent: usize) {
         debug_assert!(parent != child1 && parent != child2 && child1 != child2);
+        #[cfg(feature = "experimental-repeats")]
+        if let Some(mut repeats) = self.repeats.take() {
+            let calculated = repeats.calculate(self, child1, child2, parent);
+            self.repeats = Some(repeats);
+            if calculated {
+                return;
+            }
+        }
         let out = self.partials_buffer(parent);
         let mut dst = std::mem::take(&mut self.partials[out]);
         let maxima = match self.transition {
@@ -324,7 +363,7 @@ impl LikelihoodCore {
         };
         let buffers = [child1, child2]
             .map(|node| (self.partials_buffer(node), self.transitions_buffer(node)));
-        let children = buffers.map(|(partials, transitions)| neon::Child {
+        let children = buffers.map(|(partials, transitions)| mk::Child {
             partials: &self.partials[partials],
             transition: &self.transitions[transitions],
         });
@@ -380,38 +419,20 @@ impl LikelihoodCore {
         let Transition::Mk(model) = &self.transition else {
             unreachable!("only Mk cores store distances");
         };
-        let l = self.layout;
-        let stride = l.stride;
-        let p1 = &self.partials[self.partials_buffer(child1)];
-        let p2 = &self.partials[self.partials_buffer(child2)];
-        let t1 = &self.transitions[self.transitions_buffer(child1)];
-        let t2 = &self.transitions[self.transitions_buffer(child2)];
-        for c in 0..l.categories {
-            let (stay1, change1) = (t1[3 * c + 1], t1[3 * c + 2]);
-            let (stay2, change2) = (t2[3 * c + 1], t2[3 * c + 2]);
-            self.acc1.fill(0.0);
-            self.acc2.fill(0.0);
-            for (j, &f) in model.frequencies().iter().enumerate() {
-                let o = l.offset(c, j);
-                let (a, b) = (change1 * f, change2 * f);
-                for (acc, x) in self.acc1.iter_mut().zip(&p1[o..o + stride]) {
-                    *acc += a * x;
-                }
-                for (acc, x) in self.acc2.iter_mut().zip(&p2[o..o + stride]) {
-                    *acc += b * x;
-                }
-            }
-            for i in 0..l.states {
-                let o = l.offset(c, i);
-                let children = p1[o..o + stride].iter().zip(&p2[o..o + stride]);
-                let sums = self.acc1.iter().zip(&self.acc2);
-                for ((d, (x1, x2)), (s1, s2)) in
-                    dst[o..o + stride].iter_mut().zip(children).zip(sums)
-                {
-                    *d = (stay1 * x1 + s1) * (stay2 * x2 + s2);
-                }
-            }
-        }
+        let buffers = [child1, child2]
+            .map(|node| (self.partials_buffer(node), self.transitions_buffer(node)));
+        let children = buffers.map(|(partials, transitions)| mk::Child {
+            partials: &self.partials[partials],
+            transition: &self.transitions[transitions],
+        });
+        mk::prune(
+            self.layout,
+            model.frequencies(),
+            children,
+            dst,
+            &mut self.acc1,
+            &mut self.acc2,
+        );
     }
 
     /// Rescales by a power of two chosen from each pattern's maximum over
@@ -507,17 +528,29 @@ impl LikelihoodCore {
     }
 
     pub fn store(&mut self) {
+        #[cfg(feature = "experimental-repeats")]
+        if let Some(repeats) = &mut self.repeats {
+            repeats.store();
+        }
         self.stored_partials.copy_from_slice(&self.current_partials);
         self.stored_transitions
             .copy_from_slice(&self.current_transitions);
     }
 
     pub fn restore(&mut self) {
+        #[cfg(feature = "experimental-repeats")]
+        if let Some(repeats) = &mut self.repeats {
+            repeats.restore();
+        }
         std::mem::swap(&mut self.current_partials, &mut self.stored_partials);
         std::mem::swap(&mut self.current_transitions, &mut self.stored_transitions);
     }
 
     pub fn unstore(&mut self) {
+        #[cfg(feature = "experimental-repeats")]
+        if let Some(repeats) = &mut self.repeats {
+            repeats.unstore();
+        }
         self.current_partials.copy_from_slice(&self.stored_partials);
         self.current_transitions
             .copy_from_slice(&self.stored_transitions);
