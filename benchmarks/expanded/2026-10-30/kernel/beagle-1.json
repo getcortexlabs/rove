@@ -1,0 +1,1202 @@
+[
+  {
+    "case": "reference_20x50",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -433.28114529381804,
+    "setup_ns": 5406459,
+    "iterations": 2048,
+    "elapsed_ns": [
+      15829542,
+      15603375,
+      15649250,
+      15536667,
+      15556417,
+      15612541,
+      15590708,
+      15614833,
+      15813292
+    ]
+  },
+  {
+    "case": "reference_20x50",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -433.28114529381804,
+    "setup_ns": 151500,
+    "iterations": 1024,
+    "elapsed_ns": [
+      14193833,
+      14405375,
+      14380000,
+      14148959,
+      14198167,
+      14058875,
+      14219875,
+      14148959,
+      13886625
+    ]
+  },
+  {
+    "case": "reference_20x50",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -433.28114529381804,
+    "setup_ns": 114834,
+    "iterations": 4096,
+    "elapsed_ns": [
+      13314166,
+      13899583,
+      13154750,
+      13114833,
+      13585458,
+      13312875,
+      13109750,
+      13102208,
+      13083166
+    ]
+  },
+  {
+    "case": "reference_20x50",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -433.28114529381804,
+    "setup_ns": 132750,
+    "iterations": 8192,
+    "elapsed_ns": [
+      11536542,
+      11553625,
+      11790666,
+      11769042,
+      11615125,
+      11519958,
+      11452625,
+      11539500,
+      11514042
+    ]
+  },
+  {
+    "case": "reference_20x50_mkv",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -198.61115564792283,
+    "setup_ns": 148583,
+    "iterations": 2048,
+    "elapsed_ns": [
+      16758083,
+      16709125,
+      16727833,
+      17006375,
+      16919500,
+      16935584,
+      16799625,
+      17100458,
+      16851917
+    ]
+  },
+  {
+    "case": "reference_20x50_mkv",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -198.61115564792283,
+    "setup_ns": 157916,
+    "iterations": 1024,
+    "elapsed_ns": [
+      15335708,
+      15220084,
+      14722834,
+      15072750,
+      14980417,
+      14785000,
+      14731666,
+      15189375,
+      15253417
+    ]
+  },
+  {
+    "case": "reference_20x50_mkv",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -198.61115564792283,
+    "setup_ns": 140208,
+    "iterations": 4096,
+    "elapsed_ns": [
+      14220500,
+      14217667,
+      14347542,
+      14282083,
+      14262375,
+      14278000,
+      14284209,
+      14133375,
+      14201250
+    ]
+  },
+  {
+    "case": "reference_20x50_mkv",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -198.61115564792283,
+    "setup_ns": 111458,
+    "iterations": 8192,
+    "elapsed_ns": [
+      12583916,
+      12518209,
+      12243166,
+      12059125,
+      12196208,
+      12273625,
+      12222166,
+      12237541,
+      12269833
+    ]
+  },
+  {
+    "case": "morphology_90x250",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -11529.313888659732,
+    "setup_ns": 775459,
+    "iterations": 32,
+    "elapsed_ns": [
+      13184041,
+      13386666,
+      13171625,
+      13538250,
+      13779458,
+      13720541,
+      13667042,
+      13735500,
+      13936625
+    ]
+  },
+  {
+    "case": "morphology_90x250",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -11529.313888659732,
+    "setup_ns": 591417,
+    "iterations": 32,
+    "elapsed_ns": [
+      14552125,
+      14713875,
+      14736000,
+      14440959,
+      14353208,
+      14526250,
+      14537833,
+      14707792,
+      15231625
+    ]
+  },
+  {
+    "case": "morphology_90x250",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -11529.313888659732,
+    "setup_ns": 462083,
+    "iterations": 256,
+    "elapsed_ns": [
+      11328041,
+      11389791,
+      11945583,
+      11626583,
+      11236208,
+      11211334,
+      11247875,
+      11324583,
+      11716750
+    ]
+  },
+  {
+    "case": "morphology_90x250",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -11529.313888659732,
+    "setup_ns": 424375,
+    "iterations": 1024,
+    "elapsed_ns": [
+      10267792,
+      10445667,
+      10424416,
+      10602958,
+      10555000,
+      10451583,
+      10399625,
+      10217125,
+      10275792
+    ]
+  },
+  {
+    "case": "binary_one_rate",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -19460.397403554416,
+    "setup_ns": 371708,
+    "iterations": 64,
+    "elapsed_ns": [
+      11661834,
+      11448666,
+      11452083,
+      11554833,
+      11232125,
+      11241292,
+      11127000,
+      11236791,
+      11332208
+    ]
+  },
+  {
+    "case": "binary_one_rate",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -19460.397403554416,
+    "setup_ns": 358958,
+    "iterations": 64,
+    "elapsed_ns": [
+      12944417,
+      12628958,
+      12632125,
+      12503584,
+      12524250,
+      12474708,
+      12562375,
+      12423250,
+      12589250
+    ]
+  },
+  {
+    "case": "binary_one_rate",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -19460.397403554416,
+    "setup_ns": 285250,
+    "iterations": 1024,
+    "elapsed_ns": [
+      17772375,
+      17594958,
+      17534042,
+      17566542,
+      17485125,
+      17828292,
+      17872417,
+      17768250,
+      17819792
+    ]
+  },
+  {
+    "case": "binary_one_rate",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -19460.397403554416,
+    "setup_ns": 319500,
+    "iterations": 2048,
+    "elapsed_ns": [
+      13962583,
+      13873334,
+      14176625,
+      14165666,
+      14072167,
+      14303500,
+      13961000,
+      14054375,
+      13951875
+    ]
+  },
+  {
+    "case": "binary_four_rates",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17661.045029291778,
+    "setup_ns": 539750,
+    "iterations": 32,
+    "elapsed_ns": [
+      13931333,
+      13868416,
+      13887167,
+      13899625,
+      14040459,
+      13916875,
+      13840541,
+      14122708,
+      14224209
+    ]
+  },
+  {
+    "case": "binary_four_rates",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17661.045029291778,
+    "setup_ns": 419667,
+    "iterations": 32,
+    "elapsed_ns": [
+      14694417,
+      14511209,
+      14444208,
+      14528708,
+      14505333,
+      14434083,
+      14520208,
+      14659833,
+      14608042
+    ]
+  },
+  {
+    "case": "binary_four_rates",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17661.045029291778,
+    "setup_ns": 395292,
+    "iterations": 512,
+    "elapsed_ns": [
+      18671583,
+      18717458,
+      18962208,
+      19098667,
+      18864042,
+      19603875,
+      19298084,
+      19273000,
+      18955500
+    ]
+  },
+  {
+    "case": "binary_four_rates",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17661.045029291778,
+    "setup_ns": 434833,
+    "iterations": 1024,
+    "elapsed_ns": [
+      10291666,
+      10165709,
+      10472042,
+      10659083,
+      10129917,
+      10213584,
+      10304542,
+      10212584,
+      10201458
+    ]
+  },
+  {
+    "case": "ternary_four_rates",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -29280.732618279017,
+    "setup_ns": 1010291,
+    "iterations": 32,
+    "elapsed_ns": [
+      19594834,
+      18872709,
+      18789292,
+      18635750,
+      18712000,
+      18766500,
+      18783375,
+      18973542,
+      18959709
+    ]
+  },
+  {
+    "case": "ternary_four_rates",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -29280.732618279017,
+    "setup_ns": 627917,
+    "iterations": 16,
+    "elapsed_ns": [
+      10106125,
+      10134459,
+      10034125,
+      9998125,
+      9962417,
+      9961500,
+      11036042,
+      10159000,
+      9952250
+    ]
+  },
+  {
+    "case": "ternary_four_rates",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -29280.732618279017,
+    "setup_ns": 601000,
+    "iterations": 256,
+    "elapsed_ns": [
+      13246917,
+      13562250,
+      13361667,
+      13010542,
+      12961292,
+      13189083,
+      13356750,
+      13412250,
+      13324292
+    ]
+  },
+  {
+    "case": "ternary_four_rates",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -29280.732618279017,
+    "setup_ns": 672458,
+    "iterations": 1024,
+    "elapsed_ns": [
+      13068750,
+      12971000,
+      13366500,
+      13272375,
+      13046541,
+      13170292,
+      13110250,
+      13171875,
+      13069000
+    ]
+  },
+  {
+    "case": "eight_states",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -57413.89757152283,
+    "setup_ns": 1326959,
+    "iterations": 8,
+    "elapsed_ns": [
+      16280375,
+      16428417,
+      16424958,
+      16306625,
+      16191583,
+      16024792,
+      16796667,
+      15899750,
+      16256791
+    ]
+  },
+  {
+    "case": "eight_states",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -57413.89757152283,
+    "setup_ns": 743000,
+    "iterations": 8,
+    "elapsed_ns": [
+      17554583,
+      17766625,
+      17654500,
+      17191083,
+      17172167,
+      17337083,
+      17500542,
+      17424917,
+      17488750
+    ]
+  },
+  {
+    "case": "eight_states",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -57413.89757152283,
+    "setup_ns": 698875,
+    "iterations": 64,
+    "elapsed_ns": [
+      10105458,
+      9935250,
+      9887750,
+      9933417,
+      9810084,
+      9787500,
+      9722333,
+      9736125,
+      9724334
+    ]
+  },
+  {
+    "case": "eight_states",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -57413.89757152283,
+    "setup_ns": 1017791,
+    "iterations": 512,
+    "elapsed_ns": [
+      14335083,
+      14316542,
+      14288416,
+      14281875,
+      14231417,
+      14252625,
+      14267417,
+      14258875,
+      14494125
+    ]
+  },
+  {
+    "case": "missing_20_percent",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -14031.31626539957,
+    "setup_ns": 473959,
+    "iterations": 32,
+    "elapsed_ns": [
+      12684708,
+      12696417,
+      12695458,
+      12601375,
+      12677125,
+      13055250,
+      13378042,
+      12795667,
+      12702500
+    ]
+  },
+  {
+    "case": "missing_20_percent",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -14031.31626539957,
+    "setup_ns": 426125,
+    "iterations": 32,
+    "elapsed_ns": [
+      13776083,
+      13893208,
+      13814292,
+      13724958,
+      13728916,
+      14270208,
+      13734875,
+      13983666,
+      13882417
+    ]
+  },
+  {
+    "case": "missing_20_percent",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -14031.31626539957,
+    "setup_ns": 415875,
+    "iterations": 512,
+    "elapsed_ns": [
+      18754042,
+      18732834,
+      18845125,
+      19723584,
+      18604875,
+      18601750,
+      18883667,
+      18681667,
+      18758250
+    ]
+  },
+  {
+    "case": "missing_20_percent",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -14031.31626539957,
+    "setup_ns": 442583,
+    "iterations": 1024,
+    "elapsed_ns": [
+      10292875,
+      10180041,
+      10227167,
+      10320709,
+      10288250,
+      10213042,
+      10233042,
+      10351666,
+      10562000
+    ]
+  },
+  {
+    "case": "repeated_columns",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17529.448006777206,
+    "setup_ns": 218458,
+    "iterations": 256,
+    "elapsed_ns": [
+      10700834,
+      10745500,
+      10714667,
+      10767333,
+      10793917,
+      10647792,
+      10634000,
+      10619542,
+      10587042
+    ]
+  },
+  {
+    "case": "repeated_columns",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17529.448006777206,
+    "setup_ns": 150375,
+    "iterations": 256,
+    "elapsed_ns": [
+      18377792,
+      18391084,
+      18294250,
+      18454125,
+      18460833,
+      18344125,
+      18426875,
+      18382625,
+      18222000
+    ]
+  },
+  {
+    "case": "repeated_columns",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17529.448006777206,
+    "setup_ns": 163083,
+    "iterations": 4096,
+    "elapsed_ns": [
+      18271084,
+      18867375,
+      18455917,
+      18665833,
+      18396041,
+      18271667,
+      18319208,
+      18386458,
+      18503375
+    ]
+  },
+  {
+    "case": "repeated_columns",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17529.448006777206,
+    "setup_ns": 171375,
+    "iterations": 8192,
+    "elapsed_ns": [
+      15880959,
+      15829708,
+      15754833,
+      15775375,
+      15981125,
+      15794917,
+      15947166,
+      16033625,
+      15790125
+    ]
+  },
+  {
+    "case": "ladder",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17363.68805569,
+    "setup_ns": 746792,
+    "iterations": 32,
+    "elapsed_ns": [
+      12157792,
+      12269125,
+      12127125,
+      12109250,
+      12167416,
+      12331833,
+      11656708,
+      11594458,
+      11709291
+    ]
+  },
+  {
+    "case": "ladder",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17363.68805569,
+    "setup_ns": 442334,
+    "iterations": 32,
+    "elapsed_ns": [
+      13640625,
+      13472125,
+      13342459,
+      13363708,
+      13462125,
+      13339541,
+      13336875,
+      13358458,
+      13393375
+    ]
+  },
+  {
+    "case": "ladder",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17363.68805569,
+    "setup_ns": 440125,
+    "iterations": 32,
+    "elapsed_ns": [
+      11795833,
+      11787125,
+      11734375,
+      11666625,
+      11802791,
+      11824917,
+      11704459,
+      11795084,
+      11810625
+    ]
+  },
+  {
+    "case": "ladder",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -17363.68805569,
+    "setup_ns": 458709,
+    "iterations": 1024,
+    "elapsed_ns": [
+      10185333,
+      10297292,
+      10219375,
+      10243625,
+      10263250,
+      10409708,
+      10148667,
+      10382208,
+      10121042
+    ]
+  },
+  {
+    "case": "small_unpadded",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -68.64556079527617,
+    "setup_ns": 67667,
+    "iterations": 8192,
+    "elapsed_ns": [
+      14496667,
+      14627375,
+      14398333,
+      14448500,
+      14469083,
+      14832292,
+      14551667,
+      14556750,
+      14952750
+    ]
+  },
+  {
+    "case": "small_unpadded",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -68.64556079527617,
+    "setup_ns": 71625,
+    "iterations": 4096,
+    "elapsed_ns": [
+      13455459,
+      13289083,
+      14705708,
+      15124667,
+      14839375,
+      12875834,
+      12737708,
+      12851333,
+      12932958
+    ]
+  },
+  {
+    "case": "small_unpadded",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -68.64556079527617,
+    "setup_ns": 61959,
+    "iterations": 8192,
+    "elapsed_ns": [
+      13700459,
+      13788208,
+      13568125,
+      13694041,
+      13636417,
+      14178334,
+      14294084,
+      13787250,
+      13985333
+    ]
+  },
+  {
+    "case": "small_unpadded",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -68.64556079527617,
+    "setup_ns": 66292,
+    "iterations": 16384,
+    "elapsed_ns": [
+      19134667,
+      19327833,
+      19330000,
+      18948292,
+      19032791,
+      19127417,
+      19040584,
+      19625917,
+      19449000
+    ]
+  },
+  {
+    "case": "small_padded",
+    "metric": "full_cached",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -72.40028967717792,
+    "setup_ns": 72875,
+    "iterations": 8192,
+    "elapsed_ns": [
+      15274667,
+      15401792,
+      15384625,
+      15477083,
+      15307458,
+      15414625,
+      15151375,
+      15411167,
+      15626250
+    ]
+  },
+  {
+    "case": "small_padded",
+    "metric": "full_with_branches",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -72.40028967717792,
+    "setup_ns": 62834,
+    "iterations": 4096,
+    "elapsed_ns": [
+      13297959,
+      13219042,
+      13313125,
+      13501625,
+      13666209,
+      13304375,
+      13495875,
+      13571833,
+      13537875
+    ]
+  },
+  {
+    "case": "small_padded",
+    "metric": "tip_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -72.40028967717792,
+    "setup_ns": 67042,
+    "iterations": 8192,
+    "elapsed_ns": [
+      14223584,
+      14140542,
+      14129708,
+      14482375,
+      14542458,
+      14420958,
+      14487375,
+      14378875,
+      14588250
+    ]
+  },
+  {
+    "case": "small_padded",
+    "metric": "internal_update",
+    "backend": "beagle",
+    "implementation": {
+      "class": "beagle.BeagleJNIImpl",
+      "version": "4.0.1 (PRE-RELEASE)",
+      "flags": " PRECISION_DOUBLE COMPUTATION_SYNCH EIGEN_REAL SCALING_MANUAL SCALERS_LOG VECTOR_SSE THREADING_NONE PROCESSOR_CPU FRAMEWORK_CPU",
+      "scaling": "manual; write every updated node, accumulate all internal scalers"
+    },
+    "initial": -72.40028967717792,
+    "setup_ns": 76167,
+    "iterations": 16384,
+    "elapsed_ns": [
+      19690583,
+      19649041,
+      19541083,
+      19588958,
+      19877917,
+      19998917,
+      19739291,
+      19676500,
+      19849416
+    ]
+  }
+]

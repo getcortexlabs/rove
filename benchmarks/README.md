@@ -13,6 +13,11 @@ It predates the direct path. The
 same processes, and the [NEON comparison](neon/2026-10-28/README.md) both
 backends.
 
+The [expanded cross-engine report](expanded/2026-10-30/README.md) uses optional
+Java/BEAGLE adapters for the same numerical inputs and adds complete inference
+runs with multiple seeds. Its [protocol](expanded/PROTOCOL.md) separates warmed
+kernel timings from whole-process runtime and sampling diagnostics.
+
 ## Run
 
 Use a clean checkout with Rust, Cargo and Python 3.9 or newer. The driver builds

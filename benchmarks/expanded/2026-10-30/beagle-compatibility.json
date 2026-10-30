@@ -1,0 +1,26 @@
+{
+  "attempt": "BEAST 2.7.8 + MM 1.2.1, forced BeagleTreeLikelihood, BEAGLE 4.0.1 CPU",
+  "phase": "Untimed preparation, seed 81991, requested 1000 steps",
+  "outcome": "Unsupported: MM LewisMK provides no eigendecomposition; initialization fails before sampling.",
+  "error": "Cannot invoke EigenDecomposition.getEigenVectors() because the eigendecomposition is null",
+  "process_exit_code": 0,
+  "validation": "A successful exit code is insufficient. The benchmark requires every expected trace state.",
+  "cases": {
+    "reference": {
+      "xml_sha256": "f85f0657376daf653c186b1942e736b6c491a5f1771718cea18066a16ecd05f5",
+      "produced_trace": false,
+      "error_verified": true
+    },
+    "morphology90": {
+      "xml_sha256": "d38be5262633b8eb9dd03f340c443da72b1e939b963f4447eed3c6ff5f4299db",
+      "produced_trace": false,
+      "error_verified": true
+    },
+    "zilla": {
+      "xml_sha256": "a1c839c38a61dbf9baa7f50e90f3d7a388ab628c3571fd60cadab0e7f40acef8",
+      "produced_trace": false,
+      "error_verified": true
+    }
+  },
+  "supported_comparison": "The kernel adapter supplies transition matrices directly, bypassing the unsupported eigendecomposition path."
+}

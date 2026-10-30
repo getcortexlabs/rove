@@ -9,7 +9,7 @@ Rove 是一个用 Rust 编写的系统发育推断项目。它从一个面向形
 这个名字来自探索、漫游与发现路径。
 
 ::: info 项目状态
-早期。带直接 Mk 路径及其 NEON 内核的似然核心、Mkv 校正、NEXUS 读取器、模式压缩、数值测试和一个最小的独立采样器已经实现。已记录一次 BEAST 2.7.8 参考实验。[松弛时钟参考模型](./reference-model)已实现并通过固定状态检查。后验比较已覆盖六个含 20 个分类单元的构造案例。AVX2 路径和更大规模的跨引擎工作负载仍待完成。工作进展在 [issues](https://github.com/getcortexlabs/rove/issues) 中跟踪。
+早期。带直接 Mk 路径及其 NEON 内核的似然核心、Mkv 校正、NEXUS 读取器、模式压缩、数值测试和一个最小的独立采样器已经实现。已记录一次 BEAST 2.7.8 参考实验。[松弛时钟参考模型](./reference-model)已实现并通过固定状态检查。后验比较已覆盖六个含 20 个分类单元的构造案例。[扩展基准测试](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md)覆盖 20、90 和 500 个分类单元，并比较 BEAST/BEAGLE 内核适配器，分别报告运行时间与采样质量。较大规模的运行未达到收敛标准。AVX2 路径仍待完成。工作进展在 [issues](https://github.com/getcortexlabs/rove/issues) 中跟踪。
 :::
 
 ## 为什么还要一个内核
@@ -42,10 +42,9 @@ Rove 则从数据出发：一种沿位点模式向量化的布局，以及针对
 
 ## 还没有什么
 
-- 多个分区、末端日期、校准和其他树先验。
+- 用户定义的分区模型、末端日期、校准和其他树先验。
 - AVX2 代码路径。aarch64 以外的目标平台运行可移植代码。
-- 与 BEAST 或 BEAGLE 的受控性能基准测试。
-- 恢复中断的运行、应用内收敛报告，以及可选的 BEAST 2 或 BEAGLE 适配器。
+- 用于生产的 BEAST 2 或 BEAGLE 适配器。基准测试适配器是独立工具。
 
 本站任何地方都没有把这个清单上的内容记载为可用。[路线图](./roadmap)给出先后顺序。
 

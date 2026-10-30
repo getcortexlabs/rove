@@ -82,7 +82,11 @@ testing analyses and discussing what the results mean.
 The first [BEAST 2.7.8 reference experiment](benchmarks/beast-2.7.8/2026-10-25/README.md)
 records the exact model, runtime, sampling diagnostics, and fixed numerical
 states for a selected 20 x 50 dataset. It used BEAST's Java likelihood core.
-No controlled cross-engine benchmark has been run yet.
+The [expanded benchmark](benchmarks/expanded/2026-10-30/README.md) adds
+20-, 90- and 500-taxon full-model runs and direct BEAST/BEAGLE kernel
+comparisons. Runtime and sampling quality are reported separately; shorter
+wall time does not establish convergence. The larger runs did not meet the
+convergence criteria.
 
 The [Rust baseline on Apple M4 Max](benchmarks/rove/2026-10-26/README.md)
 measures 11 workloads, separating setup, full evaluations, partial updates and

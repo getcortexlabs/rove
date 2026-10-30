@@ -1,0 +1,1106 @@
+[
+  {
+    "case": "reference_20x50",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -433.28114529381804,
+    "setup_ns": 1883000,
+    "iterations": 1024,
+    "elapsed_ns": [
+      13365875,
+      13455542,
+      13604834,
+      13594750,
+      13522375,
+      13735042,
+      13307042,
+      13269750,
+      13301584
+    ]
+  },
+  {
+    "case": "reference_20x50",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -433.28114529381804,
+    "setup_ns": 219166,
+    "iterations": 1024,
+    "elapsed_ns": [
+      15761709,
+      15594958,
+      15864208,
+      15806083,
+      15512334,
+      16023166,
+      15637375,
+      16315334,
+      16396583
+    ]
+  },
+  {
+    "case": "reference_20x50",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -433.28114529381804,
+    "setup_ns": 90208,
+    "iterations": 2048,
+    "elapsed_ns": [
+      10166042,
+      10061791,
+      10296541,
+      10176250,
+      10135875,
+      10089292,
+      10063000,
+      10117333,
+      10087416
+    ]
+  },
+  {
+    "case": "reference_20x50",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -433.28114529381804,
+    "setup_ns": 77083,
+    "iterations": 8192,
+    "elapsed_ns": [
+      14086042,
+      14076208,
+      13930000,
+      14385583,
+      14340208,
+      14452750,
+      14495500,
+      14536084,
+      14496416
+    ]
+  },
+  {
+    "case": "reference_20x50_mkv",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -198.61115564792402,
+    "setup_ns": 96125,
+    "iterations": 1024,
+    "elapsed_ns": [
+      14639292,
+      15336417,
+      14922083,
+      14773625,
+      14506750,
+      14767833,
+      14812291,
+      14625750,
+      14619542
+    ]
+  },
+  {
+    "case": "reference_20x50_mkv",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -198.61115564792402,
+    "setup_ns": 120708,
+    "iterations": 1024,
+    "elapsed_ns": [
+      16575042,
+      16697917,
+      16713958,
+      16581666,
+      16692166,
+      16646125,
+      16609583,
+      16798541,
+      17396625
+    ]
+  },
+  {
+    "case": "reference_20x50_mkv",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -198.61115564792402,
+    "setup_ns": 92125,
+    "iterations": 2048,
+    "elapsed_ns": [
+      11009291,
+      10759500,
+      11030958,
+      11334250,
+      10806542,
+      10832417,
+      10813250,
+      10910000,
+      10804625
+    ]
+  },
+  {
+    "case": "reference_20x50_mkv",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -198.61115564792402,
+    "setup_ns": 80875,
+    "iterations": 8192,
+    "elapsed_ns": [
+      14672750,
+      14725459,
+      14720750,
+      14530125,
+      14841375,
+      14601917,
+      15028959,
+      14984875,
+      15002250
+    ]
+  },
+  {
+    "case": "morphology_90x250",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -11529.313888659732,
+    "setup_ns": 769750,
+    "iterations": 32,
+    "elapsed_ns": [
+      19957042,
+      19631625,
+      20847666,
+      20793709,
+      20469125,
+      19690000,
+      19904542,
+      19816792,
+      19681875
+    ]
+  },
+  {
+    "case": "morphology_90x250",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -11529.313888659732,
+    "setup_ns": 965250,
+    "iterations": 32,
+    "elapsed_ns": [
+      19956167,
+      20085042,
+      19914917,
+      19960542,
+      19856458,
+      19918542,
+      20030125,
+      19904959,
+      21038209
+    ]
+  },
+  {
+    "case": "morphology_90x250",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -11529.313888659732,
+    "setup_ns": 607417,
+    "iterations": 128,
+    "elapsed_ns": [
+      10081875,
+      10007458,
+      9971875,
+      9926500,
+      9963291,
+      10274833,
+      9959583,
+      9911958,
+      10031667
+    ]
+  },
+  {
+    "case": "morphology_90x250",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -11529.313888659732,
+    "setup_ns": 659459,
+    "iterations": 256,
+    "elapsed_ns": [
+      10023208,
+      9851750,
+      9927500,
+      10020167,
+      10025708,
+      10021041,
+      9852792,
+      9945500,
+      9850334
+    ]
+  },
+  {
+    "case": "binary_one_rate",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -19460.397403554405,
+    "setup_ns": 454041,
+    "iterations": 64,
+    "elapsed_ns": [
+      12044000,
+      12290875,
+      12189916,
+      12579083,
+      12605542,
+      12559834,
+      12770625,
+      12482708,
+      12403750
+    ]
+  },
+  {
+    "case": "binary_one_rate",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -19460.397403554405,
+    "setup_ns": 359042,
+    "iterations": 64,
+    "elapsed_ns": [
+      12255041,
+      12173042,
+      12384250,
+      12369083,
+      12480041,
+      12330000,
+      12654958,
+      12234834,
+      12448584
+    ]
+  },
+  {
+    "case": "binary_one_rate",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -19460.397403554405,
+    "setup_ns": 348500,
+    "iterations": 256,
+    "elapsed_ns": [
+      11147333,
+      11136667,
+      11190042,
+      10928416,
+      11247042,
+      10936250,
+      10946042,
+      10967333,
+      10927125
+    ]
+  },
+  {
+    "case": "binary_one_rate",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -19460.397403554405,
+    "setup_ns": 3710708,
+    "iterations": 512,
+    "elapsed_ns": [
+      16660334,
+      16739166,
+      16678541,
+      16772042,
+      16701000,
+      16971292,
+      16831375,
+      16516125,
+      16509209
+    ]
+  },
+  {
+    "case": "binary_four_rates",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17661.045029291778,
+    "setup_ns": 385083,
+    "iterations": 16,
+    "elapsed_ns": [
+      10655666,
+      10482333,
+      10408709,
+      10505541,
+      10363958,
+      10371083,
+      10427958,
+      10474916,
+      10352917
+    ]
+  },
+  {
+    "case": "binary_four_rates",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17661.045029291778,
+    "setup_ns": 307792,
+    "iterations": 16,
+    "elapsed_ns": [
+      10129750,
+      10122708,
+      10331167,
+      10202167,
+      10246333,
+      10137958,
+      10057708,
+      10279750,
+      10040000
+    ]
+  },
+  {
+    "case": "binary_four_rates",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17661.045029291778,
+    "setup_ns": 307084,
+    "iterations": 128,
+    "elapsed_ns": [
+      9988834,
+      10008458,
+      10020083,
+      10205417,
+      10028292,
+      9950375,
+      10025042,
+      9990792,
+      10302917
+    ]
+  },
+  {
+    "case": "binary_four_rates",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17661.045029291778,
+    "setup_ns": 297958,
+    "iterations": 256,
+    "elapsed_ns": [
+      10188125,
+      10058375,
+      10076834,
+      9902041,
+      10412459,
+      10291959,
+      9750459,
+      10002458,
+      9995791
+    ]
+  },
+  {
+    "case": "ternary_four_rates",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -29280.73261827902,
+    "setup_ns": 442417,
+    "iterations": 16,
+    "elapsed_ns": [
+      16256416,
+      15943000,
+      15547417,
+      15554167,
+      15408000,
+      15442375,
+      15420750,
+      15699584,
+      15402500
+    ]
+  },
+  {
+    "case": "ternary_four_rates",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -29280.73261827902,
+    "setup_ns": 2493416,
+    "iterations": 16,
+    "elapsed_ns": [
+      15965542,
+      15724167,
+      15812625,
+      15801125,
+      15843500,
+      15858458,
+      15795375,
+      15926167,
+      15814416
+    ]
+  },
+  {
+    "case": "ternary_four_rates",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -29280.73261827902,
+    "setup_ns": 403083,
+    "iterations": 128,
+    "elapsed_ns": [
+      14180459,
+      13994833,
+      14688250,
+      14807250,
+      14736250,
+      14766000,
+      14851458,
+      14752834,
+      14880209
+    ]
+  },
+  {
+    "case": "ternary_four_rates",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -29280.73261827902,
+    "setup_ns": 392166,
+    "iterations": 256,
+    "elapsed_ns": [
+      11182583,
+      11239000,
+      11184750,
+      11097417,
+      11102750,
+      11093541,
+      11127250,
+      11124291,
+      11079375
+    ]
+  },
+  {
+    "case": "eight_states",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -57413.89757152285,
+    "setup_ns": 3217792,
+    "iterations": 4,
+    "elapsed_ns": [
+      17826833,
+      17571417,
+      17538750,
+      17416333,
+      17612833,
+      17601125,
+      17883708,
+      17378083,
+      17398541
+    ]
+  },
+  {
+    "case": "eight_states",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -57413.89757152285,
+    "setup_ns": 3602000,
+    "iterations": 4,
+    "elapsed_ns": [
+      17043958,
+      17332958,
+      17149083,
+      17253292,
+      17154375,
+      17176167,
+      17421292,
+      17283583,
+      17176500
+    ]
+  },
+  {
+    "case": "eight_states",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -57413.89757152285,
+    "setup_ns": 1461541,
+    "iterations": 32,
+    "elapsed_ns": [
+      11798000,
+      11838292,
+      11987666,
+      11897709,
+      11786500,
+      11765750,
+      11848208,
+      12481709,
+      12106708
+    ]
+  },
+  {
+    "case": "eight_states",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -57413.89757152285,
+    "setup_ns": 1143792,
+    "iterations": 128,
+    "elapsed_ns": [
+      11284250,
+      11284875,
+      11194583,
+      11256042,
+      11090625,
+      11123042,
+      11304875,
+      11105041,
+      11178708
+    ]
+  },
+  {
+    "case": "missing_20_percent",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -14031.31626539957,
+    "setup_ns": 283750,
+    "iterations": 32,
+    "elapsed_ns": [
+      19143625,
+      19383542,
+      19135709,
+      19014583,
+      18750583,
+      20004375,
+      20171375,
+      20194875,
+      20534625
+    ]
+  },
+  {
+    "case": "missing_20_percent",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -14031.31626539957,
+    "setup_ns": 299958,
+    "iterations": 32,
+    "elapsed_ns": [
+      21571625,
+      19152416,
+      19156416,
+      19206833,
+      19649667,
+      19007459,
+      19118167,
+      19720875,
+      19353625
+    ]
+  },
+  {
+    "case": "missing_20_percent",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -14031.31626539957,
+    "setup_ns": 1844042,
+    "iterations": 256,
+    "elapsed_ns": [
+      20271708,
+      20459250,
+      20629292,
+      20221459,
+      20350125,
+      20326833,
+      19553500,
+      20543750,
+      20535875
+    ]
+  },
+  {
+    "case": "missing_20_percent",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -14031.31626539957,
+    "setup_ns": 299208,
+    "iterations": 512,
+    "elapsed_ns": [
+      19577375,
+      19443250,
+      19505792,
+      19481417,
+      19423292,
+      19764167,
+      19880334,
+      20010667,
+      19896459
+    ]
+  },
+  {
+    "case": "repeated_columns",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17529.448006777213,
+    "setup_ns": 101292,
+    "iterations": 256,
+    "elapsed_ns": [
+      15871625,
+      16082166,
+      16337375,
+      15894792,
+      15921792,
+      16124791,
+      16039333,
+      15692917,
+      15699209
+    ]
+  },
+  {
+    "case": "repeated_columns",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17529.448006777213,
+    "setup_ns": 96958,
+    "iterations": 256,
+    "elapsed_ns": [
+      18569583,
+      18347292,
+      18429709,
+      18359875,
+      18353459,
+      18258333,
+      18308167,
+      18288292,
+      18158125
+    ]
+  },
+  {
+    "case": "repeated_columns",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17529.448006777213,
+    "setup_ns": 114417,
+    "iterations": 2048,
+    "elapsed_ns": [
+      16143708,
+      16577833,
+      16080000,
+      16206333,
+      16224417,
+      16496750,
+      16139417,
+      16151583,
+      16153500
+    ]
+  },
+  {
+    "case": "repeated_columns",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17529.448006777213,
+    "setup_ns": 138959,
+    "iterations": 4096,
+    "elapsed_ns": [
+      15924833,
+      15803084,
+      16046084,
+      16001208,
+      15937292,
+      16097167,
+      16389458,
+      16023584,
+      15935416
+    ]
+  },
+  {
+    "case": "ladder",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17363.688055689996,
+    "setup_ns": 399250,
+    "iterations": 32,
+    "elapsed_ns": [
+      19741209,
+      19920250,
+      19450209,
+      19710791,
+      18843083,
+      18717042,
+      18803334,
+      18867125,
+      19797250
+    ]
+  },
+  {
+    "case": "ladder",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17363.688055689996,
+    "setup_ns": 2445459,
+    "iterations": 32,
+    "elapsed_ns": [
+      20904084,
+      20685375,
+      20564042,
+      20646875,
+      20367792,
+      19159250,
+      19250334,
+      19347125,
+      19148959
+    ]
+  },
+  {
+    "case": "ladder",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17363.688055689996,
+    "setup_ns": 305625,
+    "iterations": 32,
+    "elapsed_ns": [
+      18901959,
+      18923917,
+      19028959,
+      18739375,
+      18871000,
+      18891167,
+      18701375,
+      18836167,
+      19022583
+    ]
+  },
+  {
+    "case": "ladder",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -17363.688055689996,
+    "setup_ns": 289666,
+    "iterations": 512,
+    "elapsed_ns": [
+      19930417,
+      20235083,
+      20190542,
+      19889333,
+      19763167,
+      19660250,
+      19557583,
+      19352833,
+      19459750
+    ]
+  },
+  {
+    "case": "small_unpadded",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -68.64556079527617,
+    "setup_ns": 28209,
+    "iterations": 8192,
+    "elapsed_ns": [
+      17125709,
+      17131791,
+      17101042,
+      17076875,
+      17301459,
+      16947292,
+      16578625,
+      16600959,
+      16624750
+    ]
+  },
+  {
+    "case": "small_unpadded",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -68.64556079527617,
+    "setup_ns": 29125,
+    "iterations": 4096,
+    "elapsed_ns": [
+      10138000,
+      10362500,
+      10280375,
+      10292291,
+      10408709,
+      10395666,
+      10302708,
+      10643792,
+      10436500
+    ]
+  },
+  {
+    "case": "small_unpadded",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -68.64556079527617,
+    "setup_ns": 31500,
+    "iterations": 8192,
+    "elapsed_ns": [
+      14218083,
+      13995500,
+      14130791,
+      13900666,
+      13614625,
+      13785917,
+      13957000,
+      13936667,
+      14017500
+    ]
+  },
+  {
+    "case": "small_unpadded",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -68.64556079527617,
+    "setup_ns": 28333,
+    "iterations": 16384,
+    "elapsed_ns": [
+      13337708,
+      13475500,
+      13400542,
+      13365792,
+      13158375,
+      13310833,
+      13257708,
+      13153917,
+      13463709
+    ]
+  },
+  {
+    "case": "small_padded",
+    "metric": "full_cached",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -72.40028967717792,
+    "setup_ns": 35917,
+    "iterations": 8192,
+    "elapsed_ns": [
+      18116917,
+      18200125,
+      18200166,
+      18219292,
+      18699958,
+      18296375,
+      17914875,
+      17930291,
+      17691417
+    ]
+  },
+  {
+    "case": "small_padded",
+    "metric": "full_with_branches",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -72.40028967717792,
+    "setup_ns": 28833,
+    "iterations": 4096,
+    "elapsed_ns": [
+      10577583,
+      10559750,
+      10575459,
+      10623959,
+      10720458,
+      10743333,
+      10658500,
+      10955000,
+      10999917
+    ]
+  },
+  {
+    "case": "small_padded",
+    "metric": "tip_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -72.40028967717792,
+    "setup_ns": 28792,
+    "iterations": 8192,
+    "elapsed_ns": [
+      14445958,
+      14310042,
+      14430166,
+      14978458,
+      14910042,
+      14643459,
+      14846375,
+      14934958,
+      14721166
+    ]
+  },
+  {
+    "case": "small_padded",
+    "metric": "internal_update",
+    "backend": "java",
+    "implementation": {
+      "class": "beast.base.evolution.likelihood.BeerLikelihoodCore",
+      "scaling": "BeerLikelihoodCore scaling enabled; threshold-based rescaling"
+    },
+    "initial": -72.40028967717792,
+    "setup_ns": 32750,
+    "iterations": 16384,
+    "elapsed_ns": [
+      13997125,
+      13876708,
+      13877500,
+      13913541,
+      13889542,
+      13810667,
+      14007542,
+      13924416,
+      13942458
+    ]
+  }
+]

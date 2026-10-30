@@ -13,7 +13,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Análise de referência reprodutível com o BEAST 2.7.8 | Concluído |
 | NEXUS morfológico e compressão de padrões observados | Concluído |
 | Baseline do núcleo Rust | Concluído, #8 |
-| Benchmarks de inferência completa e entre motores | Comparação com 20 táxons registrada; ampliação pendente, #8 |
+| Benchmarks de inferência completa e entre motores | Execuções com 20/90/500 táxons e adaptadores de núcleo medidos; limites da amostragem registrados, #8 |
 | Correção de ascertainment Mkv | Concluído |
 | Poda direta do Mk | Concluído |
 | MCMC independente mínimo | Concluído |
@@ -44,7 +44,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 
 O [núcleo](./kernel) é verificado contra uma implementação escalar independente. O [leitor de NEXUS](./nexus) fornece observações ponderadas sem o BEAST. O [experimento de referência](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) registra entradas exatas, configurações de modelo, duas execuções completas do BEAST e estados numéricos fixos.
 
-O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 cenários em Rust, separando preparação, avaliações completas, atualizações parciais e manutenção do estado das propostas. Inclui amostras brutas, observações de alocação e variação entre três processos. Uma [comparação do modelo completo](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md) agora registra tempo e ESS por segundo em seis casos de 20 táxons; cenários maiores continuam pendentes. A comparação sob relógio estrito, mais abaixo, registra o tempo decorrido dos dois motores numa configuração pequena, mas não é um benchmark controlado.
+O [baseline no Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 cenários em Rust, separando preparação, avaliações completas, atualizações parciais e manutenção do estado das propostas. Inclui amostras brutas, observações de alocação e variação entre três processos. Uma [comparação do modelo completo](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md) agora registra tempo e ESS por segundo em seis casos de 20 táxons; o [relatório ampliado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) acrescenta execuções com 90 e 500 táxons e comparações dos núcleos BEAST/BEAGLE, com os limites de convergência registrados. A comparação sob relógio estrito, mais abaixo, registra o tempo decorrido dos dois motores numa configuração pequena, mas não é um benchmark controlado.
 
 ## Corretude antes da otimização
 

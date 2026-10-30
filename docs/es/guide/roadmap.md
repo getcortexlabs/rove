@@ -13,7 +13,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | Análisis de referencia reproducible con BEAST 2.7.8 | Hecho |
 | NEXUS morfológico y compresión de patrones observados | Hecho |
 | Línea base del núcleo Rust | Hecho, #8 |
-| Benchmarks de inferencia completa y entre motores | Comparación con 20 taxones registrada; ampliación pendiente, #8 |
+| Benchmarks de inferencia completa y entre motores | Ejecuciones con 20/90/500 taxones y adaptadores de núcleo medidos; límites del muestreo registrados, #8 |
 | Corrección de ascertainment de Mkv | Hecho |
 | Poda directa de Mk | Hecho |
 | MCMC independiente mínimo | Hecho |
@@ -44,7 +44,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 
 El [núcleo](./kernel) se comprueba contra una implementación escalar independiente. El [lector de NEXUS](./nexus) suministra observaciones ponderadas sin BEAST. El [experimento de referencia](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) registra las entradas exactas, la configuración del modelo, dos ejecuciones completas de BEAST y estados numéricos fijos.
 
-La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 casos en Rust, separando preparación, evaluaciones completas, actualizaciones parciales y gestión del estado de las propuestas. Incluye muestras originales, observaciones de asignación de memoria y variación entre tres procesos. Una [comparación del modelo completo](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md) ya registra tiempo y ESS por segundo en seis casos de 20 taxones; las cargas mayores siguen pendientes. La comparación con reloj estricto, más abajo, registra el tiempo transcurrido de ambos motores en una configuración pequeña, pero no es un benchmark controlado.
+La [línea base en Apple M4 Max](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) registra 11 casos en Rust, separando preparación, evaluaciones completas, actualizaciones parciales y gestión del estado de las propuestas. Incluye muestras originales, observaciones de asignación de memoria y variación entre tres procesos. Una [comparación del modelo completo](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md) ya registra tiempo y ESS por segundo en seis casos de 20 taxones; el [informe ampliado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) añade ejecuciones con 90 y 500 taxones y comparaciones de los núcleos BEAST/BEAGLE, con los límites de convergencia registrados. La comparación con reloj estricto, más abajo, registra el tiempo transcurrido de ambos motores en una configuración pequeña, pero no es un benchmark controlado.
 
 ## Corrección antes que optimización
 

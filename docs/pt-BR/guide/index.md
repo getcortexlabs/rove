@@ -9,7 +9,7 @@ O Rove é um projeto de inferência filogenética escrito em Rust. Ele começa c
 O nome vem de explorar, vagar e descobrir caminhos.
 
 ::: info Status do projeto
-Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON para ele, a correção Mkv, o leitor de NEXUS, a compressão de padrões, os testes numéricos e um amostrador independente mínimo estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. O [modelo de referência](./reference-model) com relógio relaxado está implementado e conferido em estados fixos. Comparações de posterior cobrem seis casos construídos com 20 táxons. Um caminho AVX2 e cenários maiores de comparação entre motores continuam como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
+Estágio inicial. O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON para ele, a correção Mkv, o leitor de NEXUS, a compressão de padrões, os testes numéricos e um amostrador independente mínimo estão implementados. Um experimento de referência com o BEAST 2.7.8 está registrado. O [modelo de referência](./reference-model) com relógio relaxado está implementado e conferido em estados fixos. Comparações de posterior cobrem seis casos construídos com 20 táxons. O [benchmark ampliado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) cobre 20, 90 e 500 táxons e compara adaptadores de núcleo do BEAST/BEAGLE, separando tempo e qualidade da amostragem. As execuções maiores não atingiram os critérios de convergência. Um caminho AVX2 continua como trabalho futuro. O trabalho é acompanhado nas [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Por que outro kernel
@@ -43,10 +43,9 @@ A página do [núcleo de verossimilhança](./kernel) mostra como chamá-lo. A p�
 
 ## O que ainda não existe
 
-- Múltiplas partições, datas de terminais, calibrações e outros priors de árvore.
+- Modelos de partições definidos pelo usuário, datas de terminais, calibrações e outros priors de árvore.
 - Um caminho de código AVX2. Alvos que não são aarch64 rodam o código portátil.
-- Benchmarks controlados de desempenho contra o BEAST ou o BEAGLE.
-- Retomar execuções, relatórios de convergência no app e os adaptadores opcionais para BEAST 2 ou BEAGLE.
+- Adaptadores de produção para BEAST 2 ou BEAGLE. Os adaptadores de benchmark são ferramentas separadas.
 
 Nada desta lista está documentado como disponível em qualquer parte deste site. O [roadmap](./roadmap) dá a ordem.
 

@@ -2,6 +2,8 @@
 """Publish aggregate expanded benchmarks without private alignments or trees."""
 
 import argparse
+import gzip
+import hashlib
 import json
 import shutil
 import statistics
@@ -21,10 +23,28 @@ def distribution(values):
             "sd": statistics.stdev(values) if len(values) > 1 else None, "min": min(values), "max": max(values)}
 
 
+def operators(directory, engine, seed):
+    if engine == "rove":
+        return json.loads((directory / str(seed) / "run.json").read_text())["moves"]
+    lines = (directory / f"{seed}.console.log").read_text().splitlines()
+    start = next(i for i, line in enumerate(lines) if line.startswith("Operator ") and "#accept" in line)
+    result = []
+    for line in lines[start + 1:]:
+        if not line.strip():
+            break
+        name, tuning, accepted, rejected, probability, acceptance, *_ = line.split()
+        result.append({"name": name, "final_tuning": None if tuning == "-" else float(tuning),
+                       "accepted": int(accepted), "rejected_including_failed": int(rejected),
+                       "selection_probability": float(probability), "acceptance_fraction": float(acceptance)})
+    if not result:
+        raise ValueError("Missing final BEAST operator report")
+    return result
+
+
 def inference(directory, config, timings, name):
     settings = config["cases"][name]
     summaries, traces, seconds = {}, {}, {}
-    result = {"settings": settings, "wall_seconds": {}, "statistics": {}, "tree": {}}
+    result = {"settings": settings, "wall_seconds": {}, "statistics": {}, "tree": {}, "operators": {}}
     for engine in ("rove", "beast"):
         paths = [directory / name / engine / str(seed) for seed in config["seeds"]]
         summaries[engine] = [json.loads((path / "summary.json").read_text()) for path in paths]
@@ -35,6 +55,8 @@ def inference(directory, config, timings, name):
                                if r["case"] == name and r["engine"] == engine and r["seed"] == seed)
                            for seed in config["seeds"]]
         result["wall_seconds"][engine] = distribution(seconds[engine])
+        result["operators"][engine] = {str(seed): operators(directory / name / engine, engine, seed)
+                                        for seed in config["seeds"]}
     result["beast_over_rove_wall"] = distribution([b / r for b, r in zip(seconds["beast"], seconds["rove"])])
     for label, beast_label in STATISTICS.items():
         entry = {}
@@ -144,7 +166,15 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     write(args.output / "inference.json", result)
     write(args.output / "kernel-summary.json", kernel)
-    write(args.output / "metadata.json", redact({"config": config, "timings": timings}, directory))
+    raw_input = (directory / "kernel-input.json").read_bytes()
+    compressed = gzip.compress(raw_input, mtime=0)
+    metadata = redact({"config": config, "timings": timings}, directory)
+    metadata["kernel_input_archive"] = {
+        "file": "kernel/input.json.gz", "uncompressed_sha256": hashlib.sha256(raw_input).hexdigest(),
+        "compressed_sha256": hashlib.sha256(compressed).hexdigest(),
+        "uncompressed_bytes": len(raw_input), "compressed_bytes": len(compressed),
+    }
+    write(args.output / "metadata.json", metadata)
     fixed = {}
     for name in config["cases"]:
         case = directory / name
@@ -157,7 +187,8 @@ def main():
     for path in (directory / "kernel").iterdir():
         if path.suffix in (".json", ".tsv"):
             shutil.copyfile(path, raw / path.name)
-    shutil.copyfile(directory / "kernel-input.json", raw / "input.json")
+    # Numeric partial arrays compress well; keep the exact exported bytes.
+    (raw / "input.json.gz").write_bytes(compressed)
     print(f"Published aggregates in {args.output}")
 
 

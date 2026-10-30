@@ -9,7 +9,7 @@ Rove is a phylogenetic inference project written in Rust. It starts with a likel
 The name comes from exploring, wandering and discovering paths.
 
 ::: info Project status
-Early. The likelihood core with its direct Mk path and a NEON kernel for it, the Mkv correction, the NEXUS reader, pattern compression, numerical tests and a minimal standalone sampler are implemented. A BEAST 2.7.8 reference experiment is recorded. The relaxed-clock [reference model](./reference-model) is implemented and checked at fixed states. Posterior comparisons cover six constructed 20-taxon cases. An AVX2 path and broader cross-engine workloads remain future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
+Early. The likelihood core with its direct Mk path and a NEON kernel for it, the Mkv correction, the NEXUS reader, pattern compression, numerical tests and a minimal standalone sampler are implemented. A BEAST 2.7.8 reference experiment is recorded. The relaxed-clock [reference model](./reference-model) is implemented and checked at fixed states. Posterior comparisons cover six constructed 20-taxon cases. The [expanded benchmark](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) covers 20, 90 and 500 taxa and compares BEAST/BEAGLE kernel adapters, with runtime and sampling quality reported separately. The larger runs did not meet the convergence criteria. An AVX2 path remains future work. Work is tracked in the [issues](https://github.com/getcortexlabs/rove/issues).
 :::
 
 ## Why another kernel
@@ -43,10 +43,9 @@ The [likelihood core](./kernel) page shows how to call it. The [synthetic matric
 
 ## What does not exist yet
 
-- Multiple partitions, tip dates, calibrations and additional tree priors.
+- User-defined partition models, tip dates, calibrations and additional tree priors.
 - An AVX2 code path. Targets other than aarch64 run the portable code.
-- Controlled performance benchmarks against BEAST or BEAGLE.
-- Resuming runs, in-app convergence reports and the optional BEAST 2 or BEAGLE adapters.
+- Production BEAST 2 or BEAGLE adapters. Benchmark adapters are separate tools.
 
 Nothing on this list is documented as available anywhere on this site. The [roadmap](./roadmap) gives the order.
 

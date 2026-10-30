@@ -43,7 +43,7 @@ features:
 <div class="home-status">
 
 ::: info Early
-The likelihood core with its direct Mk path and a NEON kernel, the Mkv correction, the equality tests and a minimal standalone sampler are implemented. The relaxed-clock reference model is implemented and checked at fixed states. Posterior comparisons cover six constructed 20-taxon cases. An AVX2 path and broader cross-engine workloads remain future work. [See what exists today →](/guide/#what-exists-today)
+The likelihood core with its direct Mk path and a NEON kernel, the Mkv correction, the equality tests and a minimal standalone sampler are implemented. The relaxed-clock reference model is implemented and checked at fixed states. Posterior comparisons cover six constructed 20-taxon cases. The [expanded benchmark](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) covers 20, 90 and 500 taxa and compares BEAST/BEAGLE kernel adapters, with runtime and sampling quality reported separately. The larger runs did not meet the convergence criteria. An AVX2 path remains future work. [See what exists today →](/guide/#what-exists-today)
 :::
 
 </div>

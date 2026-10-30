@@ -64,6 +64,51 @@ public final class ReferenceDiagnostics {
         return result;
     }
 
+    private static String decodedLabel(String label) {
+        if (label.length() >= 2) {
+            String quote = label.substring(0, 1);
+            if ((quote.equals("'") || quote.equals("\"")) && label.endsWith(quote)) {
+                return label.substring(1, label.length() - 1).replace(quote + quote, quote);
+            }
+        }
+        return label;
+    }
+
+    private static Tree referenceTree(String newick) {
+        Tree tree = new TreeParser(newick);
+        // TreeParser retains Newick quote delimiters; NexusParser removes them
+        // from its translation table. Compare decoded labels in both paths.
+        for (Node leaf : tree.getExternalNodes()) {
+            leaf.setID(decodedLabel(leaf.getID()));
+        }
+        return tree;
+    }
+
+    private static Map<String, String> taxonAliases(Set<String> taxa) {
+        Map<String, String> aliases = new HashMap<>();
+        for (String taxon : taxa) {
+            for (String alias : new String[]{taxon, taxon.replace(' ', '_')}) {
+                String previous = aliases.putIfAbsent(alias, taxon);
+                if (previous != null && !previous.equals(taxon)) {
+                    throw new IllegalArgumentException("Ambiguous space/underscore taxon encoding");
+                }
+            }
+        }
+        return aliases;
+    }
+
+    private static void decodeTaxa(Tree tree, Map<String, String> aliases) {
+        Set<String> seen = new TreeSet<>();
+        for (Node leaf : tree.getExternalNodes()) {
+            String label = decodedLabel(leaf.getID());
+            String canonical = aliases.get(label);
+            if (canonical == null || !seen.add(canonical)) {
+                throw new IllegalArgumentException("Unknown or duplicate taxon in sampled tree");
+            }
+            leaf.setID(canonical);
+        }
+    }
+
     private static JSONObject summarize(String log, String trees, String truth, int burnin, boolean extended) throws Exception {
         if (burnin < 0 || burnin >= 100) {
             throw new IllegalArgumentException("Burn-in must be between 0 and 99 percent");
@@ -85,9 +130,10 @@ public final class ReferenceDiagnostics {
         if (retained != analyser.getTrace(0).length) {
             throw new IllegalArgumentException("Tree and parameter sample counts differ");
         }
-        Tree expectedTree = new TreeParser(Files.readString(Path.of(truth)).trim());
+        Tree expectedTree = referenceTree(Files.readString(Path.of(truth)).trim());
         Set<String> expected = clades(expectedTree);
         Set<String> expectedTaxa = collectClades(expectedTree.getRoot(), new TreeSet<>());
+        Map<String, String> aliases = taxonAliases(expectedTaxa);
         Map<String, Integer> counts = new TreeMap<>();
         Map<String, Integer> topologies = new HashMap<>();
         Map<String, List<Double>> indicators = new TreeMap<>();
@@ -101,6 +147,7 @@ public final class ReferenceDiagnostics {
         double totalDistance = 0;
         for (int index = skip; index < parser.trees.size(); index++) {
             Tree tree = parser.trees.get(index);
+            decodeTaxa(tree, aliases);
             Set<String> observed = new TreeSet<>();
             if (!collectClades(tree.getRoot(), observed).equals(expectedTaxa)) {
                 throw new IllegalArgumentException("Tree taxon labels differ from the reference");
@@ -282,6 +329,13 @@ public final class ReferenceDiagnostics {
         if (!clades(tree).equals(Set.of("T1,T2", "T3,T4"))) {
             throw new AssertionError("Incorrect rooted clades");
         }
+        if (!clades(referenceTree("(('T1','T2'),('T3','T4'));")).equals(clades(tree))) {
+            throw new AssertionError("Newick quotes changed taxon identities");
+        }
+        if (!clades(referenceTree("(('A space','B space'),(C,D));"))
+                .equals(Set.of("A space,B space", "C,D"))) {
+            throw new AssertionError("Quoted labels were not decoded");
+        }
         Path file = Files.createTempFile("rove-translated-tree-", ".nex");
         try {
             Files.writeString(file, "#NEXUS\nBegin trees;\nTranslate 1 T3, 2 T1, 3 T4, 4 T2;\ntree STATE_0 = ((2:1,4:1):1,(1:1,3:1):1);\nEnd;\n");
@@ -290,6 +344,18 @@ public final class ReferenceDiagnostics {
             if (!clades(parser.trees.get(0)).equals(clades(tree))) {
                 throw new AssertionError("NEXUS translation changed taxon identities");
             }
+            Files.writeString(file, "#NEXUS\nBegin trees;\nTranslate 1 A_space, 2 B, 3 C, 4 D;\ntree STATE_0 = ((1:1,2:1):1,(3:1,4:1):1);\nEnd;\n");
+            parser = new NexusParser();
+            parser.parseFile(file.toFile());
+            Tree expected = referenceTree("(('A space',B),(C,D));");
+            decodeTaxa(parser.trees.get(0), taxonAliases(Set.of("A space", "B", "C", "D")));
+            if (!clades(parser.trees.get(0)).equals(clades(expected))) {
+                throw new AssertionError("NEXUS space encoding changed taxon identities");
+            }
+            boolean ambiguous = false;
+            try { taxonAliases(Set.of("A space", "A_space")); }
+            catch (IllegalArgumentException expectedFailure) { ambiguous = true; }
+            if (!ambiguous) throw new AssertionError("Ambiguous taxon aliases were accepted");
         } finally {
             Files.deleteIfExists(file);
         }

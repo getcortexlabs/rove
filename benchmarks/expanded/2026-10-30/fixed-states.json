@@ -1,0 +1,1639 @@
+{
+  "reference": {
+    "pilot": {
+      "checks": [
+        {
+          "backend": "portable",
+          "components": {
+            "birth_death": {
+              "beast": -13.542143588523782,
+              "difference": -3.552713678800501e-15,
+              "rove": -13.542143588523786,
+              "tolerance": 1e-08
+            },
+            "clock_rate_prior": {
+              "beast": 53.26228213441142,
+              "difference": -7.105427357601002e-15,
+              "rove": 53.262282134411414,
+              "tolerance": 1e-08
+            },
+            "clock_sigma_prior": {
+              "beast": -4.262062314130908,
+              "difference": 0.0,
+              "rove": -4.262062314130908,
+              "tolerance": 1e-08
+            },
+            "gamma_prior": {
+              "beast": -1.0,
+              "difference": 0.0,
+              "rove": -1.0,
+              "tolerance": 1e-08
+            },
+            "likelihood": {
+              "beast": -318.20393545292643,
+              "difference": -1.0203393685515039e-10,
+              "rove": -318.20393545302846,
+              "tolerance": 2e-05
+            },
+            "posterior": {
+              "beast": -290.65361450015183,
+              "difference": -1.0203393685515039e-10,
+              "rove": -290.65361450025387,
+              "tolerance": 2e-05
+            },
+            "prior": {
+              "beast": 27.55032095277459,
+              "difference": -7.105427357601002e-15,
+              "rove": 27.550320952774584,
+              "tolerance": 1e-08
+            }
+          },
+          "frozen_category_likelihood": -318.2039354529264,
+          "partition_differences": [
+            5.684341886080802e-14
+          ]
+        },
+        {
+          "backend": "neon",
+          "components": {
+            "birth_death": {
+              "beast": -13.542143588523782,
+              "difference": -3.552713678800501e-15,
+              "rove": -13.542143588523786,
+              "tolerance": 1e-08
+            },
+            "clock_rate_prior": {
+              "beast": 53.26228213441142,
+              "difference": -7.105427357601002e-15,
+              "rove": 53.262282134411414,
+              "tolerance": 1e-08
+            },
+            "clock_sigma_prior": {
+              "beast": -4.262062314130908,
+              "difference": 0.0,
+              "rove": -4.262062314130908,
+              "tolerance": 1e-08
+            },
+            "gamma_prior": {
+              "beast": -1.0,
+              "difference": 0.0,
+              "rove": -1.0,
+              "tolerance": 1e-08
+            },
+            "likelihood": {
+              "beast": -318.20393545292643,
+              "difference": -1.0203393685515039e-10,
+              "rove": -318.20393545302846,
+              "tolerance": 2e-05
+            },
+            "posterior": {
+              "beast": -290.65361450015183,
+              "difference": -1.0203393685515039e-10,
+              "rove": -290.65361450025387,
+              "tolerance": 2e-05
+            },
+            "prior": {
+              "beast": 27.55032095277459,
+              "difference": -7.105427357601002e-15,
+              "rove": 27.550320952774584,
+              "tolerance": 1e-08
+            }
+          },
+          "frozen_category_likelihood": -318.2039354529264,
+          "partition_differences": [
+            5.684341886080802e-14
+          ]
+        }
+      ],
+      "schema_version": 1
+    },
+    "production": {
+      "20261201": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 122.16579218640004,
+                "difference": -1.4210854715202004e-14,
+                "rove": 122.16579218640003,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -25.900104621985825,
+                "difference": -3.552713678800501e-15,
+                "rove": -25.90010462198583,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -0.03572444824211628,
+                "difference": 7.632783294297951e-16,
+                "rove": -0.035724448242115514,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -1.3962005018506225,
+                "difference": 0.0,
+                "rove": -1.3962005018506225,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -200.4183146530001,
+                "difference": 1.4409806681214832e-10,
+                "rove": -200.418314652856,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -112.49230731766077,
+                "difference": 1.4408385595743312e-10,
+                "rove": -112.49230731751669,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 87.92600733533932,
+                "difference": -1.4210854715202004e-14,
+                "rove": 87.9260073353393,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -200.4183146530047,
+            "partition_differences": [
+              -4.604316927725449e-12
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 122.16579218640004,
+                "difference": -1.4210854715202004e-14,
+                "rove": 122.16579218640003,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -25.900104621985825,
+                "difference": -3.552713678800501e-15,
+                "rove": -25.90010462198583,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -0.03572444824211628,
+                "difference": 7.632783294297951e-16,
+                "rove": -0.035724448242115514,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -1.3962005018506225,
+                "difference": 0.0,
+                "rove": -1.3962005018506225,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -200.4183146530001,
+                "difference": 1.4409806681214832e-10,
+                "rove": -200.418314652856,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -112.49230731766077,
+                "difference": 1.4408385595743312e-10,
+                "rove": -112.49230731751669,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 87.92600733533932,
+                "difference": -1.4210854715202004e-14,
+                "rove": 87.9260073353393,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -200.4183146530047,
+            "partition_differences": [
+              -4.604316927725449e-12
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261202": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 112.85291497587755,
+                "difference": -1.4210854715202004e-14,
+                "rove": 112.85291497587754,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -7.753939124860912,
+                "difference": -4.440892098500626e-15,
+                "rove": -7.753939124860916,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.130377894940249,
+                "difference": -2.220446049250313e-16,
+                "rove": -1.1303778949402492,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.41129599523260907,
+                "difference": 0.0,
+                "rove": -0.41129599523260907,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -206.21486083403263,
+                "difference": 4.3496584112290293e-10,
+                "rove": -206.21486083359767,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -109.56531415217098,
+                "difference": 4.349374194134725e-10,
+                "rove": -109.56531415173605,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 96.64954668186165,
+                "difference": -2.842170943040401e-14,
+                "rove": 96.64954668186162,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -206.21486083403312,
+            "partition_differences": [
+              -4.831690603168681e-13
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 112.85291497587755,
+                "difference": -1.4210854715202004e-14,
+                "rove": 112.85291497587754,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -7.753939124860912,
+                "difference": -4.440892098500626e-15,
+                "rove": -7.753939124860916,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.130377894940249,
+                "difference": -2.220446049250313e-16,
+                "rove": -1.1303778949402492,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.41129599523260907,
+                "difference": 0.0,
+                "rove": -0.41129599523260907,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -206.21486083403263,
+                "difference": 4.3496584112290293e-10,
+                "rove": -206.21486083359767,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -109.56531415217098,
+                "difference": 4.349374194134725e-10,
+                "rove": -109.56531415173605,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 96.64954668186165,
+                "difference": -2.842170943040401e-14,
+                "rove": 96.64954668186162,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -206.21486083403312,
+            "partition_differences": [
+              -4.831690603168681e-13
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261203": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 134.54873700496168,
+                "difference": 2.842170943040401e-14,
+                "rove": 134.5487370049617,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -14.694624448049407,
+                "difference": -3.552713678800501e-15,
+                "rove": -14.69462444804941,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -0.14258226692142278,
+                "difference": 5.551115123125783e-17,
+                "rove": -0.14258226692142273,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.8390577412560871,
+                "difference": 0.0,
+                "rove": -0.8390577412560871,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -206.51446976049158,
+                "difference": 4.0176928450819105e-10,
+                "rove": -206.5144697600898,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -94.54975249073895,
+                "difference": 4.0179770621762145e-10,
+                "rove": -94.54975249033716,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 111.96471726975263,
+                "difference": 2.842170943040401e-14,
+                "rove": 111.96471726975265,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -206.5144697604868,
+            "partition_differences": [
+              4.774847184307873e-12
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 134.54873700496168,
+                "difference": 2.842170943040401e-14,
+                "rove": 134.5487370049617,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -14.694624448049407,
+                "difference": -3.552713678800501e-15,
+                "rove": -14.69462444804941,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -0.14258226692142278,
+                "difference": 5.551115123125783e-17,
+                "rove": -0.14258226692142273,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.8390577412560871,
+                "difference": 0.0,
+                "rove": -0.8390577412560871,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -206.51446976049158,
+                "difference": 4.0176928450819105e-10,
+                "rove": -206.5144697600898,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -94.54975249073895,
+                "difference": 4.0179770621762145e-10,
+                "rove": -94.54975249033716,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 111.96471726975263,
+                "difference": 2.842170943040401e-14,
+                "rove": 111.96471726975265,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -206.5144697604868,
+            "partition_differences": [
+              4.774847184307873e-12
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261204": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 114.5502021740504,
+                "difference": -2.842170943040401e-14,
+                "rove": 114.55020217405037,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -6.89850200653764,
+                "difference": -7.105427357601002e-15,
+                "rove": -6.8985020065376474,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.2969874116859406,
+                "difference": 4.440892098500626e-16,
+                "rove": -1.2969874116859401,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.8478216208780215,
+                "difference": 0.0,
+                "rove": -0.8478216208780215,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -200.9394570166673,
+                "difference": 1.7061267953977222e-09,
+                "rove": -200.93945701496116,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -102.34032116070064,
+                "difference": 1.706112584543007e-09,
+                "rove": -102.34032115899453,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 98.59913585596665,
+                "difference": -1.4210854715202004e-14,
+                "rove": 98.59913585596664,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -200.9394570166672,
+            "partition_differences": [
+              8.526512829121202e-14
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 114.5502021740504,
+                "difference": -2.842170943040401e-14,
+                "rove": 114.55020217405037,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -6.89850200653764,
+                "difference": -7.105427357601002e-15,
+                "rove": -6.8985020065376474,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.2969874116859406,
+                "difference": 4.440892098500626e-16,
+                "rove": -1.2969874116859401,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.8478216208780215,
+                "difference": 0.0,
+                "rove": -0.8478216208780215,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -200.9394570166673,
+                "difference": 1.7061267953977222e-09,
+                "rove": -200.93945701496116,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -102.34032116070064,
+                "difference": 1.706112584543007e-09,
+                "rove": -102.34032115899453,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 98.59913585596665,
+                "difference": -1.4210854715202004e-14,
+                "rove": 98.59913585596664,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -200.9394570166672,
+            "partition_differences": [
+              8.526512829121202e-14
+            ]
+          }
+        ],
+        "schema_version": 1
+      }
+    }
+  },
+  "morphology90": {
+    "pilot": {
+      "checks": [
+        {
+          "backend": "portable",
+          "components": {
+            "birth_death": {
+              "beast": 4.409798108956685,
+              "difference": -3.108624468950438e-14,
+              "rove": 4.409798108956654,
+              "tolerance": 1e-08
+            },
+            "clock_rate_prior": {
+              "beast": 221.98070696371772,
+              "difference": 5.684341886080802e-14,
+              "rove": 221.98070696371778,
+              "tolerance": 1e-08
+            },
+            "clock_sigma_prior": {
+              "beast": -5.841508332511217,
+              "difference": 8.881784197001252e-16,
+              "rove": -5.841508332511216,
+              "tolerance": 1e-08
+            },
+            "gamma_prior": {
+              "beast": -1.0,
+              "difference": 0.0,
+              "rove": -1.0,
+              "tolerance": 1e-08
+            },
+            "likelihood": {
+              "beast": -20101.428027278966,
+              "difference": 1.3269891496747732e-07,
+              "rove": -20101.428027146267,
+              "tolerance": 2e-05
+            },
+            "posterior": {
+              "beast": -19888.786785817785,
+              "difference": 1.3269891496747732e-07,
+              "rove": -19888.786785685086,
+              "tolerance": 2e-05
+            },
+            "prior": {
+              "beast": 212.64124146118107,
+              "difference": 2.842170943040401e-14,
+              "rove": 212.6412414611811,
+              "tolerance": 1e-08
+            }
+          },
+          "frozen_category_likelihood": -20101.428027278962,
+          "partition_differences": [
+            3.637978807091713e-12
+          ]
+        },
+        {
+          "backend": "neon",
+          "components": {
+            "birth_death": {
+              "beast": 4.409798108956685,
+              "difference": -3.108624468950438e-14,
+              "rove": 4.409798108956654,
+              "tolerance": 1e-08
+            },
+            "clock_rate_prior": {
+              "beast": 221.98070696371772,
+              "difference": 5.684341886080802e-14,
+              "rove": 221.98070696371778,
+              "tolerance": 1e-08
+            },
+            "clock_sigma_prior": {
+              "beast": -5.841508332511217,
+              "difference": 8.881784197001252e-16,
+              "rove": -5.841508332511216,
+              "tolerance": 1e-08
+            },
+            "gamma_prior": {
+              "beast": -1.0,
+              "difference": 0.0,
+              "rove": -1.0,
+              "tolerance": 1e-08
+            },
+            "likelihood": {
+              "beast": -20101.428027278966,
+              "difference": 1.3269891496747732e-07,
+              "rove": -20101.428027146267,
+              "tolerance": 2e-05
+            },
+            "posterior": {
+              "beast": -19888.786785817785,
+              "difference": 1.3269891496747732e-07,
+              "rove": -19888.786785685086,
+              "tolerance": 2e-05
+            },
+            "prior": {
+              "beast": 212.64124146118107,
+              "difference": 2.842170943040401e-14,
+              "rove": 212.6412414611811,
+              "tolerance": 1e-08
+            }
+          },
+          "frozen_category_likelihood": -20101.428027278962,
+          "partition_differences": [
+            3.637978807091713e-12
+          ]
+        }
+      ],
+      "schema_version": 1
+    },
+    "production": {
+      "20261201": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 47.41083093403713,
+                "difference": -7.105427357601002e-15,
+                "rove": 47.41083093403712,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -64.68600520501838,
+                "difference": 1.4210854715202004e-14,
+                "rove": -64.68600520501836,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.0483916239943736,
+                "difference": 4.440892098500626e-16,
+                "rove": -1.0483916239943731,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -13.89724605034303,
+                "difference": 0.0,
+                "rove": -13.89724605034303,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -11437.989940572694,
+                "difference": 1.442094799131155e-08,
+                "rove": -11437.989940558273,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -11477.118507796995,
+                "difference": 1.442094799131155e-08,
+                "rove": -11477.118507782574,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -39.12856722430079,
+                "difference": 7.105427357601002e-15,
+                "rove": -39.12856722430078,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -11437.989940572686,
+            "partition_differences": [
+              7.275957614183426e-12
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 47.41083093403713,
+                "difference": -7.105427357601002e-15,
+                "rove": 47.41083093403712,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -64.68600520501838,
+                "difference": 1.4210854715202004e-14,
+                "rove": -64.68600520501836,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.0483916239943736,
+                "difference": 4.440892098500626e-16,
+                "rove": -1.0483916239943731,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -13.89724605034303,
+                "difference": 0.0,
+                "rove": -13.89724605034303,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -11437.989940572694,
+                "difference": 1.442094799131155e-08,
+                "rove": -11437.989940558273,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -11477.118507796995,
+                "difference": 1.442094799131155e-08,
+                "rove": -11477.118507782574,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -39.12856722430079,
+                "difference": 7.105427357601002e-15,
+                "rove": -39.12856722430078,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -11437.989940572686,
+            "partition_differences": [
+              7.275957614183426e-12
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261202": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 41.79139772774617,
+                "difference": 1.4210854715202004e-14,
+                "rove": 41.79139772774619,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -53.975343716242655,
+                "difference": 7.105427357601002e-15,
+                "rove": -53.97534371624265,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.1668290438325122,
+                "difference": -4.440892098500626e-16,
+                "rove": -1.1668290438325126,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -14.633622941319604,
+                "difference": 0.0,
+                "rove": -14.633622941319604,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -11410.561950530986,
+                "difference": 2.750675776042044e-08,
+                "rove": -11410.56195050348,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -11445.454103783617,
+                "difference": 2.750675776042044e-08,
+                "rove": -11445.45410375611,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -34.892153252630735,
+                "difference": 2.1316282072803006e-14,
+                "rove": -34.89215325263071,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -11410.561950530993,
+            "partition_differences": [
+              -7.275957614183426e-12
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 41.79139772774617,
+                "difference": 1.4210854715202004e-14,
+                "rove": 41.79139772774619,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -53.975343716242655,
+                "difference": 7.105427357601002e-15,
+                "rove": -53.97534371624265,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.1668290438325122,
+                "difference": -4.440892098500626e-16,
+                "rove": -1.1668290438325126,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -14.633622941319604,
+                "difference": 0.0,
+                "rove": -14.633622941319604,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -11410.561950530986,
+                "difference": 2.750675776042044e-08,
+                "rove": -11410.56195050348,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -11445.454103783617,
+                "difference": 2.750675776042044e-08,
+                "rove": -11445.45410375611,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -34.892153252630735,
+                "difference": 2.1316282072803006e-14,
+                "rove": -34.89215325263071,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -11410.561950530993,
+            "partition_differences": [
+              -7.275957614183426e-12
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261203": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 34.2615831514337,
+                "difference": -4.973799150320701e-14,
+                "rove": 34.26158315143365,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -51.20387046699906,
+                "difference": 0.0,
+                "rove": -51.20387046699906,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.0014149991173271,
+                "difference": 8.881784197001252e-16,
+                "rove": -1.0014149991173262,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -14.355015942669937,
+                "difference": 0.0,
+                "rove": -14.355015942669937,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -11426.668864297584,
+                "difference": 1.804255589377135e-08,
+                "rove": -11426.668864279542,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -11465.875337833919,
+                "difference": 1.804255589377135e-08,
+                "rove": -11465.875337815876,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -39.206473536334755,
+                "difference": -5.684341886080802e-14,
+                "rove": -39.20647353633481,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -11426.668864297595,
+            "partition_differences": [
+              -1.0913936421275139e-11
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 34.2615831514337,
+                "difference": -4.973799150320701e-14,
+                "rove": 34.26158315143365,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -51.20387046699906,
+                "difference": 0.0,
+                "rove": -51.20387046699906,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.0014149991173271,
+                "difference": 8.881784197001252e-16,
+                "rove": -1.0014149991173262,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -14.355015942669937,
+                "difference": 0.0,
+                "rove": -14.355015942669937,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -11426.668864297584,
+                "difference": 1.804255589377135e-08,
+                "rove": -11426.668864279542,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -11465.875337833919,
+                "difference": 1.804255589377135e-08,
+                "rove": -11465.875337815876,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -39.206473536334755,
+                "difference": -5.684341886080802e-14,
+                "rove": -39.20647353633481,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -11426.668864297595,
+            "partition_differences": [
+              -1.0913936421275139e-11
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261204": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 50.17918963731304,
+                "difference": 5.684341886080802e-14,
+                "rove": 50.179189637313094,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -48.4444998329312,
+                "difference": 2.842170943040401e-14,
+                "rove": -48.44449983293117,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.1423660371297863,
+                "difference": 0.0,
+                "rove": -1.1423660371297863,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -18.64484068663313,
+                "difference": 0.0,
+                "rove": -18.64484068663313,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -11434.751982002543,
+                "difference": -2.9102011467330158e-08,
+                "rove": -11434.751982031645,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -11459.712254200906,
+                "difference": -2.9102011467330158e-08,
+                "rove": -11459.712254230008,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -24.960272198363217,
+                "difference": 8.526512829121202e-14,
+                "rove": -24.960272198363132,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -11434.75198200254,
+            "partition_differences": [
+              1.8189894035458565e-12
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 50.17918963731304,
+                "difference": 5.684341886080802e-14,
+                "rove": 50.179189637313094,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -48.4444998329312,
+                "difference": 2.842170943040401e-14,
+                "rove": -48.44449983293117,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.1423660371297863,
+                "difference": 0.0,
+                "rove": -1.1423660371297863,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -18.64484068663313,
+                "difference": 0.0,
+                "rove": -18.64484068663313,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -11434.751982002543,
+                "difference": -2.9102011467330158e-08,
+                "rove": -11434.751982031645,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -11459.712254200906,
+                "difference": -2.9102011467330158e-08,
+                "rove": -11459.712254230008,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -24.960272198363217,
+                "difference": 8.526512829121202e-14,
+                "rove": -24.960272198363132,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -11434.75198200254,
+            "partition_differences": [
+              1.8189894035458565e-12
+            ]
+          }
+        ],
+        "schema_version": 1
+      }
+    }
+  },
+  "zilla": {
+    "pilot": {
+      "checks": [
+        {
+          "backend": "portable",
+          "components": {
+            "birth_death": {
+              "beast": 1404.0353451986175,
+              "difference": -2.2737367544323206e-13,
+              "rove": 1404.0353451986173,
+              "tolerance": 1e-08
+            },
+            "clock_rate_prior": {
+              "beast": 636.7953062629202,
+              "difference": -1.1368683772161603e-13,
+              "rove": 636.7953062629201,
+              "tolerance": 1e-08
+            },
+            "clock_sigma_prior": {
+              "beast": -2.9491139002512328,
+              "difference": 4.440892098500626e-16,
+              "rove": -2.9491139002512323,
+              "tolerance": 1e-08
+            },
+            "gamma_prior": {
+              "beast": -1.0,
+              "difference": 0.0,
+              "rove": -1.0,
+              "tolerance": 1e-08
+            },
+            "likelihood": {
+              "beast": -238526.8041539378,
+              "difference": 1.411710400134325e-06,
+              "rove": -238526.80415252608,
+              "tolerance": 2e-05
+            },
+            "posterior": {
+              "beast": -236496.8303716555,
+              "difference": 1.411710400134325e-06,
+              "rove": -236496.83037024378,
+              "tolerance": 2e-05
+            },
+            "prior": {
+              "beast": 2029.9737822823045,
+              "difference": -4.547473508864641e-13,
+              "rove": 2029.973782282304,
+              "tolerance": 1e-08
+            }
+          },
+          "frozen_category_likelihood": -238526.80415393805,
+          "partition_differences": [
+            7.275957614183426e-12,
+            -2.9103830456733704e-11,
+            -2.6193447411060333e-10
+          ]
+        },
+        {
+          "backend": "neon",
+          "components": {
+            "birth_death": {
+              "beast": 1404.0353451986175,
+              "difference": -2.2737367544323206e-13,
+              "rove": 1404.0353451986173,
+              "tolerance": 1e-08
+            },
+            "clock_rate_prior": {
+              "beast": 636.7953062629202,
+              "difference": -1.1368683772161603e-13,
+              "rove": 636.7953062629201,
+              "tolerance": 1e-08
+            },
+            "clock_sigma_prior": {
+              "beast": -2.9491139002512328,
+              "difference": 4.440892098500626e-16,
+              "rove": -2.9491139002512323,
+              "tolerance": 1e-08
+            },
+            "gamma_prior": {
+              "beast": -1.0,
+              "difference": 0.0,
+              "rove": -1.0,
+              "tolerance": 1e-08
+            },
+            "likelihood": {
+              "beast": -238526.8041539378,
+              "difference": 1.411710400134325e-06,
+              "rove": -238526.80415252608,
+              "tolerance": 2e-05
+            },
+            "posterior": {
+              "beast": -236496.8303716555,
+              "difference": 1.411710400134325e-06,
+              "rove": -236496.83037024378,
+              "tolerance": 2e-05
+            },
+            "prior": {
+              "beast": 2029.9737822823045,
+              "difference": -4.547473508864641e-13,
+              "rove": 2029.973782282304,
+              "tolerance": 1e-08
+            }
+          },
+          "frozen_category_likelihood": -238526.80415393805,
+          "partition_differences": [
+            7.275957614183426e-12,
+            -2.9103830456733704e-11,
+            -2.6193447411060333e-10
+          ]
+        }
+      ],
+      "schema_version": 1
+    },
+    "production": {
+      "20261201": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 130.3990511421716,
+                "difference": -2.842170943040401e-14,
+                "rove": 130.39905114217157,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -552.721260165597,
+                "difference": -4.547473508864641e-13,
+                "rove": -552.7212601655974,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -0.17779463625523567,
+                "difference": 5.551115123125783e-17,
+                "rove": -0.17779463625523562,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.8052064047111729,
+                "difference": 0.0,
+                "rove": -0.8052064047111729,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -149899.99160927316,
+                "difference": -9.465002221986651e-06,
+                "rove": -149899.99161873816,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -150330.20457461654,
+                "difference": -9.465002221986651e-06,
+                "rove": -150330.20458408154,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -430.21296534337387,
+                "difference": -5.115907697472721e-13,
+                "rove": -430.2129653433744,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -149899.9916092731,
+            "partition_differences": [
+              1.0913936421275139e-11,
+              1.8189894035458565e-11,
+              2.9103830456733704e-11
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 130.3990511421716,
+                "difference": -2.842170943040401e-14,
+                "rove": 130.39905114217157,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -552.721260165597,
+                "difference": -4.547473508864641e-13,
+                "rove": -552.7212601655974,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -0.17779463625523567,
+                "difference": 5.551115123125783e-17,
+                "rove": -0.17779463625523562,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.8052064047111729,
+                "difference": 0.0,
+                "rove": -0.8052064047111729,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -149899.99160927316,
+                "difference": -9.465002221986651e-06,
+                "rove": -149899.99161873816,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -150330.20457461654,
+                "difference": -9.465002221986651e-06,
+                "rove": -150330.20458408154,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -430.21296534337387,
+                "difference": -5.115907697472721e-13,
+                "rove": -430.2129653433744,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -149899.9916092731,
+            "partition_differences": [
+              1.0913936421275139e-11,
+              1.8189894035458565e-11,
+              2.9103830456733704e-11
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261202": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 207.74749080971404,
+                "difference": -5.684341886080802e-14,
+                "rove": 207.74749080971398,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -265.57001603806276,
+                "difference": -2.8421709430404007e-13,
+                "rove": -265.57001603806305,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.295630536799241,
+                "difference": 2.220446049250313e-16,
+                "rove": -1.2956305367992407,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.6533312271473561,
+                "difference": 0.0,
+                "rove": -0.6533312271473561,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -146099.61508025162,
+                "difference": -2.550543285906315e-06,
+                "rove": -146099.61508280216,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -146166.2943225229,
+                "difference": -2.550543285906315e-06,
+                "rove": -146166.29432507345,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -66.67924227127746,
+                "difference": -3.410605131648481e-13,
+                "rove": -66.6792422712778,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -146099.6150802515,
+            "partition_differences": [
+              2.9103830456733704e-11,
+              1.4551915228366852e-11,
+              5.820766091346741e-11
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 207.74749080971404,
+                "difference": -5.684341886080802e-14,
+                "rove": 207.74749080971398,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -265.57001603806276,
+                "difference": -2.8421709430404007e-13,
+                "rove": -265.57001603806305,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -1.295630536799241,
+                "difference": 2.220446049250313e-16,
+                "rove": -1.2956305367992407,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.6533312271473561,
+                "difference": 0.0,
+                "rove": -0.6533312271473561,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -146099.61508025162,
+                "difference": -2.550543285906315e-06,
+                "rove": -146099.61508280216,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -146166.2943225229,
+                "difference": -2.550543285906315e-06,
+                "rove": -146166.29432507345,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -66.67924227127746,
+                "difference": -3.410605131648481e-13,
+                "rove": -66.6792422712778,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -146099.6150802515,
+            "partition_differences": [
+              2.9103830456733704e-11,
+              1.4551915228366852e-11,
+              5.820766091346741e-11
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261203": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 201.00211225483767,
+                "difference": -1.2789769243681803e-12,
+                "rove": 201.0021122548364,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": 1357.3632310158862,
+                "difference": 1.3642420526593924e-12,
+                "rove": 1357.3632310158875,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -6.416835345258399,
+                "difference": 1.7763568394002505e-15,
+                "rove": -6.416835345258397,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.8178206222457648,
+                "difference": 0.0,
+                "rove": -0.8178206222457648,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -149612.82317345735,
+                "difference": -5.746871465817094e-06,
+                "rove": -149612.82317920422,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -148068.6002414331,
+                "difference": -5.746871465817094e-06,
+                "rove": -148068.60024717997,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 1544.2229320242375,
+                "difference": 0.0,
+                "rove": 1544.2229320242375,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -149612.82317345723,
+            "partition_differences": [
+              3.637978807091713e-12,
+              7.275957614183426e-12,
+              8.731149137020111e-11
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 201.00211225483767,
+                "difference": -1.2789769243681803e-12,
+                "rove": 201.0021122548364,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": 1357.3632310158862,
+                "difference": 1.3642420526593924e-12,
+                "rove": 1357.3632310158875,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -6.416835345258399,
+                "difference": 1.7763568394002505e-15,
+                "rove": -6.416835345258397,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.8178206222457648,
+                "difference": 0.0,
+                "rove": -0.8178206222457648,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -149612.82317345735,
+                "difference": -5.746871465817094e-06,
+                "rove": -149612.82317920422,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -148068.6002414331,
+                "difference": -5.746871465817094e-06,
+                "rove": -148068.60024717997,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": 1544.2229320242375,
+                "difference": 0.0,
+                "rove": 1544.2229320242375,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -149612.82317345723,
+            "partition_differences": [
+              3.637978807091713e-12,
+              7.275957614183426e-12,
+              8.731149137020111e-11
+            ]
+          }
+        ],
+        "schema_version": 1
+      },
+      "20261204": {
+        "checks": [
+          {
+            "backend": "portable",
+            "components": {
+              "birth_death": {
+                "beast": 185.2997890990627,
+                "difference": -8.526512829121202e-14,
+                "rove": 185.29978909906262,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -434.9847753056801,
+                "difference": -5.684341886080802e-14,
+                "rove": -434.98477530568016,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -0.7390154855309768,
+                "difference": -5.551115123125783e-16,
+                "rove": -0.7390154855309774,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.611488987846902,
+                "difference": 0.0,
+                "rove": -0.611488987846902,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -150834.9462311812,
+                "difference": -1.3612443581223488e-06,
+                "rove": -150834.94623254245,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -151092.88947714018,
+                "difference": -1.3612443581223488e-06,
+                "rove": -151092.88947850143,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -257.94324595897734,
+                "difference": -2.2737367544323206e-13,
+                "rove": -257.94324595897757,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -150834.94623118124,
+            "partition_differences": [
+              0.0,
+              3.637978807091713e-12,
+              -2.9103830456733704e-11
+            ]
+          },
+          {
+            "backend": "neon",
+            "components": {
+              "birth_death": {
+                "beast": 185.2997890990627,
+                "difference": -8.526512829121202e-14,
+                "rove": 185.29978909906262,
+                "tolerance": 1e-08
+              },
+              "clock_rate_prior": {
+                "beast": -434.9847753056801,
+                "difference": -5.684341886080802e-14,
+                "rove": -434.98477530568016,
+                "tolerance": 1e-08
+              },
+              "clock_sigma_prior": {
+                "beast": -0.7390154855309768,
+                "difference": -5.551115123125783e-16,
+                "rove": -0.7390154855309774,
+                "tolerance": 1e-08
+              },
+              "gamma_prior": {
+                "beast": -0.611488987846902,
+                "difference": 0.0,
+                "rove": -0.611488987846902,
+                "tolerance": 1e-08
+              },
+              "likelihood": {
+                "beast": -150834.9462311812,
+                "difference": -1.3612443581223488e-06,
+                "rove": -150834.94623254245,
+                "tolerance": 2e-05
+              },
+              "posterior": {
+                "beast": -151092.88947714018,
+                "difference": -1.3612443581223488e-06,
+                "rove": -151092.88947850143,
+                "tolerance": 2e-05
+              },
+              "prior": {
+                "beast": -257.94324595897734,
+                "difference": -2.2737367544323206e-13,
+                "rove": -257.94324595897757,
+                "tolerance": 1e-08
+              }
+            },
+            "frozen_category_likelihood": -150834.94623118124,
+            "partition_differences": [
+              0.0,
+              3.637978807091713e-12,
+              -2.9103830456733704e-11
+            ]
+          }
+        ],
+        "schema_version": 1
+      }
+    }
+  }
+}

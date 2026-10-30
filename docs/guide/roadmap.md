@@ -13,7 +13,7 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | Reproducible BEAST 2.7.8 reference analysis | Done |
 | Morphological NEXUS and observed-pattern compression | Done |
 | Rust kernel benchmark baseline | Done, #8 |
-| Full-inference and cross-engine benchmarks | 20-taxon comparison recorded; broader work pending, #8 |
+| Full-inference and cross-engine benchmarks | 20/90/500-taxon runs and kernel adapters measured; sampling limits reported, #8 |
 | Mkv ascertainment correction | Done |
 | Direct Mk pruning | Done |
 | Minimal standalone MCMC | Done |
@@ -44,7 +44,7 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 
 The [core](./kernel) is checked against an independent scalar implementation. The [NEXUS reader](./nexus) supplies weighted observations without BEAST. The [reference experiment](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md) records exact inputs, model settings, two completed BEAST runs and fixed numerical states.
 
-The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) records 11 Rust workloads, separating setup, full evaluations, partial updates and proposal bookkeeping. Raw samples, allocation observations and variation across three processes are included. A [full-model comparison](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md) now records wall time and ESS per second on six 20-taxon cases; broader workloads remain pending. The strict-clock comparison below records wall times for both engines on one small configuration, but it is not a controlled benchmark.
+The [Apple M4 Max baseline](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md) records 11 Rust workloads, separating setup, full evaluations, partial updates and proposal bookkeeping. Raw samples, allocation observations and variation across three processes are included. A [full-model comparison](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md) now records wall time and ESS per second on six 20-taxon cases; the [expanded report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) adds 90- and 500-taxon runs and BEAST/BEAGLE kernel comparisons, with convergence limits recorded. The strict-clock comparison below records wall times for both engines on one small configuration, but it is not a controlled benchmark.
 
 ## Correctness before optimization
 

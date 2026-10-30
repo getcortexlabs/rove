@@ -13,7 +13,7 @@ Rove 处于早期。没有发布版本，没有发布的 crate，也没有日期
 | 可复现的 BEAST 2.7.8 参考分析 | 已完成 |
 | 形态学 NEXUS 与观测模式压缩 | 已完成 |
 | Rust 内核基准测试基线 | 已完成，#8 |
-| 完整推断和跨引擎基准测试 | 已记录 20 分类单元比较；更大规模待完成，#8 |
+| 完整推断和跨引擎基准测试 | 已测量 20/90/500 分类单元运行及内核适配器，并记录采样局限，#8 |
 | Mkv 确认偏差校正 | 已完成 |
 | 直接 Mk 剪枝 | 已完成 |
 | 最小的独立 MCMC | 已完成 |
@@ -44,7 +44,7 @@ Rove 处于早期。没有发布版本，没有发布的 crate，也没有日期
 
 [核心](./kernel)已与一个独立的标量实现核对。[NEXUS 读取器](./nexus)在不依赖 BEAST 的情况下提供带权重的观测。[参考实验](https://github.com/getcortexlabs/rove/blob/main/benchmarks/beast-2.7.8/2026-10-25/README.md)记录了确切的输入、模型设置、两次完成的 BEAST 运行和固定的数值状态。
 
-[Apple M4 Max 基线](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md)记录了 11 个 Rust 工作负载，分别测量初始化、整树计算、局部更新和提议状态管理。报告包含原始样本、内存分配观测以及三个独立进程之间的变动。[完整模型比较](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)现已记录六个 20 分类单元案例的运行时间和每秒 ESS；更大规模的工作负载仍待完成。下文的严格时钟比较记录了两个引擎在一个小型配置上的运行时间，但它不是受控的基准测试。
+[Apple M4 Max 基线](https://github.com/getcortexlabs/rove/blob/main/benchmarks/rove/2026-10-26/README.md)记录了 11 个 Rust 工作负载，分别测量初始化、整树计算、局部更新和提议状态管理。报告包含原始样本、内存分配观测以及三个独立进程之间的变动。[完整模型比较](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)现已记录六个 20 分类单元案例的运行时间和每秒 ESS；[扩展报告](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md)增加了 90 和 500 个分类单元的运行及 BEAST/BEAGLE 内核比较，并记录收敛局限。下文的严格时钟比较记录了两个引擎在一个小型配置上的运行时间，但它不是受控的基准测试。
 
 ## 先正确，再优化
 
