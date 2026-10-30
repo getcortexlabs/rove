@@ -3,7 +3,7 @@
 //! Full pattern buffers are retained; representatives are packed for the
 //! existing Mk kernels, then expanded for the ordinary core API.
 
-use super::{Backend, LikelihoodCore, Scaling, Transition, mk, scaling};
+use super::{LikelihoodCore, Scaling, Transition, mk, scaling};
 use crate::layout::Layout;
 
 const EMPTY: u32 = u32::MAX;
@@ -298,7 +298,7 @@ impl Repeats {
         let scale = &mut core.scale[..packed.stride];
         let maxima = match core.backend {
             #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
-            Backend::Neon => {
+            super::Backend::Neon => {
                 super::neon::mk(
                     &packed,
                     model.frequencies(),
