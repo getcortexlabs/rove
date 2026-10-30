@@ -168,16 +168,18 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       datingArguments =
         try datingFile.map { ["--dating", $0.path] } ?? ["--dating-json", model.json()]
     }
-    return [
+    var arguments: [String] = [
       "sample", matrix.path, "--output", output.path, "--seed", seed,
       "--steps", String(steps), "--sample-every", String(sampleEvery),
       "--model", clock, "--conditioning", conditioning,
       "--gaps", gapsAsMissing ? "missing" : "reject",
       "--partitioning", partitioning,
-    ] + (chains > 1 ? ["--chains", String(chains)] : [])
-      + (stopWhenConverged ? ["--stop-when-converged"] : [])
-      + monophyly.flatMap { ["--monophyly", $0.joined(separator: ",")] }
-      + datingArguments
+    ]
+    if chains > 1 { arguments += ["--chains", String(chains)] }
+    if stopWhenConverged { arguments.append("--stop-when-converged") }
+    for clade in monophyly { arguments += ["--monophyly", clade.joined(separator: ",")] }
+    arguments += datingArguments
+    return arguments
   }
 
   func command(executable: URL, matrix: URL, output: URL, monophyly: [[String]] = []) throws
