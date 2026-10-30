@@ -25,6 +25,7 @@ const locales = {
       design: 'Design',
       kernel: 'The likelihood core',
       sampler: 'Sampling trees',
+      characterSelection: 'Character selection',
       referenceModel: 'The reference model',
       nexus: 'Reading NEXUS',
       fixtures: 'Synthetic matrices',
@@ -51,6 +52,7 @@ const locales = {
       design: 'Design',
       kernel: 'O núcleo de verossimilhança',
       sampler: 'Amostrando árvores',
+      characterSelection: 'Seleção de caracteres',
       referenceModel: 'O modelo de referência',
       nexus: 'Lendo NEXUS',
       fixtures: 'Matrizes sintéticas',
@@ -94,6 +96,7 @@ const locales = {
       design: 'Diseño',
       kernel: 'El núcleo de verosimilitud',
       sampler: 'Muestreo de árboles',
+      characterSelection: 'Selección de caracteres',
       referenceModel: 'El modelo de referencia',
       nexus: 'Lectura de NEXUS',
       fixtures: 'Matrices sintéticas',
@@ -137,6 +140,7 @@ const locales = {
       design: '设计',
       kernel: '似然核心',
       sampler: '树的采样',
+      characterSelection: '性状选择',
       referenceModel: '参考模型',
       nexus: '读取 NEXUS',
       fixtures: '合成矩阵',
@@ -168,7 +172,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, characterSelection, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -190,6 +194,7 @@ function themeFor(locale) {
           items: [
             { text: kernel, link: `${prefix}/guide/kernel` },
             { text: sampler, link: `${prefix}/guide/sampler` },
+            { text: characterSelection, link: `${prefix}/guide/character-selection` },
             { text: referenceModel, link: `${prefix}/guide/reference-model` },
             { text: nexus, link: `${prefix}/guide/nexus` },
             { text: fixtures, link: `${prefix}/guide/fixtures` }

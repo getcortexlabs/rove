@@ -181,6 +181,9 @@ fn reference(partition: &Patterns, sampler: &Sampler, conditioning: Conditioning
     match conditioning {
         Conditioning::None => problem.log_likelihood(),
         Conditioning::Variable => problem.variable_log_likelihood(),
+        Conditioning::Informative => {
+            unreachable!("informative conditioning has its own enumeration oracle")
+        }
     }
 }
 

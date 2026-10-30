@@ -30,6 +30,7 @@ Rove 则从数据出发：一种沿位点模式向量化的布局，以及针对
 - `Backend`：适用于任何目标平台的可移植代码，以及在 aarch64 上用于 Mk 节点更新的 NEON 内核，两者结果相同。见[后端](./kernel#后端)。
 - `model::Mk`：带闭式解转移矩阵的 Mk 模型，支持均匀或自定义的状态频率，并会验证这些频率。
 - `ascertainment::VariableCharacters`：针对可变性状矩阵的 Mkv 校正，已与两个固定的 BEAST 2.7.8 状态核对。
+- `ascertainment::InformativeProbability`：等频率无序 Mk 的缓存 Mkparsinf 条件化，已通过完整模式枚举和 BEAST 2.7.8 验证。参见[性状选择](./character-selection)。
 - `reference::Problem`：一个朴素的递归实现，在测试中作为参考保留。
 - `rates::GammaRates`, `rates::RelaxedClock`: [Mk + gamma、对数正态速率](./reference-model).
 - `mcmc::Sampler` 与 `rove sample` 命令：针对二态和多态性状的 Metropolis–Hastings 采样器，采用分区 Mk 或 Mkv、严格或对数正态松弛时钟和生灭树先验，支持单系约束。见[树的采样](./sampler)。

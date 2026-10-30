@@ -31,6 +31,7 @@ provides the [native Mac preview](./macos-preview) for matrix import, reviewed s
 - `Backend`: portable code for any target and, on aarch64, a NEON kernel for the Mk node update that gives the same results. See [Backends](./kernel#backends).
 - `model::Mk`: the Mk model with its closed-form transition matrix, for uniform or custom state frequencies, which are validated.
 - `ascertainment::VariableCharacters`: the Mkv correction for matrices of variable characters, checked against two fixed BEAST 2.7.8 states.
+- `ascertainment::InformativeProbability`: cached Mkparsinf conditioning for uniform unordered Mk, checked by complete pattern enumeration and BEAST 2.7.8. See [character selection](./character-selection).
 - `reference::Problem`: a plain recursive implementation kept as the reference in tests.
 - `rates::GammaRates`, `rates::RelaxedClock`: [Mk + gamma, lognormal](./reference-model).
 - `mcmc::Sampler` and the `rove sample` command: a Metropolis–Hastings sampler for binary and multistate characters under partitioned Mk or Mkv, a strict or lognormal relaxed clock and a birth–death tree prior, with monophyly constraints. See [Sampling trees](./sampler).

@@ -102,6 +102,67 @@ fn error_text(output: &Output) -> String {
 }
 
 #[test]
+fn informative_coding_checks_input_and_records_the_selected_model() {
+    let directory = scratch("informative-cli");
+    let matrix = directory.join("matrix.nex");
+    fs::write(
+        &matrix,
+        include_str!("../fixtures/validation/informative/matrix.nex"),
+    )
+    .unwrap();
+    let inspect = |path: &Path| {
+        let result = rove(&["inspect", path.to_str().unwrap()]);
+        assert!(result.status.success(), "{}", error_text(&result));
+        serde_json::from_slice::<serde_json::Value>(&result.stdout).unwrap()
+    };
+    assert!(inspect(&matrix)["informative_error"].is_null());
+    let run = |input: &Path, output: &Path| {
+        rove(&[
+            "sample",
+            input.to_str().unwrap(),
+            "--output",
+            output.to_str().unwrap(),
+            "--conditioning",
+            "informative",
+            "--steps",
+            "100",
+            "--sample-every",
+            "10",
+            "--seed",
+            "42",
+            "--model",
+            "reference",
+        ])
+    };
+    let output = directory.join("run");
+    let result = run(&matrix, &output);
+    assert!(result.status.success(), "{}", error_text(&result));
+    let metadata: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("run.json")).unwrap()).unwrap();
+    assert!(
+        metadata
+            .to_string()
+            .contains("parsimony-informative characters (Mkparsinf)")
+    );
+
+    // Original site 4 becomes the first site of the three-state partition.
+    let invalid = directory.join("invalid.nex");
+    fs::write(&invalid, "#NEXUS BEGIN DATA; DIMENSIONS NTAX=5 NCHAR=4; FORMAT SYMBOLS=\"012\"; MATRIX a 0010 b 0010 c 1100 d 1101 e 0102; END;").unwrap();
+    let report = inspect(&invalid);
+    assert!(report["variable_error"].is_null());
+    assert!(
+        report["informative_error"]
+            .as_str()
+            .unwrap()
+            .contains("character 4")
+    );
+    let rejected = directory.join("rejected");
+    let result = run(&invalid, &rejected);
+    assert!(error(&result).contains("character 4"));
+    assert!(!rejected.exists());
+}
+
+#[test]
 fn a_changed_fingerprint_fails_before_creating_outputs() {
     let directory = scratch("sample-fingerprint");
     let matrix = directory.join("matrix.nex");

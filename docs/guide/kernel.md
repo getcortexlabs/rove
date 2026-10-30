@@ -144,7 +144,7 @@ assert!((log_likelihood - -6.353478344891801).abs() < 1e-12);
 
 `VariableCharacters::new` rejects a character that could be constant: one in which every cell, missing and uncertain cells included, allows the same state. `0 ? 0` and `{01} 1 1` produce an error naming the character. `0 {12} 0` is accepted, because it varies whichever state the uncertain cell holds. Every completion of an accepted character is variable, so the result is the likelihood of the observations given that the complete character varies. BEAST 2.7.8 treats observed columns identical to its constant columns differently: it warns and gives them zero weight.
 
-Every declared state has its own constant pattern, including states no taxon shows. Partitions are conditioned separately. Conditioning on parsimony-informative characters and per-character corrections for missing data are not implemented.
+Every declared state has its own constant pattern, including states no taxon shows. Partitions are conditioned separately. [Informative-character conditioning](./character-selection) is implemented for uniform unordered Mk. Per-character corrections for missing data are not implemented.
 
 The constant patterns go through the same pruning as the observations. When they hold almost all the probability, as on very short trees, their rounding errors are amplified by `Σₛ Pₛ / (1 − Σₛ Pₛ)`, which exceeds 100 at both archived reference states. With two taxa at distance `d`, the error of each conditioned log probability grows roughly as `10⁻¹⁶ / d`. If the total probability of the constant patterns is within a few rounding errors of one, the result is `ascertainment::Error::UndefinedCorrection` rather than a number.
 

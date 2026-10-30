@@ -71,7 +71,7 @@ open build/macos/Rove.app
 
 ## 准备并运行分析
 
-选择严格时钟或[松弛时钟参考预设](./reference-model)、Mk 或 Mkv、链长、
+选择严格时钟或[松弛时钟参考预设](./reference-model)、Mk、Mkv 或 [Mkparsinf](./character-selection)、链长、
 采样间隔和随机种子。先验保持引擎默认值。在 Model 中，**Add group** 可选择
 必须形成单系群的末端。各组必须相互包含或互不相交。应用不会自动施加任何
 约束，包括示例的内群。约束所强制的支持不能视为数据独立恢复的证据。

@@ -20,7 +20,7 @@ integration remains a possible compatibility path.
 ## Status
 
 Early. The likelihood core with its direct Mk path and a NEON kernel for it,
-the Mkv correction, the morphological NEXUS reader, pattern compression,
+Mkv and Mkparsinf conditioning, the morphological NEXUS reader, pattern compression,
 numerical tests and a standalone binary and multistate sampler are implemented.
 The supplied reference model runs with four gamma categories and a lognormal
 relaxed clock. Posterior summaries and clade frequencies agree with BEAST 2.7.8
@@ -148,8 +148,8 @@ it does not certify topology convergence. See the [sampler guide](https://rove.g
 10. Run independent chains in parallel and compare them. Done.
 11. Add checkpoints and resume in the engine and native app. Done.
 12. Rescale by powers of two.
-13. Partition characters by number of states. Done. Conditioning on
-    parsimony-informative characters and ordered models remain planned.
+13. Partition characters by number of states and condition on parsimony-informative
+    characters. Done. Ordered models remain planned.
 14. Add marginal likelihoods, the fossilized birth–death prior with tip dates
     and posterior predictive checks.
 15. Evaluate subtree repeats.
@@ -163,10 +163,12 @@ cargo run --release --bin rove -- sample fixtures/reference/20x50/matrix.nex \
   --monophyly T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19
 ```
 
-The sampler supports binary and multistate characters under partitioned Mk or Mkv,
+The sampler supports binary and multistate characters under partitioned Mk, Mkv or Mkparsinf,
 a strict clock with rate 1 and the birth–death tree prior, with monophyly
 constraints. Add `--model reference` for the supplied XML's four gamma categories
 and explicit lognormal relaxed clock. Partitions share that tree, clock and gamma shape.
+Use `--conditioning informative` only for matrices collected with parsimony-uninformative
+characters excluded; see [character selection](docs/guide/character-selection.md).
 Automatic state-count partitioning is the default; `--partitioning declared`
 uses the full declared alphabet. See the [partition rules](docs/guide/nexus.md#partitions-by-state-count)
 and [multistate fixed-state checks](fixtures/validation/multistate/README.md).

@@ -26,7 +26,7 @@ use rove::{Backend, nexus};
 const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
-                   [--model strict|reference] [--conditioning variable|none] [--sample-from-prior]
+                   [--model strict|reference] [--conditioning variable|informative|none] [--sample-from-prior]
                    [--partitioning observed|declared]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
@@ -183,10 +183,11 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
             "--conditioning" => {
                 conditioning = match value("--conditioning")?.as_str() {
                     "variable" => Conditioning::Variable,
+                    "informative" => Conditioning::Informative,
                     "none" => Conditioning::None,
                     other => {
                         return Err(format!(
-                            "--conditioning must be variable or none, not {other:?}"
+                            "--conditioning must be variable, informative or none, not {other:?}"
                         ));
                     }
                 }
@@ -717,6 +718,7 @@ fn run_chain(
         .collect();
     let conditioning = match settings.conditioning {
         Conditioning::Variable => "variable characters (Mkv)",
+        Conditioning::Informative => "parsimony-informative characters (Mkparsinf)",
         Conditioning::None => "none (Mk)",
     };
     let metadata = Json::Object(vec![

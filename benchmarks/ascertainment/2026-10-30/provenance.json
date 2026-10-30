@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-30",
+  "hardware": {
+    "chip": "Apple M4 Max",
+    "cores": {
+      "performance": 12,
+      "efficiency": 4
+    },
+    "memory": "64 GB"
+  },
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1\n",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "base_commit": "9bba9db2cd4f3dc4336c9972e5a5ba469507fb53",
+  "source_sha256": {
+    "Cargo.toml": "419aa2bd98923ad8f3b49d72e17188a10583f06951b164634e791528c2ddf420",
+    "Cargo.lock": "9c5333915c8e065a1a6f57194e5ab56268e156aa902f93ccb5fe0bd79e028159",
+    "benches/informative.rs": "9aadeb70e957e31af49d64509d2f3b90dcd580ea3a9c85443dd27a1b0076d875",
+    "benches/support/allocations.rs": "3d31f77929bc9256543737089018bb8f68ebdc8edd0953c3ac8c805869110df6",
+    "src/ascertainment/informative.rs": "0a17df361575946a1c019cebfc7045ebaddc78f11dbe68f303749116718f6778",
+    "src/model.rs": "48ff38fce6f2a6f199b382f662e711797ceabcc168e208ff5ccba40508544ec1",
+    "src/mcmc/mod.rs": "065c2da48159877c1e5d9e7f59b39b5853406cda92c04a58e87e9c1adbdedffc"
+  },
+  "executable_sha256": "115942b7ba4d421c8886cf280f214c116a47b6aa71ad7bc6ba0b00f96806942a",
+  "build": "cargo bench --bench informative; default aarch64-apple-darwin target; fat LTO; codegen-units=1; no target-cpu override",
+  "measurement": "Three sequential processes of the compiled benchmark after tests and builds finished; 1000 warmup updates and 9 batches of 1000 timed updates per case; separate 1000-update allocation pass.",
+  "limits": "Background load, frequency, thermal state and CPU affinity not controlled. Correction only; no observed likelihood, MCMC, BEAST timing or ESS measurement."
+}

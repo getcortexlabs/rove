@@ -667,3 +667,8 @@
 "Explore the field guide" = "Explore the field guide";
 "Take the Rove tour" = "Take the Rove tour";
 "Sign out of the beta" = "Sign out of the beta";
+
+"Informative only · Mkparsinf" = "Informative only · Mkparsinf";
+"Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations." = "Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations.";
+"Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected." = "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected.";
+"Mkparsinf · informative characters" = "Mkparsinf · informative characters";

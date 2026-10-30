@@ -123,4 +123,30 @@ fn steps_do_not_allocate() {
             }
         }
     }
+    let parts = nexus::parse(include_str!(
+        "../fixtures/validation/informative/matrix.nex"
+    ))
+    .unwrap()
+    .partition_by_states(GapTreatment::Reject)
+    .unwrap();
+    for base in [Settings::default(), Settings::reference()] {
+        let settings = Settings {
+            conditioning: Conditioning::Informative,
+            ..base
+        };
+        let mut sampler = Sampler::new(&parts, &settings, 99).unwrap();
+        for _ in 0..1000 {
+            sampler.step();
+        }
+        COUNTING.store(true, Ordering::Relaxed);
+        for _ in 0..20_000 {
+            sampler.step();
+        }
+        COUNTING.store(false, Ordering::Relaxed);
+        assert_eq!(
+            CALLS.swap(0, Ordering::Relaxed),
+            0,
+            "informative conditioning"
+        );
+    }
 }

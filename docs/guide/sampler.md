@@ -32,7 +32,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--gaps reject\|missing` | Reject matrices with gaps (the default), or read gaps as missing data. |
 | `--model strict\|reference` | Strict clock with one category (default), or the gamma and relaxed-clock reference model. |
 | `--partitioning observed\|declared` | Group by observed/possible state count (default), or use the full declared alphabet for every character. |
-| `--conditioning variable\|none` | Mkv (the default) or Mk. |
+| `--conditioning variable\|informative\|none` | Mkv (default), Mkparsinf or Mk. See [character selection](./character-selection). |
 | `--sample-from-prior` | Ignore the characters and sample the prior. |
 | `--no-tuning` | Keep every slide size and scale factor fixed. |
 | `--tuning <move>=<value>` | Starting slide size or scale factor for a move, such as `subtree_slide=0.001`. Can be repeated. |

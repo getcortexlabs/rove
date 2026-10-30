@@ -52,7 +52,8 @@ public final class PartitionLikelihood {
         return groups;
     }
 
-    private static Alignment alignment(Alignment input, int k, List<Character> sites, boolean variable) throws Exception {
+    private static Alignment alignment(Alignment input, int k, List<Character> sites, boolean variable, boolean informative) throws Exception {
+        List<int[]> excluded = variable ? excludedPatterns(k, input.getTaxonCount(), informative) : List.of();
         List<Sequence> sequences = new ArrayList<>();
         TreeSet<String> ambiguities = new TreeSet<>();
         for (int taxon = 0; taxon < input.getTaxonCount(); taxon++) {
@@ -73,7 +74,7 @@ public final class PartitionLikelihood {
                     value.append('{').append(allowed).append('}');
                 } else value.append(allowed);
             }
-            if (variable) for (int state = 0; state < k; state++) value.append(state);
+            for (int[] pattern : excluded) value.append(pattern[taxon]);
             Sequence sequence = new Sequence();
             sequence.initByName("taxon", input.getTaxaNames().get(taxon), "totalcount", k, "value", value.toString());
             sequences.add(sequence);
@@ -82,8 +83,36 @@ public final class PartitionLikelihood {
         type.initByName("nrOfStates", k, "ambiguities", String.join(" ", ambiguities));
         Alignment result = new Alignment();
         result.initByName("sequence", sequences, "userDataType", type, "ascertained", variable,
-            "excludefrom", variable ? sites.size() : 0, "excludeto", variable ? sites.size() + k : 0);
+            "excludefrom", variable ? sites.size() : 0, "excludeto", variable ? sites.size() + excluded.size() : 0);
         return result;
+    }
+
+    // This deliberately enumerates excluded columns. It is an independent,
+    // small-tree oracle, not the recurrence used by the Rust engine.
+    private static List<int[]> excludedPatterns(int k, int tips, boolean informative) {
+        List<int[]> patterns = new ArrayList<>();
+        if (!informative) {
+            for (int state = 0; state < k; state++) {
+                int[] pattern = new int[tips];
+                java.util.Arrays.fill(pattern, state);
+                patterns.add(pattern);
+            }
+            return patterns;
+        }
+        if (tips > 8 || k > 4) throw new IllegalArgumentException("Enumeration limited to small fixtures");
+        int total = (int) Math.pow(k, tips);
+        for (int code = 0; code < total; code++) {
+            int[] pattern = new int[tips];
+            int[] counts = new int[k];
+            int value = code;
+            for (int tip = 0; tip < tips; tip++) {
+                pattern[tip] = value % k;
+                value /= k;
+                counts[pattern[tip]]++;
+            }
+            if (java.util.Arrays.stream(counts).filter(n -> n >= 2).count() < 2) patterns.add(pattern);
+        }
+        return patterns;
     }
 
     private static Tree tree(List<String> taxa, double scale) {
@@ -99,6 +128,7 @@ public final class PartitionLikelihood {
     }
 
     public static void main(String[] args) throws Exception {
+        boolean informative = args.length > 2 && args[2].equals("informative");
         System.setProperty("java.only", "true");
         PackageManager.loadExternalJars();
         NexusParser parser = new NexusParser();
@@ -109,7 +139,7 @@ public final class PartitionLikelihood {
         JSONArray cases = new JSONArray();
         for (double scale : new double[]{.01, 1, 10}) {
             for (boolean relaxed : new boolean[]{false, true}) {
-                for (boolean variable : new boolean[]{false, true}) {
+                for (boolean variable : informative ? new boolean[]{true} : new boolean[]{false, true}) {
                     Tree tree = tree(input.getTaxaNames(), scale);
                     BranchRateModel clock;
                     if (relaxed) {
@@ -128,7 +158,7 @@ public final class PartitionLikelihood {
                     double total = 0;
                     for (var entry : groups.entrySet()) {
                         int k = entry.getKey();
-                        Alignment data = alignment(input, k, entry.getValue(), variable);
+                        Alignment data = alignment(input, k, entry.getValue(), variable, informative);
                         LewisMK substitution = new LewisMK();
                         substitution.initByName("stateNumber", k);
                         SiteModel siteModel = new SiteModel();
@@ -149,6 +179,7 @@ public final class PartitionLikelihood {
             }
         }
         JSONObject result = new JSONObject().put("beast", "2.7.8").put("mm", "1.2.1")
+            .put("conditioning", informative ? "informative" : "variable-and-none")
             .put("taxa", new JSONArray(input.getTaxaNames())).put("heights", new JSONArray(HEIGHTS)).put("children", new JSONArray(CHILDREN))
             .put("branch_rates", new JSONArray(RATES)).put("gamma_shape", 1).put("clock_sigma", .2).put("cases", cases);
         Files.writeString(Path.of(args[1]), result.toString(2) + "\n");

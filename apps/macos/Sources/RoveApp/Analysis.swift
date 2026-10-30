@@ -12,6 +12,7 @@ struct MatrixReport: Decodable, Sendable {
   let polymorphicCount: Int
   let samplerError: String?
   let variableError: String?
+  let informativeError: String?
   let symbols: [String]
   let taxa: [String]
   let taxonNames: [String]?
@@ -137,7 +138,8 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   }
 
   var validationError: String? {
-    guard ["strict", "reference"].contains(clock), ["variable", "none"].contains(conditioning),
+    guard ["strict", "reference"].contains(clock),
+      ["variable", "informative", "none"].contains(conditioning),
       ["observed", "declared"].contains(partitioning)
     else {
       return "This setup uses an unsupported model."

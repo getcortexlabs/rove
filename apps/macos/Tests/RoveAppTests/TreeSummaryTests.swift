@@ -179,6 +179,13 @@ struct TreeSummaryTests {
     let run = AnalysisRun(request: request)
     workspace.run = run
     run.start()
+    // Import can finish before the engine publishes its first event.
+    // Establish the running analysis before testing concurrent navigation.
+    for _ in 0..<500 {
+      if run.progress != nil || !run.isActive { break }
+      try await Task.sleep(for: .milliseconds(10))
+    }
+    #expect(run.isActive && run.progress != nil)
     workspace.openTree(summary, run: folder)
     let explorer = try #require(workspace.treeExplorer)
     var finished = false

@@ -2,7 +2,7 @@ use std::error::Error;
 use std::fs;
 use std::io::Write;
 
-use rove::ascertainment::VariableCharacters;
+use rove::ascertainment::{VariableCharacters, validate_informative};
 use rove::data::{Cell, GapTreatment, Matrix};
 use rove::mcmc::{Conditioning, Sampler, Settings};
 use rove::nexus;
@@ -49,7 +49,7 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
     let description = compressed
         .as_ref()
         .map_or(Json::Null, |p| partitions::describe(p));
-    let (patterns, mut sampler_error, variable_error) = match compressed {
+    let (patterns, mut sampler_error, variable_error, informative_error) = match compressed {
         Ok(partitions) => {
             let settings = Settings {
                 conditioning: Conditioning::None,
@@ -61,13 +61,17 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
             let variable_error = partitions
                 .iter()
                 .find_map(|p| VariableCharacters::new(p).err().map(|e| e.to_string()));
+            let informative_error = partitions
+                .iter()
+                .find_map(|p| validate_informative(p).err().map(|e| e.to_string()));
             (
                 Json::Integer(partitions.iter().map(|p| p.weights().len() as u64).sum()),
                 sampler_error,
                 variable_error,
+                informative_error,
             )
         }
-        Err(error) => (Json::Null, Some(error.to_string()), None),
+        Err(error) => (Json::Null, Some(error.to_string()), None, None),
     };
     if let Some(name) = data.taxa().iter().find(|name| !is_plain_label(name)) {
         sampler_error = Some(format!(
@@ -92,6 +96,7 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
         ("polymorphic_count", Json::Integer(polymorphic)),
         ("sampler_error", optional(sampler_error)),
         ("variable_error", optional(variable_error)),
+        ("informative_error", optional(informative_error)),
         (
             "taxon_names",
             Json::List(data.taxa().iter().map(Json::text).collect()),

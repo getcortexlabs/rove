@@ -74,18 +74,29 @@ fn interrupt(mut cmd: Command, step: u64, kill: bool) {
 }
 #[test]
 fn pause_crash_and_resume_preserve_all_samples_and_moves() {
-    for (kind, matrix) in [
-        ("binary", MATRIX),
+    for (kind, matrix, conditioning) in [
+        ("binary", MATRIX, "variable"),
         (
             "multistate",
             include_str!("../fixtures/validation/multistate/matrix.nex"),
+            "variable",
+        ),
+        (
+            "informative",
+            include_str!("../fixtures/validation/informative/matrix.nex"),
+            "informative",
         ),
     ] {
         for chains in [1, 4] {
             let root = scratch(&format!("checkpoint-{kind}-{chains}"));
             fs::write(root.join("matrix.nex"), matrix).unwrap();
+            let configured = |name: &str| {
+                let mut cmd = command(&root, name, chains);
+                cmd.args(["--conditioning", conditioning]);
+                cmd
+            };
             assert!(
-                command(&root, "full", chains)
+                configured("full")
                     .stdout(Stdio::null())
                     .stderr(Stdio::null())
                     .status()
@@ -94,7 +105,7 @@ fn pause_crash_and_resume_preserve_all_samples_and_moves() {
             );
             for (i, kill) in [false, true].into_iter().enumerate() {
                 let name = format!("restart-{i}");
-                interrupt(command(&root, &name, chains), 230, kill);
+                interrupt(configured(&name), 230, kill);
                 let output = root.join(&name);
                 let manifest: Value =
                     serde_json::from_slice(&fs::read(output.join("checkpoint.json")).unwrap())

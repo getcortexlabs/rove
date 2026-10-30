@@ -89,7 +89,7 @@ constantes no pueden usar Mkv.
 ## Preparar y ejecutar un análisis
 
 Elige el reloj estricto o la [configuración de referencia con reloj relajado](./reference-model),
-Mk o Mkv, longitud de cadena, intervalo de muestreo y semilla. Los priors conservan
+Mk, Mkv o [Mkparsinf](./character-selection), longitud de cadena, intervalo de muestreo y semilla. Los priors conservan
 los valores del motor. En Model, **Add group** selecciona los terminales que deben
 formar un clado. Los grupos deben estar anidados o separados. No se restringe
 nada automáticamente, tampoco el grupo interno del ejemplo. El soporte impuesto

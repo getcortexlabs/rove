@@ -89,7 +89,7 @@ constantes não podem usar Mkv.
 ## Preparar e executar uma análise
 
 Escolha o relógio estrito ou a [configuração de referência com relógio relaxado](./reference-model),
-Mk ou Mkv, tamanho da cadeia, intervalo de amostragem e semente. Os priors
+Mk, Mkv ou [Mkparsinf](./character-selection), tamanho da cadeia, intervalo de amostragem e semente. Os priors
 mantêm os padrões do motor. Em Modelo, **Adicionar grupo** seleciona os terminais
 que devem formar um clado. Os grupos precisam estar contidos um no outro ou ser
 separados. Nada é imposto automaticamente, nem o grupo interno do exemplo.

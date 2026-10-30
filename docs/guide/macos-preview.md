@@ -86,7 +86,7 @@ treat them as missing; potentially constant characters cannot use Mkv.
 ## Prepare and run an analysis
 
 Choose a strict clock or the [relaxed-clock reference preset](./reference-model),
-Mk or Mkv, chain length, sampling interval and seed. Priors keep their engine
+Mk, Mkv or [Mkparsinf](./character-selection), chain length, sampling interval and seed. Priors keep their engine
 defaults. In Model, **Add group** selects terminals that must form a clade.
 Groups must be nested or disjoint. Nothing is constrained automatically,
 including the example's ingroup. Support imposed by a constraint is not

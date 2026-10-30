@@ -31,6 +31,7 @@ separado oferece a [prévia nativa para Mac](./macos-preview) para importar matr
 - `Backend`: código portátil para qualquer alvo e, em aarch64, um kernel NEON para a atualização de nó do Mk, que dá os mesmos resultados. Veja [Backends](./kernel#backends).
 - `model::Mk`: o modelo Mk com sua matriz de transição em forma fechada, para frequências de estados uniformes ou personalizadas, que são validadas.
 - `ascertainment::VariableCharacters`: a correção Mkv para matrizes de caracteres variáveis, verificada contra dois estados fixos do BEAST 2.7.8.
+- `ascertainment::InformativeProbability`: condicionamento Mkparsinf com cache para Mk não ordenado de frequências iguais, conferido por enumeração completa de padrões e BEAST 2.7.8. Veja [seleção de caracteres](./character-selection).
 - `reference::Problem`: uma implementação recursiva simples, mantida como referência nos testes.
 - `rates::GammaRates`, `rates::RelaxedClock`: [Mk + gama, lognormal](./reference-model).
 - `mcmc::Sampler` e o comando `rove sample`: um amostrador de Metropolis–Hastings para caracteres binários e multiestado sob Mk ou Mkv particionado, relógio estrito ou relaxado lognormal e um prior de nascimento–morte para a árvore, com restrições de monofilia. Veja [Amostrando árvores](./sampler).

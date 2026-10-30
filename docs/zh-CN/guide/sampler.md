@@ -32,7 +32,7 @@ target/release/rove sample fixtures/reference/20x50/matrix.nex \
 | `--gaps reject\|missing` | 拒绝含缺口的矩阵（默认），或把缺口当作缺失数据读取。 |
 | `--model strict\|reference` | 单类别严格时钟（默认），或带 gamma 与松弛时钟的参考模型。 |
 | `--partitioning observed\|declared` | 按观测/可能状态数分区（默认），或为每个性状使用完整的声明字母表。 |
-| `--conditioning variable\|none` | Mkv（默认）或 Mk。 |
+| `--conditioning variable\|informative\|none` | Mkv（默认）、Mkparsinf 或 Mk。参见[性状选择](./character-selection)。 |
 | `--sample-from-prior` | 忽略性状，从先验中采样。 |
 | `--no-tuning` | 保持所有滑动步长和缩放因子固定不变。 |
 | `--tuning <移动>=<值>` | 某个移动的初始滑动步长或缩放因子，例如 `subtree_slide=0.001`。可以重复。 |

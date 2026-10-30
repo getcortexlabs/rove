@@ -126,6 +126,36 @@ struct AnalysisTests {
     #expect(workspace.canOpen(.review))
   }
 
+  @Test @MainActor func informativeCodingValidatesTheMatrixAndSurvivesSaving() async throws {
+    let matrix = root.appendingPathComponent("fixtures/validation/informative/matrix.nex")
+    let workspace = Workspace(executable: executable)
+    workspace.load(matrix)
+    try await finishImport(workspace)
+    let report = try #require(workspace.report)
+    #expect(report.informativeError == nil)
+    #expect(report.partitions?.map(\.states) == [2, 3, 4])
+    workspace.settings.conditioning = "informative"
+    #expect(workspace.canOpen(.review))
+    let draft = AnalysisDraft(matrix: matrix, report: report, settings: workspace.settings)
+    let decoded = try JSONDecoder().decode(AnalysisDraft.self, from: JSONEncoder().encode(draft))
+    #expect(decoded.settings.conditioning == "informative")
+    let arguments = decoded.settings.arguments(
+      matrix: matrix, output: matrix.deletingLastPathComponent())
+    let option = try #require(arguments.firstIndex(of: "--conditioning"))
+    #expect(arguments[option + 1] == "informative")
+
+    workspace.settings.sampleEvery = 0
+    #expect(!workspace.canOpen(.review))
+    workspace.settings = decoded.settings
+    workspace.load(root.appendingPathComponent("fixtures/reference/20x50/matrix.nex"))
+    try await finishImport(workspace)
+    #expect(workspace.report?.informativeError != nil)
+    workspace.settings.conditioning = "informative"
+    #expect(!workspace.canOpen(.review))
+    workspace.settings.conditioning = "variable"
+    #expect(workspace.canOpen(.review))
+  }
+
   @Test @MainActor func importFailurePreservesThePreviousMatrixAndResetRejectsStaleImports()
     async throws
   {

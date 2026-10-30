@@ -1,7 +1,7 @@
 //! A Metropolis–Hastings sampler for partitioned morphological characters on a
 //! time tree.
 //!
-//! The model is Mk, optionally conditioned on variable characters (Mkv),
+//! The model is Mk, optionally conditioned on variable (Mkv) or informative characters,
 //! with one rate or four gamma categories, and a strict or lognormal relaxed
 //! clock. The clock-rate and mutation-rate multipliers are fixed at one.
 //! The tree prior is the birth–death prior in
@@ -15,7 +15,9 @@ pub mod output;
 
 use std::fmt;
 
-use crate::ascertainment::{self, VariableCharacters};
+use crate::ascertainment::{
+    self, InformativeProbability, VariableCharacters, validate_informative,
+};
 use crate::data::Patterns;
 use crate::model::Mk;
 use crate::random::Random;
@@ -101,6 +103,8 @@ pub enum Conditioning {
     None,
     /// Mkv: conditioned on every character being variable.
     Variable,
+    /// Conditioned on at least two states each occurring at least twice.
+    Informative,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -224,7 +228,9 @@ pub struct Operator {
 struct Likelihood {
     core: LikelihoodCore,
     variable: Option<VariableCharacters>,
+    informative: Option<InformativeProbability>,
     weights: Vec<f64>,
+    characters: f64,
     frequencies: Vec<f64>,
     dirty: Vec<bool>,
     order: Vec<usize>,
@@ -244,7 +250,17 @@ impl Likelihood {
             Conditioning::Variable => {
                 Some(VariableCharacters::new(patterns).map_err(Error::Ascertainment)?)
             }
-            Conditioning::None => None,
+            Conditioning::None | Conditioning::Informative => None,
+        };
+        let informative = if conditioning == Conditioning::Informative {
+            validate_informative(patterns).map_err(Error::Ascertainment)?;
+            Some(InformativeProbability::new(
+                states,
+                tree.tips(),
+                rates.category_rates().len(),
+            ))
+        } else {
+            None
         };
         let tips = variable
             .as_ref()
@@ -263,7 +279,9 @@ impl Likelihood {
         let mut likelihood = Self {
             core,
             variable,
+            informative,
             weights: patterns.weights().iter().map(|&w| w as f64).collect(),
+            characters: patterns.weights().iter().sum::<usize>() as f64,
             frequencies: model.frequencies().to_vec(),
             dirty: vec![false; tree.nodes()],
             order: Vec::with_capacity(tree.nodes()),
@@ -279,6 +297,9 @@ impl Likelihood {
             }
             if let Some((a, b)) = tree.children(node) {
                 likelihood.core.calculate_partials(a, b, node);
+                if let Some(correction) = &mut likelihood.informative {
+                    correction.calculate_partials(a, b, node, &likelihood.core);
+                }
             }
         }
         Ok(likelihood)
@@ -317,12 +338,16 @@ impl Likelihood {
             if let (true, Some((a, b))) = (self.dirty[node], tree.children(node)) {
                 self.core.set_node_partials_for_update(node);
                 self.core.calculate_partials(a, b, node);
+                if let Some(correction) = &mut self.informative {
+                    correction.set_node_partials_for_update(node);
+                    correction.calculate_partials(a, b, node, &self.core);
+                }
             }
         }
         self.evaluate(tree.root(), rates)
     }
 
-    /// −∞ when the value is not a number or the Mkv correction is undefined.
+    /// −∞ when the value is not a number or the ascertainment correction is undefined.
     fn evaluate(&mut self, root: usize, rates: &RateVariation) -> f64 {
         let value = match &self.variable {
             Some(variable) => {
@@ -336,6 +361,14 @@ impl Likelihood {
                 &self.frequencies,
                 &self.weights,
             ),
+        };
+        let value = if let Some(correction) = &self.informative {
+            match correction.log_probability(root, rates.category_weights()) {
+                Ok(log_probability) => value - self.characters * log_probability,
+                Err(_) => f64::NEG_INFINITY,
+            }
+        } else {
+            value
         };
         if value.is_nan() {
             f64::NEG_INFINITY
@@ -665,6 +698,9 @@ impl Sampler {
         self.stored_rates.clone_from(&self.rates);
         for likelihood in &mut self.likelihoods {
             likelihood.core.store();
+            if let Some(correction) = &mut likelihood.informative {
+                correction.store();
+            }
         }
         let proposal = kind.propose(
             &mut self.tree,
@@ -713,6 +749,9 @@ impl Sampler {
             std::mem::swap(&mut self.rates, &mut self.stored_rates);
             for likelihood in &mut self.likelihoods {
                 likelihood.core.restore();
+                if let Some(correction) = &mut likelihood.informative {
+                    correction.restore();
+                }
             }
         }
         self.tune(index, log_alpha);

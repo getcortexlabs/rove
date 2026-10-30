@@ -667,3 +667,8 @@
 "Explore the field guide" = "Explorar o guia de campo";
 "Take the Rove tour" = "Conhecer o Rove";
 "Sign out of the beta" = "Sair do beta";
+
+"Informative only · Mkparsinf" = "Só informativos · Mkparsinf";
+"Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations." = "Use Mkparsinf apenas se os caracteres constantes e os demais não informativos para parcimônia foram excluídos ao montar a matriz. Cada caráter incluído precisa continuar informativo mesmo com observações ausentes ou incertas.";
+"Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected." = "Cada caráter precisa ter pelo menos dois estados presentes em dois ou mais táxons cada. Confira a matriz e como os caracteres foram selecionados.";
+"Mkparsinf · informative characters" = "Mkparsinf · caracteres informativos";

@@ -79,7 +79,14 @@ final class Workspace {
   }
   var issue: String? {
     guard let report else { return "Import a matrix to continue." }
-    return report.samplerError ?? (settings.conditioning == "variable" ? report.variableError : nil)
+    if let error = report.samplerError { return error }
+    let conditioningError: String? =
+      switch settings.conditioning {
+      case "variable": report.variableError
+      case "informative": report.informativeError
+      default: nil
+      }
+    return conditioningError
       ?? settings.validationError
       ?? GroupConstraints.validate(monophyly, taxa: report.allTaxa, outgroup: outgroup)
   }

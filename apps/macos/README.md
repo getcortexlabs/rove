@@ -29,8 +29,10 @@ sandboxes build processes and cannot start SwiftPM's nested sandbox, set
   mean the sampler supports it: unsupported sampling inputs remain viewable
   with an explanation, and analysis preparation is blocked.
 - Gaps are rejected for sampling until the user explicitly treats them as
-  missing. Mkv remains unavailable for columns that may be constant.
-- Select the strict or relaxed-clock preset, Mk/Mkv, chain length, sampling
+  missing. Mkv remains unavailable for columns that may be constant. Mkparsinf
+  requires every completion of each character to be parsimony-informative;
+  see [character selection](../../docs/guide/character-selection.md).
+- Select the strict or relaxed-clock preset, Mk/Mkv/Mkparsinf, chain length, sampling
   interval and seed. Priors are the engine's defaults; no monophyly constraint
   is applied automatically. The complete settings are reviewed before export.
 - Save a `.rove.json` record or copy a shell-quoted command for the bundled

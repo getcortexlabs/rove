@@ -36,3 +36,7 @@ harness = false
 [[bench]]
 name = "repeats"
 harness = false
+
+[[bench]]
+name = "informative"
+harness = false

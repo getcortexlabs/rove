@@ -48,14 +48,17 @@ struct SetupView: View {
             Spacer()
             Picker(strings("Character selection"), selection: $workspace.settings.conditioning) {
               Text(strings("Variable only · Mkv")).tag("variable")
+              Text(strings("Informative only · Mkparsinf")).tag("informative")
               Text(strings("All characters · Mk")).tag("none")
-            }.labelsHidden().frame(width: 200).tint(Lab.accent)
+            }.labelsHidden().frame(width: 230).tint(Lab.accent)
           }
           Text(
             strings(
               workspace.settings.conditioning == "variable"
                 ? "Use Mkv when constant characters were excluded. Missing observations can make a character's variability impossible to establish."
-                : "Use Mk when your sampling includes constant as well as variable characters. The matrix can contain both."
+                : workspace.settings.conditioning == "informative"
+                  ? "Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations."
+                  : "Use Mk when your sampling includes constant as well as variable characters. The matrix can contain both."
             )
           )
           .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
@@ -65,6 +68,14 @@ struct SetupView: View {
             DiagnosticMessage(
               title: strings(
                 "Mkv requires characters known to be variable. Check the matrix or choose Mk if it matches how your data were collected."
+              ), details: issue, strings: strings)
+          }
+          if workspace.settings.conditioning == "informative",
+            let issue = workspace.report?.informativeError
+          {
+            DiagnosticMessage(
+              title: strings(
+                "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected."
               ), details: issue, strings: strings)
           }
         }
@@ -233,7 +244,9 @@ struct ReviewView: View {
           row(
             "Character model",
             workspace.settings.conditioning == "variable"
-              ? "Mkv · variable characters" : "Mk · all characters")
+              ? "Mkv · variable characters"
+              : workspace.settings.conditioning == "informative"
+                ? "Mkparsinf · informative characters" : "Mk · all characters")
           if let partitions = report.partitions {
             row(
               "State partitions",

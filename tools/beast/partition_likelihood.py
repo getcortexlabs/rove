@@ -20,6 +20,7 @@ def main():
     parser.add_argument("--packages", type=Path, required=True)
     parser.add_argument("--launcher", type=Path, required=True)
     parser.add_argument("--matrix", type=Path, default=Path("fixtures/validation/multistate/matrix.nex"))
+    parser.add_argument("--conditioning", choices=["comparison", "informative"], default="comparison")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--java", default="java")
     parser.add_argument("--javac", default="javac")
@@ -37,12 +38,13 @@ def main():
         subprocess.run([args.javac, "--release", "17", "-cp", classpath, "-d", classes, str(source)], check=True)
         command = [args.java, "-Djava.awt.headless=true",
                    f"-Dbeast.user.package.dir={args.packages.resolve()}", "-cp", f"{classes}:{classpath}",
-                   "rove.reference.PartitionLikelihood", str(args.matrix.resolve()), str(result)]
+                   "rove.reference.PartitionLikelihood", str(args.matrix.resolve()), str(result), args.conditioning]
         with (args.output / "console.log").open("w") as console:
             subprocess.run(command, stdout=console, stderr=subprocess.STDOUT, check=True)
     values = json.loads(result.read_text())
-    if len(values["cases"]) != 12:
-        raise ValueError("Expected twelve fixed-state cases")
+    expected = 6 if args.conditioning == "informative" else 12
+    if len(values["cases"]) != expected:
+        raise ValueError(f"Expected {expected} fixed-state cases")
     provenance = {
         "packages": versions,
         "java_version": subprocess.run([args.java, "-version"], capture_output=True, text=True, check=True).stderr,
@@ -50,8 +52,9 @@ def main():
         "jars": {p.name: digest(p) for p in jars},
         "source_sha256": digest(source), "matrix_sha256": digest(args.matrix),
         "result_sha256": digest(result),
+        "conditioning": args.conditioning,
         "backend": "Java BeerLikelihoodCore; java.only=true; scaling=always; useAmbiguities=true",
-        "reproduction": "python3 tools/beast/partition_likelihood.py --packages <packages> --launcher <launcher.jar> --output <new-directory>",
+        "reproduction": f"python3 tools/beast/partition_likelihood.py --packages <packages> --launcher <launcher.jar> --matrix {args.matrix} --conditioning {args.conditioning} --output <new-directory>",
     }
     (args.output / "provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
 

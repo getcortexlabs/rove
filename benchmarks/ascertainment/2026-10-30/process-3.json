@@ -1,0 +1,162 @@
+[
+  {
+    "allocations_per_1000_updates": 0,
+    "categories": 4,
+    "nanoseconds_per_update": [
+      11646.25,
+      11757.333,
+      11590.0,
+      11544.416,
+      11702.667,
+      11688.458,
+      11662.708,
+      11648.916,
+      11632.542
+    ],
+    "setup_allocated_bytes": 74640,
+    "states": 2,
+    "tips": 90,
+    "update": "full",
+    "updated_nodes": 89
+  },
+  {
+    "allocations_per_1000_updates": 0,
+    "categories": 4,
+    "nanoseconds_per_update": [
+      976.208,
+      962.625,
+      949.708,
+      961.708,
+      973.708,
+      937.959,
+      945.291,
+      946.042,
+      962.583
+    ],
+    "setup_allocated_bytes": 74640,
+    "states": 2,
+    "tips": 90,
+    "update": "one_tip",
+    "updated_nodes": 7
+  },
+  {
+    "allocations_per_1000_updates": 0,
+    "categories": 4,
+    "nanoseconds_per_update": [
+      15426.0,
+      15540.291,
+      15604.0,
+      15550.583,
+      15616.75,
+      15616.625,
+      15437.542,
+      15533.667,
+      15465.291
+    ],
+    "setup_allocated_bytes": 143680,
+    "states": 4,
+    "tips": 90,
+    "update": "full",
+    "updated_nodes": 89
+  },
+  {
+    "allocations_per_1000_updates": 0,
+    "categories": 4,
+    "nanoseconds_per_update": [
+      1549.041,
+      1524.875,
+      1559.75,
+      1525.833,
+      1496.75,
+      1501.833,
+      1514.208,
+      1496.0,
+      1497.584
+    ],
+    "setup_allocated_bytes": 143680,
+    "states": 4,
+    "tips": 90,
+    "update": "one_tip",
+    "updated_nodes": 7
+  },
+  {
+    "allocations_per_1000_updates": 0,
+    "categories": 4,
+    "nanoseconds_per_update": [
+      65830.916,
+      65881.917,
+      65537.167,
+      66249.125,
+      65956.75,
+      65540.583,
+      65706.583,
+      65757.292,
+      66399.917
+    ],
+    "setup_allocated_bytes": 415760,
+    "states": 2,
+    "tips": 500,
+    "update": "full",
+    "updated_nodes": 499
+  },
+  {
+    "allocations_per_1000_updates": 0,
+    "categories": 4,
+    "nanoseconds_per_update": [
+      1257.042,
+      1295.166,
+      1295.792,
+      1276.125,
+      1270.833,
+      1257.125,
+      1289.208,
+      1259.667,
+      1293.25
+    ],
+    "setup_allocated_bytes": 415760,
+    "states": 2,
+    "tips": 500,
+    "update": "one_tip",
+    "updated_nodes": 9
+  },
+  {
+    "allocations_per_1000_updates": 0,
+    "categories": 4,
+    "nanoseconds_per_update": [
+      87823.917,
+      87052.541,
+      87279.5,
+      86583.375,
+      87000.958,
+      86908.0,
+      86582.125,
+      86378.958,
+      87402.5
+    ],
+    "setup_allocated_bytes": 799680,
+    "states": 4,
+    "tips": 500,
+    "update": "full",
+    "updated_nodes": 499
+  },
+  {
+    "allocations_per_1000_updates": 0,
+    "categories": 4,
+    "nanoseconds_per_update": [
+      2061.042,
+      2089.25,
+      2087.541,
+      2110.417,
+      2114.375,
+      2095.958,
+      2097.958,
+      2083.167,
+      2124.667
+    ],
+    "setup_allocated_bytes": 799680,
+    "states": 4,
+    "tips": 500,
+    "update": "one_tip",
+    "updated_nodes": 9
+  }
+]

@@ -10,8 +10,11 @@
 //! Characters that could be constant are rejected. For the others, every
 //! completion of missing and uncertain cells is variable, so the result is the
 //! likelihood of the observations given that the complete character varies.
-//! Other schemes, such as conditioning on parsimony-informative characters or
-//! per-character corrections for missing data, are not implemented.
+//! Informative-only coding is implemented separately for uniform unordered Mk.
+//! Per-character corrections for a missing-data mask are not implemented.
+
+pub mod informative;
+pub use informative::{InformativeProbability, validate_informative};
 
 use std::fmt;
 
@@ -21,15 +24,31 @@ use crate::data::Patterns;
 pub enum Error {
     /// Every cell of the character, including missing and uncertain ones,
     /// allows `state`. The site index is zero-based within the matrix.
-    ConstantCharacter { site: usize, state: char },
+    ConstantCharacter {
+        site: usize,
+        state: char,
+    },
     /// The constant patterns hold all the probability, up to rounding error,
     /// or one of their log likelihoods is NaN or positive infinity.
     UndefinedCorrection,
+    UninformativeCharacter {
+        site: usize,
+    },
+    UndefinedInformativeCorrection,
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::UninformativeCharacter { site } => write!(
+                f,
+                "character {} could be parsimony-uninformative; informative-only coding requires at least two states represented by two or more taxa in every completion of missing or uncertain observations",
+                site + 1
+            ),
+            Self::UndefinedInformativeCorrection => write!(
+                f,
+                "the probability of a parsimony-informative character is zero or undefined in double precision"
+            ),
             Self::ConstantCharacter { site, state } => write!(
                 f,
                 "character {} could be constant in state {state:?}; the variable-character correction excludes constant characters",
