@@ -99,6 +99,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut check = false;
     let mut reverse = false;
     let mut filter = None;
+    let mut export = None;
     let mut args = std::env::args().skip(1);
     while let Some(argument) = args.next() {
         match argument.as_str() {
@@ -106,6 +107,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             "--check" => check = true,
             "--reverse" => reverse = true,
             "--case" => filter = Some(args.next().ok_or("--case requires a name")?),
+            "--export" => export = Some(args.next().ok_or("--export requires a path")?),
             "--samples" => {
                 settings.samples = args.next().ok_or("--samples requires a count")?.parse()?
             }
@@ -135,6 +137,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         .collect();
     if cases.is_empty() {
         return Err("no matching benchmark case".into());
+    }
+    if let Some(path) = export {
+        let inputs: Vec<_> = cases.iter().map(export_case).collect();
+        std::fs::write(path, serde_json::to_string_pretty(&inputs)?)?;
+        return Ok(());
     }
     let variants: Vec<(Path, Backend)> = PATHS
         .into_iter()
@@ -241,4 +248,37 @@ fn main() -> Result<(), Box<dyn Error>> {
         eprintln!("Measured {} ({} patterns).", case.name, case.weights.len());
     }
     Ok(())
+}
+
+/// Share numerical inputs with the optional Java/BEAGLE benchmark adapters.
+fn export_case(case: &Workload) -> serde_json::Value {
+    use serde_json::json;
+    let mut checks = serde_json::Map::new();
+    for metric in [
+        Metric::FullCached,
+        Metric::FullBranches,
+        Metric::TipUpdate,
+        Metric::InternalUpdate,
+    ] {
+        let mut engine = case.engine(Path::Matrices, Backend::Portable);
+        let initial = engine.full();
+        let values: Vec<_> = (0..2)
+            .map(|_| metric.run(case, Path::Matrices, Backend::Portable, &mut engine))
+            .collect();
+        checks.insert(
+            metric.name().into(),
+            json!({"initial":initial,"values":values}),
+        );
+    }
+    let tips = case.variable.as_ref().map_or(
+        case.patterns.tip_partials(),
+        rove::ascertainment::VariableCharacters::tip_partials,
+    );
+    json!({"name":case.name,"taxa":case.data.taxa().len(),"characters":case.data.character_count(),
+        "observed_patterns":case.weights.len(),"core_patterns":case.core_patterns(),"states":case.model.states(),
+        "missing_cells":case.missing_cells(),"shape":case.shape,"children":case.tree.children,
+        "distances":case.tree.distances,"rates":case.rates,"category_weights":case.category_weights,
+        "frequencies":case.model.frequencies(),"weights":case.weights,"tip_partials":tips,
+        "tip_branch":case.tip_branch,"internal_branch":case.internal_branch,
+        "variable":case.variable.is_some(),"checks":checks})
 }
