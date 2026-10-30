@@ -147,3 +147,4 @@ jobs:
         run: |
           codesign --verify --deep --strict build/macos/Rove.app
           cmp fixtures/reference/20x50/matrix.nex apps/macos/Sources/RoveApp/Resources/Example.nex
+          cmp fixtures/benchmarks/mac-v1.json apps/macos/Sources/RoveApp/Resources/BenchmarkProtocol.json

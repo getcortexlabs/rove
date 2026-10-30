@@ -1,3 +1,4 @@
+mod benchmark;
 mod checkpoint;
 mod compare;
 mod diagnose;
@@ -34,6 +35,7 @@ const USAGE: &str =
                    [--print-every <n>] [--events-json] [--cancel-on-stdin-close]
                    [--expect-input-sha256 <hash>] [--checkpoint-every <n>]
        rove sample --resume <run-directory> [--events-json] [--cancel-on-stdin-close]
+       rove benchmark [--cancel-on-stdin-close]
        rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
        rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared]
        rove inspect-tree <summary-directory>
@@ -983,7 +985,9 @@ fn run_chain(
 
 fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    let result = if arguments.first().is_some_and(|a| a == "compare") {
+    let result = if arguments.first().is_some_and(|a| a == "benchmark") {
+        benchmark::run(&arguments[1..])
+    } else if arguments.first().is_some_and(|a| a == "compare") {
         compare::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "diagnose") {
         diagnose::run(&arguments[1..]).map(|_| true)

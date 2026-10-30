@@ -47,11 +47,20 @@ final class Workspace {
   var showingHistory = false
   var selectedHistoryID: String?
   let history: RunHistory
+  let benchmark: Benchmark
   var outputParent = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(
     "Rove Runs")
-  var isRunning: Bool { run?.isActive == true }
+  var isRunning: Bool { run?.isActive == true || benchmark.isRunning }
+  var canOpenBenchmark: Bool {
+    accessAllowed() && run?.isActive != true && !loading && treeSummary == nil
+  }
+  func startBenchmark() {
+    guard canOpenBenchmark else { return }
+    benchmark.start(executable: executable)
+  }
   var canStartRun: Bool {
-    accessAllowed() && page == .review && report != nil && issue == nil && !loading && run == nil
+    accessAllowed() && !isRunning && page == .review && report != nil && issue == nil && !loading
+      && run == nil
       && !showingHistory
   }
   private var importID = UUID()
@@ -64,11 +73,13 @@ final class Workspace {
 
   init(
     executable: URL = MatrixInspector.executable, preferences: AppPreferences = AppPreferences(),
-    history: RunHistory = RunHistory(), accessAllowed: @escaping () -> Bool = { true }
+    history: RunHistory = RunHistory(), benchmark: Benchmark = Benchmark(),
+    accessAllowed: @escaping () -> Bool = { true }
   ) {
     self.executable = executable
     self.preferences = preferences
     self.history = history
+    self.benchmark = benchmark
     self.accessAllowed = accessAllowed
   }
 
@@ -364,6 +375,10 @@ final class Workspace {
   }
 
   func cancelAndWait() async {
+    if benchmark.isRunning {
+      benchmark.cancel()
+      await benchmark.waitForExit()
+    }
     guard let run, run.isActive else { return }
     run.cancel()
     await run.waitForExit()

@@ -388,3 +388,7 @@ In **Model → The exploration plan**, choose **1, 2 or 4 chains**. The step cou
 Completed groups and their History details include **Do the chains agree?**, with R-hat and ESS for every traced statistic and a clade-frequency comparison. Select a chain to open its diagnostics, summarize its trees or inspect its folder. Saved setups preserve the chain count; older setups remain single-chain. Outputs stay separate so one chain's burn-in is never mistaken for another's continuation.
 
 **Stop when diagnostic thresholds are met** is optional and off by default. It uses 10% burn-in, ESS ≥ 200 per chain, R-hat ≤ 1.01 for all traced scalar statistics, at least 1,000 retained samples per chain and two consecutive checks. The actual stopping step and reason are saved. These are scalar diagnostic criteria, not a guarantee of topology convergence; inspect the clades and traces. See [independent chains](./sampler#independent-chains) for the CLI options and limits.
+
+## Benchmark this Mac
+
+[Benchmark this Mac](./mac-benchmark)

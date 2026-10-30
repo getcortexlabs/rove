@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct WorkspaceSidebar: View {
+  @Environment(\.openWindow) private var openWindow
   @Bindable var workspace: Workspace
   private var strings: AppStrings { workspace.strings }
 
@@ -56,6 +57,14 @@ struct WorkspaceSidebar: View {
           }
 
           sectionLabel("EXPLORE").padding(.top, 28)
+          Button {
+            openWindow(id: "benchmark")
+          } label: {
+            Label(strings("Benchmark this Mac"), systemImage: "speedometer")
+              .font(.system(size: 12, weight: .medium))
+              .frame(maxWidth: .infinity, alignment: .leading).padding(12)
+          }.buttonStyle(SidebarButtonStyle()).padding(.horizontal, 12)
+            .disabled(!workspace.canOpenBenchmark)
           Button(action: workspace.loadExample) {
             HStack(spacing: 11) {
               Image(systemName: "sparkles").font(.system(size: 15))

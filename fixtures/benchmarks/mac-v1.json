@@ -1,0 +1,15 @@
+{
+  "id": "rove-mac-v1",
+  "inputSHA256": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+  "taxa": 90,
+  "characters": 250,
+  "model": "mk-gamma4-lognormal",
+  "conditioning": "none",
+  "warmupSteps": 5000,
+  "measuredSteps": 50000,
+  "repetitions": 3,
+  "chains": [1, 4],
+  "seed": 20261030,
+  "tuning": "enabled",
+  "timing": "sampling-wall-no-io"
+}

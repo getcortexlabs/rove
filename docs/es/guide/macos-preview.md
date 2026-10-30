@@ -399,3 +399,7 @@ En **Model → The exploration plan**, elige **1, 2 o 4 cadenas**. El número de
 Los grupos completados y sus detalles en History incluyen **Do the chains agree?**, con R-hat y ESS para todas las estadísticas registradas y una comparación de frecuencias de clados. Selecciona una cadena para abrir sus diagnósticos, resumir sus árboles o ver su carpeta. Las configuraciones guardadas conservan el número de cadenas; las antiguas siguen usando una sola. Los archivos permanecen separados para no tratar el burn-in de una cadena como continuación de otra.
 
 **Stop when diagnostic thresholds are met** es opcional y está desactivado por defecto. Usa 10% de burn-in, ESS ≥ 200 por cadena, R-hat ≤ 1,01 en todas las estadísticas escalares registradas, al menos 1.000 muestras retenidas por cadena y dos comprobaciones satisfactorias consecutivas. Se guardan el paso y el motivo de parada. Son criterios escalares, no una garantía de convergencia topológica; revisa clados y traces. Consulta [cadenas independientes](./sampler#cadenas-independientes) para las opciones y límites de la CLI.
+
+## Probar este Mac
+
+[Probar este Mac](./mac-benchmark)

@@ -71,6 +71,9 @@ struct RoveApp: App {
         ).disabled(!workspace.showingHistory || !access.canUse || !experience.ready)
       }
       CommandGroup(replacing: .help) {
+        Button(strings("Benchmark this Mac")) { openWindow(id: "benchmark") }
+          .disabled(!workspace.canOpenBenchmark || !experience.ready)
+        Divider()
         Button(strings("Take the Rove tour")) { experience.presentation = .tour }
           .disabled(
             !access.canUse || !experience.ready || workspace.isRunning || workspace.loading
@@ -98,6 +101,12 @@ struct RoveApp: App {
     .windowResizability(.contentSize)
     .defaultPosition(.center)
     .commandsRemoved()
+
+    Window(strings("Benchmark this Mac"), id: "benchmark") {
+      BenchmarkView(workspace: workspace, access: access)
+    }
+    .defaultSize(width: 740, height: 820)
+    .windowResizability(.contentMinSize)
 
     Window(strings("Tree explorer"), id: "tree-explorer") {
       if let model = workspace.treeExplorer {
@@ -215,9 +224,13 @@ struct WindowSetup: NSViewRepresentable {
 @MainActor private func confirmStop(_ workspace: Workspace) -> Bool {
   let strings = workspace.strings
   let alert = NSAlert()
-  alert.messageText = strings("An analysis is still running.")
+  alert.messageText = strings(
+    workspace.benchmark.isRunning
+      ? "A benchmark is still running." : "An analysis is still running.")
   alert.informativeText = strings(
-    "Closing Rove will stop the engine. History can recover the latest saved checkpoint. To save the current point, keep Rove open and pause the analysis first."
+    workspace.benchmark.isRunning
+      ? "Closing Rove will cancel this benchmark. Incomplete tests cannot be shared."
+      : "Closing Rove will stop the engine. History can recover the latest saved checkpoint. To save the current point, keep Rove open and pause the analysis first."
   )
   alert.addButton(withTitle: strings("Keep running"))
   alert.addButton(withTitle: strings("Stop and close"))

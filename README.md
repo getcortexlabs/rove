@@ -62,6 +62,8 @@ clades and export an SVG figure. Original samples stay unchanged. Completion and
 from History, including independent-chain groups. Periodic checkpoints also allow
 recovery after an interruption, using the same executable, matrix and settings. Diagnostics show recorded parameters, trace plots, ESS
 and equal-tailed intervals with an adjustable burn-in; calculations stay in Rust.
+A built-in [Mac benchmark](docs/guide/mac-benchmark.md) measures a fixed synthetic
+workload offline, keeps previous results and offers optional sharing with Cortex Labs.
 See the [Mac guide](docs/guide/macos-preview.md) and [build notes](apps/macos/README.md).
 
 ## People

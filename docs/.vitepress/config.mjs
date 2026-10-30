@@ -26,6 +26,7 @@ const locales = {
       kernel: 'The likelihood core',
       sampler: 'Sampling trees',
       characterSelection: 'Character selection',
+      macBenchmark: 'Benchmark this Mac',
       orderedCharacters: 'Ordered characters',
       referenceModel: 'The reference model',
       nexus: 'Reading NEXUS',
@@ -54,6 +55,7 @@ const locales = {
       kernel: 'O núcleo de verossimilhança',
       sampler: 'Amostrando árvores',
       characterSelection: 'Seleção de caracteres',
+      macBenchmark: 'Testar este Mac',
       orderedCharacters: 'Caracteres ordenados',
       referenceModel: 'O modelo de referência',
       nexus: 'Lendo NEXUS',
@@ -99,6 +101,7 @@ const locales = {
       kernel: 'El núcleo de verosimilitud',
       sampler: 'Muestreo de árboles',
       characterSelection: 'Selección de caracteres',
+      macBenchmark: 'Probar este Mac',
       orderedCharacters: 'Caracteres ordenados',
       referenceModel: 'El modelo de referencia',
       nexus: 'Lectura de NEXUS',
@@ -144,6 +147,7 @@ const locales = {
       kernel: '似然核心',
       sampler: '树的采样',
       characterSelection: '性状选择',
+      macBenchmark: '测试这台 Mac',
       orderedCharacters: '有序性状',
       referenceModel: '参考模型',
       nexus: '读取 NEXUS',
@@ -176,7 +180,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, characterSelection, orderedCharacters, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -189,6 +193,7 @@ function themeFor(locale) {
           items: [
             { text: what, link: `${prefix}/guide/` },
             { text: macPreview, link: `${prefix}/guide/macos-preview` },
+            { text: macBenchmark, link: `${prefix}/guide/mac-benchmark` },
             { text: design, link: `${prefix}/guide/design` },
             { text: roadmap, link: `${prefix}/guide/roadmap` }
           ]

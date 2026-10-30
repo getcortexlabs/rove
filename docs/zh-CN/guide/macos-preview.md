@@ -316,3 +316,7 @@ target/release/rove diagnose /path/to/results/trace.log --burnin-percent 25 \
 完成的组及其 History 详情中有 **Do the chains agree?** 面板，展示所有记录统计量的 R-hat、各链 ESS 和支系频率比较。选择一条链即可打开其诊断、汇总树或查看目录。保存的设置保留链数，旧设置仍使用单链。各链输出独立保存，不会把一条链的 burn-in 当作另一条链的延续。
 
 **Stop when diagnostic thresholds are met** 为可选项，默认关闭。它使用 10% burn-in，要求所有记录的标量统计量满足每链 ESS ≥ 200、R-hat ≤ 1.01，每链至少保留 1,000 个样本，且连续两次检查通过。停止步数和原因会被保存。这些标量诊断标准不保证拓扑收敛，仍需检查支系和 trace。CLI 选项和限制见[独立链](./sampler#独立链)。
+
+## 测试这台 Mac
+
+[测试这台 Mac](./mac-benchmark)

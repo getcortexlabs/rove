@@ -403,3 +403,7 @@ Em **Modelo → O plano de exploração**, escolha **1, 2 ou 4 cadeias**. O núm
 Os grupos concluídos e seus detalhes no Histórico incluem **As cadeias concordam?**, com R-hat e ESS para todas as estatísticas registradas e comparação das frequências de clados. Selecione uma cadeia para abrir seus diagnósticos, resumir suas árvores ou ver sua pasta. As configurações salvas preservam a quantidade de cadeias; configurações antigas continuam com uma cadeia. Os arquivos ficam separados para que o burn-in de uma não seja tratado como continuação de outra.
 
 **Parar quando os critérios dos diagnósticos forem atingidos** é opcional e vem desligado. Usa 10% de burn-in, ESS ≥ 200 por cadeia, R-hat ≤ 1,01 em todas as estatísticas escalares registradas, pelo menos 1.000 amostras mantidas por cadeia e duas verificações positivas seguidas. O passo e o motivo da parada são salvos. São critérios de diagnóstico escalar, não uma garantia de convergência das topologias; confira clados e traces. Veja [cadeias independentes](./sampler#cadeias-independentes) para opções e limites da CLI.
+
+## Testar este Mac
+
+[Testar este Mac](./mac-benchmark)

@@ -72,3 +72,30 @@ fn benchmark_paths_match_the_reference_and_restore_rejected_changes() {
         }
     }
 }
+#[test]
+fn distributed_benchmark_stops_when_its_owner_closes_stdin() {
+    use std::io::{BufRead, BufReader, Read};
+    use std::process::{Command, Stdio};
+
+    let mut child = Command::new(env!("CARGO_BIN_EXE_rove"))
+        .args(["benchmark", "--cancel-on-stdin-close"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .spawn()
+        .unwrap();
+    let mut output = BufReader::new(child.stdout.take().unwrap());
+    let mut line = String::new();
+    output.read_line(&mut line).unwrap();
+    let first: serde_json::Value = serde_json::from_str(&line).unwrap();
+    assert_eq!(first["event"], "started");
+    assert_eq!(first["protocol"]["id"], "rove-mac-v1");
+    drop(child.stdin.take());
+    let mut remaining = String::new();
+    output.read_to_string(&mut remaining).unwrap();
+    assert_eq!(child.wait().unwrap().code(), Some(130));
+    assert!(remaining.lines().any(|line| {
+        serde_json::from_str::<serde_json::Value>(line).unwrap()["event"] == "cancelled"
+    }));
+    assert!(!remaining.contains("completed"));
+}
