@@ -18,11 +18,11 @@ struct AboutView: View {
         ).frame(height: 1).accessibilityHidden(true)
 
       VStack(alignment: .leading, spacing: 8) {
-        Text(strings("It started with a conversation."))
+        Text(strings("We just wanted a shorter wait."))
           .font(Lab.display(20, weight: .semibold))
         Text(
           strings(
-            "Born from conversations between Rafael and Thiago about evolution, morphology and the tools they wished existed."
+            "BEAST analyses were taking a while on a Mac M1. Rafael wanted to see if he could build something faster, and Thiago joined him with his experience in biology and research. The idea was to save some time. So, naturally, they started a whole new project."
           )
         )
         .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
