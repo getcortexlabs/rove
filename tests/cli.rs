@@ -1060,3 +1060,189 @@ fn ordered_import_and_run_metadata_preserve_the_requested_models() {
     assert!(error(&rejected).contains("ordered"));
     assert!(!directory.join("invalid").exists());
 }
+
+#[test]
+fn dating_preserves_ages_in_outputs_summaries_and_prediction() {
+    let directory = scratch("dating-cli");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let dating = serde_json::json!({
+        "time_unit":"Ma", "birth_rate":0.8, "death_rate":0.3,
+        "fossil_sampling_rate":0.2, "present_sampling":0.7, "origin":4.0,
+        "clock_rate":0.1, "clock_prior_mean":0.1,
+        "ages":{"A":0,"B":[0.4,1.2],"C":0,"D":0.7,"E e":0}
+    });
+    let config = directory.join("dating.json");
+    fs::write(&config, dating.to_string()).unwrap();
+    for model in ["strict", "reference"] {
+        let output = directory.join(model);
+        let run = rove(&[
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            output.to_str().unwrap(),
+            "--dating",
+            config.to_str().unwrap(),
+            "--seed",
+            "2",
+            "--steps",
+            "2000",
+            "--sample-every",
+            "10",
+            "--gaps",
+            "missing",
+            "--conditioning",
+            "none",
+            "--model",
+            model,
+        ]);
+        assert!(run.status.success(), "{}", error_text(&run));
+        let record: serde_json::Value =
+            serde_json::from_slice(&fs::read(output.join("run.json")).unwrap()).unwrap();
+        assert_eq!(record["model"]["dating"], dating);
+        assert_eq!(record["model"]["clock_multiplier"], "trace.clock_rate");
+        let trace = fs::read_to_string(output.join("trace.log")).unwrap();
+        assert!(trace.contains("\tfossilized_birth_death\tclock_rate\tdating_parameter_prior\t"));
+        assert!(trace.contains("\ttip_age_5\n"));
+        let trees = output.join("trees.nexus");
+        let mut reader = rove::summary::nexus::Reader::new(std::io::BufReader::new(
+            fs::File::open(&trees).unwrap(),
+        ))
+        .unwrap();
+        let mut n = 0;
+        while let Some(tree) = reader.next_tree().unwrap() {
+            assert_eq!(tree.nodes[tree.tips[3]].height, 0.7);
+            assert!((0.4..=1.2).contains(&tree.nodes[tree.tips[1]].height));
+            n += 1;
+        }
+        assert_eq!(n, 201);
+        for heights in ["keep", "ca"] {
+            let summary = output.join(heights);
+            let result = rove(&[
+                "summarize",
+                trees.to_str().unwrap(),
+                "--output",
+                summary.to_str().unwrap(),
+                "--burnin-percent",
+                "10",
+                "--heights",
+                heights,
+            ]);
+            assert!(result.status.success(), "{}", error_text(&result));
+            let result = rove(&["inspect-tree", summary.to_str().unwrap()]);
+            assert!(result.status.success(), "{}", error_text(&result));
+        }
+        let predicted = output.join("predict");
+        let result = rove(&[
+            "predict",
+            output.to_str().unwrap(),
+            "--matrix",
+            matrix.to_str().unwrap(),
+            "--output",
+            predicted.to_str().unwrap(),
+            "--burnin-percent",
+            "10",
+            "--seed",
+            "17",
+            "--replicates",
+            "4",
+        ]);
+        assert!(result.status.success(), "{}", error_text(&result));
+        let result = rove(&[
+            "diagnose",
+            output.join("trace.log").to_str().unwrap(),
+            "--burnin-percent",
+            "10",
+        ]);
+        assert!(result.status.success(), "{}", error_text(&result));
+    }
+    for (name, change) in [
+        ("unknown", serde_json::json!({"unsupported":1})),
+        ("missing-taxon", serde_json::json!({"ages":{"A":0}})),
+        ("age-unit", serde_json::json!({"time_unit":""})),
+        ("negative-rate", serde_json::json!({"clock_rate":-0.1})),
+        ("invalid-origin", serde_json::json!({"origin":0.5})),
+    ] {
+        let mut invalid = dating.clone();
+        for (k, v) in change.as_object().unwrap() {
+            invalid[k] = v.clone();
+        }
+        fs::write(&config, invalid.to_string()).unwrap();
+        let result = rove(&[
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            directory.join(name).to_str().unwrap(),
+            "--dating",
+            config.to_str().unwrap(),
+            "--seed",
+            "1",
+            "--steps",
+            "10",
+            "--sample-every",
+            "1",
+            "--gaps",
+            "missing",
+        ]);
+        assert!(!result.status.success());
+        assert!(!directory.join(name).exists());
+    }
+}
+
+#[test]
+fn dated_chain_comparison_distinguishes_fixed_and_sampled_parameters() {
+    let directory = scratch("dating-comparison");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let config = serde_json::json!({
+        "time_unit":"Ma", "birth_rate":0.8, "death_rate":0.3,
+        "fossil_sampling_rate":0.2, "present_sampling":0.7, "origin":4.0,
+        "clock_rate":0.1,
+        "ages":{"A":0,"B":[0.4,1.2],"C":0,"D":[0.7,0.7],"E e":0}
+    });
+    let output = directory.join("chains");
+    let result = rove(&[
+        "sample",
+        matrix.to_str().unwrap(),
+        "--output",
+        output.to_str().unwrap(),
+        "--dating-json",
+        &config.to_string(),
+        "--seed",
+        "2",
+        "--steps",
+        "1000",
+        "--sample-every",
+        "10",
+        "--gaps",
+        "missing",
+        "--conditioning",
+        "none",
+        "--chains",
+        "2",
+    ]);
+    assert!(result.status.success(), "{}", error_text(&result));
+    let comparison: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("comparison.json")).unwrap()).unwrap();
+    for column in comparison["statistics"].as_array().unwrap() {
+        let name = column["name"].as_str().unwrap();
+        let fixed = matches!(
+            name,
+            "clock_rate"
+                | "dating_parameter_prior"
+                | "tip_age_1"
+                | "tip_age_3"
+                | "tip_age_4"
+                | "tip_age_5"
+        );
+        assert_eq!(column["fixed_by_model"] == true, fixed, "{name}");
+    }
+    let compared = rove(&[
+        "compare",
+        output.join("chain-01").to_str().unwrap(),
+        output.join("chain-02").to_str().unwrap(),
+    ]);
+    assert!(compared.status.success(), "{}", error_text(&compared));
+    let external: serde_json::Value = serde_json::from_slice(&compared.stdout).unwrap();
+    assert_eq!(comparison["statistics"], external["statistics"]);
+}

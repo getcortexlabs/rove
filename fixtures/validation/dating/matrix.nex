@@ -1,0 +1,11 @@
+#NEXUS
+BEGIN DATA;
+    DIMENSIONS NTAX=4 NCHAR=8;
+    FORMAT DATATYPE=STANDARD SYMBOLS="01" MISSING=? GAP=-;
+    MATRIX
+        Living_A 01010101
+        Fossil_B 01100101
+        Living_C 10101010
+        Fossil_D 10011010
+    ;
+END;

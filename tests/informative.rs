@@ -335,6 +335,7 @@ fn fixed_states_match_beast_with_all_excluded_columns() {
                 }
             };
             let rates = RateVariation {
+                mean: None,
                 gamma: relaxed.then(|| GammaRates::new(1.0).unwrap()),
                 clock: relaxed.then(|| {
                     RelaxedClock::new(

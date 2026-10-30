@@ -229,10 +229,12 @@ fn valid_rate(rate: f64) -> bool {
     rate > 0.0 && rate.is_finite()
 }
 
-/// Optional variation across characters and branches. Neither changes the
-/// fixed mutation-rate or clock-rate multiplier of one.
+/// Optional variation across characters and branches, with an explicit
+/// global clock for dated analyses. The mutation-rate multiplier remains one.
 #[derive(Debug, PartialEq, Default)]
 pub struct RateVariation {
+    /// Global clock rate for dated trees; None preserves the unit clock.
+    pub mean: Option<f64>,
     pub gamma: Option<GammaRates>,
     pub clock: Option<RelaxedClock>,
 }
@@ -240,12 +242,14 @@ pub struct RateVariation {
 impl Clone for RateVariation {
     fn clone(&self) -> Self {
         Self {
+            mean: self.mean,
             gamma: self.gamma,
             clock: self.clock.clone(),
         }
     }
 
     fn clone_from(&mut self, source: &Self) {
+        self.mean = source.mean;
         self.gamma = source.gamma;
         self.clock.clone_from(&source.clock);
     }
@@ -265,9 +269,11 @@ impl RateVariation {
     }
 
     pub fn branch_rate(&self, node: usize, root: usize) -> f64 {
-        self.clock
-            .as_ref()
-            .map_or(1.0, |clock| clock.branch_rate(node, root))
+        self.mean.unwrap_or(1.0)
+            * self
+                .clock
+                .as_ref()
+                .map_or(1.0, |clock| clock.branch_rate(node, root))
     }
 }
 

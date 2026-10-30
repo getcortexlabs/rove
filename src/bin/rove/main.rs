@@ -1,6 +1,7 @@
 mod benchmark;
 mod checkpoint;
 mod compare;
+mod dating;
 mod diagnose;
 mod events;
 mod inspect;
@@ -29,7 +30,7 @@ const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|informative|none] [--sample-from-prior]
-                   [--partitioning observed|declared]
+                   [--partitioning observed|declared] [--dating <settings.json>]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
                    [--stop-when-converged] [--min-ess <n>] [--max-rhat <n>] [--check-every <n>]
@@ -49,6 +50,7 @@ const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, 
 
 #[derive(Clone)]
 struct Options {
+    dating: Option<serde_json::Value>,
     executable_sha256: Option<String>,
     checkpoint_every: Option<u64>,
     resume: Option<std::sync::Arc<checkpoint::Resume>>,
@@ -84,6 +86,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     if arguments.next().map(String::as_str) != Some("sample") {
         return Err(USAGE.into());
     }
+    let mut dating = None;
     let mut checkpoint_every = None;
     let mut chains = 1;
     let mut burnin = 10;
@@ -159,6 +162,26 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                     return Err("--expect-input-sha256 needs 64 hexadecimal digits".into());
                 }
                 expected_input = Some(hash.to_ascii_lowercase());
+            }
+            "--dating" | "--dating-json" => {
+                if dating.is_some() {
+                    return Err("dating settings are given more than once".into());
+                }
+                let source = value(argument)?;
+                let source = if argument == "--dating" {
+                    let bytes = fs::read(&source)
+                        .map_err(|e| format!("cannot read dating settings: {e}"))?;
+                    if bytes.len() > 4 * 1024 * 1024 {
+                        return Err("dating settings exceed 4 MiB".into());
+                    }
+                    String::from_utf8(bytes).map_err(|e| e.to_string())?
+                } else {
+                    source
+                };
+                dating = Some(
+                    serde_json::from_str(&source)
+                        .map_err(|e| format!("invalid dating JSON: {e}"))?,
+                );
             }
             "--output" => output = Some(PathBuf::from(value("--output")?)),
             "--seed" => seed = Some(number("--seed", value("--seed")?)?),
@@ -243,6 +266,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         value.ok_or_else(|| format!("{name} is required\n{USAGE}"))
     };
     let options = Options {
+        dating,
         executable_sha256: None,
         checkpoint_every,
         resume: None,
@@ -331,6 +355,7 @@ fn quoted(text: &str) -> String {
 
 /// A minimal JSON value for the run metadata.
 enum Json {
+    Value(serde_json::Value),
     Null,
     Bool(bool),
     Integer(u64),
@@ -376,6 +401,7 @@ impl Json {
     fn write(&self, out: &mut String, depth: usize) {
         let indent = |out: &mut String, depth: usize| out.push_str(&"  ".repeat(depth));
         match self {
+            Self::Value(value) => out.push_str(&value.to_string()),
             Self::Null => out.push_str("null"),
             Self::Bool(value) => out.push_str(&value.to_string()),
             Self::Integer(value) => out.push_str(&value.to_string()),
@@ -492,6 +518,9 @@ fn run_chain(
             Settings::default()
         }
     };
+    if let Some(config) = &options.dating {
+        settings.set_dating(dating::parse(config, taxa)?);
+    }
     for &(kind, weight) in &options.weights {
         if let Some(entry) = settings.weights.iter_mut().find(|(k, _)| *k == kind) {
             entry.1 = weight;
@@ -540,7 +569,7 @@ fn run_chain(
             .collect::<Vec<_>>()
             .join(", ")
     );
-    let comments = vec![
+    let mut comments = vec![
         format!("rove {}", env!("CARGO_PKG_VERSION")),
         format!("command {command_json}"),
         format!("input sha256 {input}"),
@@ -549,18 +578,21 @@ fn run_chain(
             executable.as_deref().unwrap_or("unknown")
         ),
     ];
+    if let Some(config) = &options.dating {
+        comments.push(format!("time unit {}; ages before present; branch lengths in time; global clock in trace.clock_rate; branch rate annotations are relative multipliers", config["time_unit"].as_str().unwrap()));
+    }
     let trace_path = options.output.join("trace.log");
     let tree_path = options.output.join("trees.nexus");
     let mut trace = if let Some(saved) = saved {
-        TraceWriter::resume(
+        TraceWriter::resume_sampler(
             checkpoint::Output::resume(&trace_path, &saved["trace"])?,
-            sampler.rates(),
+            &sampler,
         )
     } else {
-        TraceWriter::with_rates(
+        TraceWriter::with_sampler(
             checkpoint::Output::create(&trace_path)?,
             &comments,
-            sampler.rates(),
+            &sampler,
         )?
     };
     let mut trees = if let Some(saved) = saved {
@@ -801,7 +833,24 @@ fn run_chain(
                 ),
                 ("conditioning", Json::text(conditioning)),
                 ("mutation_rate", Json::Number(1.0)),
-                ("clock_multiplier", Json::Number(1.0)),
+                (
+                    "clock_multiplier",
+                    if settings.dating.is_some() {
+                        Json::text("trace.clock_rate")
+                    } else {
+                        Json::Number(1.0)
+                    },
+                ),
+                (
+                    "dating",
+                    options.dating.clone().map_or(Json::Null, Json::Value),
+                ),
+                (
+                    "dating_sha256",
+                    options.dating.as_ref().map_or(Json::Null, |v| {
+                        Json::text(sha256::hex(v.to_string().as_bytes()))
+                    }),
+                ),
                 (
                     "gamma_shape_prior",
                     if options.reference_model {
@@ -842,7 +891,9 @@ fn run_chain(
                 ),
                 (
                     "clock",
-                    Json::text(if options.reference_model {
+                    Json::text(if settings.dating.is_some() {
+                        "branch length in time units times trace.clock_rate times relative branch rate; see dating settings"
+                    } else if options.reference_model {
                         "lognormal explicit branch rates; real-space distribution mean 1; no realized-mean normalization; fixed clock multiplier 1"
                     } else {
                         "strict, rate fixed at 1; heights in expected changes per character"
@@ -850,15 +901,28 @@ fn run_chain(
                 ),
                 (
                     "tree_prior",
-                    Json::text(
-                        "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips",
-                    ),
+                    Json::text(if settings.dating.is_some() {
+                        "FBD, fixed origin and process parameters, removal probability zero, restricted to terminal fossils and supplied age bounds; unnormalized restricted density, not model evidence"
+                    } else {
+                        "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips"
+                    }),
                 ),
                 (
                     "birth_difference_rate_prior",
-                    Json::text(format!("Uniform(0, {})", settings.birth_difference_upper)),
+                    if settings.dating.is_some() {
+                        Json::Null
+                    } else {
+                        Json::text(format!("Uniform(0, {})", settings.birth_difference_upper))
+                    },
                 ),
-                ("relative_death_rate_prior", Json::text("Uniform(0, 1)")),
+                (
+                    "relative_death_rate_prior",
+                    if settings.dating.is_some() {
+                        Json::Null
+                    } else {
+                        Json::text("Uniform(0, 1)")
+                    },
+                ),
                 ("sample_from_prior", Json::Bool(settings.sample_from_prior)),
                 (
                     "monophyly",

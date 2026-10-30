@@ -17,6 +17,7 @@ pub(super) fn summarize(
     directories: &[PathBuf],
     burnin: usize,
     constraints: &[Vec<String>],
+    dating: Option<&Value>,
     cancel: &dyn Fn() -> bool,
     validate_records: bool,
 ) -> Result<Value, Box<dyn Error>> {
@@ -143,6 +144,54 @@ pub(super) fn summarize(
             .total_cmp(&a["difference"].as_f64().unwrap())
             .then_with(|| a["taxa"].to_string().cmp(&b["taxa"].to_string()))
     });
+    if let Some(config) = dating.filter(|d| !d.is_null()) {
+        // Exclude only parameters fixed by the model, never a sampled parameter
+        // that happens to be constant. Verify the full trace against that value.
+        for (i, column) in columns.iter_mut().enumerate() {
+            let name = first.columns[i].name.as_str();
+            let expected = if name == "clock_rate" && config.get("clock_prior_mean").is_none() {
+                config["clock_rate"].as_f64()
+            } else if name == "dating_parameter_prior" && config.get("clock_prior_mean").is_none() {
+                let d = super::dating::parse(config, &taxa)?;
+                Some(
+                    -d.ages
+                        .iter()
+                        .filter(|a| a.minimum < a.maximum)
+                        .map(|a| (a.maximum - a.minimum).ln())
+                        .sum::<f64>(),
+                )
+            } else if let Some(tip) = name
+                .strip_prefix("tip_age_")
+                .and_then(|s| s.parse::<usize>().ok())
+            {
+                let age = taxa.get(tip.wrapping_sub(1)).map(|t| &config["ages"][t]);
+                age.and_then(|a| {
+                    a.as_f64().or_else(|| {
+                        let v = a.as_array()?;
+                        (v.len() == 2 && v[0] == v[1])
+                            .then(|| v[0].as_f64())
+                            .flatten()
+                    })
+                })
+            } else {
+                None
+            };
+            if let Some(expected) = expected {
+                if traces.iter().any(|t| {
+                    t.columns[i]
+                        .values
+                        .iter()
+                        .any(|v| (*v - expected).abs() > 1e-12 * expected.abs().max(1.0))
+                }) {
+                    return Err(format!(
+                        "fixed parameter {name} differs from the recorded dating model"
+                    )
+                    .into());
+                }
+                column["fixed_by_model"] = json!(true);
+            }
+        }
+    }
     let max_difference = clades
         .iter()
         .filter(|c| c["constrained"] == false)
@@ -164,11 +213,16 @@ pub(super) fn summarize(
 
 pub(super) fn thresholds_met(summary: &Value, min_ess: f64, max_rhat: f64) -> bool {
     // At least 1,000 retained draws per chain prevents a tiny accidental match
-    // from terminating a run. Constants and unavailable diagnostics block it.
+    // from terminating a run. Unavailable diagnostics block it, except for
+    // parameters independently verified as fixed by the model.
     summary["retained_per_chain"].as_u64().unwrap_or(0) >= 1000
         && summary["statistics"].as_array().is_some_and(|columns| {
             !columns.is_empty()
+                && columns.iter().any(|s| s["fixed_by_model"] != true)
                 && columns.iter().all(|s| {
+                    if s["fixed_by_model"] == true {
+                        return true;
+                    }
                     s["rhat"].as_f64().is_some_and(|r| r <= max_rhat)
                         && s["ess"].as_array().is_some_and(|values| {
                             values
@@ -218,7 +272,14 @@ pub(super) fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     }
     let constraints: Vec<Vec<String>> =
         serde_json::from_value(first["model"]["monophyly"].clone())?;
-    let summary = summarize(&directories, burnin, &constraints, &|| false, true)?;
+    let summary = summarize(
+        &directories,
+        burnin,
+        &constraints,
+        first["model"].get("dating"),
+        &|| false,
+        true,
+    )?;
     println!("{}", serde_json::to_string_pretty(&summary)?);
     Ok(())
 }
@@ -226,6 +287,20 @@ pub(super) fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn stopping_excludes_verified_fixed_parameters_but_not_stuck_parameters() {
+        let mut summary = json!({"retained_per_chain":1000,"statistics":[
+            {"rhat":1.005,"ess":[300,300],"lag_limit_reached":[false,false]},
+            {"fixed_by_model":true,"rhat":null,"ess":[null,null],"lag_limit_reached":[false,false]}
+        ]});
+        assert!(thresholds_met(&summary, 200.0, 1.01));
+        summary["statistics"][1]["fixed_by_model"] = json!(false);
+        assert!(!thresholds_met(&summary, 200.0, 1.01));
+        summary["statistics"][1]["fixed_by_model"] = json!(true);
+        summary["statistics"][0]["fixed_by_model"] = json!(true);
+        assert!(!thresholds_met(&summary, 200.0, 1.01));
+    }
 
     #[test]
     fn stopping_requires_every_chain_and_statistic_to_be_assessable() {

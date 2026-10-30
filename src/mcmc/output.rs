@@ -23,6 +23,8 @@ pub struct TraceWriter<W: Write> {
     out: W,
     gamma: bool,
     clock: bool,
+    dated: bool,
+    ages: usize,
 }
 
 impl<W: Write> TraceWriter<W> {
@@ -32,18 +34,51 @@ impl<W: Write> TraceWriter<W> {
             out,
             gamma: rates.gamma.is_some(),
             clock: rates.clock.is_some(),
+            dated: rates.mean.is_some(),
+            ages: 0,
         }
+    }
+
+    pub fn resume_sampler(out: W, sampler: &Sampler) -> Self {
+        let mut writer = Self::resume(out, sampler.rates());
+        writer.ages = sampler.dating().map_or(0, |d| d.ages.len());
+        writer
+    }
+
+    pub fn with_sampler(out: W, comments: &[String], sampler: &Sampler) -> io::Result<Self> {
+        Self::header(
+            out,
+            comments,
+            sampler.rates(),
+            sampler.dating().map_or(0, |d| d.ages.len()),
+        )
     }
 
     pub fn new(out: W, comments: &[String]) -> io::Result<Self> {
         Self::with_rates(out, comments, &RateVariation::default())
     }
 
-    pub fn with_rates(mut out: W, comments: &[String], rates: &RateVariation) -> io::Result<Self> {
+    pub fn with_rates(out: W, comments: &[String], rates: &RateVariation) -> io::Result<Self> {
+        Self::header(out, comments, rates, 0)
+    }
+
+    fn header(
+        mut out: W,
+        comments: &[String],
+        rates: &RateVariation,
+        ages: usize,
+    ) -> io::Result<Self> {
         for comment in comments {
             writeln!(out, "# {comment}")?;
         }
-        write!(out, "{}", TRACE_COLUMNS.join("\t"))?;
+        if rates.mean.is_some() {
+            write!(
+                out,
+                "Sample\tposterior\tlikelihood\tprior\tfossilized_birth_death\tclock_rate\tdating_parameter_prior\ttree_height\ttree_length"
+            )?;
+        } else {
+            write!(out, "{}", TRACE_COLUMNS.join("\t"))?;
+        }
         if rates.gamma.is_some() {
             write!(out, "\tgamma_shape\tgamma_prior")?;
         }
@@ -53,11 +88,16 @@ impl<W: Write> TraceWriter<W> {
                 "\tclock_sigma\tclock_rate_prior\tclock_sigma_prior\tmean_branch_rate"
             )?;
         }
+        for tip in 0..ages {
+            write!(out, "\ttip_age_{}", tip + 1)?;
+        }
         writeln!(out)?;
         Ok(Self {
             out,
             gamma: rates.gamma.is_some(),
             clock: rates.clock.is_some(),
+            dated: rates.mean.is_some(),
+            ages,
         })
     }
 
@@ -67,6 +107,7 @@ impl<W: Write> TraceWriter<W> {
         let tree = sampler.tree();
         if self.gamma != sampler.rates().gamma.is_some()
             || self.clock != sampler.rates().clock.is_some()
+            || self.dated != sampler.rates().mean.is_some()
         {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
@@ -80,8 +121,12 @@ impl<W: Write> TraceWriter<W> {
             posterior.likelihood,
             posterior.prior(),
             posterior.tree_prior,
-            birth_death.birth_difference,
-            birth_death.relative_death,
+            sampler.rates().mean.unwrap_or(birth_death.birth_difference),
+            if self.dated {
+                posterior.parameter_prior
+            } else {
+                birth_death.relative_death
+            },
             tree.height(tree.root()),
             tree.tree_length()
         )?;
@@ -98,6 +143,9 @@ impl<W: Write> TraceWriter<W> {
                 posterior.clock_sigma_prior,
                 mean
             )?;
+        }
+        for tip in 0..self.ages {
+            write!(self.out, "\t{}", tree.height(tip))?;
         }
         writeln!(self.out)
     }
@@ -152,11 +200,21 @@ impl<W: Write> TreeWriter<W> {
     pub fn write(&mut self, sample: u64, sampler: &Sampler) -> io::Result<()> {
         let tree = sampler.tree();
         let label = |tip: usize| (tip + 1).to_string();
-        let newick = match &sampler.rates().clock {
-            Some(clock) => {
-                tree.to_newick_with_rates(label, |node| clock.branch_rate(node, tree.root()))
+        let newick = if sampler.dating().is_some() {
+            tree.to_newick_dated(label, |node| {
+                sampler
+                    .rates()
+                    .clock
+                    .as_ref()
+                    .map(|c| c.branch_rate(node, tree.root()))
+            })
+        } else {
+            match &sampler.rates().clock {
+                Some(clock) => {
+                    tree.to_newick_with_rates(label, |node| clock.branch_rate(node, tree.root()))
+                }
+                None => tree.to_newick(label),
             }
-            None => tree.to_newick(label),
         };
         writeln!(self.out, "tree STATE_{sample} = {newick}")
     }

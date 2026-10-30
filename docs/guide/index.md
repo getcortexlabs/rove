@@ -53,3 +53,5 @@ Nothing on this list is documented as available anywhere on this site. The [road
 ## BEAST, as a reference
 
 BEAST is not a dependency. It is the reference for validation and benchmarking: likelihoods are compared at fixed states first, then complete inference runs. BEAST 2 and BEAST X are different code bases, and results for one do not establish results for the other, so comparisons name the implementation and version they ran against.
+
+[Fossil tip dating](./tip-dating) supports fixed ages, age intervals and a clock in time units through the CLI.

@@ -76,6 +76,7 @@ fn interrupt(mut cmd: Command, step: u64, kill: bool) {
 fn pause_crash_and_resume_preserve_all_samples_and_moves() {
     for (kind, matrix, conditioning) in [
         ("binary", MATRIX, "variable"),
+        ("dated", MATRIX, "variable"),
         (
             "multistate",
             include_str!("../fixtures/validation/multistate/matrix.nex"),
@@ -97,6 +98,21 @@ fn pause_crash_and_resume_preserve_all_samples_and_moves() {
             fs::write(root.join("matrix.nex"), matrix).unwrap();
             let configured = |name: &str| {
                 let mut cmd = command(&root, name, chains);
+                if kind == "dated" {
+                    let config = root.join("dating.json");
+                    fs::write(
+                        &config,
+                        serde_json::json!({
+                            "time_unit":"Ma","birth_rate":0.8,"death_rate":0.3,
+                            "fossil_sampling_rate":0.2,"present_sampling":0.7,"origin":4.0,
+                            "clock_rate":0.1,"clock_prior_mean":0.1,
+                            "ages":{"a":0,"b":[0.4,1.2],"c":0,"d":0.7,"e":0}
+                        })
+                        .to_string(),
+                    )
+                    .unwrap();
+                    cmd.arg("--dating").arg(config);
+                }
                 cmd.args(["--conditioning", conditioning]);
                 cmd
             };
@@ -111,6 +127,9 @@ fn pause_crash_and_resume_preserve_all_samples_and_moves() {
             for (i, kill) in [false, true].into_iter().enumerate() {
                 let name = format!("restart-{i}");
                 interrupt(configured(&name), 230, kill);
+                if kind == "dated" {
+                    fs::remove_file(root.join("dating.json")).unwrap();
+                }
                 let output = root.join(&name);
                 let manifest: Value =
                     serde_json::from_slice(&fs::read(output.join("checkpoint.json")).unwrap())

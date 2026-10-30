@@ -53,3 +53,5 @@ Nada de esta lista se documenta como disponible en ningún lugar de este sitio. 
 ## BEAST, como referencia
 
 BEAST no es una dependencia. Es la referencia para validación y benchmarking: primero se comparan verosimilitudes en estados fijos, después ejecuciones de inferencia completas. BEAST 2 y BEAST X son bases de código distintas, y los resultados de una no establecen los de la otra, así que las comparaciones nombran la implementación y la versión contra las que se ejecutaron.
+
+La [datación de fósiles](./tip-dating) admite edades fijas, intervalos y reloj en unidades temporales mediante el CLI.

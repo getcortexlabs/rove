@@ -8,6 +8,8 @@ description: "Simulate morphological matrices from a completed Rove run and comp
 
 This feature is currently available through the Rust CLI. There is no new Mac app screen. No BEAST, Java, R or RevBayes installation is required.
 
+Dated runs are also supported: predictions use the sampled tip ages, global clock rate and relative branch rates. See [fossil tip dating](./tip-dating).
+
 ## Run a check
 
 First inspect sampling and convergence diagnostics. Then supply a completed run directory containing `run.json`, `trace.log` and `trees.nexus`, plus its exact original NEXUS input:

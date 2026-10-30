@@ -77,6 +77,7 @@ fn column(trace: &Trace, name: &str, row: usize) -> Result<f64> {
 fn tree_state(
     source: &rove::summary::nexus::Tree,
     reference: bool,
+    dated: bool,
     trace: &Trace,
     row: usize,
 ) -> Result<(Tree, RateVariation)> {
@@ -109,8 +110,9 @@ fn tree_state(
         }
     }
     let tree = Tree::new(children, heights)?;
-    let rates = if reference {
+    let mut rates = if reference {
         RateVariation {
+            mean: None,
             gamma: Some(GammaRates::new(column(trace, "gamma_shape", row)?)?),
             clock: Some(RelaxedClock::new(
                 column(trace, "clock_sigma", row)?,
@@ -120,6 +122,9 @@ fn tree_state(
     } else {
         RateVariation::default()
     };
+    if dated {
+        rates.mean = Some(column(trace, "clock_rate", row)?);
+    }
     Ok((tree, rates))
 }
 
@@ -258,7 +263,20 @@ pub(super) fn run(args: &[String]) -> Result<()> {
         Some("reference") => true,
         _ => return Err("unsupported model preset".into()),
     };
-    if record["model"]["clock_multiplier"] != 1.0 || record["model"]["mutation_rate"] != 1.0 {
+    let dating = if record["model"]["dating"].is_null() {
+        None
+    } else {
+        Some(super::dating::parse(
+            &record["model"]["dating"],
+            data.taxa(),
+        )?)
+    };
+    let multiplier_matches = if dating.is_some() {
+        record["model"]["clock_multiplier"] == "trace.clock_rate"
+    } else {
+        record["model"]["clock_multiplier"] == 1.0
+    };
+    if !multiplier_matches || record["model"]["mutation_rate"] != 1.0 {
         return Err("unsupported rate multiplier".into());
     }
     let design = Design::new(&data, &partitions, gaps, conditioning)?;
@@ -341,10 +359,10 @@ pub(super) fn run(args: &[String]) -> Result<()> {
             return Err("tree taxa or sample states disagree with the matrix/trace".into());
         }
         if let Some(draws) = selected.get(&row) {
-            let (tree, rates) = tree_state(&raw, reference, &trace, row)?;
+            let (tree, rates) = tree_state(&raw, reference, dating.is_some(), &trace, row)?;
             // Reconstruct the fitted likelihood before trusting the pairing of
             // this tree, branch rates and gamma shape with its trace row.
-            let settings = Settings {
+            let mut settings = Settings {
                 conditioning,
                 ..if reference {
                     Settings::reference()
@@ -352,6 +370,9 @@ pub(super) fn run(args: &[String]) -> Result<()> {
                     Settings::default()
                 }
             };
+            if let Some(dating) = &dating {
+                settings.set_dating(dating.clone());
+            }
             let check =
                 Sampler::with_rates(&partitions, &settings, tree.clone(), rates.clone(), 0)?;
             let expected = column(&trace, "likelihood", row)?;

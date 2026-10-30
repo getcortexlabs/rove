@@ -1,0 +1,16 @@
+{
+  "time_unit": "Ma",
+  "birth_rate": 0.08,
+  "death_rate": 0.03,
+  "fossil_sampling_rate": 0.02,
+  "present_sampling": 0.7,
+  "origin": 50.0,
+  "clock_rate": 0.01,
+  "clock_prior_mean": 0.01,
+  "ages": {
+    "Living A": 0,
+    "Fossil B": [5, 9],
+    "Living C": 0,
+    "Fossil D": 12
+  }
+}

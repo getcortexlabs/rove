@@ -8,6 +8,8 @@ description: "从已完成的 Rove 分析模拟形态学矩阵，并比较配对
 
 目前通过 Rust CLI 使用此功能，Mac 应用尚无新界面。无需安装 BEAST、Java、R 或 RevBayes。
 
+也支持定年运行：预测使用采样的末端年龄、全局时钟速率和分支相对速率。见[化石末端定年](./tip-dating)。
+
 ## 运行检验
 
 先检查抽样和收敛诊断。然后提供包含 `run.json`、`trace.log` 和 `trees.nexus` 的已完成运行目录，以及该分析使用的原始 NEXUS 文件：

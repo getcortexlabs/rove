@@ -144,6 +144,7 @@ pub fn inspect(directory: &Path) -> Result<Value, Box<dyn Error>> {
             "source_sha256": source["sha256"], "source_completion": source["completion"],
             "matrix_sha256": source["run_record"]["input"]["sha256"],
             "rove_version": record["rove_version"],
+            "time_unit": record["time_unit"], "branch_units": record["branch_units"],
         },
     }))
 }

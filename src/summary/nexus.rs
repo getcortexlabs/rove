@@ -456,7 +456,7 @@ impl<'a> Tokens<'a> {
             return Err(Error("tree nesting exceeds 512 levels".into()));
         }
         self.whitespace();
-        let (children, tip, height) = if self.bytes.get(self.offset) == Some(&b'(') {
+        let (children, tip, mut height) = if self.bytes.get(self.offset) == Some(&b'(') {
             self.offset += 1;
             let a = self.node(names, nodes, tips, metadata, depth + 1)?;
             self.expect(b',')?;
@@ -466,7 +466,7 @@ impl<'a> Tokens<'a> {
             let y = nodes[b].height + nodes[b].length;
             if (x - y).abs() > 1e-9 * x.abs().max(y.abs()).max(1e-12) {
                 return Err(Error(
-                    "only ultrametric trees with contemporaneous tips are supported".into(),
+                    "branch lengths and tip heights do not define a consistent time tree".into(),
                 ));
             }
             (Some([a, b]), None, x.max(y))
@@ -482,6 +482,18 @@ impl<'a> Tokens<'a> {
         };
         let mut rate = None;
         let annotations = self.annotations()?;
+        let node_annotation = NodeAnnotations::parse(&annotations)?;
+        if tip.is_some() {
+            height = node_annotation.height.unwrap_or(0.0);
+        }
+        if node_annotation
+            .height
+            .is_some_and(|h| (h - height).abs() > 1e-9 * height.abs().max(1e-12))
+        {
+            return Err(Error(
+                "annotated height disagrees with branch lengths".into(),
+            ));
+        }
         for annotation in &annotations {
             if let Some(fields) = annotation.strip_prefix('&') {
                 for field in fields.split(',') {
@@ -522,16 +534,7 @@ impl<'a> Tokens<'a> {
             return Err(Error("non-finite tree height".into()));
         }
         if let Some(values) = metadata {
-            let annotation = NodeAnnotations::parse(&annotations)?;
-            if annotation
-                .height
-                .is_some_and(|h| (h - height).abs() > 1e-9 * height.abs().max(1e-12))
-            {
-                return Err(Error(
-                    "annotated height disagrees with branch lengths".into(),
-                ));
-            }
-            values.push(annotation);
+            values.push(node_annotation);
         }
         let id = nodes.len();
         nodes.push(Node {

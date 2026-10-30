@@ -169,6 +169,15 @@ pub fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
         Burnin::Percent(p) => ("percent", p as usize),
         Burnin::Samples(n) => ("samples", n),
     };
+    let time_unit = metadata
+        .as_ref()
+        .and_then(|m| m["model"]["dating"]["time_unit"].as_str())
+        .map(str::to_owned);
+    let branch_units = if time_unit.is_some() {
+        "time before present in time_unit; relative branch rate is a separate multiplier; per-sample global clock is in the source trace"
+    } else {
+        "source time lengths; branch rate is a separate multiplier; no calendar calibration inferred"
+    };
     let manifest = json!({
         "schema_version": 1, "status": "completed", "method": "MCC",
         "rove_version": env!("CARGO_PKG_VERSION"),
@@ -185,7 +194,7 @@ pub fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
         "height_policy": if heights == Heights::Keep {"keep"} else {"ca"},
         "height_summary": "conditional means and ranges; CA means and ranges use the MRCA in every retained tree",
         "rate_summary": "conditional arithmetic mean and range when the clade exists; no rate for the root",
-        "branch_units": "source time lengths; branch rate is a separate multiplier; no calendar calibration inferred",
+        "branch_units": branch_units, "time_unit": time_unit,
         "intervals": "ranges are observed minima and maxima, not HPD or credible intervals",
         "taxa": summary.taxa, "distinct_clades": summary.distinct_clades,
         "annotated_tree": "mcc.tree", "raw_trees": "samples.trees",

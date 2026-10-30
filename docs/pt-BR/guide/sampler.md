@@ -6,6 +6,8 @@ description: "Como executar o primeiro amostrador independente do Rove numa matr
 
 `rove sample` executa uma análise de Monte Carlo via cadeias de Markov numa matriz morfológica com caracteres binários e multiestado, sem o BEAST. A configuração padrão usa relógio estrito e uma categoria de taxa. `--model reference` ativa o [modelo de referência](./reference-model), com quatro categorias gama e taxas lognormais explícitas nos ramos.
 
+A [datação de fósseis](./tip-dating) está disponível com `--dating settings.json`. Ela substitui o prior padrão e acrescenta uma escala de tempo; os padrões sem datação descritos abaixo continuam iguais.
+
 ## O modelo padrão
 
 - **Caracteres.** Os caracteres são separados pelo número de estados, com um modelo Mk de frequências iguais por partição e uma categoria de taxa compartilhada. Por padrão, a verossimilhança é condicionada a caracteres variáveis com a [correção Mkv](./kernel#condicionando-a-caracteres-variaveis); `--conditioning none` usa o Mk simples.

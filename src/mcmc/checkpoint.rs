@@ -7,7 +7,7 @@ use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation, RelaxedClock};
 use crate::tree::Tree;
 
-const MAGIC: &[u8; 8] = b"ROVECP04";
+const MAGIC: &[u8; 8] = b"ROVECP05";
 
 impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.
@@ -30,6 +30,9 @@ impl Sampler {
             write_u64(&mut out, children.0 as u64)?;
             write_u64(&mut out, children.1 as u64)?;
             write_f64(&mut out, self.tree.height(node))?;
+        }
+        if let Some(mean) = self.rates.mean {
+            write_f64(&mut out, mean)?;
         }
         if let Some(gamma) = &self.rates.gamma {
             write_f64(&mut out, gamma.shape())?;
@@ -131,10 +134,15 @@ impl Sampler {
             }
             heights.push(read_f64(&mut input)?);
         }
-        if heights[..tips].iter().any(|&h| h != 0.0) {
+        if settings.dating.is_none() && heights[..tips].iter().any(|&h| h != 0.0) {
             return Err(invalid());
         }
         let tree = Tree::new(children, heights).map_err(|_| invalid())?;
+        let mean = if settings.dating.is_some() {
+            Some(read_f64(&mut input)?)
+        } else {
+            None
+        };
         let gamma = if settings.gamma_shape.is_some() {
             Some(GammaRates::new(read_f64(&mut input)?).map_err(|_| invalid())?)
         } else {
@@ -156,7 +164,7 @@ impl Sampler {
             patterns,
             &initial,
             tree,
-            Some(RateVariation { gamma, clock }),
+            Some(RateVariation { mean, gamma, clock }),
             random,
         )
         .map_err(|_| invalid())?;

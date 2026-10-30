@@ -282,6 +282,11 @@ impl Design {
 
 fn validate(tree: &Tree, rates: &RateVariation, tips: usize) -> Result<()> {
     tree.validate().map_err(|e| Error(e.to_string()))?;
+    if rates.mean.is_some_and(|x| !x.is_finite() || x <= 0.0) {
+        return Err(Error(
+            "global clock rate must be positive and finite".into(),
+        ));
+    }
     if tips != tree.tips()
         || rates
             .clock

@@ -261,7 +261,7 @@ impl Tree {
     /// Newick with branch lengths, naming each tip with `label`.
     pub fn to_newick(&self, label: impl Fn(usize) -> String) -> String {
         let mut text = String::new();
-        self.write_newick(self.root, &label, &|_| None, &mut text);
+        self.write_newick(self.root, &label, &|_| None, false, &mut text);
         text.push(';');
         text
     }
@@ -273,7 +273,25 @@ impl Tree {
         rate: impl Fn(usize) -> f64,
     ) -> String {
         let mut text = String::new();
-        self.write_newick(self.root, &label, &|node| Some(rate(node)), &mut text);
+        self.write_newick(
+            self.root,
+            &label,
+            &|node| Some(rate(node)),
+            false,
+            &mut text,
+        );
+        text.push(';');
+        text
+    }
+
+    /// Dated time lengths with explicit node ages; rates are relative branch multipliers.
+    pub fn to_newick_dated(
+        &self,
+        label: impl Fn(usize) -> String,
+        rate: impl Fn(usize) -> Option<f64>,
+    ) -> String {
+        let mut text = String::new();
+        self.write_newick(self.root, &label, &rate, true, &mut text);
         text.push(';');
         text
     }
@@ -283,17 +301,21 @@ impl Tree {
         node: usize,
         label: &impl Fn(usize) -> String,
         rate: &impl Fn(usize) -> Option<f64>,
+        dated: bool,
         text: &mut String,
     ) {
         match self.children[node] {
             None => text.push_str(&label(node)),
             Some((a, b)) => {
                 text.push('(');
-                self.write_newick(a, label, rate, text);
+                self.write_newick(a, label, rate, dated, text);
                 text.push(',');
-                self.write_newick(b, label, rate, text);
+                self.write_newick(b, label, rate, dated, text);
                 text.push(')');
             }
+        }
+        if dated {
+            text.push_str(&format!("[&height={}]", self.height(node)));
         }
         if node != self.root {
             if let Some(rate) = rate(node) {

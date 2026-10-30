@@ -161,11 +161,17 @@ it does not certify topology convergence. See the [sampler guide](https://rove.g
 13. Partition characters by number of states and condition on parsimony-informative
     characters. Done, including ordered Mk and Mkv.
 14. Add posterior predictive simulation and morphology checks. Done in the CLI.
-15. Add marginal likelihoods and the fossilized birth–death prior with tip dates.
+15. Add fossil tip dating with fixed FBD process parameters. Done in the CLI;
+    sampled ancestors and process-parameter inference remain future work.
+    Marginal likelihoods for model comparison remain planned.
 16. Evaluate subtree repeats. Done; experimental and off by default.
 17. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 
 ## Sampling trees
+
+Fossil tip dating is available with `--dating settings.json`, including fixed ages,
+age intervals and an explicit clock in time units. See the [dating guide](https://rove.getcortexlabs.com/guide/tip-dating)
+for fixed-process assumptions, output conventions and validation.
 
 ```sh
 cargo run --release --bin rove -- sample fixtures/reference/20x50/matrix.nex \

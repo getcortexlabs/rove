@@ -11,6 +11,8 @@ use crate::tree::Tree;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Move {
+    TipAge,
+    ClockRateScale,
     /// `Uniform`: a new height for a non-root internal node, uniform between
     /// its older child and its parent.
     NodeHeight,
@@ -42,7 +44,9 @@ pub enum Move {
 }
 
 impl Move {
-    pub const ALL: [Move; 15] = [
+    pub const ALL: [Move; 17] = [
+        Move::TipAge,
+        Move::ClockRateScale,
         Move::NodeHeight,
         Move::SubtreeSlide,
         Move::NarrowExchange,
@@ -62,6 +66,8 @@ impl Move {
 
     pub fn name(self) -> &'static str {
         match self {
+            Self::TipAge => "tip_age",
+            Self::ClockRateScale => "clock_rate_scale",
             Self::NodeHeight => "node_height",
             Self::SubtreeSlide => "subtree_slide",
             Self::NarrowExchange => "narrow_exchange",
@@ -84,7 +90,8 @@ impl Move {
     pub fn initial_tuning(self) -> Option<f64> {
         match self {
             Self::SubtreeSlide => Some(1.0),
-            Self::RootScale
+            Self::ClockRateScale
+            | Self::RootScale
             | Self::TreeScale
             | Self::BirthDifferenceScale
             | Self::RelativeDeathScale
@@ -100,7 +107,8 @@ impl Move {
     pub fn changes_tree(self) -> bool {
         matches!(
             self,
-            Self::NodeHeight
+            Self::TipAge
+                | Self::NodeHeight
                 | Self::SubtreeSlide
                 | Self::NarrowExchange
                 | Self::WideExchange
@@ -116,7 +124,10 @@ impl Move {
         self.changes_tree()
             || matches!(
                 self,
-                Self::GammaShapeScale | Self::BranchRateScale | Self::ClockSigmaRates
+                Self::ClockRateScale
+                    | Self::GammaShapeScale
+                    | Self::BranchRateScale
+                    | Self::ClockSigmaRates
             )
     }
 
@@ -146,6 +157,8 @@ impl Move {
     ) -> Option<f64> {
         let tuning = tuning.unwrap_or(f64::NAN);
         match self {
+            Self::TipAge => None, // Age constraints are owned by the sampler.
+            Self::ClockRateScale => scale(rates.mean.as_mut()?, f64::MAX, tuning, random),
             Self::NodeHeight => node_height(tree, random),
             Self::SubtreeSlide => subtree_slide(tree, tuning, random),
             Self::NarrowExchange => narrow_exchange(tree, random),

@@ -259,10 +259,10 @@ Without an adjacent `run.json`, completion is recorded as **unverified**;
 a syntactically complete file alone cannot prove a run finished. With a run
 record, the command verifies completion, sample count and every sampling interval.
 
-This reader supports Rove's rooted binary, ultrametric trees with contemporaneous
-tips, a translation table and increasing `STATE_` identifiers. Mixed taxa,
+This reader supports Rove's rooted binary time trees, with zero-age tips or explicit fossil
+height annotations, a translation table and increasing `STATE_` identifiers. Mixed taxa,
 missing final `End;`, partial rate annotations and unsupported tree shapes are
-rejected. Fossil tip dates, polytomies and arbitrary external NEXUS blocks are
+rejected. See [fossil tip dating](./tip-dating) for dated outputs. Polytomies and arbitrary external NEXUS blocks are
 not supported. Limits are 4,096 taxa, 512 nesting levels, 2 MiB per statement and
 one million distinct clades or a 128 MiB estimate for clade keys, whichever comes
 first. That estimate is not a hard process-memory cap. Four streaming passes

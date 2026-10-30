@@ -1,6 +1,7 @@
 pub mod ascertainment;
 mod checkpoint;
 pub mod data;
+pub mod dating;
 pub mod diagnostics;
 mod kernel;
 mod layout;

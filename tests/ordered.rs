@@ -321,6 +321,7 @@ fn ordered_fixed_states_match_beast_2_mm_ordinal() {
                 }
             };
             let rates = rove::rates::RateVariation {
+                mean: None,
                 gamma: relaxed.then(|| rove::rates::GammaRates::new(1.0).unwrap()),
                 clock: relaxed.then(|| {
                     rove::rates::RelaxedClock::new(

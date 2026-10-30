@@ -176,7 +176,15 @@ pub(super) fn commit(
     // Paths must still resolve after the app or CLI is launched elsewhere.
     let mut i = 1;
     while i < command.len() {
-        if command[i] == "--output" {
+        if matches!(command[i].as_str(), "--dating" | "--dating-json") {
+            command[i] = "--dating-json".into();
+            command[i + 1] = options
+                .dating
+                .as_ref()
+                .ok_or("missing dating snapshot")?
+                .to_string();
+            i += 2;
+        } else if command[i] == "--output" {
             command[i + 1] = fs::canonicalize(&options.output)?.display().to_string();
             i += 2;
         } else if command[i] == options.matrix.to_string_lossy() {

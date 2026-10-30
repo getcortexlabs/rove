@@ -8,6 +8,8 @@ description: "Simule matrizes morfológicas a partir de uma execução concluíd
 
 O recurso está disponível pelo CLI em Rust. Ainda não há uma tela nova no aplicativo para Mac. Não exige instalação de BEAST, Java, R ou RevBayes.
 
+Execuções com datação também são aceitas: as previsões usam as idades amostradas, a taxa global do relógio e as taxas relativas dos ramos. Veja [datação de fósseis](./tip-dating).
+
 ## Rodar uma checagem
 
 Primeiro examine os diagnósticos de amostragem e convergência. Depois informe a pasta de uma execução concluída, com `run.json`, `trace.log` e `trees.nexus`, junto do NEXUS original exato:

@@ -128,6 +128,7 @@ fn zero_categories_remain_constant_at_overflowing_branch_distances() {
     let patterns = data("#NEXUS\nBEGIN DATA; DIMENSIONS NTAX=2 NCHAR=1; MATRIX a 0 b 1; END;");
     let tree = Tree::new(vec![None, None, Some((0, 1))], vec![0.0, 0.0, 10.0]).unwrap();
     let rates = RateVariation {
+        mean: None,
         gamma: Some(GammaRates::new(0.001).unwrap()),
         clock: Some(RelaxedClock::new(1.0, vec![1e308; 2]).unwrap()),
     };
@@ -154,6 +155,7 @@ fn complete_reference_states_match_beast_component_by_component() {
             ..Settings::reference()
         };
         let rates = RateVariation {
+            mean: None,
             gamma: Some(GammaRates::new(state.gamma_shape).unwrap()),
             clock: Some(RelaxedClock::new(state.clock_sigma, state.branch_rates.to_vec()).unwrap()),
         };

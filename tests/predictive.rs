@@ -119,6 +119,7 @@ fn simulated_patterns_match_closed_form_probabilities_and_conditioned_mixtures()
     ] {
         let rates = if mixture {
             RateVariation {
+                mean: None,
                 gamma: Some(GammaRates::new(0.35).unwrap()),
                 clock: Some(RelaxedClock::new(0.7, vec![0.3, 1.2, 2.0, 0.7, 1.5, 0.8]).unwrap()),
             }

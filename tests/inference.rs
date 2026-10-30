@@ -87,6 +87,7 @@ fn inference_cases_match_beast_before_comparing_chains() {
             state.name
         );
         let rates = RateVariation {
+            mean: None,
             gamma: Some(GammaRates::new(state.shape).unwrap()),
             clock: Some(RelaxedClock::new(state.sigma, state.rates.to_vec()).unwrap()),
         };

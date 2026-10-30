@@ -1,0 +1,22 @@
+{
+  "reference": {
+    "BEAST.base": "2.7.8",
+    "SA": "2.1.1",
+    "SA_commit": "3f01d8f045190585e984fab1d26b216c14c2e042",
+    "SA_download": "https://github.com/CompEvol/sampled-ancestors/releases/download/v2.1.1/SA.v2.1.1.zip"
+  },
+  "java": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Temurin-17.0.15+6 (build 17.0.15+6)\nOpenJDK 64-Bit Server VM Temurin-17.0.15+6 (build 17.0.15+6, mixed mode, sharing)\n",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "sha256": {
+    "beast_base_jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+    "sa_jar": "8575b806f51d714c1a40a8089c6dc367a009e843a53ee77b6ef6736752f5da94",
+    "sa_zip": "1753e7cc7a9edc9267420eaad12ef5a94d15fd1930da4a53c56b27ac812eee46",
+    "oracle_source": "9e7e19668ad237af0d51e8e01f53fd1eae75e5b580ed5b6c8cdee188a4ce4bd3",
+    "oracle_output": "a602d052b94c528e581bbfbc8934428520d8954b6461db6dda6720c44b4fd137"
+  },
+  "tree": "((A,B),C); C has age_a; node order A,B,C,(A,B),root",
+  "removal_probability": 0,
+  "condition_on_root": false,
+  "condition_on_sampling": false,
+  "condition_on_rho_sampling": false
+}

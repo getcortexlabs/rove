@@ -123,6 +123,7 @@ fn check(
         ..Settings::reference()
     };
     let rates = RateVariation {
+        mean: None,
         gamma: Some(GammaRates::new(number(&state["gamma_shape"]))?),
         clock: Some(RelaxedClock::new(
             number(&state["clock_sigma"]),

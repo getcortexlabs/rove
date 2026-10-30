@@ -266,10 +266,10 @@ como **unverified**: un archivo sintácticamente completo no prueba que la
 ejecución haya terminado. Con metadatos, se verifican finalización, cantidad e
 intervalos de todas las muestras.
 
-Se admiten árboles de Rove enraizados, binarios y ultramétricos, con puntas
-contemporáneas, tabla de traducción e identificadores `STATE_` crecientes.
+Se admiten árboles temporales de Rove enraizados y binarios, con puntas de edad cero
+o alturas fósiles explícitas, tabla de traducción e identificadores `STATE_` crecientes.
 Se rechazan taxones mezclados, ausencia de `End;`, anotaciones de tasas parciales
-y formas no compatibles. No se admiten fechas fósiles en las puntas, politomías
+y formas no compatibles. Consulte [datación de fósiles](./tip-dating). No se admiten politomías
 ni bloques NEXUS externos arbitrarios. Límites: 4.096 taxones, 512 niveles,
 2 MiB por instrucción y un millón de clados distintos o una estimación de
 128 MiB para sus claves, lo que se alcance primero. Esta estimación no es un

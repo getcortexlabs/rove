@@ -149,6 +149,34 @@ fn steps_do_not_allocate() {
             "informative conditioning"
         );
     }
+    let mut dated = Settings::reference();
+    dated.set_dating(rove::dating::Dating {
+        process: rove::dating::FossilizedBirthDeath {
+            birth: 0.8,
+            death: 0.3,
+            fossil_sampling: 0.2,
+            present_sampling: 0.7,
+            origin: 4.0,
+        },
+        ages: (0..20)
+            .map(|i| rove::dating::TipAge {
+                minimum: if i % 2 == 0 { 0.0 } else { 0.4 },
+                maximum: if i % 2 == 0 { 0.0 } else { 1.2 },
+            })
+            .collect(),
+        clock_rate: 0.1,
+        clock_prior_mean: Some(0.1),
+    });
+    let mut sampler = Sampler::new(&patterns, &dated, 17).unwrap();
+    for _ in 0..100 {
+        sampler.step();
+    }
+    COUNTING.store(true, Ordering::Relaxed);
+    for _ in 0..20_000 {
+        sampler.step();
+    }
+    COUNTING.store(false, Ordering::Relaxed);
+    assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "dated relaxed clock");
     let ordered = nexus::parse(include_str!("../fixtures/validation/ordered/matrix.nex"))
         .unwrap()
         .partition_by_states(GapTreatment::Reject)

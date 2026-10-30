@@ -3,7 +3,8 @@
 //!
 //! The model is Mk, optionally conditioned on variable (Mkv) or informative characters,
 //! with one rate or four gamma categories, and a strict or lognormal relaxed
-//! clock. The clock-rate and mutation-rate multipliers are fixed at one.
+//! clock. Undated presets fix the clock and mutation-rate multipliers at one.
+//! Optional tip dating uses the FBD density and an explicit global clock rate.
 //! The tree prior is the birth–death prior in
 //! `speciation`, with Uniform(0, `birth_difference_upper`) on λ − μ and
 //! Uniform(0, 1) on μ / λ. Monophyly constraints restrict the topology.
@@ -32,6 +33,7 @@ pub use moves::Move;
 pub enum Error {
     /// A tree needs at least two taxa.
     TooFewTaxa(usize),
+    Dating(String),
     /// Mk needs at least two states.
     States(usize),
     /// Partitions must be nonempty and contain the same taxa in the same order.
@@ -57,6 +59,7 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::Dating(error) => f.write_str(error),
             Self::Rates(error) => error.fmt(f),
             Self::RateMove(kind) => write!(f, "{} needs its rate model to be enabled", kind.name()),
             Self::TooFewTaxa(taxa) => write!(f, "a tree needs at least two taxa, not {taxa}"),
@@ -109,11 +112,12 @@ pub enum Conditioning {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Settings {
+    pub dating: Option<crate::dating::Dating>,
     pub conditioning: Conditioning,
     /// Four midpoint gamma categories, starting at this shape; None uses one rate.
     pub gamma_shape: Option<f64>,
     /// Explicit lognormal branch rates, starting at 0.5 with this sigma.
-    /// None uses a strict clock. Both clock-rate multipliers are fixed at one.
+    /// None uses a strict clock. Dating supplies a separate global clock rate.
     pub clock_sigma: Option<f64>,
     /// Ignore the data: the chain samples the prior.
     pub sample_from_prior: bool,
@@ -138,6 +142,7 @@ impl Default for Settings {
     /// BEAST 2.7.8 recorded in the repository.
     fn default() -> Self {
         Self {
+            dating: None,
             conditioning: Conditioning::Variable,
             gamma_shape: None,
             clock_sigma: None,
@@ -168,6 +173,25 @@ impl Default for Settings {
 }
 
 impl Settings {
+    pub fn set_dating(&mut self, dating: crate::dating::Dating) {
+        self.weights.retain(|(m, _)| {
+            !matches!(
+                m,
+                Move::BirthDifferenceScale
+                    | Move::RelativeDeathScale
+                    | Move::TipAge
+                    | Move::ClockRateScale
+            )
+        });
+        if dating.ages.iter().any(|a| a.minimum < a.maximum) {
+            self.weights.push((Move::TipAge, 10.0));
+        }
+        if dating.clock_prior_mean.is_some() {
+            self.weights.push((Move::ClockRateScale, 3.0));
+        }
+        self.dating = Some(dating);
+    }
+
     /// The reference model, with classical tree moves and three scale moves
     /// instead of ORC's adaptive mixtures. Monophyly must be set explicitly.
     pub fn reference() -> Self {
@@ -394,6 +418,7 @@ fn category_distance(distance: f64, rate: f64) -> f64 {
 }
 
 pub struct Sampler {
+    dating: Option<crate::dating::Dating>,
     tree: Tree,
     rates: RateVariation,
     stored_rates: RateVariation,
@@ -433,15 +458,19 @@ impl Sampler {
         if tips < 2 {
             return Err(Error::TooFewTaxa(tips));
         }
-        let tree = Tree::random(
+        let mut tree = Tree::random(
             tips,
             &check_constraints(&settings.monophyly, tips)?,
             &mut random,
         );
+        if let Some(dating) = &settings.dating {
+            dating.validate(tips).map_err(Error::Dating)?;
+            dating.initialize(&mut tree);
+        }
         Self::from_tree(patterns, settings, tree, None, random)
     }
 
-    /// A chain that starts from `tree`, whose tips must be at height zero.
+    /// A chain from `tree`; nonzero tips require matching dating settings.
     pub fn with_tree(
         patterns: impl AsRef<[Patterns]>,
         settings: &Settings,
@@ -483,13 +512,17 @@ impl Sampler {
         if let Some(p) = patterns.iter().find(|p| p.symbols().len() < 2) {
             return Err(Error::States(p.symbols().len()));
         }
-        assert!(
-            (0..tips).all(|t| tree.height(t) == 0.0),
-            "tips must be at height zero"
-        );
+        if let Some(dating) = &settings.dating {
+            dating.validate(tips).map_err(Error::Dating)?;
+        } else if (0..tips).any(|t| tree.height(t) != 0.0) {
+            return Err(Error::Dating(
+                "nonzero tip ages require dating settings".into(),
+            ));
+        }
         let rates = match given_rates {
             Some(rates) => rates,
             None => RateVariation {
+                mean: settings.dating.as_ref().map(|d| d.clock_rate),
                 gamma: settings
                     .gamma_shape
                     .map(GammaRates::new)
@@ -502,6 +535,13 @@ impl Sampler {
                     .map_err(Error::Rates)?,
             },
         };
+        if rates.mean.is_some() != settings.dating.is_some()
+            || rates.mean.is_some_and(|x| !x.is_finite() || x <= 0.0)
+        {
+            return Err(Error::Dating(
+                "clock rate does not match dating settings".into(),
+            ));
+        }
         if rates.gamma.is_some() != settings.gamma_shape.is_some() {
             return Err(Error::Rates(rates::Error::Shape));
         }
@@ -514,6 +554,21 @@ impl Sampler {
             return Err(Error::Rates(rates::Error::BranchRates));
         }
         for &(kind, weight) in &settings.weights {
+            if weight > 0.0
+                && ((settings.dating.is_some()
+                    && matches!(kind, Move::BirthDifferenceScale | Move::RelativeDeathScale))
+                    || (kind == Move::TipAge && settings.dating.is_none())
+                    || (kind == Move::ClockRateScale
+                        && settings
+                            .dating
+                            .as_ref()
+                            .is_none_or(|d| d.clock_prior_mean.is_none())))
+            {
+                return Err(Error::Dating(format!(
+                    "{} is not available with these dating settings",
+                    kind.name()
+                )));
+            }
             if weight > 0.0
                 && ((kind == Move::GammaShapeScale && rates.gamma.is_none())
                     || (matches!(
@@ -580,6 +635,7 @@ impl Sampler {
                 .collect::<Result<Vec<_>, _>>()?
         };
         let mut sampler = Self {
+            dating: settings.dating.clone(),
             stored_tree: tree.clone(),
             stored_rates: rates.clone(),
             rates,
@@ -613,6 +669,10 @@ impl Sampler {
             return Err(Error::InitialState);
         }
         Ok(sampler)
+    }
+
+    pub fn dating(&self) -> Option<&crate::dating::Dating> {
+        self.dating.as_ref()
     }
 
     pub fn rates(&self) -> &RateVariation {
@@ -652,8 +712,13 @@ impl Sampler {
         };
         Posterior {
             likelihood: 0.0,
-            tree_prior: self.birth_death.log_density(&self.tree),
-            parameter_prior: parameters,
+            tree_prior: self.dating.as_ref().map_or_else(
+                || self.birth_death.log_density(&self.tree),
+                |d| d.process.log_density(&self.tree),
+            ),
+            parameter_prior: self.dating.as_ref().map_or(parameters, |d| {
+                d.log_parameter_prior(&self.tree, self.rates.mean.unwrap_or(1.0))
+            }),
             gamma_prior: self.rates.gamma.as_ref().map_or(0.0, GammaRates::log_prior),
             clock_rate_prior: self
                 .rates
@@ -711,14 +776,20 @@ impl Sampler {
                 correction.store();
             }
         }
-        let proposal = kind.propose(
-            &mut self.tree,
-            &mut self.birth_death,
-            &mut self.rates,
-            self.birth_difference_upper,
-            self.operators[index].tuning,
-            &mut self.random,
-        );
+        let proposal = if kind == Move::TipAge {
+            self.dating
+                .as_ref()
+                .and_then(|d| d.propose_age(&mut self.tree, &mut self.random))
+        } else {
+            kind.propose(
+                &mut self.tree,
+                &mut self.birth_death,
+                &mut self.rates,
+                self.birth_difference_upper,
+                self.operators[index].tuning,
+                &mut self.random,
+            )
+        };
         let valid = match proposal {
             Some(_) if kind.changes_topology() && !self.satisfies_constraints() => None,
             other => other,

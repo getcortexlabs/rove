@@ -269,10 +269,10 @@ Sem `run.json` ao lado da entrada, a conclusão é registrada como **unverified*
 um arquivo sintaticamente completo não comprova que a execução terminou.
 Com o registro, o comando verifica conclusão, contagem e cada intervalo amostrado.
 
-O leitor aceita árvores do Rove enraizadas, binárias e ultramétricas, com pontas
-contemporâneas, tabela de tradução e identificadores `STATE_` crescentes.
+O leitor aceita árvores temporais do Rove enraizadas e binárias, com pontas na idade zero
+ou alturas explícitas de fósseis, tabela de tradução e identificadores `STATE_` crescentes.
 Táxons misturados, ausência de `End;`, taxas incompletas e formatos de árvore
-não suportados são rejeitados. Datas de fósseis nas pontas, politomias e blocos
+não suportados são rejeitados. Veja [datação de fósseis](./tip-dating). Politomias e blocos
 NEXUS externos arbitrários não são suportados. Os limites são 4.096 táxons,
 512 níveis, 2 MiB por comando e um milhão de clados distintos ou uma estimativa
 de 128 MiB para suas chaves, o que ocorrer primeiro. Essa estimativa não é um

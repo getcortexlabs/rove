@@ -300,6 +300,7 @@ pub(super) fn run(
                             &directories,
                             options.burnin,
                             &options.monophyly,
+                            options.dating.as_ref(),
                             &|| cancellation.requested(),
                             false,
                         ) {
@@ -370,6 +371,7 @@ pub(super) fn run(
             &directories,
             options.burnin,
             &options.monophyly,
+            options.dating.as_ref(),
             &|| cancellation.requested(),
             false,
         ) {

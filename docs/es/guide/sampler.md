@@ -6,6 +6,8 @@ description: "Cómo ejecutar el primer muestreador independiente de Rove sobre u
 
 `rove sample` ejecuta un análisis de Monte Carlo mediante cadenas de Markov sobre una matriz morfológica con caracteres binarios y multiestado, sin BEAST. La configuración predeterminada usa reloj estricto y una categoría de tasa. `--model reference` activa el [modelo de referencia](./reference-model), con cuatro categorías gamma y tasas lognormales explícitas por rama.
 
+La [datación de fósiles](./tip-dating) está disponible con `--dating settings.json`. Sustituye el prior predeterminado y añade una escala temporal; los valores sin datación descritos a continuación no cambian.
+
 ## El modelo predeterminado
 
 - **Caracteres.** Los caracteres se agrupan por número de estados, con un modelo Mk de frecuencias iguales por partición y una categoría de tasa compartida. Por defecto, la verosimilitud se condiciona a caracteres variables con la [corrección Mkv](./kernel#condicionar-a-caracteres-variables); `--conditioning none` usa Mk sin condicionar.

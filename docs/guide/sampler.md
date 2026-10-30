@@ -6,6 +6,8 @@ description: "How to run Rove's first standalone sampler on a morphological matr
 
 `rove sample` runs a Markov chain Monte Carlo analysis of a morphological matrix with binary and multistate characters without BEAST. The default preset uses a strict clock and one rate category. `--model reference` enables the [reference model](./reference-model), with four gamma categories and explicit lognormal branch rates.
 
+[Fossil tip dating](./tip-dating) is available with `--dating settings.json`. It replaces the default tree prior and adds a time scale; the undated defaults below are unchanged.
+
 ## The default model
 
 - **Characters.** Characters are partitioned by their number of states, with one equal-frequency Mk model per partition and a shared rate category. By default the likelihood is conditioned on variable characters with the [Mkv correction](./kernel#conditioning-on-variable-characters); `--conditioning none` uses plain Mk.
