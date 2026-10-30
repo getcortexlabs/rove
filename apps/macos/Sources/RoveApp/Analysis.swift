@@ -109,6 +109,7 @@ enum MatrixInspector {
 }
 
 struct AnalysisSettings: Codable, Equatable, Sendable {
+  var dating = DatingSettings()
   var clock = "reference"
   var conditioning = "variable"
   var partitioning = "observed"
@@ -122,12 +123,13 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   init() {}
 
   private enum CodingKeys: String, CodingKey {
-    case clock, conditioning, partitioning, steps, sampleEvery, seed, gapsAsMissing, chains,
+    case dating, clock, conditioning, partitioning, steps, sampleEvery, seed, gapsAsMissing, chains,
       stopWhenConverged
   }
 
   init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
+    dating = try values.decodeIfPresent(DatingSettings.self, forKey: .dating) ?? DatingSettings()
     clock = try values.decode(String.self, forKey: .clock)
     conditioning = try values.decode(String.self, forKey: .conditioning)
     partitioning = try values.decodeIfPresent(String.self, forKey: .partitioning) ?? "declared"
@@ -155,11 +157,18 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     guard steps > 0, sampleEvery > 0, steps % sampleEvery == 0 else {
       return "The sampling interval must divide the number of steps exactly."
     }
-    return nil
+    return dating.validationError()
   }
 
-  func arguments(matrix: URL, output: URL, monophyly: [[String]] = []) -> [String] {
-    [
+  func arguments(matrix: URL, output: URL, monophyly: [[String]] = [], datingFile: URL? = nil)
+    throws -> [String]
+  {
+    var datingArguments: [String] = []
+    if let model = try dating.model() {
+      datingArguments =
+        try datingFile.map { ["--dating", $0.path] } ?? ["--dating-json", model.json()]
+    }
+    return [
       "sample", matrix.path, "--output", output.path, "--seed", seed,
       "--steps", String(steps), "--sample-every", String(sampleEvery),
       "--model", clock, "--conditioning", conditioning,
@@ -168,10 +177,14 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     ] + (chains > 1 ? ["--chains", String(chains)] : [])
       + (stopWhenConverged ? ["--stop-when-converged"] : [])
       + monophyly.flatMap { ["--monophyly", $0.joined(separator: ",")] }
+      + datingArguments
   }
 
-  func command(executable: URL, matrix: URL, output: URL, monophyly: [[String]] = []) -> String {
-    ([executable.path] + arguments(matrix: matrix, output: output, monophyly: monophyly)).map {
+  func command(executable: URL, matrix: URL, output: URL, monophyly: [[String]] = []) throws
+    -> String
+  {
+    ([executable.path] + (try arguments(matrix: matrix, output: output, monophyly: monophyly))).map
+    {
       value in
       "'" + value.replacingOccurrences(of: "'", with: "'\\''") + "'"
     }.joined(separator: " ")
@@ -196,7 +209,7 @@ struct AnalysisDraft: Codable, Sendable {
     matrix: URL, report: MatrixReport, settings: AnalysisSettings,
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
-    formatVersion = 2
+    formatVersion = settings.dating.enabled ? 3 : 2
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -220,11 +233,13 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard [1, 2].contains(formatVersion), (matrixPath as NSString).isAbsolutePath,
+    guard [1, 2, 3].contains(formatVersion),
+      formatVersion >= 3 || !settings.dating.enabled, (matrixPath as NSString).isAbsolutePath,
       matrixSHA256.count == 64,
       matrixSHA256.utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) })
     else { throw ImportError.message("This setup has an unsupported or invalid format.") }
     if let issue = settings.validationError { throw ImportError.message(issue) }
+    if let issue = settings.dating.validationError(taxa: taxa) { throw ImportError.message(issue) }
     if formatVersion == 1 {
       guard outgroup == nil else {
         throw ImportError.message("This setup has an unsupported or invalid format.")
@@ -241,6 +256,9 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validateTaxa(_ actual: [String]) throws {
+    if let issue = settings.dating.validationError(taxa: actual) {
+      throw ImportError.message(issue)
+    }
     if let taxa, taxa != actual {
       throw ImportError.message("The saved terminals do not match the original matrix.")
     }

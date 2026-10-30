@@ -211,8 +211,13 @@ struct TreeExplorerView: View {
       metric("Posterior support", node.posterior)
       metric("Displayed height", node.height)
       metric("Incoming branch", node.parent == nil ? nil : node.length)
-      Text(strings("Heights and branches use source time units, not substitutions."))
-        .foregroundStyle(Lab.secondary).fixedSize(horizontal: false, vertical: true)
+      Text(
+        model.document?.summary.timeUnit.map {
+          strings("Heights and branches are measured in %@.", $0)
+        }
+          ?? strings("Heights and branches use source time units, not substitutions.")
+      )
+      .foregroundStyle(Lab.secondary).fixedSize(horizontal: false, vertical: true)
       if node.children != nil {
         HStack(spacing: 12) {
           Button(strings(model.collapsed.contains(node.id) ? "Expand clade" : "Collapse clade")) {

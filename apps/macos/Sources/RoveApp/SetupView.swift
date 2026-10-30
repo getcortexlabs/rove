@@ -19,7 +19,7 @@ struct SetupView: View {
           Text(strings("Evolutionary clock")).font(.system(size: 13, weight: .semibold))
           Spacer()
           help(
-            "The clock links branch duration to expected character changes. These models have no fossil ages or calendar dates."
+            "The clock links branch duration to expected character changes. Enable fossil dating below to supply ages and a time scale."
           )
         }
         HStack(spacing: 14) {
@@ -35,6 +35,8 @@ struct SetupView: View {
           )
         }
       }
+
+      DatingSection(workspace: workspace)
 
       LabPanel {
         VStack(alignment: .leading, spacing: 15) {
@@ -260,7 +262,10 @@ struct ReviewView: View {
             "Evolutionary clock",
             workspace.settings.clock == "reference"
               ? "Lognormal relaxed clock · 4 gamma categories" : "Strict clock · 1 rate category")
-          row("Tree prior", "Birth–death · all tips at height zero")
+          row(
+            "Tree prior",
+            workspace.settings.dating.enabled
+              ? "Fossilized birth–death · fixed process" : "Birth–death · all tips at height zero")
           rule
           row(
             "Chain",
@@ -273,6 +278,9 @@ struct ReviewView: View {
         }
       }
 
+      if workspace.settings.dating.enabled {
+        LabPanel { DatingSummary(dating: workspace.settings.dating, strings: strings) }
+      }
       LabPanel {
         ConstraintSummary(
           outgroup: workspace.outgroup, taxa: report.allTaxa,

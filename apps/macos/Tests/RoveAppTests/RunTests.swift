@@ -51,7 +51,7 @@ struct RunTests {
     let direct = directory.appendingPathComponent("direct")
     let child = Process()
     child.executableURL = executable
-    child.arguments = request.draft.settings.arguments(
+    child.arguments = try request.draft.settings.arguments(
       matrix: URL(fileURLWithPath: request.draft.matrixPath), output: direct,
       monophyly: request.draft.monophyly)
     child.standardOutput = FileHandle.nullDevice

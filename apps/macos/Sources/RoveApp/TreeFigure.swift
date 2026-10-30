@@ -90,9 +90,9 @@ struct TreeFigure: Sendable {
     return (value, value / height * branchWidth)
   }
   var scaleLabel: String {
-    scale.value > 0
-      ? strings("%@ source time units", Self.number(scale.value))
-      : strings("All branch lengths are zero")
+    guard scale.value > 0 else { return strings("All branch lengths are zero") }
+    if let unit = tree.summary.timeUnit { return "\(Self.number(scale.value)) \(unit)" }
+    return strings("%@ source time units", Self.number(scale.value))
   }
 
   func write(to url: URL, runName: String, protectedFiles: [URL]) throws {

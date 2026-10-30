@@ -9,19 +9,22 @@ struct RunRequest: Sendable {
   let draft: AnalysisDraft
   var resume = false
   var output: URL { directory.appendingPathComponent("results") }
+  var datingFile: URL { directory.appendingPathComponent("dating.json") }
   var arguments: [String] {
-    if resume {
-      return [
-        "sample", "--resume", output.path, "--events-json", "--cancel-on-stdin-close",
-        "--expect-input-sha256", draft.matrixSHA256,
-      ]
+    get throws {
+      if resume {
+        return [
+          "sample", "--resume", output.path, "--events-json", "--cancel-on-stdin-close",
+          "--expect-input-sha256", draft.matrixSHA256,
+        ]
+      }
+      return try draft.settings.arguments(
+        matrix: URL(fileURLWithPath: draft.matrixPath), output: output,
+        monophyly: draft.constraints, datingFile: datingFile) + [
+          "--events-json", "--cancel-on-stdin-close", "--expect-input-sha256", draft.matrixSHA256,
+          "--print-every", String(max(1, min(100_000, draft.settings.steps / 100))),
+        ]
     }
-    return draft.settings.arguments(
-      matrix: URL(fileURLWithPath: draft.matrixPath), output: output,
-      monophyly: draft.constraints) + [
-        "--events-json", "--cancel-on-stdin-close", "--expect-input-sha256", draft.matrixSHA256,
-        "--print-every", String(max(1, min(100_000, draft.settings.steps / 100))),
-      ]
   }
 }
 
@@ -132,6 +135,9 @@ final class RunProcess: @unchecked Sendable {
       guard flock(descriptor, LOCK_EX | LOCK_NB) == 0 else { throw RunFailure.runInUse }
       if !request.resume {
         try request.draft.write(to: request.directory.appendingPathComponent("setup.rove.json"))
+        if let model = try request.draft.settings.dating.model() {
+          try Data(model.json().utf8).write(to: request.datingFile, options: .atomic)
+        }
         try writeRecord(request, status: "partial", result: nil, began: began, step: nil)
       }
       if cancellationRequested {
@@ -176,7 +182,7 @@ final class RunProcess: @unchecked Sendable {
       }
       let child = Process()
       child.executableURL = request.executable
-      child.arguments = request.arguments
+      child.arguments = try request.arguments
       child.standardOutput = pipe
       child.standardError = stderr
       child.standardInput = owner

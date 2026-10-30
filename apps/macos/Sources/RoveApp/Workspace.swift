@@ -99,7 +99,15 @@ final class Workspace {
       }
     return conditioningError
       ?? settings.validationError
+      ?? settings.dating.validationError(taxa: report.allTaxa)
       ?? GroupConstraints.validate(monophyly, taxa: report.allTaxa, outgroup: outgroup)
+  }
+
+  func setDatingEnabled(_ enabled: Bool) {
+    if enabled && settings.dating.ages.isEmpty, let taxa = report?.allTaxa {
+      settings.dating.ages = Dictionary(uniqueKeysWithValues: taxa.map { ($0, TipAgeInput()) })
+    }
+    settings.dating.enabled = enabled
   }
 
   func canOpen(_ destination: WorkspacePage) -> Bool {
@@ -238,11 +246,15 @@ final class Workspace {
     let output = FileManager.default.homeDirectoryForCurrentUser
       .appendingPathComponent("Rove Runs")
       .appendingPathComponent("analysis-\(UUID().uuidString.prefix(8))")
-    let command = settings.command(
-      executable: executable, matrix: file, output: output, monophyly: constraints)
-    NSPasteboard.general.clearContents()
-    NSPasteboard.general.setString(command, forType: .string)
-    notice = "Command copied. Paste it in Terminal to run this analysis."
+    do {
+      let command = try settings.command(
+        executable: executable, matrix: file, output: output, monophyly: constraints)
+      NSPasteboard.general.clearContents()
+      NSPasteboard.general.setString(command, forType: .string)
+      notice = "Command copied. Paste it in Terminal to run this analysis."
+    } catch {
+      self.error = (error as? ImportError)?.errorDescription ?? "The setup could not be saved."
+    }
   }
 
   func open(_ url: URL) {

@@ -38,6 +38,7 @@ struct EngineRecord: Decodable, Sendable {
     let seed: UInt64
   }
   struct Model: Decodable, Sendable {
+    let dating: EngineDatingModel?
     let monophyly: [[String]]
     let preset: String
     let partitioning: String?
@@ -74,7 +75,10 @@ struct EngineRecord: Decodable, Sendable {
     guard let conditioningIndex = command.firstIndex(of: "--conditioning"),
       command.indices.contains(conditioningIndex + 1)
     else { return false }
+    let expectedDating: EngineDatingModel?
+    do { expectedDating = try draft.settings.dating.model() } catch { return false }
     return draft.settings.validationError == nil && input.sha256 == draft.matrixSHA256
+      && model.dating == expectedDating
       && input.gaps == (draft.settings.gapsAsMissing ? "missing" : "reject")
       && model.preset == draft.settings.clock
       && (model.partitioning ?? "declared") == draft.settings.partitioning

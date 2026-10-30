@@ -44,6 +44,20 @@ It does not edit matrices. Pause saves the current sampled state, and History ca
 resume it using the same matrix, settings and engine. Interrupted runs can recover
 the last committed checkpoint. Saved MCC summaries open in a native tree explorer. Completion
 means the requested steps finished and output metadata was verified, not convergence.
+Fossil dating is available in Model → A place in time. The searchable age editor
+assigns present-day, fixed or interval ages to the complete parsed terminal list.
+Process rates, present-day sampling, origin and clock fields start empty. The app
+validates decimal input and age bounds before review, writes a per-run `dating.json`
+and passes it to the bundled engine. Copied terminal commands embed the same JSON.
+
+Dated setups use format 3; older apps reject them instead of silently dropping ages.
+Undated setups still use format 2, and formats 1 and 2 remain readable. Review,
+History and setup reuse preserve the full dating configuration. Completion checks
+compare that configuration with `run.json`; checkpoint recovery checks the embedded
+configuration and does not depend on the original `dating.json`. Annotated tree
+scales use the recorded time unit, and chain comparisons label fixed parameters.
+See the [tip-dating guide](../../docs/guide/tip-dating.md) for model limits.
+
 The setup format is a preview format, not a configuration accepted by the CLI.
 The app supports English and Brazilian Portuguese, with a dark appearance.
 Open Settings from the sidebar or Command-comma to follow the Mac's language
@@ -98,7 +112,7 @@ taxa. Imposed support is not independent evidence. Changing the setup affects a
 new run, never reroots saved trees. The outgroup is a tip, not the ancestral root;
 branch rotation or vertical ordering in a viewer does not determine rooting.
 
-New setup records use format 2: `taxa` stores the complete terminal list,
+Undated setup records use format 2: `taxa` stores the complete terminal list,
 `outgroup` is optional, `monophyly` retains manual groups, and `appliedMonophyly`
 records the derived constraints sent through `--monophyly`. Validation checks
 these fields agree, then verifies the terminal list against the fingerprint-checked

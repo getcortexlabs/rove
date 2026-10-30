@@ -58,11 +58,19 @@ struct ChainResultsView: View {
             ForEach(report.statistics) { statistic in
               GridRow {
                 Text(statistic.name).foregroundStyle(Lab.secondary)
-                Text(number(statistic.rhat, digits: 3))
-                  .foregroundStyle((statistic.rhat ?? .infinity) <= 1.01 ? Lab.ice : Lab.coral)
-                  .help(
-                    strings(
-                      statistic.rhatReason == "constant"
+                Text(
+                  statistic.fixedByModel == true
+                    ? strings("Fixed") : number(statistic.rhat, digits: 3)
+                )
+                .foregroundStyle(
+                  statistic.fixedByModel == true
+                    ? Lab.secondary : ((statistic.rhat ?? .infinity) <= 1.01 ? Lab.ice : Lab.coral)
+                )
+                .help(
+                  strings(
+                    statistic.fixedByModel == true
+                      ? "Fixed by the model; sampling diagnostics do not apply."
+                      : statistic.rhatReason == "constant"
                         ? "Constant samples; R-hat is unavailable."
                         : "Unavailable diagnostics do not count as agreement."))
                 ForEach(0..<settings.chains, id: \.self) { chain in
@@ -70,7 +78,9 @@ struct ChainResultsView: View {
                     number(statistic.ess[chain], digits: 0)
                       + (statistic.lagLimitReached[chain] ? " *" : "")
                   )
-                  .foregroundStyle((statistic.ess[chain] ?? 0) >= 200 ? Lab.ice : Lab.coral)
+                  .foregroundStyle(
+                    statistic.fixedByModel == true
+                      ? Lab.secondary : ((statistic.ess[chain] ?? 0) >= 200 ? Lab.ice : Lab.coral))
                 }
               }.font(.system(size: 11, design: .monospaced)).monospacedDigit()
             }

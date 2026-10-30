@@ -8,6 +8,7 @@ struct ChainComparison: Decodable, Sendable {
     let ess: [Double?]
     let means: [Double]
     let lagLimitReached: [Bool]
+    var fixedByModel: Bool? = nil
     var id: String { name }
   }
   struct Clade: Decodable, Sendable, Identifiable {

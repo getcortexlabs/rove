@@ -18,7 +18,7 @@ struct RunCheckpoint: Decodable, Sendable {
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     let value = try decoder.decode(
       Self.self, from: RecordFile.read(output.appendingPathComponent("checkpoint.json")))
-    let expected = draft.settings.arguments(
+    let expected = try draft.settings.arguments(
       matrix: URL(fileURLWithPath: draft.matrixPath).resolvingSymlinksInPath(),
       output: output.resolvingSymlinksInPath(), monophyly: draft.constraints)
     var recorded = value.arguments
@@ -28,6 +28,13 @@ struct RunCheckpoint: Decodable, Sendable {
       for index in [1, 3] {
         recorded[index] = URL(fileURLWithPath: recorded[index]).resolvingSymlinksInPath().path
       }
+    }
+    if let index = expected.firstIndex(of: "--dating-json") {
+      guard recorded.indices.contains(index + 1), recorded[index] == "--dating-json",
+        try EngineDatingModel.decode(recorded[index + 1])
+          == EngineDatingModel.decode(expected[index + 1])
+      else { throw RunFailure.invalidCheckpoint }
+      recorded[index + 1] = expected[index + 1]
     }
     guard value.schemaVersion == 1, value.inputSha256 == draft.matrixSHA256,
       recorded.starts(with: expected), value.chains.count == draft.settings.chains,

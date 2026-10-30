@@ -61,7 +61,9 @@ struct AnalysisTests {
     #expect(workspace.report?.partitions?.map(\.ordering) == [.unordered, .ordered])
   }
 
-  @Test func exportedCommandsKeepPathsAsLiteralArguments() throws {
+  @Test(arguments: [false, true]) func exportedCommandsKeepPathsAsLiteralArguments(dated: Bool)
+    throws
+  {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
@@ -70,7 +72,12 @@ struct AnalysisTests {
     let recorder = directory.appendingPathComponent("record arguments")
     try "#!/bin/sh\nprintf '%s\\0' \"$@\"\n".write(to: recorder, atomically: true, encoding: .utf8)
     try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: recorder.path)
-    let command = AnalysisSettings().command(executable: recorder, matrix: matrix, output: output)
+    var settings = AnalysisSettings()
+    if dated {
+      settings.dating = DatingTests.example
+      settings.dating.timeUnit = "Ma ' $(touch UNEXPECTED)"
+    }
+    let command = try settings.command(executable: recorder, matrix: matrix, output: output)
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/bin/sh")
     process.arguments = ["-c", command]
@@ -82,7 +89,7 @@ struct AnalysisTests {
     process.waitUntilExit()
     #expect(process.terminationStatus == 0)
     let arguments = String(data: response, encoding: .utf8)?.split(separator: "\0").map(String.init)
-    #expect(arguments == AnalysisSettings().arguments(matrix: matrix, output: output))
+    #expect(arguments == (try settings.arguments(matrix: matrix, output: output)))
     #expect(
       !FileManager.default.fileExists(atPath: directory.appendingPathComponent("UNEXPECTED").path))
   }
@@ -171,7 +178,7 @@ struct AnalysisTests {
     let draft = AnalysisDraft(matrix: matrix, report: report, settings: workspace.settings)
     let decoded = try JSONDecoder().decode(AnalysisDraft.self, from: JSONEncoder().encode(draft))
     #expect(decoded.settings.conditioning == "informative")
-    let arguments = decoded.settings.arguments(
+    let arguments = try decoded.settings.arguments(
       matrix: matrix, output: matrix.deletingLastPathComponent())
     let option = try #require(arguments.firstIndex(of: "--conditioning"))
     #expect(arguments[option + 1] == "informative")

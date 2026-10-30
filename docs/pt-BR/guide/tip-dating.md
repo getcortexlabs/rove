@@ -4,7 +4,19 @@ description: "Date fósseis com idades fixas ou intervalos, escala de tempo expl
 
 # Datação de fósseis nas pontas
 
-`rove sample --dating settings.json` acrescenta idades de fósseis e uma escala de tempo à análise morfológica. Funciona com relógios estrito e relaxado, partições, correção de seleção dos caracteres, cadeias independentes e checkpoints. A configuração é pelo CLI Rust; a tela de preparação do Mac ainda não tem controles de datação. Não precisa de BEAST nem Java.
+`rove sample --dating settings.json` acrescenta idades de fósseis e uma escala de tempo à análise morfológica. Funciona com relógios estrito e relaxado, partições, correção de seleção dos caracteres, cadeias independentes e checkpoints. A configuração pode ser feita no app nativo do Mac ou pelo CLI Rust. Não precisa de BEAST nem Java.
+
+## No app do Mac
+
+1. Importe a matriz, abra **Modelo** e ative **Datar fósseis** em **Um lugar no tempo**.
+2. Escolha a unidade de tempo e abra **Editar idades**. Todos os terminais começam como atuais (zero). Busque cada fóssil e escolha uma idade fixa ou um intervalo do mais recente ao mais antigo; depois, **Aplicar idades**. O editor exige limites distintos nos intervalos; se forem iguais, use **Idade fixa**.
+3. Preencha as taxas de nascimento, morte e amostragem fóssil, a probabilidade de amostragem atual e a idade da origem. Os campos começam vazios. Os valores do exemplo abaixo verificam o software; não são recomendações para os seus dados.
+4. Escolha **Estimar** a taxa global do relógio (taxa inicial e média do prior exponencial) ou **Manter fixa** (apenas a taxa). Os cartões do relógio evolutivo continuam escolhendo entre taxas estritas e relaxadas nos ramos.
+5. Confira tudo em **Revisão** e inicie a análise. O histórico guarda as idades, unidade, parâmetros do processo e modo do relógio. Configurações salvas e execuções pausadas também preservam essas escolhas.
+
+Os campos aceitam ponto ou vírgula decimal e notação científica, sem separadores de milhar. Trocar o nome da unidade não converte os valores. Desativar a datação restaura o modelo sem datas, mantendo os valores preenchidos para uma eventual reativação; importar outra matriz inicia uma configuração nova.
+
+A escala da árvore anotada mostra a unidade registrada. A comparação de cadeias identifica parâmetros fixos verificados como **Fixo**, porque ESS e R-hat não se aplicam a valores que não foram amostrados.
 
 ## Idades e unidades
 

@@ -57,12 +57,12 @@ struct PreferencesTests {
     workspace.settings.steps = 100_000_000
     let settings = workspace.settings
     let output = root.appendingPathComponent("unused-test-output")
-    let arguments = settings.arguments(matrix: matrix, output: output)
+    let arguments = try settings.arguments(matrix: matrix, output: output)
     preferences.language = .portuguese
     #expect(workspace.page == .review)
     #expect(workspace.report?.inputSha256 == report.inputSha256)
     #expect(workspace.settings == settings)
-    #expect(workspace.settings.arguments(matrix: matrix, output: output) == arguments)
+    #expect(try workspace.settings.arguments(matrix: matrix, output: output) == arguments)
     #expect(workspace.canOpen(.review))
     workspace.settings.seed = "-1"
     let issue = try #require(workspace.issue)

@@ -4,7 +4,19 @@ description: "Date fossil tips with fixed ages or age intervals, an explicit tim
 
 # Fossil tip dating
 
-`rove sample --dating settings.json` adds fossil ages and a time scale to a morphological analysis. It works with strict or relaxed clocks, character partitions, ascertainment conditioning, independent chains and checkpoints. Configuration is currently through the Rust CLI; the Mac setup screen has no dating controls. BEAST and Java are not required.
+`rove sample --dating settings.json` adds fossil ages and a time scale to a morphological analysis. It works with strict or relaxed clocks, character partitions, ascertainment conditioning, independent chains and checkpoints. Configure it in the native Mac app or through the Rust CLI. BEAST and Java are not required.
+
+## In the Mac app
+
+1. Import the matrix, then open **Model** and enable **Date fossils** under **A place in time**.
+2. Choose the common time unit and open **Edit tip ages**. Every terminal starts as present-day (zero). Search for each fossil and choose a fixed age or a younger–older interval, then **Apply ages**. This editor uses distinct bounds for intervals; use **Fixed age** when they are equal.
+3. Enter birth, death and fossil sampling rates, present-day sampling probability and origin age. These fields start empty. Values from the example below are for checking the software, not recommendations for your data.
+4. Set the global clock to **Estimate** (initial rate and exponential prior mean) or **Keep fixed** (rate only). The evolutionary clock cards still choose strict versus relaxed branch rates.
+5. Check the full setup in **Review**, then start the analysis. History retains the age assignments, unit, process settings and clock mode; saved setups and paused runs preserve them too.
+
+Decimal dots and commas are accepted, as is scientific notation. Grouping separators are not accepted. Changing the unit label does not rescale any value. Disabling dating restores the undated model while keeping the entered values available if you enable it again; importing another matrix starts a fresh setup.
+
+Annotated trees show the recorded time unit on their scale. Chain comparisons label verified fixed parameters as **Fixed**, because ESS and R-hat do not apply to values that were never sampled.
 
 ## Ages and units
 

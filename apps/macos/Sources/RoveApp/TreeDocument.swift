@@ -34,6 +34,7 @@ struct TreeProvenance: Codable, Sendable {
   let sourceCompletion: String
   let matrixSha256: String?
   let roveVersion: String
+  var timeUnit: String? = nil
 }
 
 struct TreeDocument: Codable, Sendable {

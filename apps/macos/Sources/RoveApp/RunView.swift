@@ -85,10 +85,12 @@ struct RunView: View {
             Spacer()
           }
           DisclosureGroup(strings("Applied analysis setup")) {
-            ConstraintSummary(
-              outgroup: run.request.draft.outgroup, taxa: run.request.draft.taxa,
-              groups: run.request.draft.constraints, strings: strings
-            ).padding(.top, 10)
+            VStack(alignment: .leading, spacing: 20) {
+              DatingSummary(dating: run.request.draft.settings.dating, strings: strings)
+              ConstraintSummary(
+                outgroup: run.request.draft.outgroup, taxa: run.request.draft.taxa,
+                groups: run.request.draft.constraints, strings: strings)
+            }.padding(.top, 10)
           }.font(.system(size: 12))
           Text(
             strings(
