@@ -36,7 +36,7 @@ Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado
 | [Caracteres ordenados](./ordered-characters) | Implementado, #21 |
 | Verosimilitudes marginales para comparar modelos | Planificado, #24 |
 | Prior de nacimiento-muerte fosilizado con fechas de terminales | Planificado, #25 |
-| Comprobaciones predictivas posteriores | Planificado, #26 |
+| [Comprobaciones predictivas posteriores](./posterior-prediction) | Implementado en el CLI, #26 |
 | Evaluación de repeticiones dentro de subárboles | Evaluado; experimental, desactivado por defecto, #17 |
 | Adaptadores opcionales de JNI para BEAST 2 y de C ABI para BEAGLE | Posible, #6 y #7 |
 
@@ -56,7 +56,7 @@ La ruta directa de Mk y el backend NEON están implementados y medidos en los in
 
 El primer [muestreador mínimo](./sampler) admitía Mk o Mkv binario, un reloj estricto y el prior de nacimiento-muerte. Con los mismos movimientos y pasos fijos que BEAST 2.7.8, sus medias posteriores y frecuencias de clados en la matriz de referencia cumplieron criterios fijados antes de las ejecuciones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). El [modelo de referencia](./reference-model), con categorías gamma y reloj relajado lognormal, ya reproduce ambos estados archivados componente por componente. Los resúmenes de posterior y las frecuencias de clados cumplieron los criterios fijados antes de las ejecuciones en seis casos construidos con 20 taxones ([informe](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)). La validación avanza desde verosimilitudes en estados fijos hasta ejecuciones completas sobre matrices conocidas. La calidad del muestreo, incluidos el ESS por unidad de tiempo y los diagnósticos de árboles, cuenta tanto como el tiempo de ejecución.
 
-Con la evaluación de propuestas registrada (#27), las funciones planificadas siguen lo que necesitan los análisis morfológicos: verosimilitudes marginales para comparar modelos (#24), el prior de nacimiento-muerte fosilizado con fechas de terminales (#25) y comprobaciones predictivas posteriores (#26). RevBayes documenta cada una de ellas para datos morfológicos y puede servir de segunda referencia donde BEAST no tenga una función equivalente.
+Con la evaluación de propuestas registrada (#27), las funciones planificadas siguen lo que necesitan los análisis morfológicos: verosimilitudes marginales para comparar modelos (#24) y el prior de nacimiento-muerte fosilizado con fechas de terminales (#25). RevBayes documenta cada una de ellas para datos morfológicos y puede servir de segunda referencia donde BEAST no tenga una función equivalente.
 
 La [vista previa nativa para Mac](./macos-preview) importa y muestra matrices y prepara los ajustes del análisis. Ejecuta el motor Rust incluido con progreso real, cancelación y reapertura de configuraciones con verificación de huella. Los adaptadores de BEAST y BEAGLE son rutas de compatibilidad opcionales, no dependencias del motor en Rust.
 
@@ -65,3 +65,5 @@ Sigue los [issues del repositorio](https://github.com/getcortexlabs/rove/issues)
 Las particiones por número de estados (#19) están implementadas en el motor, CLI, app nativa y checkpoints. Las reglas y la validación en estados fijos están en la [guía NEXUS](./nexus#particiones-por-numero-de-estados).
 
 El condicionamiento a caracteres informativos (#20) está implementado en el motor, CLI, app nativa y checkpoints. Consulta [selección de caracteres](./character-selection) para las reglas de entrada y la validación.
+
+La simulación predictiva posterior y las estadísticas morfológicas pareadas están disponibles mediante `rove predict`. Consulta [comprobaciones predictivas posteriores](./posterior-prediction) para conocer reglas de observación, interpretación y límites.

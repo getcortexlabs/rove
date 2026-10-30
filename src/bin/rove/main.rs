@@ -7,6 +7,7 @@ mod inspect;
 mod inspect_tree;
 mod parallel;
 mod partitions;
+mod predict;
 mod sha256;
 mod summarize;
 
@@ -40,7 +41,9 @@ const USAGE: &str =
        rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared]
        rove inspect-tree <summary-directory>
        rove diagnose <trace.log> --burnin-percent <0..99> [--output <new-directory>]
-       rove summarize <trees.nexus> --output <directory> --burnin-percent <0..99> --heights keep|ca";
+       rove summarize <trees.nexus> --output <directory> --burnin-percent <0..99> --heights keep|ca
+       rove predict <run-directory> --matrix <matrix.nex> --output <directory>
+                    --burnin-percent <0..99> --seed <n> [--replicates <n>] [--max-attempts <n>]";
 
 const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero";
 
@@ -987,6 +990,8 @@ fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
     let result = if arguments.first().is_some_and(|a| a == "benchmark") {
         benchmark::run(&arguments[1..])
+    } else if arguments.first().is_some_and(|a| a == "predict") {
+        predict::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "compare") {
         compare::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "diagnose") {

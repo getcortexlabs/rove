@@ -36,7 +36,7 @@ Rove is early. There are no releases, no published crate and no dates. This is t
 | [Ordered characters](./ordered-characters) | Implemented, #21 |
 | Marginal likelihoods for model comparison | Planned, #24 |
 | Fossilized birth–death prior with tip dates | Planned, #25 |
-| Posterior predictive checks | Planned, #26 |
+| [Posterior predictive checks](./posterior-prediction) | Implemented in the CLI, #26 |
 | Evaluation of repeats within subtrees | Evaluated; experimental, off by default, #17 |
 | Optional BEAST 2 JNI and BEAGLE C ABI adapters | Possible, #6 and #7 |
 
@@ -56,7 +56,7 @@ The direct Mk path and the NEON backend are implemented and measured in the [Mk]
 
 The first [minimal sampler](./sampler) supported binary Mk or Mkv, a strict clock and the birth–death prior. With the same moves and fixed steps as BEAST 2.7.8, its posterior means and clade frequencies on the reference matrix met criteria fixed before the runs ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). The [reference model](./reference-model), with gamma categories and the lognormal relaxed clock, now reproduces both archived states component by component. Its posterior summaries and clade frequencies met the predeclared criteria in six constructed 20-taxon cases ([report](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)). Validation proceeds from fixed-state likelihoods to complete runs on known matrices. Sampling quality, including ESS per time and tree diagnostics, counts alongside runtime.
 
-With the proposal evaluation recorded (#27), the planned features follow what morphological analyses need: marginal likelihoods for model comparison (#24), the fossilized birth–death prior with tip dates (#25) and posterior predictive checks (#26). RevBayes documents each of these for morphological data and can serve as a second reference where BEAST has no matching feature.
+With the proposal evaluation recorded (#27), the planned features follow what morphological analyses need: marginal likelihoods for model comparison (#24) and the fossilized birth–death prior with tip dates (#25). RevBayes documents each of these for morphological data and can serve as a second reference where BEAST has no matching feature.
 
 The [native Mac preview](./macos-preview) imports and displays matrices and prepares analysis settings. It runs the bundled Rust engine with live progress, cancellation and fingerprint-checked setup reopening. BEAST and BEAGLE adapters are optional compatibility paths, not dependencies of the Rust engine.
 
@@ -65,3 +65,5 @@ Follow the [repository issues](https://github.com/getcortexlabs/rove/issues) for
 State-count partitioning (#19) is implemented in the engine, CLI, native app and checkpoints. See [NEXUS partitions](./nexus#partitions-by-state-count) for the model rules and fixed-state validation.
 
 Informative-character conditioning (#20) is implemented in the engine, CLI, native app and checkpoints. See [character selection](./character-selection) for its input rules and validation.
+
+Posterior predictive simulation and paired morphology statistics are available through `rove predict`. See [posterior predictive checks](./posterior-prediction) for the observation rules, interpretation and limits.

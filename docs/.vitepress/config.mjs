@@ -28,6 +28,7 @@ const locales = {
       characterSelection: 'Character selection',
       macBenchmark: 'Benchmark this Mac',
       orderedCharacters: 'Ordered characters',
+      posteriorPrediction: 'Posterior predictive checks',
       referenceModel: 'The reference model',
       nexus: 'Reading NEXUS',
       fixtures: 'Synthetic matrices',
@@ -57,6 +58,7 @@ const locales = {
       characterSelection: 'Seleção de caracteres',
       macBenchmark: 'Testar este Mac',
       orderedCharacters: 'Caracteres ordenados',
+      posteriorPrediction: 'Checagens preditivas posteriores',
       referenceModel: 'O modelo de referência',
       nexus: 'Lendo NEXUS',
       fixtures: 'Matrizes sintéticas',
@@ -103,6 +105,7 @@ const locales = {
       characterSelection: 'Selección de caracteres',
       macBenchmark: 'Probar este Mac',
       orderedCharacters: 'Caracteres ordenados',
+      posteriorPrediction: 'Comprobaciones predictivas posteriores',
       referenceModel: 'El modelo de referencia',
       nexus: 'Lectura de NEXUS',
       fixtures: 'Matrices sintéticas',
@@ -149,6 +152,7 @@ const locales = {
       characterSelection: '性状选择',
       macBenchmark: '测试这台 Mac',
       orderedCharacters: '有序性状',
+      posteriorPrediction: '后验预测检验',
       referenceModel: '参考模型',
       nexus: '读取 NEXUS',
       fixtures: '合成矩阵',
@@ -180,7 +184,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -205,6 +209,7 @@ function themeFor(locale) {
             { text: sampler, link: `${prefix}/guide/sampler` },
             { text: characterSelection, link: `${prefix}/guide/character-selection` },
             { text: orderedCharacters, link: `${prefix}/guide/ordered-characters` },
+            { text: posteriorPrediction, link: `${prefix}/guide/posterior-prediction` },
             { text: referenceModel, link: `${prefix}/guide/reference-model` },
             { text: nexus, link: `${prefix}/guide/nexus` },
             { text: fixtures, link: `${prefix}/guide/fixtures` }

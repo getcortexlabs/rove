@@ -7,6 +7,7 @@ mod layout;
 pub mod mcmc;
 pub mod model;
 pub mod nexus;
+pub mod predictive;
 pub mod random;
 pub mod rates;
 pub mod reference;

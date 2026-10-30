@@ -24,6 +24,8 @@ Mkv and Mkparsinf conditioning, the morphological NEXUS reader, pattern compress
 numerical tests and a standalone binary and multistate sampler are implemented.
 [Ordered characters](docs/guide/ordered-characters.md) can share an analysis with
 unordered characters under Mk or Mkv; ordered Mkparsinf is not yet supported.
+[Posterior predictive checks](docs/guide/posterior-prediction.md) simulate matrices
+from completed runs and report paired morphology statistics through `rove predict`.
 The supplied reference model runs with four gamma categories and a lognormal
 relaxed clock. Posterior summaries and clade frequencies agree with BEAST 2.7.8
 under predeclared criteria in six constructed 20-taxon cases. Optional integrations
@@ -155,13 +157,13 @@ it does not certify topology convergence. See the [sampler guide](https://rove.g
 9. Evaluate relaxed-clock proposals. Done; classical defaults retained.
 10. Run independent chains in parallel and compare them. Done.
 11. Add checkpoints and resume in the engine and native app. Done.
-12. Rescale by powers of two.
+12. Rescale by powers of two. Done.
 13. Partition characters by number of states and condition on parsimony-informative
-    characters. Done. Ordered models remain planned.
-14. Add marginal likelihoods, the fossilized birth–death prior with tip dates
-    and posterior predictive checks.
-15. Evaluate subtree repeats.
-15. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
+    characters. Done, including ordered Mk and Mkv.
+14. Add posterior predictive simulation and morphology checks. Done in the CLI.
+15. Add marginal likelihoods and the fossilized birth–death prior with tip dates.
+16. Evaluate subtree repeats. Done; experimental and off by default.
+17. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 
 ## Sampling trees
 
