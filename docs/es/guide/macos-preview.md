@@ -263,6 +263,8 @@ salidas originales se conservan. Cada resumen requiere espacio para otra copia
 del archivo original. Un resumen y un soporte alto no demuestran convergencia;
 compara ejecuciones independientes y diagnósticos de muestreo.
 
+**Árboles de otro programa.** **File → Summarize Tree File…** abre una muestra de árboles NEXUS escrita por Rove, BEAST 2 u otro programa, pide el burn-in y las alturas de los nodos, y guarda el resumen en una carpeta con el nombre del archivo dentro de la carpeta de ejecuciones. El `tree-source.json` de la carpeta registra la ruta y el SHA-256 del archivo, y History la lista como archivo de árboles, con sus resúmenes y el explorador. No se conoce ningún grupo externo, ya que Rove no ejecutó la muestra aquí, y el resumen registra la finalización como no verificada salvo que el archivo esté junto a un registro de ejecución de Rove. Elegir un archivo de árboles en la importación de la matriz lo indica y remite a este elemento del menú.
+
 El comando Rust independiente hace el mismo cálculo sin Java ni BEAST:
 
 ```sh

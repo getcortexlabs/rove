@@ -52,6 +52,11 @@ struct RoveApp: App {
         ).disabled(workspace.isRunning || !access.canUse || !experience.ready)
         Button(strings("Try Example Matrix"), action: workspace.loadExample).disabled(
           workspace.isRunning || !access.canUse || !experience.ready)
+        Button(strings("Summarize Tree File…"), action: workspace.summarizeTreeFile)
+          .keyboardShortcut("t", modifiers: [.command, .shift])
+          .disabled(
+            workspace.isRunning || workspace.loading || workspace.treeSummary != nil
+              || !access.canUse || !experience.ready)
         Divider()
         Button(strings("Save Setup…"), action: workspace.saveDraft).keyboardShortcut("s")
           .disabled(

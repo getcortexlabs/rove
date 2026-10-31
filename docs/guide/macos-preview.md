@@ -256,6 +256,8 @@ other run outputs remain unchanged. Each summary needs disk space for another
 copy of the raw tree file. A summary and high node support do not establish
 convergence; compare independent runs and sampling diagnostics.
 
+**Trees from another program.** **File → Summarize Tree File…** opens a NEXUS tree sample written by Rove, BEAST 2 or another program, asks for the burn-in and node heights, and saves the summary in a folder named after the file under the runs folder. The folder's `tree-source.json` records the file's path and SHA-256, and History lists it as a tree file with its summaries and the explorer. No outgroup is known, since Rove did not run the sample here, and the summary records completion as unverified unless the file sits beside a Rove run record. Choosing a tree file in the matrix import says so and points to this menu item.
+
 The standalone Rust command uses the same calculation, without Java or BEAST:
 
 ```sh

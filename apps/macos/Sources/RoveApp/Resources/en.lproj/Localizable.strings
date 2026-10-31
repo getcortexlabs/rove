@@ -939,3 +939,23 @@
 "Estimate record" = "Estimate record";
 "The estimate was cancelled. Its partial traces stay in the run folder." = "The estimate was cancelled. Its partial traces stay in the run folder.";
 "The marginal likelihood could not be estimated." = "The marginal likelihood could not be estimated.";
+
+/* Tree files from other programs. */
+"Tree file" = "Tree file";
+"Summarize Tree File…" = "Summarize Tree File…";
+"This file holds trees, not a character matrix. Summarize and explore it with File → Summarize Tree File." = "This file holds trees, not a character matrix. Summarize and explore it with File → Summarize Tree File.";
+"Choose a tree file" = "Choose a tree file";
+"Open a NEXUS tree sample written by Rove, BEAST 2 or another program. Your data stays on this Mac." = "Open a NEXUS tree sample written by Rove, BEAST 2 or another program. Your data stays on this Mac.";
+"Summarize" = "Summarize";
+"Choose a tree file, rather than a folder." = "Choose a tree file, rather than a folder.";
+"Tree files up to 1 GB can be summarized." = "Tree files up to 1 GB can be summarized.";
+"The tree file could not be opened." = "The tree file could not be opened.";
+"The tree file is no longer at its recorded path." = "The tree file is no longer at its recorded path.";
+"Trees from another program" = "Trees from another program";
+"Rove did not run this sample here, so no outgroup is known. A summary and high node support do not establish convergence." = "Rove did not run this sample here, so no outgroup is known. A summary and high node support do not establish convergence.";
+"The tree file is no longer at its recorded path. Saved summaries stay available." = "The tree file is no longer at its recorded path. Saved summaries stay available.";
+"Summaries" = "Summaries";
+"No summary yet. Summarize the file to build an annotated MCC tree." = "No summary yet. Summarize the file to build an annotated MCC tree.";
+"Reveal tree file" = "Reveal tree file";
+"Reading the tree file…" = "Reading the tree file…";
+"Reading the tree file" = "Reading the tree file";

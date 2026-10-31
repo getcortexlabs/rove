@@ -80,10 +80,16 @@ struct RootView: View {
           Lab.background.opacity(0.7).ignoresSafeArea()
           VStack(spacing: 15) {
             ProgressView().controlSize(.small).tint(Lab.accent)
-            Text(strings("Getting to know your matrix…")).font(.system(size: 13, weight: .medium))
+            Text(
+              strings(
+                workspace.preparingTrees
+                  ? "Reading the tree file…" : "Getting to know your matrix…")
+            )
+            .font(.system(size: 13, weight: .medium))
           }.padding(28).background(Lab.raised, in: RoundedRectangle(cornerRadius: 18))
             .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(Lab.border))
-        }.accessibilityLabel(strings("Reading matrix"))
+        }.accessibilityLabel(
+          strings(workspace.preparingTrees ? "Reading the tree file" : "Reading matrix"))
       }
     }
   }
