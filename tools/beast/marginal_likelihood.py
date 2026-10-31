@@ -25,6 +25,18 @@ CONSISTENCY_TOLERANCE = 1e-6
 POWER_CONCERN = 2
 
 
+def sanitize(value):
+    """Replace the repository and home prefixes in archived strings so the
+    record holds no machine-specific paths."""
+    if isinstance(value, dict):
+        return {k: sanitize(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [sanitize(v) for v in value]
+    if isinstance(value, str):
+        return value.replace(str(ROOT), "<repository>").replace(str(Path.home()), "~")
+    return value
+
+
 def sha256(path):
     digest = hashlib.sha256()
     with open(path, "rb") as source:
@@ -57,13 +69,13 @@ def ess(values):
     centre = mean(values)
     deviations = [v - centre for v in values]
     variance = math.fsum(d * d for d in deviations) / n
-    if variance == 0.0:
-        return None, 0.0
     if n < 4:
         return None, variance
+    if variance == 0.0:
+        return None, 0.0
 
     def covariance(lag):
-        return math.fsum(a * b for a, b in zip(deviations, deviations[lag:])) / n
+        return math.fsum(a * b for a, b in zip(deviations, deviations[lag:])) / (n - lag)
 
     integral = variance
     for lag in range(2, min(MAX_LAG, n), 2):
@@ -77,6 +89,8 @@ def ess(values):
 
 def mean_variance(values):
     """Mean and the variance of the mean, sd² / ESS; None without a usable ESS."""
+    if len(values) < 4:
+        return mean(values), None, None
     effective, variance = ess(values)
     if variance == 0.0:
         return mean(values), 0.0, None
@@ -190,20 +204,24 @@ def run_rove(args, config, seed, directory, log):
     return {"command": command, "seed": seed, "wall_seconds": seconds, "marginal": results}
 
 
-def combined(a, b):
-    return math.sqrt(a["standard_error"] ** 2 + b["standard_error"] ** 2)
+def pairs(rove_runs, beast_runs, method):
+    """Every Rove–BEAST pair of one estimator; a pair without both standard
+    errors cannot agree."""
+    result = []
+    for r in rove_runs:
+        for b in beast_runs:
+            x, y = r["recomputed"][method], b["recomputed"][method]
+            errors = (x["standard_error"], y["standard_error"])
+            combined = None if None in errors else math.sqrt(errors[0] ** 2 + errors[1] ** 2)
+            difference = x["log_marginal_likelihood"] - y["log_marginal_likelihood"]
+            result.append({"rove_seed": r["seed"], "beast_seed": b["seed"], "difference": difference,
+                           "combined_standard_error": combined,
+                           "agrees": combined is not None and abs(difference) <= PAIR_TOLERANCE * combined})
+    return result
 
 
 def compare(rove_runs, beast_runs, powers):
-    pairs = []
-    for r in rove_runs:
-        for b in beast_runs:
-            x, y = r["recomputed"]["stepping_stone"], b["recomputed"]["stepping_stone"]
-            error = combined(x, y)
-            pairs.append({"rove_seed": r["seed"], "beast_seed": b["seed"],
-                          "difference": x["log_marginal_likelihood"] - y["log_marginal_likelihood"],
-                          "combined_standard_error": error,
-                          "agrees": abs(x["log_marginal_likelihood"] - y["log_marginal_likelihood"]) <= PAIR_TOLERANCE * error})
+    stepping_stone = pairs(rove_runs, beast_runs, "stepping_stone")
     power_flags = []
     for r in rove_runs:
         for b in beast_runs:
@@ -223,8 +241,9 @@ def compare(rove_runs, beast_runs, powers):
                   for b in beast_runs],
     }
     return {
-        "pairs": pairs,
-        "all_pairs_agree": all(p["agrees"] for p in pairs),
+        "pairs": stepping_stone,
+        "all_pairs_agree": all(p["agrees"] for p in stepping_stone),
+        "path_sampling_pairs": pairs(rove_runs, beast_runs, "path_sampling"),
         "consistency": consistency,
         "consistent": all(d <= CONSISTENCY_TOLERANCE for d in consistency["rove"] + consistency["beast"]),
         "power_flags": power_flags,
@@ -235,13 +254,13 @@ def compare(rove_runs, beast_runs, powers):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--packages", type=Path, required=True, help="BEAST package directory including MODEL_SELECTION")
-    parser.add_argument("--launcher", type=Path, required=True)
+    parser.add_argument("--packages", type=Path, help="BEAST package directory including MODEL_SELECTION")
+    parser.add_argument("--launcher", type=Path)
     parser.add_argument("--java", type=Path, default=Path("java"))
-    parser.add_argument("--xml", type=Path, required=True, help="strict-clock configuration")
-    parser.add_argument("--matrix", type=Path, required=True)
-    parser.add_argument("--rove", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True, help="new directory")
+    parser.add_argument("--xml", type=Path, help="strict-clock configuration")
+    parser.add_argument("--matrix", type=Path)
+    parser.add_argument("--rove", type=Path)
+    parser.add_argument("--output", type=Path, required=True, help="new directory, or a finished one with --recompute")
     parser.add_argument("--powers", type=int, default=32)
     parser.add_argument("--alpha", type=float, default=0.3)
     parser.add_argument("--chain-length", type=int, default=1_000_000)
@@ -249,7 +268,14 @@ def main():
     parser.add_argument("--pre-burnin", type=int, default=200_000)
     parser.add_argument("--beast-seeds", type=int, nargs="+", default=[24101, 24102, 24103])
     parser.add_argument("--rove-seeds", type=int, nargs="+", default=[24001, 24002, 24003])
+    parser.add_argument("--recompute", action="store_true",
+                        help="reread the logs of a finished output directory instead of running the engines")
     args = parser.parse_args()
+    if args.recompute:
+        return recompute(args)
+    missing = [name for name in ("packages", "launcher", "xml", "matrix", "rove") if getattr(args, name) is None]
+    if missing:
+        parser.error("the following arguments are required: " + ", ".join(f"--{name}" for name in missing))
     args.output.mkdir(parents=True, exist_ok=False)
     for package in ["BEAST.app", "BEAST.base"]:
         version = ET.parse(args.packages / package / "version.xml").getroot().attrib["version"]
@@ -296,7 +322,25 @@ def main():
         "rove": rove_runs,
         "comparison": comparison,
     }
-    (args.output / "comparison.json").write_text(json.dumps(record, indent=2, allow_nan=False) + "\n")
+    (args.output / "comparison.json").write_text(json.dumps(sanitize(record), indent=2, allow_nan=False) + "\n")
+
+
+def recompute(args):
+    """Apply the current analysis to the logs of a finished run and rewrite
+    comparison.json, keeping the recorded commands, wall times and the
+    estimates each engine reported."""
+    path = args.output / "comparison.json"
+    record = json.loads(path.read_text())
+    powers = record["settings"]["schedule"]
+    burnin = record["settings"]["burnin_percent"]
+    for run in record["beast"]:
+        run["recomputed"] = estimate(beast_samples(args.output / f"beast-{run['seed']}" / "steps", powers, burnin))
+    for run in record["rove"]:
+        run["recomputed"] = estimate(rove_samples(args.output / f"rove-{run['seed']}", powers, burnin))
+    record["comparison"] = compare(record["rove"], record["beast"], powers)
+    record["analysis_script_sha256"] = sha256(Path(__file__))
+    path.write_text(json.dumps(sanitize(record), indent=2, allow_nan=False) + "\n")
+    print(json.dumps({k: record["comparison"][k] for k in ["all_pairs_agree", "consistent", "power_concern"]}), flush=True)
 
 
 if __name__ == "__main__":

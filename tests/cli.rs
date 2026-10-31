@@ -1499,6 +1499,10 @@ fn marginal_likelihood_runs_record_every_power_and_both_estimates() {
         ]))
         .contains("--powers is required")
     );
+    assert!(
+        error(&rove(&["marginal", "--resume", output.to_str().unwrap()]))
+            .contains("use rove sample --resume")
+    );
     for (extra, text) in [
         (vec!["--powers", "1"], "--powers must be 2 to 256"),
         (

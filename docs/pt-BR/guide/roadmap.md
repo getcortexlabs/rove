@@ -34,7 +34,7 @@ O Rove está em estágio inicial. Não há releases, nem crate publicada, nem da
 | Partições por número de estados | Implementado, #19 |
 | Condicionamento a caracteres informativos para parcimônia | Implementado, #20 |
 | [Caracteres ordenados](./ordered-characters) | Implementado, #21 |
-| Verossimilhanças marginais para comparar modelos | Planejado, #24 |
+| [Comparação de modelos](./model-comparison) por verossimilhanças marginais | Implementado no CLI; concordância com o BEAST 2.7.8 registrada, #24 |
 | [Datação de fósseis](./tip-dating) | Implementada no motor e app nativo com parâmetros do processo fixos ou estimados, #25 / #40 / #41 |
 | [Checagens preditivas posteriores](./posterior-prediction) | Implementado no CLI, #26 |
 | Avaliação de repetições dentro de subárvores | Avaliado; experimental, desligado por padrão, #17 |
@@ -56,7 +56,7 @@ O caminho direto do Mk e o backend NEON estão implementados e medidos nos relat
 
 O primeiro [amostrador mínimo](./sampler) suportava Mk ou Mkv binário, um relógio estrito e o prior de nascimento–morte. Com os mesmos movimentos e passos fixos do BEAST 2.7.8, as suas médias posteriores e frequências de clados na matriz de referência atenderam a critérios fixados antes das execuções ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/strict-clock/2026-10-28/README.md)). O [modelo de referência](./reference-model), com categorias gama e relógio relaxado lognormal, agora reproduz os dois estados arquivados componente por componente. Os resumos de posterior e as frequências de clados atenderam aos critérios definidos antes das corridas em seis casos construídos com 20 táxons ([relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/inference/2026-10-29/README.md)). A validação avança das verossimilhanças em estados fixos até execuções completas em matrizes conhecidas. A qualidade da amostragem, incluindo ESS por tempo e diagnósticos de árvore, conta junto com o tempo de execução.
 
-As verossimilhanças marginais para comparar modelos (#24) continuam planejadas. A [datação de fósseis](./tip-dating) permite fixar ou estimar parâmetros do processo e origem no motor, CLI e app nativo (#25 / #40 / #41). A estimação usa um modelo conjunto explícito de amostragem, validado com componentes do BEAST 2 SA e distribuições independentes em árvores pequenas. Ancestrais amostrados continuam sem suporte; essas densidades não são verossimilhanças marginais.
+A [comparação de modelos](./model-comparison) estima verossimilhanças marginais por stepping stone e path sampling (#24); o [relatório](https://github.com/getcortexlabs/rove/blob/main/benchmarks/marginal-likelihood/2026-10-31/README.md) registra a concordância com o PathSampler do BEAST 2.7.8 em duas configurações de relógio estrito. A [datação de fósseis](./tip-dating) permite fixar ou estimar parâmetros do processo e origem no motor, CLI e app nativo (#25 / #40 / #41). A estimação usa um modelo conjunto explícito de amostragem, validado com componentes do BEAST 2 SA e distribuições independentes em árvores pequenas. Ancestrais amostrados continuam sem suporte; essas densidades não são verossimilhanças marginais.
 
 A [prévia nativa para Mac](./macos-preview) importa e exibe matrizes e prepara as configurações da análise. Ela executa o motor Rust incluído com progresso real, cancelamento e reabertura de configurações com verificação da impressão digital. Os adaptadores BEAST e BEAGLE são caminhos de compatibilidade opcionais, não dependências da engine em Rust.
 

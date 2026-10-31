@@ -93,6 +93,7 @@ pub struct Analysis {
 fn mean_and_variance(values: &[f64]) -> Result<(diagnostics::Statistics, Option<f64>), Error> {
     let stats = statistics(values, &|| false)?;
     let variance = match (stats.ess, stats.ess_reason) {
+        _ if values.len() < 4 => None,
         (Some(ess), _) => Some(stats.sd * stats.sd / ess),
         (None, Some("constant")) => Some(0.0),
         _ => None,
@@ -227,6 +228,34 @@ mod tests {
         assert_eq!(analysis.stepping_stone.standard_error, Some(0.0));
         assert_eq!(analysis.path_sampling.standard_error, Some(0.0));
         assert_eq!(analysis.stones.len(), 5);
+    }
+
+    #[test]
+    fn short_series_have_no_standard_error() {
+        let samples: Vec<PowerSample> = schedule(4, 0.3)
+            .unwrap()
+            .into_iter()
+            .map(|power| PowerSample {
+                power,
+                log_likelihoods: vec![-2.0 - power, -3.0],
+            })
+            .collect();
+        let analysis = analyse(&samples).unwrap();
+        assert!(analysis.stepping_stone.log_marginal_likelihood.is_finite());
+        assert_eq!(analysis.stepping_stone.standard_error, None);
+        assert_eq!(analysis.path_sampling.standard_error, None);
+        assert!(analysis.stones.iter().all(|s| s.variance.is_none()));
+        let single: Vec<PowerSample> = samples
+            .iter()
+            .map(|s| PowerSample {
+                power: s.power,
+                log_likelihoods: vec![-5.0],
+            })
+            .collect();
+        assert_eq!(
+            analyse(&single).unwrap().stepping_stone.standard_error,
+            None
+        );
     }
 
     #[test]

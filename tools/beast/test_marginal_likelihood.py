@@ -1,8 +1,11 @@
+import json
 import math
 import random
 import unittest
 
-from marginal_likelihood import estimate, ess, schedule
+from pathlib import Path
+
+from marginal_likelihood import ROOT, estimate, ess, sanitize, schedule
 
 
 def gaussian_samples(tau, powers, draws, seed):
@@ -27,15 +30,27 @@ class Estimators(unittest.TestCase):
 
     def test_gaussian_evidence_within_reported_error(self):
         tau = 9.0
+        powers = schedule(16, 0.3)
         expected = -0.5 * math.log(1.0 + tau)
+        # Path sampling estimates the trapezoid of E[log L] = -tau / (2 (1 + beta tau)), bias included.
+        coefficients = [((powers[k] - powers[k - 1]) if k else 0.0) / 2 + ((powers[k + 1] - powers[k]) if k + 1 < len(powers) else 0.0) / 2
+                        for k in range(len(powers))]
+        trapezoid = sum(c * (-tau / (2 * (1 + b * tau))) for c, b in zip(coefficients, powers))
+        self.assertLess(abs(trapezoid - expected), 0.02)
         within = 0
         for seed in range(12):
-            result = estimate(gaussian_samples(tau, schedule(16, 0.3), 1500, seed))
-            for method in ("stepping_stone", "path_sampling"):
-                z = (result[method]["log_marginal_likelihood"] - expected) / result[method]["standard_error"]
+            result = estimate(gaussian_samples(tau, powers, 1500, seed))
+            for method, target in (("stepping_stone", expected), ("path_sampling", trapezoid)):
+                z = (result[method]["log_marginal_likelihood"] - target) / result[method]["standard_error"]
                 self.assertLess(abs(z), 5.0, (seed, method))
                 within += abs(z) < 2.0
         self.assertGreaterEqual(within, 18)
+
+    def test_short_series_have_no_standard_error(self):
+        result = estimate([(p, [-2.0 - p, -3.0]) for p in schedule(4, 0.3)])
+        self.assertIsNone(result["stepping_stone"]["standard_error"])
+        self.assertIsNone(result["path_sampling"]["standard_error"])
+        self.assertIsNone(estimate([(p, [-5.0]) for p in schedule(3, 0.3)])["stepping_stone"]["standard_error"])
 
     def test_ess_matches_independent_and_autocorrelated_series(self):
         generator = random.Random(3)
@@ -49,6 +64,15 @@ class Estimators(unittest.TestCase):
         effective, _ = ess(correlated)
         self.assertLess(effective, 600)
         self.assertEqual(ess([1.0] * 10)[0], None)
+
+    def test_sanitize_removes_machine_paths(self):
+        record = {"command": [str(ROOT / "target/release/rove"), "--output", str(Path.home() / "runs")],
+                  "nested": {"path": str(ROOT)}, "count": 3}
+        clean = sanitize(record)
+        self.assertEqual(clean["command"], ["<repository>/target/release/rove", "--output", "~/runs"])
+        self.assertEqual(clean["nested"]["path"], "<repository>")
+        self.assertEqual(clean["count"], 3)
+        self.assertNotIn(str(Path.home()), json.dumps(clean))
 
     def test_powers_must_cover_the_unit_interval(self):
         with self.assertRaises(ValueError):

@@ -26,25 +26,51 @@ fn gaussian_samples(tau: f64, powers: &[f64], draws: usize, seed: u64) -> Vec<Po
         .collect()
 }
 
+/// The trapezoidal rule applied to the exact mean log-likelihood,
+/// `E_β[ℓ] = −τ / (2 (1 + βτ))`: what path sampling estimates, bias included.
+fn trapezoid_expectation(tau: f64, powers: &[f64]) -> f64 {
+    let n = powers.len();
+    (0..n)
+        .map(|k| {
+            let before = if k == 0 {
+                0.0
+            } else {
+                powers[k] - powers[k - 1]
+            };
+            let after = if k + 1 == n {
+                0.0
+            } else {
+                powers[k + 1] - powers[k]
+            };
+            (before + after) / 2.0 * (-tau / (2.0 * (1.0 + powers[k] * tau)))
+        })
+        .sum()
+}
+
 #[test]
 fn estimators_recover_a_gaussian_evidence_with_calibrated_errors() {
     let tau = 9.0;
     let expected = -0.5 * (1.0_f64 + tau).ln();
     let powers = schedule(24, 0.3).unwrap();
+    let trapezoid = trapezoid_expectation(tau, &powers);
+    assert!(
+        (trapezoid - expected).abs() < 0.01,
+        "{trapezoid} {expected}"
+    );
     let mut within_two = [0, 0];
     for seed in 0..40 {
         let analysis = analyse(&gaussian_samples(tau, &powers, 4000, 100 + seed)).unwrap();
-        for (slot, estimate) in [&analysis.stepping_stone, &analysis.path_sampling]
-            .into_iter()
-            .enumerate()
+        for (slot, (estimate, target)) in [
+            (&analysis.stepping_stone, expected),
+            (&analysis.path_sampling, trapezoid),
+        ]
+        .into_iter()
+        .enumerate()
         {
             let error = estimate.standard_error.unwrap();
             assert!(error > 0.0 && error < 0.05, "{estimate:?}");
-            let z = (estimate.log_marginal_likelihood - expected) / error;
-            assert!(
-                z.abs() < 5.0,
-                "seed {seed}: {estimate:?} against {expected}"
-            );
+            let z = (estimate.log_marginal_likelihood - target) / error;
+            assert!(z.abs() < 5.0, "seed {seed}: {estimate:?} against {target}");
             if z.abs() < 2.0 {
                 within_two[slot] += 1;
             }

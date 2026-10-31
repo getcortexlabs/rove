@@ -930,11 +930,11 @@ impl Sampler {
     fn log_density_change(&self, proposed: &Posterior) -> f64 {
         if self.likelihood_power == 1.0 {
             proposed.total() - self.posterior.total()
-        } else if proposed.likelihood.is_finite() {
+        } else if proposed.likelihood == f64::NEG_INFINITY {
+            f64::NEG_INFINITY
+        } else {
             self.likelihood_power * (proposed.likelihood - self.posterior.likelihood)
                 + (proposed.prior() - self.posterior.prior())
-        } else {
-            f64::NEG_INFINITY
         }
     }
 
