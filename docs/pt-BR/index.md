@@ -17,7 +17,7 @@ hero:
   actions:
     - theme: brand
       text: Baixar para Mac
-      link: https://github.com/getcortexlabs/rove/releases/latest
+      link: https://getcortexlabs.com/download/rove
     - theme: alt
       text: O que é o Rove?
       link: /pt-BR/guide/
