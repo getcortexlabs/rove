@@ -217,7 +217,7 @@ target/release/rove summarize /path/to/results/trees.nexus \
   --output /path/to/new-summary --burnin-percent 25 --heights ca
 ```
 
-可改用 `--burnin-samples N` 指定丢弃样本数，或 `--heights keep` 保留高度。
+BEAST 2 写出的树文件带有长度为零的根枝和根上的速率，可以被接受；根上的速率会被丢弃。可改用 `--burnin-samples N` 指定丢弃样本数，或 `--heights keep` 保留高度。
 输出目录必须尚不存在。扩展名不改变输入的解释方式。
 若输入旁没有 `run.json`，完成状态记为 **unverified**；语法完整的文件并不能证明分析已结束。
 若有运行记录，则检查完成状态、样本数量及每个采样间隔。

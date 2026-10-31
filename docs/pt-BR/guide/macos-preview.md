@@ -272,6 +272,8 @@ target/release/rove summarize /path/to/results/trees.nexus \
   --output /path/to/new-summary --burnin-percent 25 --heights ca
 ```
 
+Arquivos de árvores gravados pelo BEAST 2, que trazem um ramo de raiz de
+comprimento zero e uma taxa na raiz, são aceitos; a taxa da raiz é descartada.
 Use `--burnin-samples N` para contar amostras ou `--heights keep` para manter
 alturas. A pasta de saída não pode existir. A extensão não muda a interpretação.
 Sem `run.json` ao lado da entrada, a conclusão é registrada como **unverified**:
