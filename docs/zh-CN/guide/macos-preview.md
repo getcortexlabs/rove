@@ -155,6 +155,11 @@ open build/macos/Rove.app
 （**Command-Shift-R**）保留已打开的矩阵和设置。历史功能不会删除输出文件，
 也不能证明收敛。
 
+**Compare with other runs** 出现在已完成的运行中。它列出 History 中矩阵、模型、
+约束和采样间隔相同、种子不重叠的其他已完成运行，包括链组。选择运行和 burn-in 后，
+应用对各链文件夹运行 `rove compare`。报告与链组显示的相同，每条链一列，并保存在
+该运行的 `comparisons` 文件夹中。运行之间的一致不代表其中任何一个已收敛。
+
 ## 从命令行检查
 
 ```sh

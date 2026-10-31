@@ -189,6 +189,14 @@ analysis**; reusing a setup stays disabled until it finishes or is cancelled.
 **Back to workspace** (**Command-Shift-R**) preserves the matrix and settings
 already open. History does not delete output files or establish convergence.
 
+**Compare with other runs** appears on a completed run. It lists the other
+completed runs in History with the same matrix, model, constraints and sampling
+interval and seeds that do not overlap, including groups. Choose runs and a
+burn-in, and the app runs `rove compare` on their chain folders. The report is
+the one shown for a chain group, with one column per chain, and is saved in the
+run's `comparisons` folder for later. Agreement between runs is not convergence
+of either.
+
 ## Inspect from the command line
 
 ```sh

@@ -197,6 +197,14 @@ ou ser cancelada. **Voltar à área de trabalho** (**Command-Shift-R**) preserva
 a matriz e os ajustes abertos. O histórico não apaga arquivos nem comprova
 convergência.
 
+**Comparar com outras execuções** aparece numa execução concluída. Lista as
+outras execuções concluídas do Histórico com a mesma matriz, modelo, restrições
+e intervalo de amostragem e sementes que não se sobrepõem, inclusive grupos.
+Escolha as execuções e um burn-in, e o app executa `rove compare` nas pastas de
+cada cadeia. O relatório é o mesmo mostrado para um grupo de cadeias, com uma
+coluna por cadeia, e fica salvo na pasta `comparisons` da execução. Concordância
+entre execuções não é convergência de nenhuma delas.
+
 ## Inspecionar pelo terminal
 
 ```sh

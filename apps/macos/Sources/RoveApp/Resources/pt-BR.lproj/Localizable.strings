@@ -809,3 +809,19 @@
 "The origin must be older than the root and every allowed tip age, including interval maxima." = "A origem deve ser mais antiga que a raiz e todas as idades permitidas para os terminais, incluindo os máximos dos intervalos.";
 "How the fossils inform the process" = "Como os fósseis informam o processo";
 "The observed sample count, fossil age evidence and imposed terminal/clade constraints inform the estimated rates and origin. A run without character data still uses that information." = "A quantidade de amostras observadas, as informações de idade e as restrições impostas aos terminais e clados informam as taxas e a origem estimadas. Uma execução sem dados de caracteres ainda usa essas informações.";
+
+/* Comparing runs from History. */
+"Compare with other runs" = "Comparar com outras execuções";
+"Do independent runs agree?" = "As execuções independentes concordam?";
+"Runs with the same matrix, model and constraints and different seeds can be compared. Agreement between runs is not convergence of either." = "Execuções com a mesma matriz, o mesmo modelo e as mesmas restrições, com sementes diferentes, podem ser comparadas. Concordância entre execuções não é convergência de nenhuma delas.";
+"No other completed run matches this setup." = "Nenhuma outra execução concluída tem esta configuração.";
+"Compare runs" = "Comparar execuções";
+"Comparing runs…" = "Comparando execuções…";
+"The comparison was cancelled." = "A comparação foi cancelada.";
+"The runs could not be compared." = "Não foi possível comparar as execuções.";
+"Saved comparisons" = "Comparações salvas";
+"%@ chains · %@%% burn-in" = "%@ cadeias · %@%% de burn-in";
+"%@ chains" = "%@ cadeias";
+"%@ · ESS" = "%@ · ESS";
+"Choose runs with 2 to 16 chains in total." = "Escolha execuções com 2 a 16 cadeias no total.";
+"Runs with seeds that overlap a selected run, or beyond 16 chains in total, are unavailable." = "Execuções com sementes que se sobrepõem a uma execução selecionada, ou acima de 16 cadeias no total, ficam indisponíveis.";
