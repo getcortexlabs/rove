@@ -325,6 +325,14 @@ target/release/rove diagnose /path/to/results/trace.log --burnin-percent 25 \
 
 **Advanced sampling** 折叠在探索计划下方，提供 `rove sample` 的其余选项。**Sample from the priors only** 在不使用性状的情况下运行。开启自动停止后，最小 ESS、最大 R-hat 和检查间隔可以替代引擎的默认值 200、1.01 及其自身的检查节奏。检查点间隔可以按步数设置，而不是默认的约每 30 秒一次。提议方案提供经典默认方案、[松弛时钟](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md)和[伽马频率](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md)报告中评估过的两种方案，以及按移动自定义的权重和初始步长，步长调节可以关闭。每个选项都会在引擎启动前验证，记录在运行记录和 History 中，并以格式 5 保存在配置中；旧版应用会拒绝打开，而不是忽略这些选项继续运行。两种评估过的方案都不作为推荐；报告记录了各自的得失。
 
+## 后验预测检验
+
+History 中已完成的运行包含 **Can the model reproduce the matrix?** 面板，它以选定的 burn-in、重复次数和种子对该运行执行 [`rove predict`](./posterior-prediction)；链组每次只检验一条链。进度和取消与其他工具相同，被取消的检验不留下任何文件。每个已保存的检验列出简约长度、一致性指数和保留指数、模式惊异度以及信息性性状的有效配对数、下尾和上尾比例及其 95% Wilson 区间，以及相等值的数量，与 `predictive.json` 的记录完全一致。检验连同重复矩阵保存在运行的 `predictions` 文件夹中。较小的尾比例标记出需要调查的差异；应用不施加任何阈值。
+
+## 模型比较
+
+同一详情页包含 **Which model explains the matrix better?** 面板，它以选定的幂数、alpha、每个幂的步数、burn-in 和种子，对该运行的模型和约束执行 [`rove marginal`](./model-comparison)。运行的采样间隔、提议权重和步长被沿用；链、检查点和自动停止不可用，对估计的 FBD 参数也不提供估计。进度显示当前的幂和步数；被取消的估计把部分 trace 留在运行文件夹中，但不会列出。每个已保存的估计显示阶石法和路径采样的值及其标准误，以及来自 `marginal.json` 的逐幂表格。当同一矩阵、同一约束和同一缺口策略的其他已完成运行保存了估计时，面板会列出它们与本运行最新估计的差值，以及按平方和开方合并两者的标准误；这两个派生数字是应用唯一自行计算的数字。指南中的注意事项同样适用：估计包含先验，Mk、Mkv 和 Mkparsinf 描述不同的观测过程，带定年的模型只能在定年设置完全相同时比较。
+
 ## 测试这台 Mac
 
 [测试这台 Mac](./mac-benchmark)

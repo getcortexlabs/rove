@@ -6,7 +6,7 @@ description: "基于幂后验，用阶石法和路径采样估计对数边际似
 
 `rove marginal` 估计所配置模型的对数边际似然：在模型下对所有树和参数积分后得到的矩阵概率。两个模型的对数边际似然之差即对数贝叶斯因子。估计来自幂后验：即把似然取某个指数次幂后的链目标，指数为零时是先验，为一时是后验。该方法沿用 [RevBayes 模型选择教程](https://revbayes.github.io/tutorials/model_selection_bayes_factors/bf_intro) 和 BEAST 2 MODEL_SELECTION 包的 PathSampler。运行它不需要任何外部软件。
 
-该命令在 Rust CLI 中可用。Mac 应用未提供它。
+该命令在 Rust CLI 中可用；对于已完成的运行，也可在 [Mac 应用](./macos-preview#模型比较)的 History 中使用。
 
 ## 运行一次估计
 

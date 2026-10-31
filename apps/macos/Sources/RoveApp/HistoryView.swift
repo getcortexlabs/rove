@@ -340,8 +340,12 @@ private struct HistoryDetail: View {
         Button(strings("Summarize trees")) { workspace.summarizeTrees(in: entry.directory) }
           .buttonStyle(LabButtonStyle(prominent: true))
       }
-      if entry.status == .completed, entry.draft != nil {
+      if entry.status == .completed, let draft = entry.draft {
         RunComparisonView(workspace: workspace, entry: entry)
+        if !draft.settings.sampleFromPrior {
+          PredictiveCheckView(workspace: workspace, entry: entry)
+          MarginalLikelihoodView(workspace: workspace, entry: entry)
+        }
       }
       HStack(alignment: .center, spacing: 18) {
         Button {

@@ -6,7 +6,7 @@ description: "Simula matrices morfológicas desde una ejecución completada de R
 
 `rove predict` comprueba si el modelo ajustado puede generar matrices con propiedades similares a las observadas. Usa árboles y parámetros de la posterior, genera caracteres y compara la matriz original y la simulada en el **mismo árbol muestreado**. Evalúa aspectos de la adecuación del modelo; no establece convergencia ni la probabilidad de que el modelo sea verdadero. El [tutorial de morfología de RevBayes](https://revbayes.github.io/tutorials/pps_morpho/) presenta el enfoque.
 
-La función está disponible mediante el CLI en Rust. Todavía no hay una pantalla nueva en la aplicación para Mac. No requiere BEAST, Java, R ni RevBayes.
+La función está disponible mediante el CLI en Rust y, para ejecuciones completadas, desde History en la [app para Mac](./macos-preview#comprobaciones-predictivas-posteriores). No requiere BEAST, Java, R ni RevBayes.
 
 También se admiten ejecuciones con datación: las predicciones usan edades muestreadas, tasa global del reloj y tasas relativas de ramas. Consulte [datación de fósiles](./tip-dating).
 

@@ -314,17 +314,9 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   func arguments(matrix: URL, output: URL, monophyly: [[String]] = [], datingFile: URL? = nil)
     throws -> [String]
   {
-    var datingArguments: [String] = []
-    if let model = try dating.model() {
-      datingArguments =
-        try datingFile.map { ["--dating", $0.path] } ?? ["--dating-json", model.json()]
-    }
     var arguments: [String] = [
       "sample", matrix.path, "--output", output.path, "--seed", seed,
       "--steps", String(steps), "--sample-every", String(sampleEvery),
-      "--model", clock, "--conditioning", conditioning,
-      "--gaps", gapsAsMissing ? "missing" : "reject",
-      "--partitioning", partitioning,
     ]
     if chains > 1 { arguments += ["--chains", String(chains)] }
     if stopWhenConverged {
@@ -335,6 +327,15 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     }
     if let checkpointEvery { arguments += ["--checkpoint-every", String(checkpointEvery)] }
     if sampleFromPrior { arguments.append("--sample-from-prior") }
+    return arguments + (try modelArguments(monophyly: monophyly, datingFile: datingFile))
+  }
+
+  /// The model options shared by `rove sample` and `rove marginal`.
+  func modelArguments(monophyly: [[String]] = [], datingFile: URL? = nil) throws -> [String] {
+    var arguments = [
+      "--model", clock, "--conditioning", conditioning,
+      "--gaps", gapsAsMissing ? "missing" : "reject", "--partitioning", partitioning,
+    ]
     if !tuning { arguments.append("--no-tuning") }
     for override in weights {
       arguments += ["--weight", "\(override.move)=\(String(override.value))"]
@@ -343,7 +344,9 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       arguments += ["--tuning", "\(override.move)=\(String(override.value))"]
     }
     for clade in monophyly { arguments += ["--monophyly", clade.joined(separator: ",")] }
-    arguments += datingArguments
+    if let model = try dating.model() {
+      arguments += try datingFile.map { ["--dating", $0.path] } ?? ["--dating-json", model.json()]
+    }
     return arguments
   }
 

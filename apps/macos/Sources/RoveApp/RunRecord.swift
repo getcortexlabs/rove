@@ -45,6 +45,23 @@ struct EngineRecord: Decodable, Sendable {
     let partitioning: String?
     let partitions: [CharacterPartition]?
     var sampleFromPrior: Bool? = nil
+    var conditioning: String? = nil
+
+    /// The engine's description of each conditioning option.
+    static let conditioningDescriptions = [
+      "none": "none (Mk)", "variable": "variable characters (Mkv)",
+      "informative": "parsimony-informative characters (Mkparsinf)",
+    ]
+
+    /// The model name in the engine's description of its conditioning.
+    var conditioningLabel: String {
+      switch conditioning {
+      case "none (Mk)": "Mk"
+      case "variable characters (Mkv)": "Mkv"
+      case "parsimony-informative characters (Mkparsinf)": "Mkparsinf"
+      default: conditioning ?? "—"
+      }
+    }
   }
   struct MoveRecord: Decodable, Sendable {
     let name: String
