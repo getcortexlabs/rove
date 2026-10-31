@@ -59,6 +59,12 @@ jobs:
         run: cargo clippy --locked --all-targets -- -D warnings
       - name: Run tests
         run: cargo test --locked
+      - name: Validate sampler measurement tools
+        run: |
+          cargo test --locked --example convergence_budget
+          cargo test --locked --example profile_checkpoint
+          cargo clippy --locked --all-targets --features profile-sampler -- -D warnings
+          cargo test --locked --features profile-sampler --lib profiling::tests -- --test-threads=1
       - name: Run numerical and rate-model tests in an optimized build
         run: cargo test --locked --release --test equality --test rates --test inference --test diagnostics --test partitions --test ascertainment --test informative --test scaling --test ordered --test predictive --test predictive_cli --test dating --test fbd_estimation --test marginal
       - name: Validate the experimental repeat path

@@ -29,6 +29,8 @@ impl Random {
     }
 
     pub fn next_u64(&mut self) -> u64 {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Random);
         let s = &mut self.state;
         let result = s[0].wrapping_add(s[3]).rotate_left(23).wrapping_add(s[0]);
         let t = s[1] << 17;
@@ -66,12 +68,16 @@ impl Random {
 
     /// Standard normal, by the Box–Muller transform.
     pub fn normal(&mut self) -> f64 {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Random);
         let radius = (-2.0 * (1.0 - self.uniform()).ln()).sqrt();
         radius * (std::f64::consts::TAU * self.uniform()).cos()
     }
 
     /// Exponential with rate one.
     pub fn exponential(&mut self) -> f64 {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Random);
         -(1.0 - self.uniform()).ln()
     }
 }

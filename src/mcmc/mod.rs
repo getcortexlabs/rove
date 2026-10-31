@@ -364,6 +364,8 @@ impl Likelihood {
     /// Recomputes the branches that differ from `before`, and the partials of
     /// their ancestors.
     fn update(&mut self, tree: &Tree, before: &Tree, rates: &RateVariation) -> f64 {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::LikelihoodUpdate);
         let dirty = &mut self.dirty;
         dirty.fill(false);
         for node in 0..tree.nodes() {
@@ -405,6 +407,8 @@ impl Likelihood {
 
     /// −∞ when the value is not a number or the ascertainment correction is undefined.
     fn evaluate(&mut self, root: usize, rates: &RateVariation) -> f64 {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Root);
         let value = match &self.variable {
             Some(variable) => {
                 self.core.integrate_partials(root, rates.category_weights());
@@ -770,6 +774,8 @@ impl Sampler {
     }
 
     fn priors(&self) -> Posterior {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Priors);
         let BirthDeath {
             birth_difference: r,
             relative_death: a,
@@ -838,6 +844,8 @@ impl Sampler {
 
     /// One Metropolis–Hastings step. Returns the move and whether it was accepted.
     pub fn step(&mut self) -> (Move, bool) {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Tree);
         self.steps += 1;
         let index = self.choose();
         let kind = self.operators[index].kind;

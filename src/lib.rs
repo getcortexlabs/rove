@@ -10,6 +10,8 @@ pub mod mcmc;
 pub mod model;
 pub mod nexus;
 pub mod predictive;
+#[cfg(feature = "profile-sampler")]
+pub mod profiling;
 pub mod random;
 pub mod rates;
 pub mod reference;

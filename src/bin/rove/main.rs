@@ -518,13 +518,25 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
     options.executable_sha256 = Some(sha256::file(&std::env::current_exe()?)?);
     let arguments = &command;
     let cancellation = events::Cancellation::watch_stdin(options.cancel_on_stdin_close);
+    #[cfg(feature = "profile-sampler")]
+    if options.chains != 1 || options.command != Command::Sample || options.resume.is_some() {
+        return Err("profile-sampler builds support one fresh sample chain only".into());
+    }
     if options.command == Command::Marginal {
         return marginal::run(arguments, options, &cancellation);
     }
     if options.chains > 1 {
         return parallel::run(arguments, options, cancellation);
     }
-    run_chain(arguments, options, &cancellation, None)
+    #[cfg(feature = "profile-sampler")]
+    let profiler = rove::profiling::Session::start(options.output.join("profile.json"));
+    let result = run_chain(arguments, options, &cancellation, None);
+    #[cfg(feature = "profile-sampler")]
+    let profile_result = profiler.finish();
+    let completed = result?;
+    #[cfg(feature = "profile-sampler")]
+    profile_result?;
+    Ok(completed)
 }
 
 fn chain_progress(chain: Option<usize>, line: impl Display) {
@@ -940,6 +952,8 @@ fn run_chain(
                         trees: &mut TreeWriter<checkpoint::Output>,
                         worker: &mut Option<parallel::Worker>|
      -> Result<bool, Box<dyn Error>> {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = rove::profiling::enter(rove::profiling::Phase::Output);
         let step = sampler.steps();
         if let Some(worker) = worker {
             if !worker.should_wait(step, cancellation.paused())? {
@@ -983,6 +997,8 @@ fn run_chain(
         sampler.step();
         completed_steps = step;
         if step % options.sample_every == 0 {
+            #[cfg(feature = "profile-sampler")]
+            rove::profiling::step(step);
             trace.write(step, &sampler)?;
             trees.write(step, &sampler)?;
             if boundary(&sampler, &mut trace, &mut trees, &mut worker)? {

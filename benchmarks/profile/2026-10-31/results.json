@@ -1,0 +1,2910 @@
+{
+  "metadata": {
+    "protocols": {
+      "benchmarks/convergence/PROTOCOL.md": "93966d297b5594df50812451bd6c57c2ac99f22462abb789b581864c38d8fe10",
+      "benchmarks/profile/PROTOCOL.md": "5400e15410fc4ec4c3162a5f9960b2fd7703bb2535ead72d37bab250eacbdef2"
+    },
+    "source_commit": "ee592836b5234d7af562e265ff5170438063cb3d",
+    "build_commands": [
+      [
+        "cargo",
+        "build",
+        "--locked",
+        "--release",
+        "--bin",
+        "rove",
+        "--example",
+        "convergence_budget"
+      ],
+      [
+        "cargo",
+        "build",
+        "--locked",
+        "--release",
+        "--bin",
+        "rove",
+        "--features",
+        "profile-sampler"
+      ]
+    ],
+    "build_settings": {
+      "opt_level": 3,
+      "lto": "fat",
+      "codegen_units": 1,
+      "target_cpu": "Rust target default",
+      "rustflags": "",
+      "release_debug": "default (off)"
+    },
+    "binaries": {
+      "rove-profile": "6a31e9d5923da63ec98aa83e1db0d6b2cf9f289314805a604d9903af0393e2cf",
+      "convergence_budget": "fcefa31fafc7d4c9c066b94fa54fd90e4e2a99daf8d3b17fb06c0c2b25854da4",
+      "rove": "728d9d551d4aab2d62c4811525b72fe72fbe1388baded4c693128179fa382563"
+    },
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1",
+    "hardware": {
+      "architecture": "arm64",
+      "system": "Darwin",
+      "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+      "machdep.cpu.brand_string": null,
+      "hw.memsize": null,
+      "hw.physicalcpu": null,
+      "hw.logicalcpu": null,
+      "hw.perflevel0.physicalcpu": null,
+      "hw.perflevel1.physicalcpu": null,
+      "system_profiler": {
+        "machine_name": "MacBook Pro",
+        "machine_model": "Mac16,6",
+        "chip_type": "Apple M4 Max",
+        "number_processors": "proc 16:12:4:0",
+        "physical_memory": "64 GB"
+      }
+    },
+    "inputs": {
+      "morphology90": {
+        "path": "$PUBLIC_MATRIX",
+        "sha256": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f"
+      },
+      "zilla": {
+        "path": "$PRIVATE_MATRIX",
+        "sha256": "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a"
+      }
+    },
+    "cases": {
+      "morphology90": {
+        "conditioning": "none",
+        "steps": 20000000,
+        "every": 2000000,
+        "interval": 1000,
+        "profile_steps": 2000000,
+        "seed": 2026103101
+      },
+      "zilla": {
+        "conditioning": "variable",
+        "steps": 5000000,
+        "every": 1000000,
+        "interval": 500,
+        "profile_steps": 300000,
+        "seed": 2026103111
+      }
+    },
+    "created_unix_seconds": 1793465528.0494359
+  },
+  "results": [
+    {
+      "normal": {
+        "command": [
+          "$RUN/bin/rove",
+          "sample",
+          "$PUBLIC_MATRIX",
+          "--output",
+          "$RUN/morphology90-strict-1-normal",
+          "--model",
+          "strict",
+          "--conditioning",
+          "none",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103181",
+          "--steps",
+          "2000000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+          "--events-json"
+        ],
+        "whole_process_seconds": 18.990629625,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t23%; charging; 2:24 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            8.279296875,
+            11.72607421875,
+            34.9365234375
+          ],
+          "unix_seconds": 1793468374.417912
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t23%; charging; 2:24 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            7.80712890625,
+            11.41357421875,
+            34.28564453125
+          ],
+          "unix_seconds": 1793468393.42525
+        },
+        "run_wall_seconds": 18.458017667,
+        "trace_samples_sha256": "75c272ea0fb92af510d45fb767f99d4fffd86cee2f1c5b39be2b2655df822690",
+        "tree_samples_sha256": "da6dee65251fc6aae77364f61b736e860cd1204873ad5f8d6dac14ab4445d1f1",
+        "run_sha256": "c3f19514830e4e350ef3a835bdf9c1fd708d3a935f691861929ee6de50090d0e",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 264940,
+            "rejected": 505092,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.09639567346934656,
+            "accepted": 89101,
+            "rejected": 229664,
+            "failed": 65013
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 19059,
+            "rejected": 366723,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 61,
+            "rejected": 38055,
+            "failed": 38730
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 141,
+            "rejected": 72750,
+            "failed": 3861
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.764673668446461,
+            "accepted": 17935,
+            "rejected": 39338,
+            "failed": 19146
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.881673162361547,
+            "accepted": 17803,
+            "rejected": 58793,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.4915516436009309,
+            "accepted": 18280,
+            "rejected": 58257,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.1402122302485022,
+            "accepted": 18788,
+            "rejected": 55173,
+            "failed": 3297
+          }
+        ]
+      },
+      "profile": {
+        "command": [
+          "$RUN/bin/rove-profile",
+          "sample",
+          "$PUBLIC_MATRIX",
+          "--output",
+          "$RUN/morphology90-strict-1-profile",
+          "--model",
+          "strict",
+          "--conditioning",
+          "none",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103181",
+          "--steps",
+          "2000000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+          "--events-json"
+        ],
+        "whole_process_seconds": 18.771384584,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t23%; charging; 2:24 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            7.80712890625,
+            11.41357421875,
+            34.28564453125
+          ],
+          "unix_seconds": 1793468393.457945
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t23%; charging; 2:24 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            9.50439453125,
+            11.59033203125,
+            33.818359375
+          ],
+          "unix_seconds": 1793468412.246078
+        },
+        "run_wall_seconds": 18.47425925,
+        "trace_samples_sha256": "75c272ea0fb92af510d45fb767f99d4fffd86cee2f1c5b39be2b2655df822690",
+        "tree_samples_sha256": "da6dee65251fc6aae77364f61b736e860cd1204873ad5f8d6dac14ab4445d1f1",
+        "run_sha256": "3e4cf5b36e635aeec85df2ace2b521293ca810856f3058660b7d4cad690ea346",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 264940,
+            "rejected": 505092,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.09639567346934656,
+            "accepted": 89101,
+            "rejected": 229664,
+            "failed": 65013
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 19059,
+            "rejected": 366723,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 61,
+            "rejected": 38055,
+            "failed": 38730
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 141,
+            "rejected": 72750,
+            "failed": 3861
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.764673668446461,
+            "accepted": 17935,
+            "rejected": 39338,
+            "failed": 19146
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.881673162361547,
+            "accepted": 17803,
+            "rejected": 58793,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.4915516436009309,
+            "accepted": 18280,
+            "rejected": 58257,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.1402122302485022,
+            "accepted": 18788,
+            "rejected": 55173,
+            "failed": 3297
+          }
+        ]
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 2346,
+          "node_partials": 3592,
+          "other": 9,
+          "output": 565,
+          "priors": 929,
+          "random": 7,
+          "rescaling": 3596,
+          "root_likelihood": 2110,
+          "tree_and_bookkeeping": 562
+        },
+        "first_sample_seconds": 0.89036825,
+        "last_sample_seconds": 18.485164208,
+        "maximum_gap_seconds": 0.004334749999999943,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 2000000,
+        "samples": 13716,
+        "warmup_steps": 100000
+      },
+      "case": "morphology90",
+      "model": "strict",
+      "repetition": 1,
+      "seed": 2026103181,
+      "fractions": {
+        "likelihood_update": 0.1710411198600175,
+        "node_partials": 0.26188393117526976,
+        "other": 0.0006561679790026247,
+        "output": 0.04119276757072032,
+        "priors": 0.06773111694371536,
+        "random": 0.000510352872557597,
+        "rescaling": 0.26217556138815984,
+        "root_likelihood": 0.15383493729950423,
+        "tree_and_bookkeeping": 0.04097404491105278
+      },
+      "kernel_fraction": 0.5240594925634297,
+      "kernel_only_ceiling": 2.101102941176471,
+      "profile_over_normal_wall_ratio": 0.9884550936262072,
+      "steps_per_second": 105315.09694481759
+    },
+    {
+      "normal": {
+        "command": [
+          "$RUN/bin/rove",
+          "sample",
+          "$PUBLIC_MATRIX",
+          "--output",
+          "$RUN/morphology90-reference-1-normal",
+          "--model",
+          "reference",
+          "--conditioning",
+          "none",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103181",
+          "--steps",
+          "2000000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+          "--events-json"
+        ],
+        "whole_process_seconds": 34.530448625000005,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t23%; charging; 2:24 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            9.50439453125,
+            11.59033203125,
+            33.818359375
+          ],
+          "unix_seconds": 1793468412.278712
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t24%; charging; 2:17 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            8.03955078125,
+            10.98779296875,
+            32.70166015625
+          ],
+          "unix_seconds": 1793468446.825561
+        },
+        "run_wall_seconds": 34.508735,
+        "trace_samples_sha256": "1acf2b9019b276a42f1e0f513cc162e98782e23642f2980e73b5755bfbd8e321",
+        "tree_samples_sha256": "45cb3b6d4fb6d981a082a6829be0df1dca901af4ab0d7a7c246ab5466007a0b1",
+        "run_sha256": "373cb0071499029db5ef34286c401179c1ce2769023a0e83fa145ae1e75de6a3",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 193993,
+            "rejected": 400085,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.10073648724051801,
+            "accepted": 69199,
+            "rejected": 179521,
+            "failed": 48237
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 13146,
+            "rejected": 283936,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 39,
+            "rejected": 29397,
+            "failed": 29724
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 108,
+            "rejected": 56316,
+            "failed": 2895
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.750347527065958,
+            "accepted": 13967,
+            "rejected": 29558,
+            "failed": 15945
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8468901683381478,
+            "accepted": 14016,
+            "rejected": 45453,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.501857182345271,
+            "accepted": 13998,
+            "rejected": 45169,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.14260082133508234,
+            "accepted": 14319,
+            "rejected": 42178,
+            "failed": 2843
+          },
+          {
+            "name": "gamma_shape_scale",
+            "weight": 0.1,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.37521503160240627,
+            "accepted": 467,
+            "rejected": 1510,
+            "failed": 0
+          },
+          {
+            "name": "clock_sigma_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.7127245180637514,
+            "accepted": 13837,
+            "rejected": 45310,
+            "failed": 0
+          },
+          {
+            "name": "branch_rate_scale",
+            "weight": 20.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.273438100265663,
+            "accepted": 93674,
+            "rejected": 301160,
+            "failed": 0
+          }
+        ]
+      },
+      "profile": {
+        "command": [
+          "$RUN/bin/rove-profile",
+          "sample",
+          "$PUBLIC_MATRIX",
+          "--output",
+          "$RUN/morphology90-reference-1-profile",
+          "--model",
+          "reference",
+          "--conditioning",
+          "none",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103181",
+          "--steps",
+          "2000000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+          "--events-json"
+        ],
+        "whole_process_seconds": 33.523749917,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t24%; charging; 2:17 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            8.03955078125,
+            10.98779296875,
+            32.70166015625
+          ],
+          "unix_seconds": 1793468446.873406
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t25%; charging; 2:17 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            8.22509765625,
+            10.73583984375,
+            31.85595703125
+          ],
+          "unix_seconds": 1793468480.414521
+        },
+        "run_wall_seconds": 33.501728708,
+        "trace_samples_sha256": "1acf2b9019b276a42f1e0f513cc162e98782e23642f2980e73b5755bfbd8e321",
+        "tree_samples_sha256": "45cb3b6d4fb6d981a082a6829be0df1dca901af4ab0d7a7c246ab5466007a0b1",
+        "run_sha256": "44498c81dbdd9a60bd7226e24637d636d9c478a241d0bea9a2c5ddc592349750",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 193993,
+            "rejected": 400085,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.10073648724051801,
+            "accepted": 69199,
+            "rejected": 179521,
+            "failed": 48237
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 13146,
+            "rejected": 283936,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 39,
+            "rejected": 29397,
+            "failed": 29724
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 108,
+            "rejected": 56316,
+            "failed": 2895
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.750347527065958,
+            "accepted": 13967,
+            "rejected": 29558,
+            "failed": 15945
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8468901683381478,
+            "accepted": 14016,
+            "rejected": 45453,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.501857182345271,
+            "accepted": 13998,
+            "rejected": 45169,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.14260082133508234,
+            "accepted": 14319,
+            "rejected": 42178,
+            "failed": 2843
+          },
+          {
+            "name": "gamma_shape_scale",
+            "weight": 0.1,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.37521503160240627,
+            "accepted": 467,
+            "rejected": 1510,
+            "failed": 0
+          },
+          {
+            "name": "clock_sigma_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.7127245180637514,
+            "accepted": 13837,
+            "rejected": 45310,
+            "failed": 0
+          },
+          {
+            "name": "branch_rate_scale",
+            "weight": 20.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.273438100265663,
+            "accepted": 93674,
+            "rejected": 301160,
+            "failed": 0
+          }
+        ]
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 3197,
+          "node_partials": 11613,
+          "other": 14,
+          "output": 789,
+          "priors": 1603,
+          "random": 8,
+          "rescaling": 5381,
+          "root_likelihood": 1733,
+          "tree_and_bookkeeping": 626
+        },
+        "first_sample_seconds": 1.761329833,
+        "last_sample_seconds": 33.514473208,
+        "maximum_gap_seconds": 0.003950958999997312,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 2000000,
+        "samples": 24964,
+        "warmup_steps": 100000
+      },
+      "case": "morphology90",
+      "model": "reference",
+      "repetition": 1,
+      "seed": 2026103181,
+      "fractions": {
+        "likelihood_update": 0.12806441275436628,
+        "node_partials": 0.4651898734177215,
+        "other": 0.0005608075628905624,
+        "output": 0.03160551193718955,
+        "priors": 0.0642124659509694,
+        "random": 0.0003204614645088928,
+        "rescaling": 0.215550392565294,
+        "root_likelihood": 0.06941996474923891,
+        "tree_and_bookkeeping": 0.02507610959782086
+      },
+      "kernel_fraction": 0.6807402659830155,
+      "kernel_only_ceiling": 3.1322459222082806,
+      "profile_over_normal_wall_ratio": 0.9708460576654323,
+      "steps_per_second": 57919.896197120426
+    },
+    {
+      "normal": {
+        "command": [
+          "$RUN/bin/rove",
+          "sample",
+          "$PRIVATE_MATRIX",
+          "--output",
+          "$RUN/zilla-strict-1-normal",
+          "--model",
+          "strict",
+          "--conditioning",
+          "variable",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103181",
+          "--steps",
+          "300000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+          "--events-json"
+        ],
+        "whole_process_seconds": 47.480124125,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t25%; charging; 2:17 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            8.22509765625,
+            10.73583984375,
+            31.85595703125
+          ],
+          "unix_seconds": 1793468480.4666529
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t25%; charging; 2:17 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.21484375,
+            11.283203125,
+            30.859375
+          ],
+          "unix_seconds": 1793468527.9663339
+        },
+        "run_wall_seconds": 47.417846,
+        "trace_samples_sha256": "301e51f84f0dc96fa11720a464941eb00d035e3d8891389aa584a93c52742bf3",
+        "tree_samples_sha256": "a3153d56ad652266e0b9896c0c01e124a61d58ca7b325c31c6f8f55cc5d34cfc",
+        "run_sha256": "1b07ef7604fa7af240b3b12edd002f3cd57bba34c11f62d6d40f7a3c613d18a3",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 41998,
+            "rejected": 72878,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.013963952376492948,
+            "accepted": 12343,
+            "rejected": 34562,
+            "failed": 10986
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 10072,
+            "rejected": 47770,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 129,
+            "rejected": 5555,
+            "failed": 5876
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 301,
+            "rejected": 11183,
+            "failed": 136
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8064581891657485,
+            "accepted": 2563,
+            "rejected": 7519,
+            "failed": 1295
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.9451052446932221,
+            "accepted": 2523,
+            "rejected": 9054,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.7442642731484576,
+            "accepted": 2830,
+            "rejected": 8847,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.12650480951329915,
+            "accepted": 3057,
+            "rejected": 8355,
+            "failed": 168
+          }
+        ]
+      },
+      "profile": {
+        "command": [
+          "$RUN/bin/rove-profile",
+          "sample",
+          "$PRIVATE_MATRIX",
+          "--output",
+          "$RUN/zilla-strict-1-profile",
+          "--model",
+          "strict",
+          "--conditioning",
+          "variable",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103181",
+          "--steps",
+          "300000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+          "--events-json"
+        ],
+        "whole_process_seconds": 43.955066875,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t25%; charging; 2:17 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.21484375,
+            11.283203125,
+            30.859375
+          ],
+          "unix_seconds": 1793468527.999207
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t26%; charging; 2:14 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            12.0556640625,
+            11.5146484375,
+            29.935546875
+          ],
+          "unix_seconds": 1793468571.9745631
+        },
+        "run_wall_seconds": 43.885756542,
+        "trace_samples_sha256": "301e51f84f0dc96fa11720a464941eb00d035e3d8891389aa584a93c52742bf3",
+        "tree_samples_sha256": "a3153d56ad652266e0b9896c0c01e124a61d58ca7b325c31c6f8f55cc5d34cfc",
+        "run_sha256": "1cf5ac3ccd48641bafdd6dc65f2c8872a4ad52b0b06441ca20f79075da0ff89c",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 41998,
+            "rejected": 72878,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.013963952376492948,
+            "accepted": 12343,
+            "rejected": 34562,
+            "failed": 10986
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 10072,
+            "rejected": 47770,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 129,
+            "rejected": 5555,
+            "failed": 5876
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 301,
+            "rejected": 11183,
+            "failed": 136
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8064581891657485,
+            "accepted": 2563,
+            "rejected": 7519,
+            "failed": 1295
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.9451052446932221,
+            "accepted": 2523,
+            "rejected": 9054,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.7442642731484576,
+            "accepted": 2830,
+            "rejected": 8847,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.12650480951329915,
+            "accepted": 3057,
+            "rejected": 8355,
+            "failed": 168
+          }
+        ]
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 5062,
+          "node_partials": 8984,
+          "other": 12,
+          "output": 373,
+          "priors": 524,
+          "random": 1,
+          "rescaling": 6484,
+          "root_likelihood": 531,
+          "tree_and_bookkeeping": 286
+        },
+        "first_sample_seconds": 15.074972167,
+        "last_sample_seconds": 43.944585167,
+        "maximum_gap_seconds": 0.0043102079999997045,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 300000,
+        "samples": 22257,
+        "warmup_steps": 100000
+      },
+      "case": "zilla",
+      "model": "strict",
+      "repetition": 1,
+      "seed": 2026103181,
+      "fractions": {
+        "likelihood_update": 0.22743406568719954,
+        "node_partials": 0.4036482904254841,
+        "other": 0.0005391562205148942,
+        "output": 0.016758772521004626,
+        "priors": 0.023543154962483714,
+        "random": 4.4929685042907847e-05,
+        "rescaling": 0.2913240778182145,
+        "root_likelihood": 0.023857662757784066,
+        "tree_and_bookkeeping": 0.012849889922271644
+      },
+      "kernel_fraction": 0.6949723682436986,
+      "kernel_only_ceiling": 3.2783915156871406,
+      "profile_over_normal_wall_ratio": 0.9257572023038597,
+      "steps_per_second": 6318.433355612041
+    },
+    {
+      "normal": {
+        "command": [
+          "$RUN/bin/rove",
+          "sample",
+          "$PRIVATE_MATRIX",
+          "--output",
+          "$RUN/zilla-reference-1-normal",
+          "--model",
+          "reference",
+          "--conditioning",
+          "variable",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103181",
+          "--steps",
+          "300000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+          "--events-json"
+        ],
+        "whole_process_seconds": 99.34123166699999,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t26%; charging; 2:14 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            12.0556640625,
+            11.5146484375,
+            29.935546875
+          ],
+          "unix_seconds": 1793468572.009345
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t28%; charging; 2:15 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.21533203125,
+            11.40771484375,
+            27.94873046875
+          ],
+          "unix_seconds": 1793468671.369719
+        },
+        "run_wall_seconds": 99.242204833,
+        "trace_samples_sha256": "183e363f08eb9c48487628f0ece327e8f8ebf6a8e7fc275f11652b5b3ecd7957",
+        "tree_samples_sha256": "b29b31afb44a7c82e496d1575b2c2eb65b22bb89676997273237ca5773fdb609",
+        "run_sha256": "0a044b373f7185a86f4a47b4f462a7bd22debf1f653d713524a7fcd74214bdec",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 32547,
+            "rejected": 56328,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.025540658187808346,
+            "accepted": 9970,
+            "rejected": 26516,
+            "failed": 8105
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 10712,
+            "rejected": 33505,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 125,
+            "rejected": 4388,
+            "failed": 4502
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 320,
+            "rejected": 8554,
+            "failed": 109
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.874914542345384,
+            "accepted": 1999,
+            "rejected": 4617,
+            "failed": 2435
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8858065248142807,
+            "accepted": 1972,
+            "rejected": 6703,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.74217589740074,
+            "accepted": 2185,
+            "rejected": 6901,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.13286740827219376,
+            "accepted": 1994,
+            "rejected": 6602,
+            "failed": 272
+          },
+          {
+            "name": "gamma_shape_scale",
+            "weight": 0.1,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.8868803283340577,
+            "accepted": 52,
+            "rejected": 240,
+            "failed": 0
+          },
+          {
+            "name": "clock_sigma_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.8677028679661537,
+            "accepted": 1964,
+            "rejected": 6948,
+            "failed": 0
+          },
+          {
+            "name": "branch_rate_scale",
+            "weight": 20.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.23224938907642245,
+            "accepted": 15029,
+            "rejected": 44406,
+            "failed": 0
+          }
+        ]
+      },
+      "profile": {
+        "command": [
+          "$RUN/bin/rove-profile",
+          "sample",
+          "$PRIVATE_MATRIX",
+          "--output",
+          "$RUN/zilla-reference-1-profile",
+          "--model",
+          "reference",
+          "--conditioning",
+          "variable",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103181",
+          "--steps",
+          "300000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+          "--events-json"
+        ],
+        "whole_process_seconds": 96.63664766699998,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t28%; charging; 2:15 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.21533203125,
+            11.40771484375,
+            27.94873046875
+          ],
+          "unix_seconds": 1793468671.4159439
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t30%; charging; 2:15 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.2412109375,
+            11.408203125,
+            26.11328125
+          ],
+          "unix_seconds": 1793468768.06884
+        },
+        "run_wall_seconds": 96.538935458,
+        "trace_samples_sha256": "183e363f08eb9c48487628f0ece327e8f8ebf6a8e7fc275f11652b5b3ecd7957",
+        "tree_samples_sha256": "b29b31afb44a7c82e496d1575b2c2eb65b22bb89676997273237ca5773fdb609",
+        "run_sha256": "ba64aebfd6ea2609ff889f3f0c15381d4259f43cc09ea5be83ac66a9e9aeeed2",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 32547,
+            "rejected": 56328,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.025540658187808346,
+            "accepted": 9970,
+            "rejected": 26516,
+            "failed": 8105
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 10712,
+            "rejected": 33505,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 125,
+            "rejected": 4388,
+            "failed": 4502
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 320,
+            "rejected": 8554,
+            "failed": 109
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.874914542345384,
+            "accepted": 1999,
+            "rejected": 4617,
+            "failed": 2435
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8858065248142807,
+            "accepted": 1972,
+            "rejected": 6703,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.74217589740074,
+            "accepted": 2185,
+            "rejected": 6901,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.13286740827219376,
+            "accepted": 1994,
+            "rejected": 6602,
+            "failed": 272
+          },
+          {
+            "name": "gamma_shape_scale",
+            "weight": 0.1,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.8868803283340577,
+            "accepted": 52,
+            "rejected": 240,
+            "failed": 0
+          },
+          {
+            "name": "clock_sigma_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.8677028679661537,
+            "accepted": 1964,
+            "rejected": 6948,
+            "failed": 0
+          },
+          {
+            "name": "branch_rate_scale",
+            "weight": 20.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.23224938907642245,
+            "accepted": 15029,
+            "rejected": 44406,
+            "failed": 0
+          }
+        ]
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 5974,
+          "node_partials": 28539,
+          "other": 11,
+          "output": 915,
+          "priors": 881,
+          "random": 3,
+          "rescaling": 11277,
+          "root_likelihood": 625,
+          "tree_and_bookkeeping": 347
+        },
+        "first_sample_seconds": 34.459644917,
+        "last_sample_seconds": 96.62484725,
+        "maximum_gap_seconds": 0.004523290999998153,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 300000,
+        "samples": 48572,
+        "warmup_steps": 100000
+      },
+      "case": "zilla",
+      "model": "reference",
+      "repetition": 1,
+      "seed": 2026103181,
+      "fractions": {
+        "likelihood_update": 0.12299267067446265,
+        "node_partials": 0.5875607345795932,
+        "other": 0.00022646792390677758,
+        "output": 0.018838013670427405,
+        "priors": 0.01813802190562464,
+        "random": 6.176397924730297e-05,
+        "rescaling": 0.23217079799061188,
+        "root_likelihood": 0.012867495676521453,
+        "tree_and_bookkeeping": 0.007144033599604711
+      },
+      "kernel_fraction": 0.8197315325702051,
+      "kernel_only_ceiling": 5.547281863864781,
+      "profile_over_normal_wall_ratio": 0.9727748090635115,
+      "steps_per_second": 3019.8941060608627
+    },
+    {
+      "profile": {
+        "command": [
+          "$RUN/bin/rove-profile",
+          "sample",
+          "$PRIVATE_MATRIX",
+          "--output",
+          "$RUN/zilla-reference-2-profile",
+          "--model",
+          "reference",
+          "--conditioning",
+          "variable",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103182",
+          "--steps",
+          "300000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+          "--events-json"
+        ],
+        "whole_process_seconds": 95.68825583299997,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t30%; charging; 2:15 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.2412109375,
+            11.408203125,
+            26.11328125
+          ],
+          "unix_seconds": 1793468768.109854
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t32%; charging; 2:12 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.21142578125,
+            11.33740234375,
+            24.529296875
+          ],
+          "unix_seconds": 1793468863.814178
+        },
+        "run_wall_seconds": 95.595603084,
+        "trace_samples_sha256": "2fa0964b6b43817e3b7094963afaee7e049c7adf2aca8d26f1a2f4d939982cfe",
+        "tree_samples_sha256": "7b4cbc0e97a16812e411d07f8e8c2a5b8de5bd41bbe8acf3839e31500097257f",
+        "run_sha256": "7fd873d4a1fea0adae99d58d07a954b906ea6f06cb41a85c6d17c96d4c68fcb8",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 33174,
+            "rejected": 55673,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.022668255082125353,
+            "accepted": 9843,
+            "rejected": 26586,
+            "failed": 8089
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 11276,
+            "rejected": 33438,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 115,
+            "rejected": 4328,
+            "failed": 4509
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 345,
+            "rejected": 8481,
+            "failed": 113
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8247880146626828,
+            "accepted": 2076,
+            "rejected": 4339,
+            "failed": 2612
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.895834982070723,
+            "accepted": 1987,
+            "rejected": 6836,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.7563518382991891,
+            "accepted": 2172,
+            "rejected": 6821,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.13184710929089677,
+            "accepted": 2190,
+            "rejected": 6613,
+            "failed": 98
+          },
+          {
+            "name": "gamma_shape_scale",
+            "weight": 0.1,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.8681558959715616,
+            "accepted": 51,
+            "rejected": 227,
+            "failed": 0
+          },
+          {
+            "name": "clock_sigma_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.8680068376428531,
+            "accepted": 1944,
+            "rejected": 6806,
+            "failed": 0
+          },
+          {
+            "name": "branch_rate_scale",
+            "weight": 20.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.23968792081171383,
+            "accepted": 14893,
+            "rejected": 44365,
+            "failed": 0
+          }
+        ]
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 6041,
+          "node_partials": 28385,
+          "other": 14,
+          "output": 926,
+          "priors": 880,
+          "random": 2,
+          "rescaling": 11338,
+          "root_likelihood": 704,
+          "tree_and_bookkeeping": 336
+        },
+        "first_sample_seconds": 33.707318208,
+        "last_sample_seconds": 95.677092042,
+        "maximum_gap_seconds": 0.004426667000004159,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 300000,
+        "samples": 48626,
+        "warmup_steps": 100000
+      },
+      "normal": {
+        "command": [
+          "$RUN/bin/rove",
+          "sample",
+          "$PRIVATE_MATRIX",
+          "--output",
+          "$RUN/zilla-reference-2-normal",
+          "--model",
+          "reference",
+          "--conditioning",
+          "variable",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103182",
+          "--steps",
+          "300000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+          "--events-json"
+        ],
+        "whole_process_seconds": 96.16011370799998,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t32%; charging; 2:12 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.21142578125,
+            11.33740234375,
+            24.529296875
+          ],
+          "unix_seconds": 1793468863.857159
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t33%; charging; 2:11 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.376953125,
+            11.32470703125,
+            23.12841796875
+          ],
+          "unix_seconds": 1793468960.035328
+        },
+        "run_wall_seconds": 96.068511125,
+        "trace_samples_sha256": "2fa0964b6b43817e3b7094963afaee7e049c7adf2aca8d26f1a2f4d939982cfe",
+        "tree_samples_sha256": "7b4cbc0e97a16812e411d07f8e8c2a5b8de5bd41bbe8acf3839e31500097257f",
+        "run_sha256": "81e463a241678bedc44f7a1a2f9720dc64a00d0809ba2a9b337d4fc09373f4a3",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 33174,
+            "rejected": 55673,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.022668255082125353,
+            "accepted": 9843,
+            "rejected": 26586,
+            "failed": 8089
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 11276,
+            "rejected": 33438,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 115,
+            "rejected": 4328,
+            "failed": 4509
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 345,
+            "rejected": 8481,
+            "failed": 113
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8247880146626828,
+            "accepted": 2076,
+            "rejected": 4339,
+            "failed": 2612
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.895834982070723,
+            "accepted": 1987,
+            "rejected": 6836,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.7563518382991891,
+            "accepted": 2172,
+            "rejected": 6821,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.13184710929089677,
+            "accepted": 2190,
+            "rejected": 6613,
+            "failed": 98
+          },
+          {
+            "name": "gamma_shape_scale",
+            "weight": 0.1,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.8681558959715616,
+            "accepted": 51,
+            "rejected": 227,
+            "failed": 0
+          },
+          {
+            "name": "clock_sigma_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.8680068376428531,
+            "accepted": 1944,
+            "rejected": 6806,
+            "failed": 0
+          },
+          {
+            "name": "branch_rate_scale",
+            "weight": 20.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.23968792081171383,
+            "accepted": 14893,
+            "rejected": 44365,
+            "failed": 0
+          }
+        ]
+      },
+      "case": "zilla",
+      "model": "reference",
+      "repetition": 2,
+      "seed": 2026103182,
+      "fractions": {
+        "likelihood_update": 0.12423394891621767,
+        "node_partials": 0.583741208407025,
+        "other": 0.0002879118167235635,
+        "output": 0.01904331016328713,
+        "priors": 0.018097314194052565,
+        "random": 4.113025953193765e-05,
+        "rescaling": 0.2331674412865545,
+        "root_likelihood": 0.014477851355242051,
+        "tree_and_bookkeeping": 0.0069098836013655246
+      },
+      "kernel_fraction": 0.8169086496935796,
+      "kernel_only_ceiling": 5.46175446478715,
+      "profile_over_normal_wall_ratio": 0.9950929979509711,
+      "steps_per_second": 3119.796643658104
+    },
+    {
+      "profile": {
+        "command": [
+          "$RUN/bin/rove-profile",
+          "sample",
+          "$PRIVATE_MATRIX",
+          "--output",
+          "$RUN/zilla-strict-2-profile",
+          "--model",
+          "strict",
+          "--conditioning",
+          "variable",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103182",
+          "--steps",
+          "300000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+          "--events-json"
+        ],
+        "whole_process_seconds": 37.90406400000006,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t33%; charging; 2:11 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.376953125,
+            11.32470703125,
+            23.12841796875
+          ],
+          "unix_seconds": 1793468960.0793269
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t34%; charging; 2:11 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            10.255859375,
+            11.0087890625,
+            22.46728515625
+          ],
+          "unix_seconds": 1793468997.999721
+        },
+        "run_wall_seconds": 37.840301292,
+        "trace_samples_sha256": "15176853202d4ac68c5e226aebeda967d438eabef34f9a839778a582cc105457",
+        "tree_samples_sha256": "b052e54ff04c9c437900328d759e40b277a82eca7096b28c6c22d0f2f6ff7b63",
+        "run_sha256": "b3998f25cbde539e7db2b21d9bb64001b7ed200e139a5e01e853fff546fbd4be",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 42222,
+            "rejected": 73074,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.013618936330102202,
+            "accepted": 12310,
+            "rejected": 34728,
+            "failed": 10889
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 10049,
+            "rejected": 47785,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 115,
+            "rejected": 5659,
+            "failed": 5743
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 304,
+            "rejected": 10942,
+            "failed": 129
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8156222648352743,
+            "accepted": 2597,
+            "rejected": 7709,
+            "failed": 1253
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.9464367146502533,
+            "accepted": 2479,
+            "rejected": 8975,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.7242234667706806,
+            "accepted": 2751,
+            "rejected": 8709,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.140523877797901,
+            "accepted": 3068,
+            "rejected": 8351,
+            "failed": 159
+          }
+        ]
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 4289,
+          "node_partials": 7872,
+          "other": 10,
+          "output": 342,
+          "priors": 485,
+          "random": 2,
+          "rescaling": 5792,
+          "root_likelihood": 499,
+          "tree_and_bookkeeping": 273
+        },
+        "first_sample_seconds": 12.982257917,
+        "last_sample_seconds": 37.894241417,
+        "maximum_gap_seconds": 0.003933082999999726,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 300000,
+        "samples": 19564,
+        "warmup_steps": 100000
+      },
+      "normal": {
+        "command": [
+          "$RUN/bin/rove",
+          "sample",
+          "$PRIVATE_MATRIX",
+          "--output",
+          "$RUN/zilla-strict-2-normal",
+          "--model",
+          "strict",
+          "--conditioning",
+          "variable",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103182",
+          "--steps",
+          "300000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+          "--events-json"
+        ],
+        "whole_process_seconds": 37.60674449999999,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t34%; charging; 2:11 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            10.255859375,
+            11.0087890625,
+            22.46728515625
+          ],
+          "unix_seconds": 1793468998.0285141
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t35%; charging; 2:10 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            8.87060546875,
+            10.58056640625,
+            21.84814453125
+          ],
+          "unix_seconds": 1793469035.6518312
+        },
+        "run_wall_seconds": 37.546711916,
+        "trace_samples_sha256": "15176853202d4ac68c5e226aebeda967d438eabef34f9a839778a582cc105457",
+        "tree_samples_sha256": "b052e54ff04c9c437900328d759e40b277a82eca7096b28c6c22d0f2f6ff7b63",
+        "run_sha256": "0a7446a9ac0f37e5348912b24366b410c3be406537b74c9f5093a8a36380d8b8",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 42222,
+            "rejected": 73074,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.013618936330102202,
+            "accepted": 12310,
+            "rejected": 34728,
+            "failed": 10889
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 10049,
+            "rejected": 47785,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 115,
+            "rejected": 5659,
+            "failed": 5743
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 304,
+            "rejected": 10942,
+            "failed": 129
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8156222648352743,
+            "accepted": 2597,
+            "rejected": 7709,
+            "failed": 1253
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.9464367146502533,
+            "accepted": 2479,
+            "rejected": 8975,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.7242234667706806,
+            "accepted": 2751,
+            "rejected": 8709,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.140523877797901,
+            "accepted": 3068,
+            "rejected": 8351,
+            "failed": 159
+          }
+        ]
+      },
+      "case": "zilla",
+      "model": "strict",
+      "repetition": 2,
+      "seed": 2026103182,
+      "fractions": {
+        "likelihood_update": 0.21922919648333675,
+        "node_partials": 0.40237170312819465,
+        "other": 0.0005111429155591903,
+        "output": 0.01748108771212431,
+        "priors": 0.02479043140462073,
+        "random": 0.00010222858311183807,
+        "rescaling": 0.29605397669188305,
+        "root_likelihood": 0.0255060314864036,
+        "tree_and_bookkeeping": 0.013954201594765897
+      },
+      "kernel_fraction": 0.6984256798200776,
+      "kernel_only_ceiling": 3.31593220338983,
+      "profile_over_normal_wall_ratio": 1.0079060153691333,
+      "steps_per_second": 7977.292477417184
+    },
+    {
+      "profile": {
+        "command": [
+          "$RUN/bin/rove-profile",
+          "sample",
+          "$PUBLIC_MATRIX",
+          "--output",
+          "$RUN/morphology90-reference-2-profile",
+          "--model",
+          "reference",
+          "--conditioning",
+          "none",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103182",
+          "--steps",
+          "2000000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+          "--events-json"
+        ],
+        "whole_process_seconds": 32.49613620800005,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t35%; charging; 2:10 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            8.87060546875,
+            10.58056640625,
+            21.84814453125
+          ],
+          "unix_seconds": 1793469035.6817439
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t35%; charging; 2:10 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.79150390625,
+            11.0009765625,
+            21.53955078125
+          ],
+          "unix_seconds": 1793469068.1957939
+        },
+        "run_wall_seconds": 32.47316625,
+        "trace_samples_sha256": "31776de90bf2f3a29c20a7b0296de984f8660e44a76c68e6650ef8fa3aaf06c4",
+        "tree_samples_sha256": "2658bb9ed9b64822011245a86a2d382bdf6644c49b47dbf26b5f20e269778d7c",
+        "run_sha256": "05ae40260d5f11fa2d0a9776a63f05359c38e4296f969eef558576b4f4905310",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 193649,
+            "rejected": 399407,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.09710056477430733,
+            "accepted": 69155,
+            "rejected": 180147,
+            "failed": 48053
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 13226,
+            "rejected": 282866,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 40,
+            "rejected": 29577,
+            "failed": 30049
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 115,
+            "rejected": 55996,
+            "failed": 3067
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.745517128463725,
+            "accepted": 13978,
+            "rejected": 29641,
+            "failed": 15990
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8531532121069582,
+            "accepted": 13765,
+            "rejected": 45553,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.48289118177158025,
+            "accepted": 14134,
+            "rejected": 45423,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.13455526182813374,
+            "accepted": 14248,
+            "rejected": 42280,
+            "failed": 2856
+          },
+          {
+            "name": "gamma_shape_scale",
+            "weight": 0.1,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.40461259716296494,
+            "accepted": 456,
+            "rejected": 1488,
+            "failed": 0
+          },
+          {
+            "name": "clock_sigma_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.7117967698873697,
+            "accepted": 13695,
+            "rejected": 45501,
+            "failed": 0
+          },
+          {
+            "name": "branch_rate_scale",
+            "weight": 20.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.30806142354885924,
+            "accepted": 93847,
+            "rejected": 301798,
+            "failed": 0
+          }
+        ]
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 3102,
+          "node_partials": 11299,
+          "other": 16,
+          "output": 775,
+          "priors": 1468,
+          "random": 13,
+          "rescaling": 5195,
+          "root_likelihood": 1612,
+          "tree_and_bookkeeping": 674
+        },
+        "first_sample_seconds": 1.720988583,
+        "last_sample_seconds": 32.485850375,
+        "maximum_gap_seconds": 0.003949499999997386,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 2000000,
+        "samples": 24154,
+        "warmup_steps": 100000
+      },
+      "normal": {
+        "command": [
+          "$RUN/bin/rove",
+          "sample",
+          "$PUBLIC_MATRIX",
+          "--output",
+          "$RUN/morphology90-reference-2-normal",
+          "--model",
+          "reference",
+          "--conditioning",
+          "none",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103182",
+          "--steps",
+          "2000000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+          "--events-json"
+        ],
+        "whole_process_seconds": 32.87796908300004,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t35%; charging; 2:10 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.79150390625,
+            11.0009765625,
+            21.53955078125
+          ],
+          "unix_seconds": 1793469068.249019
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t36%; charging; 2:09 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.5859375,
+            11.5859375,
+            21.39013671875
+          ],
+          "unix_seconds": 1793469101.143003
+        },
+        "run_wall_seconds": 32.854326375,
+        "trace_samples_sha256": "31776de90bf2f3a29c20a7b0296de984f8660e44a76c68e6650ef8fa3aaf06c4",
+        "tree_samples_sha256": "2658bb9ed9b64822011245a86a2d382bdf6644c49b47dbf26b5f20e269778d7c",
+        "run_sha256": "b71714cac2b36b27a22856f39ea4a462556816e1561f311a164b70784fc9cd0a",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 193649,
+            "rejected": 399407,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.09710056477430733,
+            "accepted": 69155,
+            "rejected": 180147,
+            "failed": 48053
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 13226,
+            "rejected": 282866,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 40,
+            "rejected": 29577,
+            "failed": 30049
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 115,
+            "rejected": 55996,
+            "failed": 3067
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.745517128463725,
+            "accepted": 13978,
+            "rejected": 29641,
+            "failed": 15990
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8531532121069582,
+            "accepted": 13765,
+            "rejected": 45553,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.48289118177158025,
+            "accepted": 14134,
+            "rejected": 45423,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.13455526182813374,
+            "accepted": 14248,
+            "rejected": 42280,
+            "failed": 2856
+          },
+          {
+            "name": "gamma_shape_scale",
+            "weight": 0.1,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.40461259716296494,
+            "accepted": 456,
+            "rejected": 1488,
+            "failed": 0
+          },
+          {
+            "name": "clock_sigma_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.7117967698873697,
+            "accepted": 13695,
+            "rejected": 45501,
+            "failed": 0
+          },
+          {
+            "name": "branch_rate_scale",
+            "weight": 20.0,
+            "initial_tuning": 0.5,
+            "final_tuning": 0.30806142354885924,
+            "accepted": 93847,
+            "rejected": 301798,
+            "failed": 0
+          }
+        ]
+      },
+      "case": "morphology90",
+      "model": "reference",
+      "repetition": 2,
+      "seed": 2026103182,
+      "fractions": {
+        "likelihood_update": 0.12842593359277965,
+        "node_partials": 0.46779001407634346,
+        "other": 0.0006624161629543761,
+        "output": 0.03208578289310259,
+        "priors": 0.060776682951064004,
+        "random": 0.0005382131324004305,
+        "rescaling": 0.21507824790924898,
+        "root_likelihood": 0.06673842841765339,
+        "tree_and_bookkeeping": 0.027904280864453092
+      },
+      "kernel_fraction": 0.6828682619855925,
+      "kernel_only_ceiling": 3.153263707571802,
+      "profile_over_normal_wall_ratio": 0.9883863606649166,
+      "steps_per_second": 60831.007990518636
+    },
+    {
+      "profile": {
+        "command": [
+          "$RUN/bin/rove-profile",
+          "sample",
+          "$PUBLIC_MATRIX",
+          "--output",
+          "$RUN/morphology90-strict-2-profile",
+          "--model",
+          "strict",
+          "--conditioning",
+          "none",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103182",
+          "--steps",
+          "2000000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+          "--events-json"
+        ],
+        "whole_process_seconds": 16.757473667,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t36%; charging; 2:09 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.5859375,
+            11.5859375,
+            21.39013671875
+          ],
+          "unix_seconds": 1793469101.190996
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t36%; charging; 2:09 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.5087890625,
+            11.70654296875,
+            21.20556640625
+          ],
+          "unix_seconds": 1793469117.96468
+        },
+        "run_wall_seconds": 16.737287083,
+        "trace_samples_sha256": "fef733ab813e0e92a8e9afd9b350fe7aa3f43fd1224bdc53c9e4b1df3ea7aa12",
+        "tree_samples_sha256": "92dac8bdc03f3173870579037480f58a2084df001cc35907df0e6eda3c62fa4e",
+        "run_sha256": "5067a26d6a7921688ea7e99094d09332259b2dd6452b1be07c6d2c18fd0ea770",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 264032,
+            "rejected": 503974,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.09986266516623264,
+            "accepted": 89086,
+            "rejected": 231108,
+            "failed": 65217
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 19342,
+            "rejected": 365892,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 57,
+            "rejected": 38362,
+            "failed": 38796
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 160,
+            "rejected": 73041,
+            "failed": 3837
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.7514087001017234,
+            "accepted": 17969,
+            "rejected": 39491,
+            "failed": 19152
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8816605459857796,
+            "accepted": 17900,
+            "rejected": 58987,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.4975463840002861,
+            "accepted": 18341,
+            "rejected": 58683,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.13893589360907638,
+            "accepted": 18642,
+            "rejected": 54767,
+            "failed": 3164
+          }
+        ]
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 2164,
+          "node_partials": 3177,
+          "other": 11,
+          "output": 582,
+          "priors": 875,
+          "random": 9,
+          "rescaling": 3275,
+          "root_likelihood": 1870,
+          "tree_and_bookkeeping": 546
+        },
+        "first_sample_seconds": 0.84681825,
+        "last_sample_seconds": 16.749415208,
+        "maximum_gap_seconds": 0.00402729199999996,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 2000000,
+        "samples": 12509,
+        "warmup_steps": 100000
+      },
+      "normal": {
+        "command": [
+          "$RUN/bin/rove",
+          "sample",
+          "$PUBLIC_MATRIX",
+          "--output",
+          "$RUN/morphology90-strict-2-normal",
+          "--model",
+          "strict",
+          "--conditioning",
+          "none",
+          "--gaps",
+          "missing",
+          "--partitioning",
+          "observed",
+          "--backend",
+          "neon",
+          "--seed",
+          "2026103182",
+          "--steps",
+          "2000000",
+          "--sample-every",
+          "1000",
+          "--checkpoint-every",
+          "100000",
+          "--expect-input-sha256",
+          "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+          "--events-json"
+        ],
+        "whole_process_seconds": 16.67056354099998,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t36%; charging; 2:09 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.5087890625,
+            11.70654296875,
+            21.20556640625
+          ],
+          "unix_seconds": 1793469117.994633
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t36%; charging; 2:09 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            12.4052734375,
+            11.54248046875,
+            20.97998046875
+          ],
+          "unix_seconds": 1793469134.681912
+        },
+        "run_wall_seconds": 16.651122792,
+        "trace_samples_sha256": "fef733ab813e0e92a8e9afd9b350fe7aa3f43fd1224bdc53c9e4b1df3ea7aa12",
+        "tree_samples_sha256": "92dac8bdc03f3173870579037480f58a2084df001cc35907df0e6eda3c62fa4e",
+        "run_sha256": "53a9bcec6b7a02530daf98230f49c87855403b70a0ad5e90157cae604ad7d26e",
+        "moves": [
+          {
+            "name": "node_height",
+            "weight": 30.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 264032,
+            "rejected": 503974,
+            "failed": 0
+          },
+          {
+            "name": "subtree_slide",
+            "weight": 15.0,
+            "initial_tuning": 1.0,
+            "final_tuning": 0.09986266516623264,
+            "accepted": 89086,
+            "rejected": 231108,
+            "failed": 65217
+          },
+          {
+            "name": "narrow_exchange",
+            "weight": 15.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 19342,
+            "rejected": 365892,
+            "failed": 0
+          },
+          {
+            "name": "wide_exchange",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 57,
+            "rejected": 38362,
+            "failed": 38796
+          },
+          {
+            "name": "wilson_balding",
+            "weight": 3.0,
+            "initial_tuning": null,
+            "final_tuning": null,
+            "accepted": 160,
+            "rejected": 73041,
+            "failed": 3837
+          },
+          {
+            "name": "root_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.7514087001017234,
+            "accepted": 17969,
+            "rejected": 39491,
+            "failed": 19152
+          },
+          {
+            "name": "tree_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.8816605459857796,
+            "accepted": 17900,
+            "rejected": 58987,
+            "failed": 0
+          },
+          {
+            "name": "birth_difference_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.4975463840002861,
+            "accepted": 18341,
+            "rejected": 58683,
+            "failed": 0
+          },
+          {
+            "name": "relative_death_scale",
+            "weight": 3.0,
+            "initial_tuning": 0.75,
+            "final_tuning": 0.13893589360907638,
+            "accepted": 18642,
+            "rejected": 54767,
+            "failed": 3164
+          }
+        ]
+      },
+      "case": "morphology90",
+      "model": "strict",
+      "repetition": 2,
+      "seed": 2026103182,
+      "fractions": {
+        "likelihood_update": 0.1729954432808378,
+        "node_partials": 0.2539771364617475,
+        "other": 0.0008793668558637781,
+        "output": 0.046526500919338076,
+        "priors": 0.06994963626189143,
+        "random": 0.0007194819729794548,
+        "rescaling": 0.2618114957230794,
+        "root_likelihood": 0.14949236549684228,
+        "tree_and_bookkeeping": 0.04364857302742026
+      },
+      "kernel_fraction": 0.5157886321848268,
+      "kernel_only_ceiling": 2.065213802212316,
+      "profile_over_normal_wall_ratio": 1.0052133886047867,
+      "steps_per_second": 119971.94906345863
+    }
+  ]
+}
