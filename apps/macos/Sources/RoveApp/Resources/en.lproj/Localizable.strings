@@ -961,3 +961,13 @@
 "Summarize trees from Rove, BEAST 2 or another program." = "Summarize trees from Rove, BEAST 2 or another program.";
 "Summarize a tree file…" = "Summarize a tree file…";
 "Open or drop a NEXUS matrix or tree file" = "Open or drop a NEXUS matrix or tree file";
+
+/* Release notes 0.1.1. */
+"Trees from anywhere." = "Trees from anywhere.";
+"A tree sample from BEAST 2 or another program now has a home in Rove: summarize it, explore it and find it again in History." = "A tree sample from BEAST 2 or another program now has a home in Rove: summarize it, explore it and find it again in History.";
+"Bring the trees you already have." = "Bring the trees you already have.";
+"Summarize a tree file from another program and explore its MCC tree." = "Summarize a tree file from another program and explore its MCC tree.";
+"Choose a NEXUS tree sample from the welcome screen, the sidebar, File → Summarize Tree File… or the matrix import, which recognizes it. Summaries live in a folder named after the file and History lists it as a tree file. The engine now reads BEAST 2 trees, root stem included." = "Choose a NEXUS tree sample from the welcome screen, the sidebar, File → Summarize Tree File… or the matrix import, which recognizes it. Summaries live in a folder named after the file and History lists it as a tree file. The engine now reads BEAST 2 trees, root stem included.";
+"A summary that fits the window." = "A summary that fits the window.";
+"No truncated text, whole summary cards, the file named at the top." = "No truncated text, whole summary cards, the file named at the top.";
+"The summary sheet scrolls above a fixed footer, so the options, the explanation and every saved summary stay visible on a small screen." = "The summary sheet scrolls above a fixed footer, so the options, the explanation and every saved summary stay visible on a small screen.";

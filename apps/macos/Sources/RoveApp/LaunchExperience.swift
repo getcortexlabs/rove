@@ -38,6 +38,28 @@ struct RoveRelease: Identifiable {
 
   static let all = [
     RoveRelease(
+      version: "0.1.1",
+      headline: "Trees from anywhere.",
+      introduction:
+        "A tree sample from BEAST 2 or another program now has a home in Rove: summarize it, explore it and find it again in History.",
+      highlights: [
+        ReleaseHighlight(
+          id: "tree-files", symbol: "point.3.connected.trianglepath.dotted",
+          title: "Bring the trees you already have.",
+          summary: "Summarize a tree file from another program and explore its MCC tree.",
+          detail:
+            "Choose a NEXUS tree sample from the welcome screen, the sidebar, File → Summarize Tree File… or the matrix import, which recognizes it. Summaries live in a folder named after the file and History lists it as a tree file. The engine now reads BEAST 2 trees, root stem included.",
+          action: "Open History", destination: .history),
+        ReleaseHighlight(
+          id: "summary-sheet", symbol: "rectangle.and.text.magnifyingglass",
+          title: "A summary that fits the window.",
+          summary: "No truncated text, whole summary cards, the file named at the top.",
+          detail:
+            "The summary sheet scrolls above a fixed footer, so the options, the explanation and every saved summary stay visible on a small screen.",
+          action: "Explore the field guide", destination: .guide),
+      ]
+    ),
+    RoveRelease(
       version: "0.1.0",
       headline: "Your first field notes.",
       introduction:
