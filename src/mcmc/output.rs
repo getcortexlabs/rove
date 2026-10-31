@@ -114,6 +114,8 @@ impl<W: Write> TraceWriter<W> {
     }
 
     pub fn write(&mut self, sample: u64, sampler: &Sampler) -> io::Result<()> {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Output);
         let posterior = sampler.posterior();
         let birth_death = sampler.birth_death();
         let tree = sampler.tree();
@@ -218,6 +220,8 @@ impl<W: Write> TreeWriter<W> {
     }
 
     pub fn write(&mut self, sample: u64, sampler: &Sampler) -> io::Result<()> {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Output);
         let tree = sampler.tree();
         let label = |tip: usize| (tip + 1).to_string();
         let newick = if sampler.dating().is_some() {

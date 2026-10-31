@@ -348,6 +348,8 @@ impl LikelihoodCore {
     }
 
     pub fn calculate_partials(&mut self, child1: usize, child2: usize, parent: usize) {
+        #[cfg(feature = "profile-sampler")]
+        let _profile = crate::profiling::enter(crate::profiling::Phase::Node);
         debug_assert!(parent != child1 && parent != child2 && child1 != child2);
         #[cfg(feature = "experimental-repeats")]
         if let Some(mut repeats) = self.repeats.take() {
@@ -374,6 +376,8 @@ impl LikelihoodCore {
             }
         };
         if self.scaling == Scaling::Always {
+            #[cfg(feature = "profile-sampler")]
+            let _profile = crate::profiling::enter(crate::profiling::Phase::Rescale);
             self.rescale(&mut dst, out, maxima);
             let mut exponents = std::mem::take(&mut self.exponents[out]);
             let first = &self.exponents[self.partials_buffer(child1)];
