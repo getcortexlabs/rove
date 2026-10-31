@@ -44,7 +44,6 @@
 "Drop a NEXUS file here, or browse your Mac." = "Drop a NEXUS file here, or browse your Mac.";
 "·  Morphological characters" = "·  Morphological characters";
 "Drop one matrix at a time." = "Drop one matrix at a time.";
-"Open or drop a morphological NEXUS matrix" = "Open or drop a morphological NEXUS matrix";
 "Just a little curious?" = "Just a little curious?";
 "Take our tiny example matrix for a spin." = "Take our tiny example matrix for a spin.";
 "Try an example" = "Try an example";
@@ -943,7 +942,6 @@
 /* Tree files from other programs. */
 "Tree file" = "Tree file";
 "Summarize Tree File…" = "Summarize Tree File…";
-"This file holds trees, not a character matrix. Summarize and explore it with File → Summarize Tree File." = "This file holds trees, not a character matrix. Summarize and explore it with File → Summarize Tree File.";
 "Choose a tree file" = "Choose a tree file";
 "Open a NEXUS tree sample written by Rove, BEAST 2 or another program. Your data stays on this Mac." = "Open a NEXUS tree sample written by Rove, BEAST 2 or another program. Your data stays on this Mac.";
 "Summarize" = "Summarize";
@@ -959,3 +957,7 @@
 "Reveal tree file" = "Reveal tree file";
 "Reading the tree file…" = "Reading the tree file…";
 "Reading the tree file" = "Reading the tree file";
+"Already have a tree sample?" = "Already have a tree sample?";
+"Summarize trees from Rove, BEAST 2 or another program." = "Summarize trees from Rove, BEAST 2 or another program.";
+"Summarize a tree file…" = "Summarize a tree file…";
+"Open or drop a NEXUS matrix or tree file" = "Open or drop a NEXUS matrix or tree file";

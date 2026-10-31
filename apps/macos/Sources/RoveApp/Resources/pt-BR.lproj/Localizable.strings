@@ -44,7 +44,6 @@
 "Drop a NEXUS file here, or browse your Mac." = "Arraste um arquivo NEXUS ou escolha no seu Mac.";
 "·  Morphological characters" = "·  Caracteres morfológicos";
 "Drop one matrix at a time." = "Arraste uma matriz por vez.";
-"Open or drop a morphological NEXUS matrix" = "Abrir ou arrastar uma matriz morfológica NEXUS";
 "Just a little curious?" = "Bateu a curiosidade?";
 "Take our tiny example matrix for a spin." = "Dê uma volta pela nossa matriz de exemplo.";
 "Try an example" = "Experimentar";
@@ -943,7 +942,6 @@
 /* Tree files from other programs. */
 "Tree file" = "Arquivo de árvores";
 "Summarize Tree File…" = "Resumir arquivo de árvores…";
-"This file holds trees, not a character matrix. Summarize and explore it with File → Summarize Tree File." = "Este arquivo contém árvores, não uma matriz de caracteres. Resuma e explore pelo menu Arquivo → Resumir arquivo de árvores.";
 "Choose a tree file" = "Escolha um arquivo de árvores";
 "Open a NEXUS tree sample written by Rove, BEAST 2 or another program. Your data stays on this Mac." = "Abra uma amostra de árvores NEXUS gravada pelo Rove, pelo BEAST 2 ou por outro programa. Seus dados ficam neste Mac.";
 "Summarize" = "Resumir";
@@ -959,3 +957,7 @@
 "Reveal tree file" = "Mostrar arquivo de árvores";
 "Reading the tree file…" = "Lendo o arquivo de árvores…";
 "Reading the tree file" = "Lendo o arquivo de árvores";
+"Already have a tree sample?" = "Já tem uma amostra de árvores?";
+"Summarize trees from Rove, BEAST 2 or another program." = "Resuma árvores do Rove, do BEAST 2 ou de outro programa.";
+"Summarize a tree file…" = "Resumir um arquivo de árvores…";
+"Open or drop a NEXUS matrix or tree file" = "Abra ou arraste uma matriz NEXUS ou um arquivo de árvores";

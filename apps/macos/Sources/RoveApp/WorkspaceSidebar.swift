@@ -77,9 +77,22 @@ struct WorkspaceSidebar: View {
               Spacer(minLength: 0)
             }.padding(.horizontal, 12).padding(.vertical, 12)
           }.buttonStyle(SidebarButtonStyle()).padding(.horizontal, 12).disabled(workspace.isRunning)
+          Button(action: workspace.summarizeTreeFile) {
+            HStack(spacing: 11) {
+              Image(systemName: "point.3.connected.trianglepath.dotted").font(.system(size: 15))
+                .foregroundStyle(Lab.ice).frame(width: 25).accessibilityHidden(true)
+              VStack(alignment: .leading, spacing: 5) {
+                Text(strings("Tree file")).font(.system(size: 12, weight: .medium))
+                Text(strings("Trees from another program")).font(.system(size: 10))
+                  .foregroundStyle(Lab.muted)
+              }
+              Spacer(minLength: 0)
+            }.padding(.horizontal, 12).padding(.vertical, 12)
+          }.buttonStyle(SidebarButtonStyle()).padding(.horizontal, 12)
+            .disabled(workspace.isRunning || workspace.loading || workspace.treeSummary != nil)
 
         }
-      }.scrollIndicators(.hidden)
+      }.scrollIndicators(.automatic)
 
       Spacer(minLength: 16)
 
