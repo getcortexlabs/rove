@@ -34,6 +34,9 @@ remain pending. Work is tracked in the
 
 ## Native Mac preview
 
+[Download the latest release](https://github.com/getcortexlabs/rove/releases/latest): a signed and
+notarized disk image for Apple silicon Macs on macOS 14 or newer.
+
 The first SwiftUI/AppKit workspace imports matrices through Rust, displays their
 characters and runs analyses with live progress and cancellation. It uses a glass sidebar, a fossil
 explorer and the Cortex Labs typography. Settings supports English, Brazilian
@@ -49,8 +52,11 @@ scripts/build-macos.sh
 open build/macos/Rove.app
 ```
 
-The app targets macOS 14+. Building requires Xcode 26.3 or newer and Rust. This builds a local app; a
-notarized release and DMG are future work. Review the model and explicit group
+The app targets macOS 14+ on Apple silicon. Each
+[release](https://github.com/getcortexlabs/rove/releases) attaches a disk image
+signed with a Developer ID certificate and notarized by Apple. Building requires
+Xcode 26.3 or newer and Rust; `scripts/package-macos.sh` produces the disk
+image. Review the model and explicit group
 constraints, start the bundled Rust engine, and inspect trace and tree files.
 Choose an optional outgroup without removing any terminals; review the applied
 groups before starting. Saved setups preserve that choice and can be reopened

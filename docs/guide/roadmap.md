@@ -4,7 +4,7 @@ description: "Rove's implementation order: establish correctness and measured ba
 
 # Roadmap
 
-Rove is early. There are no releases, no published crate and no dates. This is the implementation order, not a schedule.
+Rove is early. There is no published crate and no dates. This is the implementation order, not a schedule.
 
 | Step | State |
 | --- | --- |

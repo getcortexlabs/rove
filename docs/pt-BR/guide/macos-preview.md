@@ -47,15 +47,16 @@ serviços de rede.
 
 ## Compilar e abrir
 
-O app tem como destino macOS 14 ou mais recente. Para compilar, instale Xcode 26.3 ou mais recente e Rust em um Mac compatível com essa versão do Xcode. Execute na raiz do repositório:
+Cada [release](https://github.com/getcortexlabs/rove/releases) traz o `Rove-<versão>.dmg` para Apple silicon, assinado com um certificado Developer ID e notarizado pela Apple: abra a imagem, arraste o Rove para Aplicativos e abra-o. O app tem como destino macOS 14 ou mais recente.
+
+Para compilar por conta própria, instale Xcode 26.3 ou mais recente e Rust em um Mac compatível com essa versão do Xcode. Execute na raiz do repositório:
 
 ```sh
 scripts/build-macos.sh
 open build/macos/Rove.app
 ```
 
-Isso gera um aplicativo local com assinatura ad hoc. Não é uma versão
-notarizada nem um instalador. A interface usa um tema escuro inspirado na
+Isso gera um aplicativo local com assinatura ad hoc. O `scripts/package-macos.sh` compila a configuração de release e a empacota em uma imagem de disco; com `CODESIGN_ID` e `NOTARY_PROFILE` definidos, assina e notariza o app e a imagem da mesma forma que as releases são construídas. A interface usa um tema escuro inspirado na
 Cortex Labs e está disponível em português brasileiro e inglês.
 
 ## Idioma e configurações

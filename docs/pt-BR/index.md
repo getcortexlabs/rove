@@ -16,6 +16,9 @@ hero:
     alt: O logotipo do Rove, uma letra R desenhada como nós conectados.
   actions:
     - theme: brand
+      text: Baixar para Mac
+      link: https://github.com/getcortexlabs/rove/releases/latest
+    - theme: alt
       text: O que é o Rove?
       link: /pt-BR/guide/
     - theme: alt
@@ -43,7 +46,7 @@ features:
 <div class="home-status">
 
 ::: info Estágio inicial
-O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON, a correção Mkv, os testes de igualdade e um amostrador independente mínimo estão implementados. O modelo de referência com relógio relaxado está implementado e conferido em estados fixos. Comparações de posterior cobrem seis casos construídos com 20 táxons. O [benchmark ampliado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) cobre 20, 90 e 500 táxons e compara adaptadores de núcleo do BEAST/BEAGLE, separando tempo e qualidade da amostragem. As execuções maiores não atingiram os critérios de convergência. Um caminho AVX2 continua como trabalho futuro. [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
+O núcleo de verossimilhança com o caminho direto do Mk e um kernel NEON, a correção Mkv, os testes de igualdade e um amostrador independente mínimo estão implementados. O modelo de referência com relógio relaxado está implementado e conferido em estados fixos. Comparações de posterior cobrem seis casos construídos com 20 táxons. O [benchmark ampliado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) cobre 20, 90 e 500 táxons e compara adaptadores de núcleo do BEAST/BEAGLE, separando tempo e qualidade da amostragem. As execuções maiores não atingiram os critérios de convergência. Um caminho AVX2 continua como trabalho futuro. O app nativo para Mac é distribuído como imagem de disco assinada e notarizada para Apple silicon no [GitHub Releases](https://github.com/getcortexlabs/rove/releases/latest). [Veja o que existe hoje →](/pt-BR/guide/#o-que-existe-hoje)
 :::
 
 </div>

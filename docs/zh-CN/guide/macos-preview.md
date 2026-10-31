@@ -38,7 +38,9 @@ Cloudflare 验证访问权限，Resend 发送验证码。服务保存邮箱、�
 
 ## 构建与打开
 
-应用的部署目标为 macOS 14 或更高版本。构建时，请在相应 Xcode 支持的 Mac 上安装 Xcode 26.3 或更高版本及 Rust，
+每个[发布版本](https://github.com/getcortexlabs/rove/releases)都附带面向 Apple 芯片的 `Rove-<版本>.dmg`，使用 Developer ID 证书签名并经 Apple 公证：打开镜像，把 Rove 拖到“应用程序”，然后启动。应用的部署目标为 macOS 14 或更高版本。
+
+如需自行构建，请在相应 Xcode 支持的 Mac 上安装 Xcode 26.3 或更高版本及 Rust，
 然后从代码仓库根目录运行：
 
 ```sh
@@ -46,7 +48,7 @@ scripts/build-macos.sh
 open build/macos/Rove.app
 ```
 
-这会构建带有 ad hoc 签名的本地应用，不是经过公证的发行版或安装程序。
+这会构建带有 ad hoc 签名的本地应用。`scripts/package-macos.sh` 会构建 release 配置并打包成磁盘镜像；设置 `CODESIGN_ID` 和 `NOTARY_PROFILE` 后，会按发布版本的构建方式对应用和镜像签名并公证。
 界面的深色外观参考 Cortex Labs，支持英语和巴西葡萄牙语。
 
 ## 语言与设置
@@ -227,7 +229,7 @@ target/release/rove summarize /path/to/results/trees.nexus \
 估计占用 128 MiB（先到者为准）。该估计不是进程内存的硬上限。
 四次流式遍历只保留支系计数和目标树统计，不在内存中保存全部解析树。
 
-[验证与 Apple silicon 测量](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
+[验证与 Apple 芯片测量](https://github.com/getcortexlabs/rove/blob/main/benchmarks/tree-summary/2026-10-29/README.md)
 记录了与固定版本 TreeAnnotator 和外部 NEXUS 读取器的比较。
 
 ## 查看带注释的树

@@ -26,10 +26,12 @@ fi
 swift build "${swift_options[@]}"
 swift_bin="$(swift build "${swift_options[@]}" --show-bin-path)"
 app="$repo_root/build/macos/Rove.app"
+# A fresh bundle: a stapled ticket from an earlier build sits outside the
+# signature's seal and would otherwise survive re-signing.
+rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Helpers" "$app/Contents/Resources"
 cp "$swift_bin/Rove" "$app/Contents/MacOS/Rove"
 cp target/release/rove "$app/Contents/Helpers/rove"
-rm -rf "$app/Contents/Resources/Rove_RoveApp.bundle"
 cp -R "$swift_bin/Rove_RoveApp.bundle" "$app/Contents/Resources/"
 cp apps/macos/Info.plist "$app/Contents/Info.plist"
 
