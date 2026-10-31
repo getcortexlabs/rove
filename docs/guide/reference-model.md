@@ -149,3 +149,7 @@ not fresh observations, and the results do not establish general performance.
 Six additional fixed states cover those cases. With imported category rates, likelihood
 differences were at most 1.14e-13; generating the categories independently increased the
 maximum to 8.16e-8, from the same quantile approximation difference described above.
+
+## Gamma proposal frequency
+
+A [follow-up study](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md) found that gamma shape received only about one proposal per 1,100–1,200 steps in the constructed four-tip dated workload. Raising `gamma_shape_scale` weight from 0.1 to 3 increased gamma ESS per group wall second by about 22–24 times, with the same proposal and prior. Other parameters became the bottleneck, and an efficiency regression prevented promotion under the frozen criteria. **Weight 0.1 remains the default**, including in the Mac app. The tested setting is available through `--weight gamma_shape_scale=3`; inspect all parameters and tree diagnostics before choosing it. This is not a 22–24-fold speedup of the full analysis or a measurement on M1 hardware.

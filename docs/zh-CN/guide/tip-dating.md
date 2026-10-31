@@ -103,3 +103,5 @@ trace 包含 fossilized_birth_death、clock_rate、dating_parameter_prior，以�
 估计任一过程参数时，trace 还记录 `fbd_birth_rate`、`fbd_death_rate`、`fbd_fossil_sampling_rate`、`fbd_present_sampling` 和 `fbd_origin`。其中固定的成员也会记录，并在链比较中验证。`run.json` 保存 `dating_density_convention` 和完整先验。原生设置中，过程估计使用格式 4，固定过程定年使用格式 3，无日期分析使用格式 2；旧应用拒绝不支持的格式。检查点恢复需要相同的引擎可执行文件。
 
 估计验证新增八个完整先验状态与 BEAST 2.7.8 / SA 2.1.1 的比较、解析条件分布、独立联合积分、固定与估计混合运行及精确恢复测试。[构造数据报告](https://github.com/getcortexlabs/rove/tree/main/benchmarks/fbd-estimation/2026-10-30) 记录时间、ESS、R-hat、类群差异和相关性。它不证明经验化石数据上的准确性、可识别性或性能。
+
+[Gamma 频率研究](./reference-model#gamma-提案频率)发现，更新频率过低限制了此构造示例的采样。已评估的 CLI 调整可以提高 gamma ESS，但未满足成为新默认设置的全部效率标准。原生应用仍使用现有设置。

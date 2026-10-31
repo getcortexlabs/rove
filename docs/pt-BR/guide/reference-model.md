@@ -157,3 +157,7 @@ Seis estados fixos adicionais cobrem esses casos. Com as taxas de categoria impo
 a diferença máxima de verossimilhança foi 1,14e-13; gerando as categorias de forma
 independente, chegou a 8,16e-8, pela mesma diferença de aproximação dos quantis descrita
 acima.
+
+## Frequência das propostas da gama
+
+Um [estudo posterior](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md) encontrou apenas uma proposta para a forma da gama a cada 1.100–1.200 passos no exemplo construído de datação com quatro terminais. Aumentar o peso de `gamma_shape_scale` de 0,1 para 3 elevou a ESS da gama por segundo de tempo total do grupo em cerca de 22–24 vezes, mantendo a proposta e o prior. Outros parâmetros passaram a limitar a amostragem, e uma regressão de eficiência impediu a promoção pelos critérios definidos antes das corridas. **O peso padrão continua em 0,1**, inclusive no app Mac. A configuração testada pode ser usada com `--weight gamma_shape_scale=3`; examine todos os parâmetros e os diagnósticos das árvores antes de escolhê-la. Isso não representa uma análise inteira 22–24 vezes mais rápida nem uma medição em hardware M1.

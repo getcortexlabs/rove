@@ -158,3 +158,7 @@ Seis estados fijos adicionales cubren estos casos. Con tasas de categoría impor
 diferencia máxima de verosimilitud fue 1,14e-13; al generar las categorías de forma
 independiente, llegó a 8,16e-8, por la misma diferencia de aproximación de cuantiles
 descrita arriba.
+
+## Frecuencia de las propuestas gamma
+
+Un [estudio posterior](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md) encontró apenas una propuesta para la forma gamma cada 1.100–1.200 pasos en el ejemplo construido de datación con cuatro terminales. Aumentar el peso de `gamma_shape_scale` de 0,1 a 3 elevó la ESS gamma por segundo de tiempo total del grupo unas 22–24 veces, manteniendo la propuesta y el prior. Otros parámetros pasaron a limitar el muestreo y una regresión de eficiencia impidió la promoción según los criterios fijados antes de las ejecuciones. **El peso predeterminado sigue siendo 0,1**, también en la app Mac. La configuración evaluada está disponible mediante `--weight gamma_shape_scale=3`; examine todos los parámetros y los diagnósticos de árboles antes de elegirla. No equivale a un análisis completo 22–24 veces más rápido ni a una medición en hardware M1.

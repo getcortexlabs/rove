@@ -1,0 +1,405 @@
+{
+  "comparison": "Rove raw-tree reader versus BEAST 2 validation reader, per-chain retained clade frequencies",
+  "chains": [
+    {
+      "directory": "dated-fixed-42101-0.1/chain-01",
+      "summary_sha256": "206dfaba57e5d33cd669d8b60061429a6d3d726a688975b16cb823bc18ad5d4d",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42101-0.1/chain-02",
+      "summary_sha256": "aa501ecb4c513c71511d67b53cec777949e58e45ba597cf7b4a6050bb0ea97fe",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42101-0.1/chain-03",
+      "summary_sha256": "da562dd7a59d630940ddd86c34b21c1666f9ad7b89f061e31d1c8a946ab0e07d",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42101-0.1/chain-04",
+      "summary_sha256": "1cf0e9a3e9d543a163d6c002319cb77571dd0e8155ba844fb8ffb62e32c82674",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42101-3/chain-01",
+      "summary_sha256": "c4212bca6cbf1cd3fefab9a0cf9914915ad8cd1afc308393f873dedb0b0e5cf0",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42101-3/chain-02",
+      "summary_sha256": "4863b764f7dad2f0896c9e0c774c6423ac210badc58ac6a1a7203e64e964ac20",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42101-3/chain-03",
+      "summary_sha256": "752d4e93ed457c76150705f1181495bb0553327c0b530b25d3554f4ddb62ce00",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42101-3/chain-04",
+      "summary_sha256": "39a361179f7a2ad764caf7c8ca5a1a766001d389e078ffbbc3b9fad905844221",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42111-3/chain-01",
+      "summary_sha256": "9792c78145bdbd67285e7fdffb7d1a8472a0e0b35b5a6be5c21d8684828ee77c",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42111-3/chain-02",
+      "summary_sha256": "f0ff902e4bb767dd222beb1d87693692320778e271209c1ed045631cd37c79a9",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42111-3/chain-03",
+      "summary_sha256": "c9b52bdb924cb2b567d422786ac904d8966f6152cff5fb6ea036d181d0ea4b48",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42111-3/chain-04",
+      "summary_sha256": "5db19ea60dc7eb272f0fe75fe9e552920dd38602c015ac8e87c4332ffb35cd83",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42111-0.1/chain-01",
+      "summary_sha256": "d3fdea77e7c2ab51a0f655459888a98ca86d7b02ba52df69ae7ec1816f2d01ba",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42111-0.1/chain-02",
+      "summary_sha256": "96282e408c934c1043e8dd8cb11c3bf6362e2c2ce1f278f60302d4053f322cfe",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42111-0.1/chain-03",
+      "summary_sha256": "bbf67414ccaf048a6752b443044a8d22b0126f3c2175fdc160be47503e801e14",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-fixed-42111-0.1/chain-04",
+      "summary_sha256": "8f9d389deaeb05f6de39b9275d67a614b438021bba0c47b5edfde17460643d18",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42121-3/chain-01",
+      "summary_sha256": "72739964093813c1fc7102f32e93e8c769e831858b2e84edc2cc9a17ddf0b242",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42121-3/chain-02",
+      "summary_sha256": "eeb3d328eb47254233487f358681278c456e6400a24ccd3123bb218816919f2c",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42121-3/chain-03",
+      "summary_sha256": "5e40257b8c029dbca0230f7181c6dc21f9ef7562938ba4b9fc1b5257c926b514",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42121-3/chain-04",
+      "summary_sha256": "3c2291c12f996cc7f76ba897658ff596d84153b560d1b92673e9e6f5ee2a469e",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42121-0.1/chain-01",
+      "summary_sha256": "2e5c09f2bd3415ffadac3e1caa352b89a15ab722d6627a2280ea1207c438075b",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42121-0.1/chain-02",
+      "summary_sha256": "3b92b886985199e2809a9bee5fbb5d26af0e1241a2e42c7193523a7bae9bf26b",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42121-0.1/chain-03",
+      "summary_sha256": "233196a8ff66c62583a77f420617c3488b4436b02a6ca8f31a8e3a3606dbd748",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42121-0.1/chain-04",
+      "summary_sha256": "d8735ae281d197631f17edf8e06c14fcbfe53ad7edfe8ab17be04f5714666a8e",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42131-0.1/chain-01",
+      "summary_sha256": "d9d20b6d973506573c17eaeab4d781b10ef33429b4097f3bd34772b4e25f94a4",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42131-0.1/chain-02",
+      "summary_sha256": "d26021c281a29b8eadfba9123fd2a2e72ac99ef5c3f04c9b96b1fb0d9e1dab41",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42131-0.1/chain-03",
+      "summary_sha256": "665889ffbd3b1d087965ea6dfd40e5cb8ef70cfccd02fa108bf0e758c69445e2",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42131-0.1/chain-04",
+      "summary_sha256": "cd37c622da8fc9b136f00b2d98703578763ebb415e61f0b6878ae8c04e2adc8e",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42131-3/chain-01",
+      "summary_sha256": "7802e7d56e98bc80f4a3b60ec376f69067bc318598dcfc649c8dad27c772d950",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42131-3/chain-02",
+      "summary_sha256": "086dc3a73df64983215104df06fdf6757e99d54d0cd3423f2fb85931bd2179dc",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42131-3/chain-03",
+      "summary_sha256": "d3c56d5df1f8e6e9d7249ed6f0ccff8b0d664f70777553b053278b6f6bab0274",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "dated-estimated-42131-3/chain-04",
+      "summary_sha256": "106d828713dc70a9277df8f7709c08e834a5089bdcea83bc8eab2abf1e33586f",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mk-42201-0.1/chain-01",
+      "summary_sha256": "68c18501c72fc65eb00bb0e214e452b5830506f04a5853d220c62460630b7669",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mk-42201-0.1/chain-02",
+      "summary_sha256": "c003ee952b59cb3adc87166e6a3be8fd8eef9c322e246d73d0e59ddc53c522a3",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mk-42201-0.1/chain-03",
+      "summary_sha256": "b70952f8176a60b760c5dbb549eba133ea8d053daa094581e2cadde2ab5844f0",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mk-42201-0.1/chain-04",
+      "summary_sha256": "26710c8631f1fee050643b7febac365fe6e3cc433859e66caa11a86417bdc722",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mk-42201-3/chain-01",
+      "summary_sha256": "99579eee89fc1c12e65a9c80a45d0d46c54a827838ef022af4a0ebc05a91347d",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mk-42201-3/chain-02",
+      "summary_sha256": "3b4daaadd2858826aaae3384997be66d401bf3a735d18046724e1712bd74f148",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mk-42201-3/chain-03",
+      "summary_sha256": "8b585303dbbad6ee0fcb7545e7978af7a77bc82792347eaedae0fdb879727a03",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mk-42201-3/chain-04",
+      "summary_sha256": "a4cbd4a07178046b6c9e9dbadf5b4f56363b614bf7929fb622bae5127c8e0e0a",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mkv-42211-3/chain-01",
+      "summary_sha256": "51b0c7938f7f7cac4e5f79f31b1be9eeb04dc110ce5803c5598a6072f70ee14d",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mkv-42211-3/chain-02",
+      "summary_sha256": "c29bcbf64d18459c68a50cfdabad0d1e2bdbf64ab3f3d5611b8e88c7fb942075",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mkv-42211-3/chain-03",
+      "summary_sha256": "b1db535164a54e7c0a9d25b6ef37618a72162dc24aa0b495c3c7a024e1fa3743",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mkv-42211-3/chain-04",
+      "summary_sha256": "18a0907801145eb0f5e8773c638a4b240d73fc0246b50fce123348e574385192",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mkv-42211-0.1/chain-01",
+      "summary_sha256": "ae1da0fe87c9f475e94aff5d55f0f16c4e2c87d14a34885cc57c99054b449d3e",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mkv-42211-0.1/chain-02",
+      "summary_sha256": "633b933e7f209feac46662227747be951a0adee9ef99bdde582b380544fc4daa",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mkv-42211-0.1/chain-03",
+      "summary_sha256": "a3ce9fda129930cc32d799ecb227c2b920b9e3436d7409011d7586925c333b46",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reference-mkv-42211-0.1/chain-04",
+      "summary_sha256": "309e7f35e02ca07d437f27c49bbd9dd3fbce569e00b416e95617738acf929129",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "control-42221-0.1/chain-01",
+      "summary_sha256": "7c83ab9d05e2bfe2e5af86b99ba12509ac89788247c527687c8c47311aa19d88",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "control-42221-0.1/chain-02",
+      "summary_sha256": "8305661da38b6d17c695d37dc9cb56fddc43322902b018195d4db9133d9be9d1",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "control-42221-0.1/chain-03",
+      "summary_sha256": "a123e9e9ee0bb5d60af623ae1f87e30e476ceaef4e5c5de7e65e9182c48d4ace",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "control-42221-0.1/chain-04",
+      "summary_sha256": "235b7b82c6c9d53e2b1f7010bfc4a26e41416644998b8bc1f8dce940e40640c2",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "control-42221-3/chain-01",
+      "summary_sha256": "9071853d73614a953a720f378c66f127dde72da0d83b98e746f520bf2580a992",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "control-42221-3/chain-02",
+      "summary_sha256": "f7d313382f501fed3726da1ab32aa72ed1f03ce0b27200d8c9ab36f14df35189",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "control-42221-3/chain-03",
+      "summary_sha256": "4ca6475ccddd3cd12333a80a3728da9864f098daeb0dc358dc84be771f3b9385",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "control-42221-3/chain-04",
+      "summary_sha256": "9cb5a2df6691afb1a700a89a511bbe54e4d49a6b479d8edf670ca9acc292f0f3",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "homoplasy-42231-3/chain-01",
+      "summary_sha256": "9a026888f9c6262f10be08275822fbebca5b9cc3bd9654d32f0a691b08189f0f",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "homoplasy-42231-3/chain-02",
+      "summary_sha256": "14a00253b66cfe6199b368e0c5fa7b0c6e51bbff72d2803aef8831892977bf67",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "homoplasy-42231-3/chain-03",
+      "summary_sha256": "8d59ee81119b7bf6f3123e7c034647cf6ccb86761d4e9c412a47640dcb5f099c",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "homoplasy-42231-3/chain-04",
+      "summary_sha256": "4b44fa575545a78944d4a1aa74e2fcebf0d439c33ab8ef3d8894734fd1be8c9f",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "homoplasy-42231-0.1/chain-01",
+      "summary_sha256": "346a7e2508d9acf68caf349112ff989270b397ef7a5602538c0a062c09db08dd",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "homoplasy-42231-0.1/chain-02",
+      "summary_sha256": "d8bc0fae405bfa177230cbf62eb8a1991ff7562ce625168820eff1f7e16769b3",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "homoplasy-42231-0.1/chain-03",
+      "summary_sha256": "8d84c4d9ce82ec3d44f92a2a89d8858d11bceda383f852e2ef0f9044db2806a9",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "homoplasy-42231-0.1/chain-04",
+      "summary_sha256": "405406f5388fe50aee99184c116b4bd0d096478cda411cd7f0b54885e653925f",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "missing-42241-0.1/chain-01",
+      "summary_sha256": "7f125fbc32768e3dbd3c6dedabea5a7e999710171ef1bd0032804627fce782ae",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "missing-42241-0.1/chain-02",
+      "summary_sha256": "a030338b77c480d7b27e6a2a9f03e62bebaae665121cd03179a9e0631b888b2d",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "missing-42241-0.1/chain-03",
+      "summary_sha256": "41ed56ef6d00927673e0855e533311aa62102ed1b9cab212f60eb1b33685508e",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "missing-42241-0.1/chain-04",
+      "summary_sha256": "f427bb1aa4603dea0e234a21b91032d6bcbb4925227bbac2dca2d85373cb6d29",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "missing-42241-3/chain-01",
+      "summary_sha256": "6e4301a431af453b24e58ec743196f07549cafb720ece945581a75743264bdbf",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "missing-42241-3/chain-02",
+      "summary_sha256": "8afe8d80bd3adeb1dbb4b88c68c5c4c1ce37b0cdd1c249f341acba304756b386",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "missing-42241-3/chain-03",
+      "summary_sha256": "74872e8ff697d447db5ab3c8fd1bb72d095d2714cf7ff6beb32b852fc9147800",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "missing-42241-3/chain-04",
+      "summary_sha256": "0565554739d054f88aa5f765b55c7f8044f2bebdda813bb653c06fbec1681b14",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reduced-42251-3/chain-01",
+      "summary_sha256": "4b688d3b4d773a1c962b5a9cad40bcb806e420f62a528e7f029869483eaf2334",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reduced-42251-3/chain-02",
+      "summary_sha256": "a6188ee63f3613e92f2c520c379ab1de3648a62b4554fcc862d9337155581ac8",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reduced-42251-3/chain-03",
+      "summary_sha256": "5a6e9f140394db8582fcbeffa85826733273dbc091f4f773d58684a33fe6aa1f",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reduced-42251-3/chain-04",
+      "summary_sha256": "79afb1c9a9e4979519164b7efa5ad46782122bea2cea475ae113f2d5090a30c5",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reduced-42251-0.1/chain-01",
+      "summary_sha256": "2c89a929c539d4f364687e9b1d619b8dced45733c7ebc387f7821708f43ab2ad",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reduced-42251-0.1/chain-02",
+      "summary_sha256": "5ad7f26beb95f416b67d0e4341a341ee728369d4d79d46295872c9ce2f1362de",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reduced-42251-0.1/chain-03",
+      "summary_sha256": "2516305a7c50c87bbdb2f6ce3faf45da9d7babbb8ff162112101145301ac89e1",
+      "max_clade_frequency_difference": 0.0
+    },
+    {
+      "directory": "reduced-42251-0.1/chain-04",
+      "summary_sha256": "b798800ae66b6ac1d1a5ceef34b72816173aee9b590bfabaf762df4d6d41d875",
+      "max_clade_frequency_difference": 0.0
+    }
+  ]
+}
