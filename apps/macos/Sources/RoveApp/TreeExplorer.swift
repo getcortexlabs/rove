@@ -27,6 +27,8 @@ final class TreeExplorer: Identifiable {
   private(set) var focusRevision = 0
   private(set) var exporting = false
   private(set) var exportedFile: URL?
+  /// The run folder's name, or the tree file's name for an external sample.
+  private(set) var runName: String
   private var revision = 0
   private var arrangement: Task<Void, Never>?
 
@@ -34,6 +36,7 @@ final class TreeExplorer: Identifiable {
     self.directory = directory
     self.runDirectory = runDirectory
     self.executable = executable
+    runName = runDirectory.lastPathComponent
   }
 
   func load() async {
@@ -44,21 +47,23 @@ final class TreeExplorer: Identifiable {
     let executable = executable
     let run = runDirectory
     do {
-      let (tree, layout, group) = try await Task.detached {
+      let (tree, layout, group, name) = try await Task.detached {
         let tree = try TreeInspector.read(directory: directory, executable: executable)
         let layout = TreeLayout.build(tree, collapsed: [], rotated: [])
-        let draft = HistoryEntry.read(run).draft
+        let entry = HistoryEntry.read(run)
+        let draft = entry.draft
         let groups = Set(tree.constraints.map { $0.sorted().joined(separator: "\u{0}") })
         let applied = Set((draft?.constraints ?? []).map { $0.sorted().joined(separator: "\u{0}") })
         let outgroup =
           draft?.matrixSHA256 == tree.summary.matrixSha256 && groups == applied
           ? draft?.outgroup : nil
-        return (tree, layout, outgroup)
+        return (tree, layout, outgroup, entry.source?.name ?? run.lastPathComponent)
       }.value
       try Task.checkCancellation()
       document = tree
       self.layout = layout
       outgroup = group
+      runName = name
     } catch is CancellationError {
     } catch {
       self.error = "The annotated tree could not be opened."
@@ -157,7 +162,7 @@ final class TreeExplorer: Identifiable {
     let figure = TreeFigure(
       tree: document, layout: layout, viewport: viewport, collapsed: layout.collapsed,
       selected: selected, showSupport: showSupport, strings: strings)
-    let runName = runDirectory.lastPathComponent
+    let runName = runName
     let protected =
       ["mcc.tree", "samples.trees", "summary.json"].map { directory.appendingPathComponent($0) }
       + [URL(fileURLWithPath: document.summary.sourcePath)]

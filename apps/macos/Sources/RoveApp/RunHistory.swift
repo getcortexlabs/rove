@@ -10,6 +10,7 @@ enum HistoryStatus: String, CaseIterable, Sendable {
   case incomplete = "Incomplete files"
   case unavailable = "Unavailable"
   case unreadable = "Unreadable record"
+  case treeFile = "Tree file"
 }
 
 struct HistoryEntry: Identifiable, Sendable {
@@ -22,13 +23,15 @@ struct HistoryEntry: Identifiable, Sendable {
   let message: String?
   let files: Set<String>
   let folderAvailable: Bool
+  /// Set for a folder of summaries of a tree file Rove did not write.
+  var source: TreeSource? = nil
   var checkpoint: RunCheckpoint? {
     guard status != .completed, let draft else { return nil }
     return try? RunCheckpoint.read(directory: directory, draft: draft)
   }
   var id: String { directory.path }
   var name: String {
-    draft.map { URL(fileURLWithPath: $0.matrixPath).lastPathComponent }
+    source?.name ?? draft.map { URL(fileURLWithPath: $0.matrixPath).lastPathComponent }
       ?? directory.lastPathComponent
   }
 
@@ -38,7 +41,7 @@ struct HistoryEntry: Identifiable, Sendable {
       (try? directory.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true
     let names = [
       "session.json", "setup.rove.json", "engine.stderr.log", "results/run.json",
-      "results/trace.log", "results/trees.nexus",
+      "results/trace.log", "results/trees.nexus", TreeSource.fileName,
     ]
     let files = Set(
       names.filter {
@@ -49,6 +52,14 @@ struct HistoryEntry: Identifiable, Sendable {
     let draft =
       session?.setup
       ?? (try? AnalysisDraft.read(directory.appendingPathComponent("setup.rove.json")))
+    if session == nil, draft == nil, folderAvailable,
+      let source = try? TreeSource.read(directory.appendingPathComponent(TreeSource.fileName))
+    {
+      return Self(
+        directory: directory, status: .treeFile, draft: nil, startedAt: source.createdAt,
+        elapsedSeconds: nil, completedSteps: nil, message: nil, files: files,
+        folderAvailable: true, source: source)
+    }
     var engine = try? EngineRecord.read(directory.appendingPathComponent("results/run.json"))
     if let draft, engine?.matches(draft) != true { engine = nil }
     let status: HistoryStatus
@@ -138,6 +149,7 @@ struct HistoryScan: Sendable {
           }
           if manager.fileExists(atPath: child.appendingPathComponent("session.json").path)
             || manager.fileExists(atPath: child.appendingPathComponent("setup.rove.json").path)
+            || manager.fileExists(atPath: child.appendingPathComponent(TreeSource.fileName).path)
           {
             directories.insert(child.standardizedFileURL.resolvingSymlinksInPath())
           }

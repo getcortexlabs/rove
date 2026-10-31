@@ -25,7 +25,11 @@ struct HistoryView: View {
         } label: {
           Label(strings("All runs"), systemImage: "arrow.left")
         }.buttonStyle(LabButtonStyle(compact: true))
-        HistoryDetail(workspace: workspace, entry: selected)
+        if let source = selected.source {
+          TreeFileDetail(workspace: workspace, entry: selected, source: source)
+        } else {
+          HistoryDetail(workspace: workspace, entry: selected)
+        }
       } else {
         header
         if let run = workspace.run, run.isActive {
@@ -146,9 +150,10 @@ struct HistoryView: View {
 
   private func row(_ entry: HistoryEntry) -> some View {
     HStack(spacing: 16) {
-      Image(systemName: "doc.text.image").font(.system(size: 23, weight: .light)).foregroundStyle(
-        Lab.lilac
+      Image(
+        systemName: entry.source == nil ? "doc.text.image" : "point.3.connected.trianglepath.dotted"
       )
+      .font(.system(size: 23, weight: .light)).foregroundStyle(Lab.lilac)
       .frame(width: 44, height: 50).background(
         Lab.accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12))
       VStack(alignment: .leading, spacing: 8) {
@@ -159,14 +164,19 @@ struct HistoryView: View {
             "\(strings(draft.settings.clock == "reference" ? "Relaxed clock + gamma" : "Strict clock")) · \(strings("Seed %@", draft.settings.seed))"
           )
           .font(.system(size: 10)).foregroundStyle(Lab.muted)
+        } else if entry.source != nil {
+          Text(strings("Trees from another program")).font(.system(size: 10))
+            .foregroundStyle(Lab.muted)
         }
       }
       Spacer(minLength: 12)
       VStack(alignment: .trailing, spacing: 10) {
         HistoryStatusBadge(status: entry.status, strings: strings)
-        Text(HistoryDetail.duration(entry.elapsedSeconds)).font(
-          .system(size: 11, design: .monospaced)
-        ).foregroundStyle(Lab.secondary)
+        if entry.source == nil {
+          Text(HistoryDetail.duration(entry.elapsedSeconds)).font(
+            .system(size: 11, design: .monospaced)
+          ).foregroundStyle(Lab.secondary)
+        }
       }
       Image(systemName: "chevron.right").font(.system(size: 11)).foregroundStyle(Lab.muted)
     }.padding(18).background(Lab.surface, in: RoundedRectangle(cornerRadius: 15))

@@ -61,7 +61,7 @@ struct TreeExplorerView: View {
           Lab.lilac.opacity(0.1), in: RoundedRectangle(cornerRadius: 15))
       VStack(alignment: .leading, spacing: 5) {
         Text(strings("Follow the branches.")).font(Lab.display(26))
-        Text(model.runDirectory.lastPathComponent).font(.system(size: 11, design: .monospaced))
+        Text(model.runName).font(.system(size: 11, design: .monospaced))
           .foregroundStyle(Lab.secondary).lineLimit(1).truncationMode(.middle)
         if let summary = model.document?.summary {
           Text(

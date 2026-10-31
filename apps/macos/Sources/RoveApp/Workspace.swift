@@ -22,6 +22,8 @@ final class Workspace {
     }
   }
   var loading = false
+  /// Whether `loading` stands for a tree file being fingerprinted, not a matrix.
+  var preparingTrees = false
   var error: String?
   var errorDetails: String?
   var notice: String?
@@ -156,6 +158,11 @@ final class Workspace {
         guard values.isRegularFile == true else {
           throw ImportError.message("Choose a NEXUS file, rather than a folder.")
         }
+        if try await Task.detached { try Self.holdsTrees(url) }.value {
+          throw ImportError.message(
+            "This file holds trees, not a character matrix. Summarize and explore it with File → Summarize Tree File."
+          )
+        }
         guard (values.fileSize ?? 0) <= 32 * 1024 * 1024 else {
           throw ImportError.message("The matrix preview supports files up to 32 MB.")
         }
@@ -196,6 +203,71 @@ final class Workspace {
 
   func reloadGapPolicy() {
     if let file { load(file, example: isExample, preserveSettings: true) }
+  }
+
+  /// Whether a NEXUS file opens a TREES block before any characters: a tree
+  /// sample rather than a matrix. Only the first 256 KB are read, with
+  /// bracketed comments removed.
+  nonisolated static func holdsTrees(_ url: URL) throws -> Bool {
+    let handle = try FileHandle(forReadingFrom: url)
+    defer { try? handle.close() }
+    let head = String(decoding: try handle.read(upToCount: 256 * 1024) ?? Data(), as: UTF8.self)
+      .lowercased().replacing(/\[[^\]]*\]/, with: " ")
+    let trees = head.firstRange(of: /begin\s+trees\s*;/)?.lowerBound
+    let characters = head.firstRange(of: /begin\s+(characters|data)\s*;/)?.lowerBound
+    guard let trees else { return false }
+    return characters.map { trees < $0 } ?? true
+  }
+
+  func summarizeTreeFile() {
+    guard !isRunning, !loading, treeSummary == nil else { return }
+    let panel = NSOpenPanel()
+    panel.title = strings("Choose a tree file")
+    panel.message = strings(
+      "Open a NEXUS tree sample written by Rove, BEAST 2 or another program. Your data stays on this Mac."
+    )
+    panel.prompt = strings("Summarize")
+    panel.canChooseDirectories = false
+    panel.allowsMultipleSelection = false
+    if panel.runModal() == .OK, let url = panel.url { openTreeFile(url) }
+  }
+
+  /// Prepares the folder that keeps the file's summaries, lists it in History
+  /// and opens the summary sheet. The file is fingerprinted every time, so a
+  /// changed file gets its own folder.
+  func openTreeFile(_ url: URL) {
+    guard !isRunning, !loading, treeSummary == nil else { return }
+    let id = UUID()
+    importID = id
+    loading = true
+    preparingTrees = true
+    error = nil
+    errorDetails = nil
+    let parent = outputParent
+    Task {
+      do {
+        let container = try await Task.detached { try TreeSource.prepare(url, under: parent) }
+          .value
+        guard importID == id else { return }
+        history.rememberLocation(parent)
+        history.rememberRun(container)
+        treeSummary = TreeSummaryModel(
+          directory: container, executable: executable, source: .file(url))
+        await history.reload()
+      } catch {
+        guard importID == id else { return }
+        if case ImportError.message(let key) = error {
+          self.error = key
+        } else {
+          self.error = "The tree file could not be opened."
+          errorDetails = error.localizedDescription
+        }
+      }
+      if importID == id {
+        loading = false
+        preparingTrees = false
+      }
+    }
   }
 
   func reset() {
@@ -257,8 +329,15 @@ final class Workspace {
     }
   }
 
+  /// Routes a dropped or double-clicked file: a setup, a tree sample or a matrix.
   func open(_ url: URL) {
-    if url.lastPathComponent.hasSuffix(".rove.json") { loadSetup(url) } else { load(url) }
+    if url.lastPathComponent.hasSuffix(".rove.json") {
+      loadSetup(url)
+    } else if url.pathExtension.lowercased() == "trees" {
+      openTreeFile(url)
+    } else {
+      load(url)
+    }
   }
 
   func chooseSetup() {
