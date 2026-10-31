@@ -6,7 +6,7 @@ description: "Estime log-verosimilitudes marginales a partir de posteriores de p
 
 `rove marginal` estima la log-verosimilitud marginal de un modelo configurado: la probabilidad de la matriz bajo el modelo, integrando todos los árboles y parámetros. La diferencia entre las log-verosimilitudes marginales de dos modelos es el logaritmo del factor de Bayes. La estimación procede de posteriores de potencia: el objetivo de la cadena con la verosimilitud elevada a un exponente entre cero, el prior, y uno, la posterior. El enfoque sigue el [tutorial de selección de modelos de RevBayes](https://revbayes.github.io/tutorials/model_selection_bayes_factors/bf_intro) y el PathSampler del paquete MODEL_SELECTION de BEAST 2. No se requiere software externo para ejecutarlo.
 
-El comando está disponible en el CLI en Rust. La app para Mac no lo expone.
+El comando está disponible en el CLI en Rust y, para ejecuciones completadas, desde History en la [app para Mac](./macos-preview#comparacion-de-modelos).
 
 ## Ejecutar una estimación
 

@@ -6,7 +6,7 @@ description: "Simulate morphological matrices from a completed Rove run and comp
 
 `rove predict` asks whether a fitted model can generate matrices with properties like the observed data. It uses posterior trees and parameters, generates new characters, and compares the original and simulated matrix on the **same sampled tree**. This checks aspects of model adequacy; it does not establish convergence or give the probability that a model is true. The [RevBayes morphology tutorial](https://revbayes.github.io/tutorials/pps_morpho/) introduces the approach.
 
-This feature is currently available through the Rust CLI. There is no new Mac app screen. No BEAST, Java, R or RevBayes installation is required.
+This feature is available through the Rust CLI and, for completed runs, from History in the [Mac app](./macos-preview#posterior-predictive-checks). No BEAST, Java, R or RevBayes installation is required.
 
 Dated runs are also supported: predictions use the sampled tip ages, global clock rate and relative branch rates. See [fossil tip dating](./tip-dating).
 

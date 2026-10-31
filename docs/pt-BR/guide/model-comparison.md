@@ -6,7 +6,7 @@ description: "Estime log-verossimilhanças marginais a partir de posteriores de 
 
 `rove marginal` estima a log-verossimilhança marginal de um modelo configurado: a probabilidade da matriz sob o modelo, integrando todas as árvores e parâmetros. A diferença entre as log-verossimilhanças marginais de dois modelos é o log do fator de Bayes. A estimativa vem de posteriores de potência: o alvo da cadeia com a verossimilhança elevada a um expoente entre zero, o prior, e um, a posterior. A abordagem segue o [tutorial de seleção de modelos do RevBayes](https://revbayes.github.io/tutorials/model_selection_bayes_factors/bf_intro) e o PathSampler do pacote MODEL_SELECTION do BEAST 2. Nenhum software externo é necessário para executá-la.
 
-O comando está disponível no CLI em Rust. O app para Mac não o expõe.
+O comando está disponível no CLI em Rust e, para execuções concluídas, no Histórico do [app para Mac](./macos-preview#comparacao-de-modelos).
 
 ## Executar uma estimativa
 

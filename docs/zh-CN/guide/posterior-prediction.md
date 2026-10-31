@@ -6,7 +6,7 @@ description: "从已完成的 Rove 分析模拟形态学矩阵，并比较配对
 
 `rove predict` 检查拟合的模型能否生成具有类似观测数据特征的矩阵。它使用后验树和参数生成新性状，并在**同一棵抽样树**上比较原始矩阵和模拟矩阵。这能检验模型充分性的某些方面，但不能证明收敛，也不是模型为真的概率。[RevBayes 形态学教程](https://revbayes.github.io/tutorials/pps_morpho/)介绍了这一方法。
 
-目前通过 Rust CLI 使用此功能，Mac 应用尚无新界面。无需安装 BEAST、Java、R 或 RevBayes。
+此功能可通过 Rust CLI 使用；对于已完成的运行，也可在 [Mac 应用](./macos-preview#后验预测检验)的 History 中使用。无需安装 BEAST、Java、R 或 RevBayes。
 
 也支持定年运行：预测使用采样的末端年龄、全局时钟速率和分支相对速率。见[化石末端定年](./tip-dating)。
 

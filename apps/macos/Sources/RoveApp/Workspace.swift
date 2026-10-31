@@ -52,7 +52,7 @@ final class Workspace {
     "Rove Runs")
   var isRunning: Bool { run?.isActive == true || benchmark.isRunning }
   var canOpenBenchmark: Bool {
-    accessAllowed() && run?.isActive != true && !loading && treeSummary == nil
+    accessAllowed() && run?.isActive != true && !loading && treeSummary == nil && !toolsBusy
   }
   func startBenchmark() {
     guard canOpenBenchmark else { return }
@@ -423,6 +423,28 @@ final class Workspace {
 
   func runComparison(for entry: HistoryEntry) -> RunComparisonModel {
     RunComparisonModel(entry: entry, executable: executable)
+  }
+
+  /// Checks and estimates keep running while History shows another run.
+  var predictiveChecks: [String: PredictiveCheckModel] = [:]
+  var marginalEstimates: [String: MarginalLikelihoodModel] = [:]
+  var toolsBusy: Bool {
+    predictiveChecks.values.contains(where: \.busy)
+      || marginalEstimates.values.contains(where: \.busy)
+  }
+
+  func predictiveCheck(for entry: HistoryEntry) -> PredictiveCheckModel {
+    if let model = predictiveChecks[entry.id] { return model }
+    let model = PredictiveCheckModel(entry: entry, executable: executable)
+    predictiveChecks[entry.id] = model
+    return model
+  }
+
+  func marginalLikelihood(for entry: HistoryEntry) -> MarginalLikelihoodModel {
+    if let model = marginalEstimates[entry.id] { return model }
+    let model = MarginalLikelihoodModel(entry: entry, executable: executable)
+    marginalEstimates[entry.id] = model
+    return model
   }
 
   func openHistory() {

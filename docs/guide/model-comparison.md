@@ -6,7 +6,7 @@ description: "Estimate log marginal likelihoods from power posteriors with stepp
 
 `rove marginal` estimates the log marginal likelihood of a configured model: the probability of the matrix under the model with every tree and parameter integrated out. The difference between two models' log marginal likelihoods is the log Bayes factor. The estimate comes from power posteriors, the chain's target with the likelihood raised to an exponent between zero, which gives the prior, and one, which gives the posterior. The approach follows the [RevBayes model-selection tutorial](https://revbayes.github.io/tutorials/model_selection_bayes_factors/bf_intro) and the PathSampler of BEAST 2's MODEL_SELECTION package. No external software is required to run it.
 
-This command is available in the Rust CLI. The Mac app does not expose it.
+This command is available in the Rust CLI and, for completed runs, from History in the [Mac app](./macos-preview#model-comparison).
 
 ## Run an estimate
 

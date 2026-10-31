@@ -35,12 +35,14 @@ struct AdvancedOptionsTests {
     #expect(settings.validationError == nil)
     #expect(settings.usesAdvancedOptions)
     let arguments = try settings.arguments(matrix: matrix, output: output)
-    let expected = [
+    let sampling = [
       "--chains", "2", "--stop-when-converged", "--min-ess", "300.0", "--max-rhat", "1.02",
-      "--check-every", "5000", "--checkpoint-every", "20000", "--sample-from-prior", "--no-tuning",
-      "--weight", "gamma_shape_scale=3.0", "--tuning", "subtree_slide=0.00076",
+      "--check-every", "5000", "--checkpoint-every", "20000", "--sample-from-prior",
     ]
-    #expect(arguments.suffix(expected.count).elementsEqual(expected))
+    let schedule = ["--no-tuning", "--weight", "gamma_shape_scale=3.0", "--tuning", "subtree_slide=0.00076"]
+    #expect(arguments.indices.contains { arguments[$0...].starts(with: sampling) })
+    #expect(arguments.suffix(schedule.count).elementsEqual(schedule))
+    #expect(try settings.modelArguments().suffix(schedule.count).elementsEqual(schedule))
     // Thresholds stay in the setup but are inert while automatic stopping is off.
     settings.stopWhenConverged = false
     #expect(settings.validationError == nil)
