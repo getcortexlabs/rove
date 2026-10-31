@@ -30,6 +30,7 @@ const locales = {
       orderedCharacters: 'Ordered characters',
       posteriorPrediction: 'Posterior predictive checks',
       tipDating: 'Fossil tip dating',
+      modelComparison: 'Model comparison',
       referenceModel: 'The reference model',
       nexus: 'Reading NEXUS',
       fixtures: 'Synthetic matrices',
@@ -61,6 +62,7 @@ const locales = {
       orderedCharacters: 'Caracteres ordenados',
       posteriorPrediction: 'Checagens preditivas posteriores',
       tipDating: 'Datação de fósseis',
+      modelComparison: 'Comparação de modelos',
       referenceModel: 'O modelo de referência',
       nexus: 'Lendo NEXUS',
       fixtures: 'Matrizes sintéticas',
@@ -109,6 +111,7 @@ const locales = {
       orderedCharacters: 'Caracteres ordenados',
       posteriorPrediction: 'Comprobaciones predictivas posteriores',
       tipDating: 'Datación de fósiles',
+      modelComparison: 'Comparación de modelos',
       referenceModel: 'El modelo de referencia',
       nexus: 'Lectura de NEXUS',
       fixtures: 'Matrices sintéticas',
@@ -157,6 +160,7 @@ const locales = {
       orderedCharacters: '有序性状',
       posteriorPrediction: '后验预测检验',
       tipDating: '化石末端定年',
+      modelComparison: '模型比较',
       referenceModel: '参考模型',
       nexus: '读取 NEXUS',
       fixtures: '合成矩阵',
@@ -188,7 +192,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, tipDating, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, tipDating, modelComparison, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -215,6 +219,7 @@ function themeFor(locale) {
             { text: orderedCharacters, link: `${prefix}/guide/ordered-characters` },
             { text: posteriorPrediction, link: `${prefix}/guide/posterior-prediction` },
             { text: tipDating, link: `${prefix}/guide/tip-dating` },
+            { text: modelComparison, link: `${prefix}/guide/model-comparison` },
             { text: referenceModel, link: `${prefix}/guide/reference-model` },
             { text: nexus, link: `${prefix}/guide/nexus` },
             { text: fixtures, link: `${prefix}/guide/fixtures` }

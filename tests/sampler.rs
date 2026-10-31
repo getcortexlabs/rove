@@ -471,3 +471,61 @@ fn every_backend_gives_the_same_chain() {
         }
     }
 }
+
+#[test]
+fn power_zero_follows_the_prior_chain_and_still_evaluates_the_likelihood() {
+    let patterns = five_taxa();
+    let prior = Settings {
+        sample_from_prior: true,
+        ..Settings::default()
+    };
+    let tempered = Settings {
+        likelihood_power: 0.0,
+        ..Settings::default()
+    };
+    let mut a = Sampler::new(&patterns, &prior, 7).unwrap();
+    let mut b = Sampler::new(&patterns, &tempered, 7).unwrap();
+    let mut likelihoods = std::collections::HashSet::new();
+    for _ in 0..5000 {
+        assert_eq!(a.step(), b.step());
+        assert_eq!(a.tree(), b.tree());
+        assert_eq!(a.posterior().prior(), b.posterior().prior());
+        assert_eq!(a.posterior().likelihood, 0.0);
+        likelihoods.insert(b.posterior().likelihood.to_bits());
+    }
+    assert!(b.posterior().likelihood.is_finite());
+    assert!(likelihoods.len() > 100, "{}", likelihoods.len());
+    let fresh = b.recompute().unwrap();
+    assert!((fresh.likelihood - b.posterior().likelihood).abs() < 1e-9);
+}
+
+#[test]
+fn likelihood_powers_are_validated_and_checkpoints_record_them() {
+    for power in [-0.1, 1.1, f64::NAN, f64::INFINITY] {
+        let settings = Settings {
+            likelihood_power: power,
+            ..Settings::default()
+        };
+        assert!(Sampler::new(five_taxa(), &settings, 1).is_err(), "{power}");
+    }
+    let settings = Settings {
+        likelihood_power: 0.5,
+        ..Settings::default()
+    };
+    let mut chain = Sampler::new(five_taxa(), &settings, 3).unwrap();
+    assert!(chain.set_likelihood_power(2.0).is_err());
+    assert_eq!(chain.likelihood_power(), 0.5);
+    chain.set_likelihood_power(0.25).unwrap();
+    assert!(chain.checkpoint(&settings).is_err());
+    let live = Settings {
+        likelihood_power: 0.25,
+        ..settings.clone()
+    };
+    let bytes = chain.checkpoint(&live).unwrap();
+    assert!(Sampler::resume(five_taxa(), &settings, &bytes).is_err());
+    let mut resumed = Sampler::resume(five_taxa(), &live, &bytes).unwrap();
+    for _ in 0..200 {
+        assert_eq!(chain.step(), resumed.step());
+    }
+    assert_eq!(chain.posterior(), resumed.posterior());
+}

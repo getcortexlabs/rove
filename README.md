@@ -163,7 +163,8 @@ it does not certify topology convergence. See the [sampler guide](https://rove.g
 14. Add posterior predictive simulation and morphology checks. Done in the CLI.
 15. Add fossil tip dating with fixed or estimated FBD process parameters. Done in the CLI and native app;
     sampled ancestors remain future work.
-    Marginal likelihoods for model comparison remain planned.
+    `rove marginal` estimates marginal likelihoods for model comparison
+    ([report](benchmarks/marginal-likelihood/2026-10-31/README.md)).
 16. Evaluate subtree repeats. Done; experimental and off by default.
 17. Consider optional BEAST 2 JNI and BEAGLE C ABI adapters.
 

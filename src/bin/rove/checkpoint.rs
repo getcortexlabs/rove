@@ -236,7 +236,9 @@ pub(super) struct Resume {
 }
 
 pub(super) fn load(arguments: &[String]) -> Result<(Vec<String>, Options, Lock), Box<dyn Error>> {
-    if arguments.get(1).map(String::as_str) != Some("--resume") {
+    if arguments.first().map(String::as_str) != Some("sample")
+        || arguments.get(1).map(String::as_str) != Some("--resume")
+    {
         return Err("use rove sample --resume <run-directory>".into());
     }
     let directory = PathBuf::from(arguments.get(2).ok_or("--resume needs a run directory")?);

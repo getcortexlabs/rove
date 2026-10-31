@@ -6,6 +6,7 @@ mod diagnose;
 mod events;
 mod inspect;
 mod inspect_tree;
+mod marginal;
 mod parallel;
 mod partitions;
 mod predict;
@@ -37,6 +38,14 @@ const USAGE: &str =
                    [--print-every <n>] [--events-json] [--cancel-on-stdin-close]
                    [--expect-input-sha256 <hash>] [--checkpoint-every <n>]
        rove sample --resume <run-directory> [--events-json] [--cancel-on-stdin-close]
+       rove marginal <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
+                     --powers <2..256> [--alpha <x>] [--burnin-percent <0..99>]
+                     [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
+                     [--model strict|reference] [--conditioning variable|informative|none]
+                     [--partitioning observed|declared] [--dating <settings.json>]
+                     [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
+                     [--backend portable|neon] [--print-every <n>] [--cancel-on-stdin-close]
+                     [--expect-input-sha256 <hash>]
        rove benchmark [--cancel-on-stdin-close]
        rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
        rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared]
@@ -48,8 +57,18 @@ const USAGE: &str =
 
 const TUNING_SCHEDULE: &str = "BEAST's OperatorSchedule.calcDelta and optimize, with its square-root transform; a failed proposal counts as acceptance zero";
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Command {
+    Sample,
+    Marginal,
+}
+
 #[derive(Clone)]
 struct Options {
+    command: Command,
+    /// Likelihood powers in a marginal-likelihood schedule; zero for `sample`.
+    powers: usize,
+    alpha: f64,
     dating: Option<serde_json::Value>,
     executable_sha256: Option<String>,
     checkpoint_every: Option<u64>,
@@ -83,9 +102,13 @@ struct Options {
 
 fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut arguments = arguments.iter();
-    if arguments.next().map(String::as_str) != Some("sample") {
-        return Err(USAGE.into());
-    }
+    let command = match arguments.next().map(String::as_str) {
+        Some("sample") => Command::Sample,
+        Some("marginal") => Command::Marginal,
+        _ => return Err(USAGE.into()),
+    };
+    let mut powers = None;
+    let mut alpha = 0.3;
     let mut dating = None;
     let mut checkpoint_every = None;
     let mut chains = 1;
@@ -153,6 +176,18 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
             }
             "--check-every" => {
                 check_every = Some(number("--check-every", value("--check-every")?)?)
+            }
+            "--powers" => {
+                powers = Some(
+                    value("--powers")?
+                        .parse::<usize>()
+                        .map_err(|_| "--powers needs an integer")?,
+                )
+            }
+            "--alpha" => {
+                alpha = value("--alpha")?
+                    .parse::<f64>()
+                    .map_err(|_| "--alpha needs a number")?
             }
             "--events-json" => events_json = true,
             "--cancel-on-stdin-close" => cancel_on_stdin_close = true,
@@ -266,6 +301,12 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         value.ok_or_else(|| format!("{name} is required\n{USAGE}"))
     };
     let options = Options {
+        command,
+        powers: match command {
+            Command::Marginal => powers.ok_or_else(|| format!("--powers is required\n{USAGE}"))?,
+            Command::Sample => 0,
+        },
+        alpha,
         dating,
         executable_sha256: None,
         checkpoint_every,
@@ -328,6 +369,34 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         && chains < 2
     {
         return Err("stopping diagnostics require at least two chains".into());
+    }
+    match command {
+        Command::Marginal => {
+            let unsupported = [
+                "--chains",
+                "--checkpoint-every",
+                "--stop-when-converged",
+                "--min-ess",
+                "--max-rhat",
+                "--check-every",
+                "--events-json",
+                "--sample-from-prior",
+            ];
+            if let Some(flag) = unsupported.iter().find(|flag| seen.contains(**flag)) {
+                return Err(format!("{flag} is not available with rove marginal"));
+            }
+            if !(2..=256).contains(&options.powers) {
+                return Err("--powers must be 2 to 256".into());
+            }
+            if !alpha.is_finite() || alpha <= 0.0 {
+                return Err("--alpha must be finite and positive".into());
+            }
+        }
+        Command::Sample => {
+            if seen.contains("--powers") || seen.contains("--alpha") {
+                return Err("--powers and --alpha belong to rove marginal".into());
+            }
+        }
     }
     Ok(options)
 }
@@ -449,6 +518,9 @@ fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
     options.executable_sha256 = Some(sha256::file(&std::env::current_exe()?)?);
     let arguments = &command;
     let cancellation = events::Cancellation::watch_stdin(options.cancel_on_stdin_close);
+    if options.command == Command::Marginal {
+        return marginal::run(arguments, options, &cancellation);
+    }
     if options.chains > 1 {
         return parallel::run(arguments, options, cancellation);
     }
@@ -463,14 +535,15 @@ fn chain_progress(chain: Option<usize>, line: impl Display) {
     }
 }
 
-fn run_chain(
-    arguments: &[String],
-    mut options: Options,
-    cancellation: &events::Cancellation,
-    mut worker: Option<parallel::Worker>,
-) -> Result<bool, Box<dyn Error>> {
-    let chain = worker.as_ref().map(|w| w.index);
-    let executable = options.executable_sha256.clone();
+/// The parsed matrix, its patterns and the sampler settings of a command.
+struct Configured {
+    input: String,
+    data: rove::data::Matrix,
+    patterns: Vec<rove::data::Patterns>,
+    settings: Settings,
+}
+
+fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
     let bytes = fs::read(&options.matrix)
         .map_err(|e| format!("cannot read {}: {e}", options.matrix.display()))?;
     let input = sha256::hex(&bytes);
@@ -528,6 +601,238 @@ fn run_chain(
             settings.weights.push((kind, weight));
         }
     }
+    Ok(Configured {
+        input,
+        data,
+        patterns,
+        settings,
+    })
+}
+
+fn input_json(
+    options: &Options,
+    input: &str,
+    data: &rove::data::Matrix,
+    patterns: &[rove::data::Patterns],
+) -> Json {
+    Json::Object(vec![
+        ("path", Json::text(options.matrix.display().to_string())),
+        ("sha256", Json::text(input)),
+        ("taxa", Json::Integer(data.taxa().len() as u64)),
+        ("characters", Json::Integer(data.character_count() as u64)),
+        (
+            "observed_patterns",
+            Json::Integer(patterns.iter().map(|p| p.weights().len() as u64).sum()),
+        ),
+        (
+            "gaps",
+            Json::text(match options.gaps {
+                GapTreatment::Reject => "reject",
+                GapTreatment::Missing => "missing",
+            }),
+        ),
+    ])
+}
+
+fn model_json(
+    options: &Options,
+    settings: &Settings,
+    patterns: &[rove::data::Patterns],
+    taxa: &[String],
+) -> Json {
+    let conditioning = match settings.conditioning {
+        Conditioning::Variable => "variable characters (Mkv)",
+        Conditioning::Informative => "parsimony-informative characters (Mkparsinf)",
+        Conditioning::None => "none (Mk)",
+    };
+    let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
+    Json::Object(vec![
+        ("partitioning", Json::text(options.partitioning.name())),
+        ("partitions", partitions::describe(patterns)),
+        (
+            "substitution",
+            Json::text(
+                if patterns
+                    .iter()
+                    .any(|p| p.ordering() == rove::model::CharacterOrdering::Ordered)
+                {
+                    if options.reference_model {
+                        "Ordered/unordered models per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+                    } else {
+                        "Ordered/unordered models per partition, equal frequencies, one rate category"
+                    }
+                } else if options.reference_model {
+                    "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+                } else {
+                    "Mk per partition, equal frequencies, one rate category"
+                },
+            ),
+        ),
+        (
+            "preset",
+            Json::text(if options.reference_model {
+                "reference"
+            } else {
+                "strict"
+            }),
+        ),
+        ("conditioning", Json::text(conditioning)),
+        ("mutation_rate", Json::Number(1.0)),
+        (
+            "clock_multiplier",
+            if settings.dating.is_some() {
+                Json::text("trace.clock_rate")
+            } else {
+                Json::Number(1.0)
+            },
+        ),
+        (
+            "dating",
+            options.dating.clone().map_or(Json::Null, Json::Value),
+        ),
+        (
+            "dating_density_convention",
+            options.dating.as_ref().map_or(Json::Null, |d| {
+                Json::text(if d.get("process_priors").is_some() {
+                    "joint_sampling_v1"
+                } else {
+                    "fixed_process_restriction_v1"
+                })
+            }),
+        ),
+        (
+            "dating_sha256",
+            options.dating.as_ref().map_or(Json::Null, |v| {
+                Json::text(sha256::hex(v.to_string().as_bytes()))
+            }),
+        ),
+        (
+            "gamma_shape_prior",
+            if options.reference_model {
+                Json::text(
+                    "Exponential(mean=1), parameter bounds [0.001, 1000], density without truncation normalization",
+                )
+            } else {
+                Json::Null
+            },
+        ),
+        (
+            "clock_sigma_prior",
+            if options.reference_model {
+                Json::text("Gamma(shape=5, scale=0.2)")
+            } else {
+                Json::Null
+            },
+        ),
+        (
+            "branch_rate_prior",
+            if options.reference_model {
+                Json::text(
+                    "independent LogNormal(mu=-sigma^2/2, sigma), positive rates; BEAST clock initialization sets lower bound to zero",
+                )
+            } else {
+                Json::Null
+            },
+        ),
+        (
+            "rate_mapping",
+            if options.reference_model {
+                Json::text(
+                    "node index; last node uses the root index when it is not the root; root has no branch rate",
+                )
+            } else {
+                Json::Null
+            },
+        ),
+        (
+            "clock",
+            Json::text(if settings.dating.is_some() {
+                "branch length in time units times trace.clock_rate times relative branch rate; see dating settings"
+            } else if options.reference_model {
+                "lognormal explicit branch rates; real-space distribution mean 1; no realized-mean normalization; fixed clock multiplier 1"
+            } else {
+                "strict, rate fixed at 1; heights in expected changes per character"
+            }),
+        ),
+        (
+            "tree_prior",
+            Json::text(
+                if settings
+                    .dating
+                    .as_ref()
+                    .is_some_and(|d| d.process_priors.is_some())
+                {
+                    "FBD joint sampling density, origin-conditioned, removal probability zero, no survival conditioning; observed specimen count, age evidence and imposed terminal/clade constraints inform process parameters; not a parameter-wise normalized restricted tree prior or marginal likelihood"
+                } else if settings.dating.is_some() {
+                    "FBD, fixed origin and process parameters, removal probability zero, restricted to terminal fossils and supplied age bounds; unnormalized restricted density, not model evidence"
+                } else {
+                    "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips"
+                },
+            ),
+        ),
+        (
+            "birth_difference_rate_prior",
+            if settings.dating.is_some() {
+                Json::Null
+            } else {
+                Json::text(format!("Uniform(0, {})", settings.birth_difference_upper))
+            },
+        ),
+        (
+            "relative_death_rate_prior",
+            if settings.dating.is_some() {
+                Json::Null
+            } else {
+                Json::text("Uniform(0, 1)")
+            },
+        ),
+        ("sample_from_prior", Json::Bool(settings.sample_from_prior)),
+        (
+            "monophyly",
+            Json::List(settings.monophyly.iter().map(|c| names(c)).collect()),
+        ),
+    ])
+}
+
+fn optional(value: Option<f64>) -> Json {
+    value.map_or(Json::Null, Json::Number)
+}
+
+fn moves_json(sampler: &Sampler) -> Json {
+    Json::List(
+        sampler
+            .operators()
+            .iter()
+            .map(|operator| {
+                Json::Object(vec![
+                    ("name", Json::text(operator.kind.name())),
+                    ("weight", Json::Number(operator.weight)),
+                    ("initial_tuning", optional(operator.initial_tuning)),
+                    ("final_tuning", optional(operator.tuning)),
+                    ("accepted", Json::Integer(operator.accepted)),
+                    ("rejected", Json::Integer(operator.rejected)),
+                    ("failed", Json::Integer(operator.failed)),
+                ])
+            })
+            .collect(),
+    )
+}
+
+fn run_chain(
+    arguments: &[String],
+    mut options: Options,
+    cancellation: &events::Cancellation,
+    mut worker: Option<parallel::Worker>,
+) -> Result<bool, Box<dyn Error>> {
+    let chain = worker.as_ref().map(|w| w.index);
+    let executable = options.executable_sha256.clone();
+    let Configured {
+        input,
+        data,
+        patterns,
+        settings,
+    } = configure(&mut options)?;
+    let taxa = data.taxa();
     let resume = options.resume.as_ref();
     let index = chain.unwrap_or(1) - 1;
     let saved = resume.map(|r| &r.manifest["chains"][index]);
@@ -735,29 +1040,7 @@ fn run_chain(
         "cancelled"
     };
 
-    let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
     let posterior = sampler.posterior();
-    let optional = |value: Option<f64>| value.map_or(Json::Null, Json::Number);
-    let moves = sampler
-        .operators()
-        .iter()
-        .map(|operator| {
-            Json::Object(vec![
-                ("name", Json::text(operator.kind.name())),
-                ("weight", Json::Number(operator.weight)),
-                ("initial_tuning", optional(operator.initial_tuning)),
-                ("final_tuning", optional(operator.tuning)),
-                ("accepted", Json::Integer(operator.accepted)),
-                ("rejected", Json::Integer(operator.rejected)),
-                ("failed", Json::Integer(operator.failed)),
-            ])
-        })
-        .collect();
-    let conditioning = match settings.conditioning {
-        Conditioning::Variable => "variable characters (Mkv)",
-        Conditioning::Informative => "parsimony-informative characters (Mkparsinf)",
-        Conditioning::None => "none (Mk)",
-    };
     let metadata = Json::Object(vec![
         ("status", Json::text(status)),
         ("termination_reason", Json::text(termination)),
@@ -779,175 +1062,8 @@ fn run_chain(
             "command",
             Json::List(command.into_iter().map(Json::Text).collect()),
         ),
-        (
-            "input",
-            Json::Object(vec![
-                ("path", Json::text(options.matrix.display().to_string())),
-                ("sha256", Json::text(&input)),
-                ("taxa", Json::Integer(taxa.len() as u64)),
-                ("characters", Json::Integer(data.character_count() as u64)),
-                (
-                    "observed_patterns",
-                    Json::Integer(patterns.iter().map(|p| p.weights().len() as u64).sum()),
-                ),
-                (
-                    "gaps",
-                    Json::text(match options.gaps {
-                        GapTreatment::Reject => "reject",
-                        GapTreatment::Missing => "missing",
-                    }),
-                ),
-            ]),
-        ),
-        (
-            "model",
-            Json::Object(vec![
-                ("partitioning", Json::text(options.partitioning.name())),
-                ("partitions", partitions::describe(&patterns)),
-                (
-                    "substitution",
-                    Json::text(
-                        if patterns
-                            .iter()
-                            .any(|p| p.ordering() == rove::model::CharacterOrdering::Ordered)
-                        {
-                            if options.reference_model {
-                                "Ordered/unordered models per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
-                            } else {
-                                "Ordered/unordered models per partition, equal frequencies, one rate category"
-                            }
-                        } else if options.reference_model {
-                            "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
-                        } else {
-                            "Mk per partition, equal frequencies, one rate category"
-                        },
-                    ),
-                ),
-                (
-                    "preset",
-                    Json::text(if options.reference_model {
-                        "reference"
-                    } else {
-                        "strict"
-                    }),
-                ),
-                ("conditioning", Json::text(conditioning)),
-                ("mutation_rate", Json::Number(1.0)),
-                (
-                    "clock_multiplier",
-                    if settings.dating.is_some() {
-                        Json::text("trace.clock_rate")
-                    } else {
-                        Json::Number(1.0)
-                    },
-                ),
-                (
-                    "dating",
-                    options.dating.clone().map_or(Json::Null, Json::Value),
-                ),
-                (
-                    "dating_density_convention",
-                    options.dating.as_ref().map_or(Json::Null, |d| {
-                        Json::text(if d.get("process_priors").is_some() {
-                            "joint_sampling_v1"
-                        } else {
-                            "fixed_process_restriction_v1"
-                        })
-                    }),
-                ),
-                (
-                    "dating_sha256",
-                    options.dating.as_ref().map_or(Json::Null, |v| {
-                        Json::text(sha256::hex(v.to_string().as_bytes()))
-                    }),
-                ),
-                (
-                    "gamma_shape_prior",
-                    if options.reference_model {
-                        Json::text(
-                            "Exponential(mean=1), parameter bounds [0.001, 1000], density without truncation normalization",
-                        )
-                    } else {
-                        Json::Null
-                    },
-                ),
-                (
-                    "clock_sigma_prior",
-                    if options.reference_model {
-                        Json::text("Gamma(shape=5, scale=0.2)")
-                    } else {
-                        Json::Null
-                    },
-                ),
-                (
-                    "branch_rate_prior",
-                    if options.reference_model {
-                        Json::text(
-                            "independent LogNormal(mu=-sigma^2/2, sigma), positive rates; BEAST clock initialization sets lower bound to zero",
-                        )
-                    } else {
-                        Json::Null
-                    },
-                ),
-                (
-                    "rate_mapping",
-                    if options.reference_model {
-                        Json::text(
-                            "node index; last node uses the root index when it is not the root; root has no branch rate",
-                        )
-                    } else {
-                        Json::Null
-                    },
-                ),
-                (
-                    "clock",
-                    Json::text(if settings.dating.is_some() {
-                        "branch length in time units times trace.clock_rate times relative branch rate; see dating settings"
-                    } else if options.reference_model {
-                        "lognormal explicit branch rates; real-space distribution mean 1; no realized-mean normalization; fixed clock multiplier 1"
-                    } else {
-                        "strict, rate fixed at 1; heights in expected changes per character"
-                    }),
-                ),
-                (
-                    "tree_prior",
-                    Json::text(
-                        if settings
-                            .dating
-                            .as_ref()
-                            .is_some_and(|d| d.process_priors.is_some())
-                        {
-                            "FBD joint sampling density, origin-conditioned, removal probability zero, no survival conditioning; observed specimen count, age evidence and imposed terminal/clade constraints inform process parameters; not a parameter-wise normalized restricted tree prior or marginal likelihood"
-                        } else if settings.dating.is_some() {
-                            "FBD, fixed origin and process parameters, removal probability zero, restricted to terminal fossils and supplied age bounds; unnormalized restricted density, not model evidence"
-                        } else {
-                            "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips"
-                        },
-                    ),
-                ),
-                (
-                    "birth_difference_rate_prior",
-                    if settings.dating.is_some() {
-                        Json::Null
-                    } else {
-                        Json::text(format!("Uniform(0, {})", settings.birth_difference_upper))
-                    },
-                ),
-                (
-                    "relative_death_rate_prior",
-                    if settings.dating.is_some() {
-                        Json::Null
-                    } else {
-                        Json::text("Uniform(0, 1)")
-                    },
-                ),
-                ("sample_from_prior", Json::Bool(settings.sample_from_prior)),
-                (
-                    "monophyly",
-                    Json::List(settings.monophyly.iter().map(|c| names(c)).collect()),
-                ),
-            ]),
-        ),
+        ("input", input_json(&options, &input, &data, &patterns)),
+        ("model", model_json(&options, &settings, &patterns, taxa)),
         (
             "settings",
             Json::Object(vec![
@@ -983,7 +1099,7 @@ fn run_chain(
                 ("backend", Json::text(settings.backend.name())),
             ]),
         ),
-        ("moves", Json::List(moves)),
+        ("moves", moves_json(&sampler)),
         (
             "final_state",
             Json::Object(vec![

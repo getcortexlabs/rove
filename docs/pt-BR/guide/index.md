@@ -54,4 +54,4 @@ Nada desta lista está documentado como disponível em qualquer parte deste site
 
 O BEAST não é uma dependência. É a referência para validação e benchmarking: as verossimilhanças são comparadas primeiro em estados fixos, depois em execuções completas de inferência. BEAST 2 e BEAST X são bases de código diferentes, e resultados de um não estabelecem resultados do outro, por isso as comparações nomeiam a implementação e a versão contra as quais foram executadas.
 
-A [datação de fósseis](./tip-dating) aceita idades fixas, intervalos e relógio em unidades de tempo pelo CLI.
+A [datação de fósseis](./tip-dating) aceita idades fixas, intervalos e relógio em unidades de tempo pelo CLI. A [comparação de modelos](./model-comparison) estima log-verossimilhanças marginais para fatores de Bayes pelo CLI.

@@ -90,7 +90,7 @@ FBD 包括出生、灭绝、化石采样和不完全的现生采样。树限制�
 
 所有过程参数固定时，限制树密度的归一化常数不变，因此被省略。估计显式选择 `joint_sampling_v1`：观察到的标本数量、年龄证据以及末端和类群约束同时为过程和树提供信息。Rove 将 FBD 采样密度、适当先验和观测因子相乘。限制空间的质量依赖参数，作为信息保留；**不能**假定它抵消，也不会按各参数值将它除去。这与为每个过程分别条件化并归一化的树先验不同。
 
-底层 FBD 密度以起源为条件，不以存活或现生采样为条件，在验证状态上与 [BEAST 2 SA](https://www.beast2.org/xml/sa.evolution.speciation.SABirthDeathModel.html) 一致。[模型推导与验证](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/fbd-estimation) 给出联合目标的细节。仍不支持边际似然、采样祖先及物种出现范围。施加的年龄或类群约束不是字符数据的独立恢复结果。
+底层 FBD 密度以起源为条件，不以存活或现生采样为条件，在验证状态上与 [BEAST 2 SA](https://www.beast2.org/xml/sa.evolution.speciation.SABirthDeathModel.html) 一致。[模型推导与验证](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/fbd-estimation) 给出联合目标的细节。仍不支持采样祖先及物种出现范围；[模型比较](./model-comparison)说明了定年边际似然何时可以比较。施加的年龄或类群约束不是字符数据的独立恢复结果。
 
 ## 输出与检查
 

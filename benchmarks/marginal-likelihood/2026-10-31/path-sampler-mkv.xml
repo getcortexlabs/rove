@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.base.evolution.alignment:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="BEAST.base v2.7.8:MM v1.2.1:ORC v1.2.1:BEASTLabs v2.0.3" version="2.7">
+    <data
+id="matriz_20x50"
+spec="Alignment"
+dataType="standard">
+        <sequence id="seq_T1" spec="Sequence" taxon="T1" totalcount="2" value="1111110001110000000000000001100000000000000000000001"/>
+        <sequence id="seq_T2" spec="Sequence" taxon="T2" totalcount="2" value="1111110001110000000000000001100000000000000000000001"/>
+        <sequence id="seq_T3" spec="Sequence" taxon="T3" totalcount="2" value="1111110001110000000000000000011000000000000001000001"/>
+        <sequence id="seq_T4" spec="Sequence" taxon="T4" totalcount="2" value="1111110001110000000000000000011000000000000000000001"/>
+        <sequence id="seq_T5" spec="Sequence" taxon="T5" totalcount="2" value="1111110000001110000000000000000110000000000000000001"/>
+        <sequence id="seq_T6" spec="Sequence" taxon="T6" totalcount="2" value="1111110000001110000000000000000110000000000000000001"/>
+        <sequence id="seq_T7" spec="Sequence" taxon="T7" totalcount="2" value="1111110000001110000000000000000001100000000000100001"/>
+        <sequence id="seq_T8" spec="Sequence" taxon="T8" totalcount="2" value="1111110000001110000000000000000001100000000000000001"/>
+        <sequence id="seq_T9" spec="Sequence" taxon="T9" totalcount="2" value="1110001110000001110000000000000000011000000000000001"/>
+        <sequence id="seq_T10" spec="Sequence" taxon="T10" totalcount="2" value="1110001110000001110000000000000000011000000000010001"/>
+        <sequence id="seq_T11" spec="Sequence" taxon="T11" totalcount="2" value="1110001110000001110000000000000000000110000000000001"/>
+        <sequence id="seq_T12" spec="Sequence" taxon="T12" totalcount="2" value="1110001110000001110000000000000000000110000000000001"/>
+        <sequence id="seq_T13" spec="Sequence" taxon="T13" totalcount="2" value="1110001110000000001111110000000000000001100000000001"/>
+        <sequence id="seq_T14" spec="Sequence" taxon="T14" totalcount="2" value="1110001110000000001111110000000000000001100000001001"/>
+        <sequence id="seq_T15" spec="Sequence" taxon="T15" totalcount="2" value="1110001110000000001111110000000000000000011000000001"/>
+        <sequence id="seq_T16" spec="Sequence" taxon="T16" totalcount="2" value="1110001110000000001111110000000000000000011000000001"/>
+        <sequence id="seq_T17" spec="Sequence" taxon="T17" totalcount="2" value="1110001110000000001110001110000000000000000110000001"/>
+        <sequence id="seq_T18" spec="Sequence" taxon="T18" totalcount="2" value="1110001110000000001110001110000000000000000110000001"/>
+        <sequence id="seq_T19" spec="Sequence" taxon="T19" totalcount="2" value="1110001110000000001110001110000000000000000000000101"/>
+        <sequence id="seq_T20" spec="Sequence" taxon="T20" totalcount="2" value="0000000000000000000000000000000000000000000000000001"/>
+        <userDataType id="StandardData.0" spec="beast.base.evolution.datatype.StandardData" ambiguities="" nrOfStates="2"/>
+    </data>
+
+    <map name="Uniform" >beast.base.inference.distribution.Uniform</map>
+    <map name="Exponential" >beast.base.inference.distribution.Exponential</map>
+    <map name="LogNormal" >beast.base.inference.distribution.LogNormalDistributionModel</map>
+    <map name="Normal" >beast.base.inference.distribution.Normal</map>
+    <map name="Beta" >beast.base.inference.distribution.Beta</map>
+    <map name="Gamma" >beast.base.inference.distribution.Gamma</map>
+    <map name="LaplaceDistribution" >beast.base.inference.distribution.LaplaceDistribution</map>
+    <map name="prior" >beast.base.inference.distribution.Prior</map>
+    <map name="InverseGamma" >beast.base.inference.distribution.InverseGamma</map>
+    <map name="OneOnX" >beast.base.inference.distribution.OneOnX</map>
+    <run id="pathSampler" spec="modelselection.inference.PathSampler" nrOfSteps="32" alpha="0.3" chainLength="1000000" burnInPercentage="20" preBurnin="200000" posterior2prior="true" deleteOldLogs="true" rootdir="<repository>/.local/issue24/final/mkv/beast-24101/steps">
+cd $(dir)
+/usr/bin/java -Xss8m -Djava.awt.headless=true -Dbeast.user.package.dir=<repository>/.local/issue24/beast-packages -cp <repository>/.local/beast-reference-20261025/tools/launcher.jar:<repository>/.local/issue24/beast-packages/BEAST.app/lib/BEAST.app.jar:<repository>/.local/issue24/beast-packages/BEAST.base/lib/BEAST.base.jar:<repository>/.local/issue24/beast-packages/BEASTLabs/lib/BEASTlabs.v2.0.3.jar:<repository>/.local/issue24/beast-packages/MM/lib/MM.addon.jar:<repository>/.local/issue24/beast-packages/MODEL_SELECTION/lib/MODEL_SELECTION.addon.jar:<repository>/.local/issue24/beast-packages/ORC/lib/ORC.addon.jar beastfx.app.beast.BeastMCMC -batch $(resume/overwrite) -seed $(seed) -threads 1 beast.xml
+
+<mcmc id="mcmc" spec="MCMC" chainLength="10000000">
+        <state id="state" spec="State" storeEvery="5000">
+            <tree id="Tree.t:matriz_20x50" spec="beast.base.evolution.tree.Tree" name="stateNode">
+                <taxonset id="TaxonSet.matriz_20x502" spec="TaxonSet">
+                    <alignment id="matriz_20x502" spec="FilteredAlignment" ascertained="true" excludefrom="50" excludeto="52" filter="1-50,51-52">
+                        <data idref="matriz_20x50"/>
+                        <userDataType id="morphDataType.matriz_20x502" spec="beast.base.evolution.datatype.StandardData" ambiguities="" nrOfStates="2"/>
+                    </alignment>
+                </taxonset>
+            </tree>
+            <parameter id="BDBirthRate.t:matriz_20x50" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="10000.0">1.0</parameter>
+            <parameter id="BDDeathRate.t:matriz_20x50" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
+        </state>
+        <init id="RandomTree.t:matriz_20x50" spec="RandomTree" estimate="false" initial="@Tree.t:matriz_20x50" taxa="@matriz_20x502">
+            <populationModel id="ConstantPopulation0.t:matriz_20x50" spec="ConstantPopulation">
+                <parameter id="randomPopSize.t:matriz_20x50" spec="parameter.RealParameter" name="popSize">1.0</parameter>
+            </populationModel>
+        </init>
+        <distribution id="posterior" spec="CompoundDistribution">
+            <distribution id="prior" spec="CompoundDistribution">
+                <distribution id="BirthDeath.t:matriz_20x50" spec="beast.base.evolution.speciation.BirthDeathGernhard08Model" birthDiffRate="@BDBirthRate.t:matriz_20x50" relativeDeathRate="@BDDeathRate.t:matriz_20x50" tree="@Tree.t:matriz_20x50"/>
+                <prior id="BirthRatePrior.t:matriz_20x50" name="distribution" x="@BDBirthRate.t:matriz_20x50">
+                    <Uniform id="Uniform.2" name="distr" upper="1000.0"/>
+                </prior>
+                <prior id="DeathRatePrior.t:matriz_20x50" name="distribution" x="@BDDeathRate.t:matriz_20x50">
+                    <Uniform id="Uniform.3" name="distr"/>
+                </prior>
+                <distribution id="root.prior" spec="beast.base.evolution.tree.MRCAPrior" monophyletic="true" tree="@Tree.t:matriz_20x50">
+                    <taxonset id="root" spec="TaxonSet">
+                        <taxon id="T1" spec="Taxon"/>
+                        <taxon id="T10" spec="Taxon"/>
+                        <taxon id="T11" spec="Taxon"/>
+                        <taxon id="T12" spec="Taxon"/>
+                        <taxon id="T13" spec="Taxon"/>
+                        <taxon id="T14" spec="Taxon"/>
+                        <taxon id="T15" spec="Taxon"/>
+                        <taxon id="T16" spec="Taxon"/>
+                        <taxon id="T17" spec="Taxon"/>
+                        <taxon id="T18" spec="Taxon"/>
+                        <taxon id="T19" spec="Taxon"/>
+                        <taxon id="T2" spec="Taxon"/>
+                        <taxon id="T3" spec="Taxon"/>
+                        <taxon id="T4" spec="Taxon"/>
+                        <taxon id="T5" spec="Taxon"/>
+                        <taxon id="T6" spec="Taxon"/>
+                        <taxon id="T7" spec="Taxon"/>
+                        <taxon id="T8" spec="Taxon"/>
+                        <taxon id="T9" spec="Taxon"/>
+                    </taxonset>
+                </distribution>
+            </distribution>
+            <distribution id="likelihood" spec="CompoundDistribution">
+                <distribution id="morphTreeLikelihood.matriz_20x502" spec="TreeLikelihood" data="@matriz_20x502" tree="@Tree.t:matriz_20x50">
+                    <siteModel id="SiteModel.s:matriz_20x502" spec="SiteModel">
+                        <substModel id="LewisMK.s:matriz_20x502" spec="morphmodels.evolution.substitutionmodel.LewisMK" datatype="@morphDataType.matriz_20x502"/>
+                    </siteModel>
+                    <branchRateModel id="StrictClock.c:matriz_20x50" spec="beast.base.evolution.branchratemodel.StrictClockModel">
+                        <parameter id="clockRate.c:matriz_20x50" spec="parameter.RealParameter" estimate="false" name="clock.rate">1.0</parameter>
+                    </branchRateModel>
+                </distribution>
+            </distribution>
+        </distribution>
+        <operator id="NodeHeight.t:matriz_20x50" spec="Uniform" tree="@Tree.t:matriz_20x50" weight="30.0"/>
+        <operator id="SubtreeSlide.t:matriz_20x50" spec="SubtreeSlide" size="0.00076" optimise="false" tree="@Tree.t:matriz_20x50" weight="15.0"/>
+        <operator id="Narrow.t:matriz_20x50" spec="Exchange" tree="@Tree.t:matriz_20x50" weight="15.0"/>
+        <operator id="Wide.t:matriz_20x50" spec="Exchange" isNarrow="false" tree="@Tree.t:matriz_20x50" weight="3.0"/>
+        <operator id="WilsonBalding.t:matriz_20x50" spec="WilsonBalding" tree="@Tree.t:matriz_20x50" weight="3.0"/>
+        <operator id="RootScale.t:matriz_20x50" spec="ScaleOperator" rootOnly="true" scaleFactor="0.75" optimise="false" tree="@Tree.t:matriz_20x50" weight="3.0"/>
+        <operator id="TreeScale.t:matriz_20x50" spec="ScaleOperator" scaleFactor="0.24" optimise="false" tree="@Tree.t:matriz_20x50" weight="3.0"/>
+        <operator id="BirthRateScale.t:matriz_20x50" spec="ScaleOperator" parameter="@BDBirthRate.t:matriz_20x50" scaleFactor="0.28" optimise="false" weight="3.0"/>
+        <operator id="DeathRateScale.t:matriz_20x50" spec="ScaleOperator" parameter="@BDDeathRate.t:matriz_20x50" scaleFactor="0.28" optimise="false" weight="3.0"/>
+        <logger id="tracelog" spec="Logger" fileName="$(filebase).log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+            <log idref="BirthDeath.t:matriz_20x50"/>
+            <log idref="BDBirthRate.t:matriz_20x50"/>
+            <log idref="BDDeathRate.t:matriz_20x50"/>
+            <log id="TreeStat.t:matriz_20x50" spec="beast.base.evolution.tree.TreeStatLogger" tree="@Tree.t:matriz_20x50"/>
+        </logger>
+        <logger id="screenlog" spec="Logger" logEvery="100000">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+        </logger>
+        <logger id="treelog.t:matriz_20x50" spec="Logger" fileName="$(tree).trees" logEvery="1000" mode="tree">
+            <log id="TreeLogger.t:matriz_20x50" spec="beast.base.evolution.TreeWithMetaDataLogger" tree="@Tree.t:matriz_20x50"/>
+        </logger>
+    </mcmc>
+</run>
+</beast>
