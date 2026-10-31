@@ -7,31 +7,21 @@ struct TreeExplorerView: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      header.padding(22)
+      header.padding(.horizontal, 24).padding(.top, 22).padding(.bottom, 16)
       if let tree = model.document, let layout = model.layout {
-        HStack(spacing: 0) {
-          VStack(spacing: 0) {
-            controls.padding(12)
-            GeometryReader { geometry in
-              TreeCanvas(
-                figure: TreeFigure(
-                  tree: tree, layout: layout, viewport: geometry.size,
-                  collapsed: layout.collapsed, selected: model.selected,
-                  showSupport: model.showSupport, strings: strings), model: model
-              )
-              .onAppear { model.viewport = geometry.size }
-              .onChange(of: geometry.size) { _, size in model.viewport = size }
-            }
-            HStack {
+        HStack(alignment: .top, spacing: 16) {
+          VStack(spacing: 10) {
+            toolbar
+            canvas(tree, layout)
+            HStack(spacing: 6) {
               Image(systemName: "cursorarrow.motionlines")
               Text(strings("Scroll or drag to pan · Pinch to zoom"))
               Spacer()
               if model.arranging { ProgressView().controlSize(.mini) }
-            }.font(.system(size: 10)).foregroundStyle(Lab.secondary).padding(12)
+            }.font(.system(size: 10)).foregroundStyle(Lab.muted).padding(.horizontal, 6)
           }
-          Divider()
-          inspector(tree).frame(width: 280)
-        }
+          inspector(tree).frame(width: 300)
+        }.padding(.horizontal, 24).padding(.bottom, 18)
       } else {
         Spacer()
         if model.loading {
@@ -93,104 +83,113 @@ struct TreeExplorerView: View {
     }
   }
 
-  private var controls: some View {
+  private var toolbar: some View {
     HStack(spacing: 12) {
       Toggle(strings("Support"), isOn: $model.showSupport).toggleStyle(.checkbox)
       Spacer(minLength: 4)
-      Button {
-        model.zoom = max(1, model.zoom / 1.25)
-      } label: {
-        Image(systemName: "minus.magnifyingglass")
+      HStack(spacing: 2) {
+        ToolButton(symbol: "minus.magnifyingglass", label: strings("Zoom out"), disabled: model.zoom <= 1) {
+          model.zoom = max(1, model.zoom / 1.25)
+        }
+        Text("\(Int(model.zoom * 100))%")
+          .font(.system(size: 11, weight: .medium, design: .monospaced)).frame(width: 44)
+        ToolButton(symbol: "plus.magnifyingglass", label: strings("Zoom in"), disabled: model.zoom >= 4) {
+          model.zoom = min(4, model.zoom * 1.25)
+        }
       }
-      .help(strings("Zoom out")).accessibilityLabel(strings("Zoom out"))
-      .disabled(model.zoom <= 1)
-      Text("\(Int(model.zoom * 100))%")
-        .font(.system(size: 11, design: .monospaced)).frame(width: 42)
-      Button {
-        model.zoom = min(4, model.zoom * 1.25)
-      } label: {
-        Image(systemName: "plus.magnifyingglass")
-      }
-      .help(strings("Zoom in")).accessibilityLabel(strings("Zoom in"))
-      .disabled(model.zoom >= 4)
+      .padding(3).background(Lab.raised.opacity(0.75), in: RoundedRectangle(cornerRadius: 10))
       Button(strings("Fit width")) { model.zoom = 1 }
-      Button {
+        .buttonStyle(LabButtonStyle(compact: true)).disabled(model.zoom == 1)
+      ToolButton(symbol: "arrow.counterclockwise", label: strings("Reset display"), disabled: model.arranging) {
         model.resetDisplay()
-      } label: {
-        Image(systemName: "arrow.counterclockwise")
       }
-      .help(strings("Reset display")).accessibilityLabel(strings("Reset display"))
-      .disabled(model.arranging)
-    }.font(.system(size: 11)).buttonStyle(.borderless)
+    }
+    .font(.system(size: 11)).padding(.horizontal, 14).padding(.vertical, 7)
+    .background { SidebarGlass() }
+  }
+
+  private func canvas(_ tree: TreeDocument, _ layout: TreeLayout) -> some View {
+    let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
+    return GeometryReader { geometry in
+      TreeCanvas(
+        figure: TreeFigure(
+          tree: tree, layout: layout, viewport: geometry.size, collapsed: layout.collapsed,
+          selected: model.selected, showSupport: model.showSupport, strings: strings),
+        style: .lab, model: model
+      )
+      .onAppear { model.viewport = geometry.size }
+      .onChange(of: geometry.size) { _, size in model.viewport = size }
+    }
+    .clipShape(shape)
+    .overlay(shape.strokeBorder(Lab.border.opacity(0.9), lineWidth: 0.75))
   }
 
   private func inspector(_ tree: TreeDocument) -> some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 18) {
-        HStack {
-          Image(systemName: "magnifyingglass").foregroundStyle(Lab.muted)
-          TextField(strings("Find a taxon"), text: $model.query).textFieldStyle(.plain)
-            .onSubmit { if let id = model.matches.first { model.reveal(id) } }
-          if !model.query.isEmpty {
-            Button {
-              model.query = ""
-            } label: {
-              Image(systemName: "xmark.circle.fill")
-            }
-            .buttonStyle(.plain).accessibilityLabel(strings("Clear search"))
-          }
-        }.padding(10).background(Lab.raised, in: RoundedRectangle(cornerRadius: 9))
-        if !model.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-          VStack(alignment: .leading, spacing: 8) {
-            Text(strings("%@ matches · showing up to 50", strings.number(model.matchCount)))
-              .font(.system(size: 10)).foregroundStyle(Lab.secondary)
-            ForEach(model.matches, id: \.self) { id in
+      VStack(alignment: .leading, spacing: 12) {
+        InspectorCard {
+          HStack {
+            Image(systemName: "magnifyingglass").foregroundStyle(Lab.muted)
+            TextField(strings("Find a taxon"), text: $model.query).textFieldStyle(.plain)
+              .onSubmit { if let id = model.matches.first { model.reveal(id) } }
+            if !model.query.isEmpty {
               Button {
-                model.reveal(id)
+                model.query = ""
               } label: {
-                Label(tree.nodes[id].taxon ?? "", systemImage: "leaf")
-                  .frame(maxWidth: .infinity, alignment: .leading)
-              }.buttonStyle(.plain).foregroundStyle(Lab.ice)
+                Image(systemName: "xmark.circle.fill").foregroundStyle(Lab.muted)
+              }
+              .buttonStyle(.plain).accessibilityLabel(strings("Clear search"))
             }
           }
-        }
-        HStack {
-          Eyebrow(text: strings("Node inspector"), color: Lab.ice)
-          Spacer()
-          Button {
-            model.moveSelection(-1)
-          } label: {
-            Image(systemName: "chevron.up")
+          if !model.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+              Text(strings("%@ matches · showing up to 50", strings.number(model.matchCount)))
+                .font(.system(size: 10)).foregroundStyle(Lab.secondary)
+              ForEach(model.matches, id: \.self) { id in
+                Button {
+                  model.reveal(id)
+                } label: {
+                  Label(tree.nodes[id].taxon ?? "", systemImage: "leaf")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }.buttonStyle(.plain).foregroundStyle(Lab.ice)
+              }
+            }.padding(.top, 12)
           }
-          .accessibilityLabel(strings("Previous node"))
-          Button {
-            model.moveSelection(1)
-          } label: {
-            Image(systemName: "chevron.down")
+        }
+        InspectorCard {
+          HStack {
+            Eyebrow(text: strings("Node inspector"), color: Lab.ice)
+            Spacer()
+            ToolButton(symbol: "chevron.up", label: strings("Previous node")) {
+              model.moveSelection(-1)
+            }
+            ToolButton(symbol: "chevron.down", label: strings("Next node")) {
+              model.moveSelection(1)
+            }
           }
-          .accessibilityLabel(strings("Next node"))
-        }.buttonStyle(.borderless)
-        if let id = model.selected {
-          nodeDetails(tree.nodes[id], tree: tree)
-        } else {
-          Text(strings("Select a node or a tip to inspect its support, heights and descendants."))
-            .foregroundStyle(Lab.secondary).lineSpacing(4)
+          if let id = model.selected {
+            nodeDetails(tree.nodes[id], tree: tree).padding(.top, 14)
+          } else {
+            Text(strings("Select a node or a tip to inspect its support, heights and descendants."))
+              .foregroundStyle(Lab.secondary).lineSpacing(4).padding(.top, 14)
+          }
         }
-        Divider()
-        provenance(tree)
-        Text(strings("Support: retained clade frequency. Diamonds: constrained groups."))
-          .foregroundStyle(Lab.secondary).lineSpacing(3)
-        Text(strings("A summary does not establish convergence."))
-          .foregroundStyle(Lab.secondary).lineSpacing(3)
-        if let exported = model.exportedFile {
-          Button {
-            NSWorkspace.shared.activateFileViewerSelecting([exported])
-          } label: {
-            Label(strings("Show exported figure"), systemImage: "folder")
-          }.buttonStyle(.borderless)
+        InspectorCard {
+          provenance(tree)
+          Text(strings("Support: retained clade frequency. Diamonds: constrained groups."))
+            .foregroundStyle(Lab.secondary).lineSpacing(3).padding(.top, 12)
+          Text(strings("A summary does not establish convergence."))
+            .foregroundStyle(Lab.secondary).lineSpacing(3).padding(.top, 8)
+          if let exported = model.exportedFile {
+            Button {
+              NSWorkspace.shared.activateFileViewerSelecting([exported])
+            } label: {
+              Label(strings("Show exported figure"), systemImage: "folder")
+            }.buttonStyle(.borderless).padding(.top, 10)
+          }
         }
-      }.padding(18)
-    }.font(.system(size: 11)).background(Lab.surface.opacity(0.7))
+      }
+    }.font(.system(size: 11))
   }
 
   private func nodeDetails(_ node: DisplayTreeNode, tree: TreeDocument) -> some View {
@@ -208,9 +207,13 @@ struct TreeExplorerView: View {
         )
         .foregroundStyle(Lab.secondary).fixedSize(horizontal: false, vertical: true)
       }
-      metric("Posterior support", node.posterior)
-      metric("Displayed height", node.height)
-      metric("Incoming branch", node.parent == nil ? nil : node.length)
+      VStack(alignment: .leading, spacing: 10) {
+        metric("Posterior support", node.posterior)
+        metric("Displayed height", node.height)
+        metric("Incoming branch", node.parent == nil ? nil : node.length)
+      }
+      .padding(12).frame(maxWidth: .infinity, alignment: .leading)
+      .background(Lab.raised.opacity(0.55), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
       Text(
         model.document?.summary.timeUnit.map {
           strings("Heights and branches are measured in %@.", $0)
@@ -219,12 +222,19 @@ struct TreeExplorerView: View {
       )
       .foregroundStyle(Lab.secondary).fixedSize(horizontal: false, vertical: true)
       if node.children != nil {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
           Button(strings(model.collapsed.contains(node.id) ? "Expand clade" : "Collapse clade")) {
             model.toggleCollapse()
           }
           Button(strings("Rotate")) { model.rotate() }
-        }.buttonStyle(.borderless).disabled(model.arranging)
+        }.buttonStyle(LabButtonStyle(compact: true)).disabled(model.arranging)
+      }
+      if let parent = node.parent {
+        Button {
+          model.reveal(parent)
+        } label: {
+          Label(strings("Select parent"), systemImage: "arrow.turn.left.up")
+        }.buttonStyle(.borderless)
       }
       DisclosureGroup(strings("Height and rate ranges")) {
         VStack(alignment: .leading, spacing: 10) {
@@ -241,9 +251,6 @@ struct TreeExplorerView: View {
           )
           .foregroundStyle(Lab.secondary).fixedSize(horizontal: false, vertical: true)
         }.padding(.top, 10)
-      }
-      if let parent = node.parent {
-        Button(strings("Select parent")) { model.reveal(parent) }.buttonStyle(.borderless)
       }
       if let children = node.children {
         DisclosureGroup(strings("Descendant taxa")) {
@@ -274,17 +281,16 @@ struct TreeExplorerView: View {
   }
 
   private func metric(_ title: String, _ value: Double?) -> some View {
-    HStack(alignment: .firstTextBaseline) {
-      Text(strings(title)).foregroundStyle(Lab.secondary)
-      Spacer(minLength: 6)
+    VStack(alignment: .leading, spacing: 3) {
+      Text(strings(title)).font(.system(size: 10)).foregroundStyle(Lab.secondary)
       Text(value.map(TreeFigure.number) ?? strings("Unavailable"))
-        .font(.system(size: 11, weight: .medium, design: .monospaced)).textSelection(.enabled)
+        .font(.system(size: 14, weight: .semibold, design: .monospaced)).textSelection(.enabled)
     }
   }
 
   private func interval(_ title: String, _ range: [Double]?) -> some View {
     VStack(alignment: .leading, spacing: 3) {
-      Text(strings(title)).foregroundStyle(Lab.secondary)
+      Text(strings(title)).font(.system(size: 10)).foregroundStyle(Lab.secondary)
       Text(
         range.map { $0.map(TreeFigure.number).joined(separator: " – ") } ?? strings("Unavailable")
       )
@@ -319,5 +325,38 @@ struct TreeExplorerView: View {
         .foregroundStyle(Lab.secondary)
       }.fixedSize(horizontal: false, vertical: true).padding(.top, 10)
     }
+  }
+}
+
+/// A raised card for one inspector section.
+private struct InspectorCard<Content: View>: View {
+  @ViewBuilder let content: Content
+  var body: some View {
+    let shape = RoundedRectangle(cornerRadius: 16, style: .continuous)
+    VStack(alignment: .leading, spacing: 0) { content }
+      .frame(maxWidth: .infinity, alignment: .leading).padding(16)
+      .background(Lab.surface.opacity(0.85), in: shape)
+      .overlay(shape.strokeBorder(Lab.border.opacity(0.7), lineWidth: 0.75))
+  }
+}
+
+/// A compact icon button with a hover background.
+private struct ToolButton: View {
+  let symbol: String
+  let label: String
+  var disabled = false
+  let action: () -> Void
+  @State private var hovering = false
+
+  var body: some View {
+    Button(action: action) {
+      Image(systemName: symbol).font(.system(size: 12, weight: .semibold))
+        .frame(width: 28, height: 26)
+        .background(hovering && !disabled ? Lab.raised : .clear, in: RoundedRectangle(cornerRadius: 8))
+        .contentShape(RoundedRectangle(cornerRadius: 8))
+    }
+    .buttonStyle(.plain).disabled(disabled).opacity(disabled ? 0.35 : 1)
+    .onHover { hovering = $0 }
+    .help(label).accessibilityLabel(label)
   }
 }
