@@ -97,8 +97,15 @@ states for a selected 20 x 50 dataset. It used BEAST's Java likelihood core.
 The [expanded benchmark](benchmarks/expanded/2026-10-30/README.md) adds
 20-, 90- and 500-taxon full-model runs and direct BEAST/BEAGLE kernel
 comparisons. Runtime and sampling quality are reported separately; shorter
-wall time does not establish convergence. The larger runs did not meet the
-convergence criteria.
+wall time does not establish convergence. The larger runs in that short study
+did not meet the convergence criteria.
+
+The later [independent-chain study](benchmarks/convergence/2026-10-31/README.md)
+records a first sustained diagnostic pass at 18M steps per chain for the
+90-taxon Mk case. The 500-taxon Mkv case does not meet the criteria within its
+5M-per-chain cap. A [sampler profile](benchmarks/profile/2026-10-31/README.md)
+measures phase occupancy on both workloads, including separate continuations
+from the terminal states. These studies do not time a BEAST comparison.
 
 The [Rust baseline on Apple M4 Max](benchmarks/rove/2026-10-26/README.md)
 measures 11 workloads, separating setup, full evaluations, partial updates and
