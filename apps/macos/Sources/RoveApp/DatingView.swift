@@ -20,7 +20,7 @@ struct DatingSection: View {
           Toggle(
             strings("Date fossils"),
             isOn: Binding(
-              get: { workspace.settings.dating.enabled }, set: workspace.setDatingEnabled
+              get: { workspace.settings.dating.enabled }, set: { workspace.setDatingEnabled($0) }
             )
           ).toggleStyle(.switch).font(.system(size: 12))
         }

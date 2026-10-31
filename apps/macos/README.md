@@ -1,10 +1,9 @@
 # Native macOS preview
 
 A SwiftUI and AppKit workspace for importing a morphological NEXUS matrix,
-inspecting its observations and running an analysis. Requires macOS 14 or
-newer, Xcode 26.3 or newer, and the repository's Rust toolchain. CI pins Xcode
-26.3: the macOS runner's default Swift 6.1.2 crashes during optimized IR generation.
-The app's deployment target remains macOS 14.
+inspecting its observations and running an analysis. The app targets macOS 14
+or newer. Building requires Xcode 26.3 or newer and the repository's Rust toolchain.
+CI pins Xcode 26.3 to keep the native build reproducible.
 
 From the repository root:
 
