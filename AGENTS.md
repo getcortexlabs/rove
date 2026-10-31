@@ -71,6 +71,13 @@ not document planned behavior as available.
 ## Repository and private notes
 
 - The canonical repository is `https://github.com/getcortexlabs/rove`.
+- Do not push to `main`. Make every change on a short-lived branch, push the
+  branch and open a pull request against `main`. Rafael reviews and merges.
+  Wait for the pull request's CI and address review comments on the same
+  branch. Do not merge, close or force-push over a reviewed pull request.
+- Write `Closes #N` in the pull request body so the merge closes the issue.
+  Post the completion comment on the issue after the merge, with the merged
+  commit and the CI run.
 - Check existing issues before creating new ones. Keep scope, dependencies,
   and completion criteria current as the implementation changes.
 - `DIARIO-LOCAL.md` and `GUIA-DO-ZERO-LOCAL.md` are private, local-only notes.
