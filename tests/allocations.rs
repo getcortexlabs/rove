@@ -1,7 +1,8 @@
 //! Steps of the sampler must not allocate once the chain is set up.
 
 use std::alloc::{GlobalAlloc, Layout, System};
-use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+use std::cell::Cell;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use rove::data::GapTreatment;
 use rove::mcmc::{Conditioning, Sampler, Settings};
@@ -13,15 +14,22 @@ mod repeat_matrix;
 
 struct Counting;
 
-static COUNTING: AtomicBool = AtomicBool::new(false);
-static CALLS: AtomicUsize = AtomicUsize::new(0);
+// Per thread, so the test harness and concurrent tests never add to a count.
+thread_local! {
+    static COUNTING: Cell<bool> = const { Cell::new(false) };
+    static CALLS: Cell<usize> = const { Cell::new(0) };
+}
+
+fn record() {
+    if COUNTING.get() {
+        CALLS.set(CALLS.get() + 1);
+    }
+}
 
 // SAFETY: every call is forwarded unchanged to the system allocator.
 unsafe impl GlobalAlloc for Counting {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        if COUNTING.load(Ordering::Relaxed) {
-            CALLS.fetch_add(1, Ordering::Relaxed);
-        }
+        record();
         unsafe { System.alloc(layout) }
     }
 
@@ -30,15 +38,59 @@ unsafe impl GlobalAlloc for Counting {
     }
 
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
-        if COUNTING.load(Ordering::Relaxed) {
-            CALLS.fetch_add(1, Ordering::Relaxed);
-        }
+        record();
         unsafe { System.realloc(ptr, layout, size) }
     }
 }
 
 #[global_allocator]
 static ALLOCATOR: Counting = Counting;
+
+/// Allocations made by the calling thread while `work` runs.
+fn allocations(work: impl FnOnce()) -> usize {
+    CALLS.set(0);
+    COUNTING.set(true);
+    work();
+    COUNTING.set(false);
+    CALLS.get()
+}
+
+/// Allocations during `counted` steps after `warmup` uncounted ones.
+fn step_allocations(sampler: &mut Sampler, warmup: usize, counted: usize) -> usize {
+    for _ in 0..warmup {
+        sampler.step();
+    }
+    allocations(|| {
+        for _ in 0..counted {
+            sampler.step();
+        }
+    })
+}
+
+#[test]
+fn other_threads_are_not_counted() {
+    static GO: AtomicBool = AtomicBool::new(false);
+    static DONE: AtomicBool = AtomicBool::new(false);
+    let worker = std::thread::spawn(|| {
+        while !GO.load(Ordering::Acquire) {
+            std::thread::yield_now();
+        }
+        std::hint::black_box(Vec::<u8>::with_capacity(4096));
+        DONE.store(true, Ordering::Release);
+    });
+    let elsewhere = allocations(|| {
+        GO.store(true, Ordering::Release);
+        while !DONE.load(Ordering::Acquire) {
+            std::thread::yield_now();
+        }
+    });
+    worker.join().unwrap();
+    assert_eq!(elsewhere, 0);
+    let here = allocations(|| {
+        std::hint::black_box(Vec::<u8>::with_capacity(4096));
+    });
+    assert_eq!(here, 1);
+}
 
 #[test]
 fn steps_do_not_allocate() {
@@ -57,15 +109,11 @@ fn steps_do_not_allocate() {
                 ..base.clone()
             };
             let mut sampler = Sampler::new(&patterns, &settings, 11).unwrap();
-            for _ in 0..1000 {
-                sampler.step();
-            }
-            COUNTING.store(true, Ordering::Relaxed);
-            for _ in 0..20_000 {
-                sampler.step();
-            }
-            COUNTING.store(false, Ordering::Relaxed);
-            assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "{conditioning:?}");
+            assert_eq!(
+                step_allocations(&mut sampler, 1000, 20_000),
+                0,
+                "{conditioning:?}"
+            );
             let multistate =
                 nexus::parse(include_str!("../fixtures/validation/multistate/matrix.nex"))
                     .unwrap()
@@ -80,16 +128,8 @@ fn steps_do_not_allocate() {
                 11,
             )
             .unwrap();
-            for _ in 0..1000 {
-                sampler.step();
-            }
-            COUNTING.store(true, Ordering::Relaxed);
-            for _ in 0..20_000 {
-                sampler.step();
-            }
-            COUNTING.store(false, Ordering::Relaxed);
             assert_eq!(
-                CALLS.swap(0, Ordering::Relaxed),
+                step_allocations(&mut sampler, 1000, 20_000),
                 0,
                 "multistate {conditioning:?}"
             );
@@ -110,15 +150,11 @@ fn steps_do_not_allocate() {
                         11,
                     )
                     .unwrap();
-                    for _ in 0..1000 {
-                        sampler.step();
-                    }
-                    COUNTING.store(true, Ordering::Relaxed);
-                    for _ in 0..2000 {
-                        sampler.step();
-                    }
-                    COUNTING.store(false, Ordering::Relaxed);
-                    assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "repeat indices");
+                    assert_eq!(
+                        step_allocations(&mut sampler, 1000, 2000),
+                        0,
+                        "repeat indices"
+                    );
                 }
             }
         }
@@ -135,16 +171,8 @@ fn steps_do_not_allocate() {
             ..base
         };
         let mut sampler = Sampler::new(&parts, &settings, 99).unwrap();
-        for _ in 0..1000 {
-            sampler.step();
-        }
-        COUNTING.store(true, Ordering::Relaxed);
-        for _ in 0..20_000 {
-            sampler.step();
-        }
-        COUNTING.store(false, Ordering::Relaxed);
         assert_eq!(
-            CALLS.swap(0, Ordering::Relaxed),
+            step_allocations(&mut sampler, 1000, 20_000),
             0,
             "informative conditioning"
         );
@@ -181,16 +209,8 @@ fn steps_do_not_allocate() {
             dated.set_dating(dating);
         }
         let mut sampler = Sampler::new(&patterns, &dated, 17).unwrap();
-        for _ in 0..100 {
-            sampler.step();
-        }
-        COUNTING.store(true, Ordering::Relaxed);
-        for _ in 0..20_000 {
-            sampler.step();
-        }
-        COUNTING.store(false, Ordering::Relaxed);
         assert_eq!(
-            CALLS.swap(0, Ordering::Relaxed),
+            step_allocations(&mut sampler, 100, 20_000),
             0,
             "dated relaxed clock; estimated process {estimated}"
         );
@@ -210,15 +230,11 @@ fn steps_do_not_allocate() {
                 5,
             )
             .unwrap();
-            for _ in 0..100 {
-                chain.step();
-            }
-            COUNTING.store(true, Ordering::Relaxed);
-            for _ in 0..2000 {
-                chain.step();
-            }
-            COUNTING.store(false, Ordering::Relaxed);
-            assert_eq!(CALLS.swap(0, Ordering::Relaxed), 0, "ordered partitions");
+            assert_eq!(
+                step_allocations(&mut chain, 100, 2000),
+                0,
+                "ordered partitions"
+            );
         }
     }
 }
