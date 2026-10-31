@@ -45,7 +45,7 @@ access or these network services.
 
 ## Build and open
 
-On macOS 14 or newer, with Xcode supporting Swift 6 and Rust installed, run
+The app targets macOS 14 or newer. To build it, install Xcode 26.3 or newer and Rust on a Mac supported by that Xcode version, then run
 these commands from the repository root:
 
 ```sh

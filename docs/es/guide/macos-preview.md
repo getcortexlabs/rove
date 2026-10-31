@@ -46,8 +46,8 @@ acceso a la beta ni estos servicios de red.
 
 ## Compilar y abrir
 
-En macOS 14 o posterior, con Xcode compatible con Swift 6 y Rust instalado,
-ejecuta estos comandos desde la raíz del repositorio:
+La app tiene como destino macOS 14 o posterior. Para compilarla, instale Xcode 26.3 o posterior y Rust en un Mac compatible con esa versión de Xcode;
+ejecute estos comandos desde la raíz del repositorio:
 
 ```sh
 scripts/build-macos.sh

@@ -38,7 +38,7 @@ Cloudflare 验证访问权限，Resend 发送验证码。服务保存邮箱、�
 
 ## 构建与打开
 
-在 macOS 14 或更高版本上安装支持 Swift 6 的 Xcode 和 Rust，
+应用的部署目标为 macOS 14 或更高版本。构建时，请在相应 Xcode 支持的 Mac 上安装 Xcode 26.3 或更高版本及 Rust，
 然后从代码仓库根目录运行：
 
 ```sh

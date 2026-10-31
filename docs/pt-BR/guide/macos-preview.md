@@ -47,8 +47,7 @@ serviços de rede.
 
 ## Compilar e abrir
 
-No macOS 14 ou mais recente, com Xcode compatível com Swift 6 e Rust
-instalados, execute na raiz do repositório:
+O app tem como destino macOS 14 ou mais recente. Para compilar, instale Xcode 26.3 ou mais recente e Rust em um Mac compatível com essa versão do Xcode. Execute na raiz do repositório:
 
 ```sh
 scripts/build-macos.sh

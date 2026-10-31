@@ -49,7 +49,7 @@ scripts/build-macos.sh
 open build/macos/Rove.app
 ```
 
-Requires macOS 14+, Xcode with Swift 6, and Rust. This builds a local app; a
+The app targets macOS 14+. Building requires Xcode 26.3 or newer and Rust. This builds a local app; a
 notarized release and DMG are future work. Review the model and explicit group
 constraints, start the bundled Rust engine, and inspect trace and tree files.
 Choose an optional outgroup without removing any terminals; review the applied
