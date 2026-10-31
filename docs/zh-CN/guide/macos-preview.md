@@ -181,6 +181,7 @@ target/release/rove inspect fixtures/reference/20x50/matrix.nex
 Burn-in 丢弃最前面的 `floor(样本总数 × 百分比 / 100)` 棵树，向下取整。
 `STATE_0` 也计为一个样本。默认的 10% 是可修改的建议，并非收敛诊断；
 请检查轨迹后再选择。面板显示丢弃和保留的数量。
+Burn-in 也可以按样本数给出，对应 `--burnin-samples`。
 
 MCC（最大分支可信度）选择一个**已采样的拓扑**，不是多数规则共识树。
 Rove 对每棵保留树的内部支系频率取对数并求和；求和前先对支系排序。
@@ -321,6 +322,8 @@ target/release/rove diagnose /path/to/results/trace.log --burnin-percent 25 \
 完成的组及其 History 详情中有 **Do the chains agree?** 面板，展示所有记录统计量的 R-hat、各链 ESS 和支系频率比较。选择一条链即可打开其诊断、汇总树或查看目录。保存的设置保留链数，旧设置仍使用单链。各链输出独立保存，不会把一条链的 burn-in 当作另一条链的延续。
 
 **Stop when diagnostic thresholds are met** 为可选项，默认关闭。它使用 10% burn-in，要求所有记录的标量统计量满足每链 ESS ≥ 200、R-hat ≤ 1.01，每链至少保留 1,000 个样本，且连续两次检查通过。停止步数和原因会被保存。这些标量诊断标准不保证拓扑收敛，仍需检查支系和 trace。CLI 选项和限制见[独立链](./sampler#独立链)。
+
+**Advanced sampling** 折叠在探索计划下方，提供 `rove sample` 的其余选项。**Sample from the priors only** 在不使用性状的情况下运行。开启自动停止后，最小 ESS、最大 R-hat 和检查间隔可以替代引擎的默认值 200、1.01 及其自身的检查节奏。检查点间隔可以按步数设置，而不是默认的约每 30 秒一次。提议方案提供经典默认方案、[松弛时钟](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md)和[伽马频率](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md)报告中评估过的两种方案，以及按移动自定义的权重和初始步长，步长调节可以关闭。每个选项都会在引擎启动前验证，记录在运行记录和 History 中，并以格式 5 保存在配置中；旧版应用会拒绝打开，而不是忽略这些选项继续运行。两种评估过的方案都不作为推荐；报告记录了各自的得失。
 
 ## 测试这台 Mac
 

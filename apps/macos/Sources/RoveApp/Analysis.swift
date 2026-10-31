@@ -108,6 +108,114 @@ enum MatrixInspector {
   }
 }
 
+/// A selection weight or starting step size for one engine move.
+struct MoveOverride: Codable, Equatable, Sendable, Identifiable {
+  var move: String
+  var value: Double
+  var id: String { move }
+}
+
+/// The engine's move names and the schedules evaluated in the sampling reports.
+enum ProposalSchedule {
+  struct Preset: Identifiable, Sendable {
+    let id: String
+    let name: String
+    let report: String
+    let weights: [MoveOverride]
+  }
+
+  static let moves = [
+    "node_height", "subtree_slide", "narrow_exchange", "wide_exchange", "wilson_balding",
+    "root_scale", "tree_scale", "birth_difference_scale", "relative_death_scale",
+    "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale", "node_time_rates",
+    "root_time_rates", "clock_sigma_rates", "tip_age", "clock_rate_scale", "fbd_birth_scale",
+    "fbd_death_scale", "fbd_sampling_scale", "fbd_rho_logit", "fbd_origin_scale",
+  ]
+  static let relaxedClockMoves: Set<String> = [
+    "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale", "node_time_rates",
+    "root_time_rates", "clock_sigma_rates",
+  ]
+  static let datingMoves: Set<String> = [
+    "tip_age", "clock_rate_scale", "fbd_birth_scale", "fbd_death_scale", "fbd_sampling_scale",
+    "fbd_rho_logit", "fbd_origin_scale",
+  ]
+  static let undatedMoves: Set<String> = ["birth_difference_scale", "relative_death_scale"]
+  /// Moves with a tunable step: a slide size for `subtree_slide`, otherwise a
+  /// scale factor strictly between zero and one.
+  static let tunable: Set<String> = [
+    "subtree_slide", "root_scale", "tree_scale", "birth_difference_scale",
+    "relative_death_scale", "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale",
+    "root_time_rates", "clock_sigma_rates", "clock_rate_scale", "fbd_birth_scale",
+    "fbd_death_scale", "fbd_sampling_scale", "fbd_rho_logit", "fbd_origin_scale",
+  ]
+  static let presets = [
+    Preset(
+      id: "gamma-3", name: "Gamma shape weight 3", report: "#42",
+      weights: [MoveOverride(move: "gamma_shape_scale", value: 3)]),
+    Preset(
+      id: "joint", name: "Joint relaxed-clock moves", report: "#27",
+      weights: [
+        MoveOverride(move: "node_height", value: 18),
+        MoveOverride(move: "node_time_rates", value: 12),
+        MoveOverride(move: "root_scale", value: 1),
+        MoveOverride(move: "root_time_rates", value: 2),
+        MoveOverride(move: "clock_sigma_scale", value: 1),
+        MoveOverride(move: "clock_sigma_rates", value: 2),
+      ]),
+  ]
+
+  static func validate(
+    weights: [MoveOverride], tuningValues: [MoveOverride], clock: String, dating: DatingSettings
+  ) -> String? {
+    for list in [weights, tuningValues] {
+      guard Set(list.map(\.move)).count == list.count else {
+        return "Each move appears once in the proposal schedule."
+      }
+      guard list.allSatisfy({ moves.contains($0.move) }) else {
+        return "The proposal schedule names a move the engine does not have."
+      }
+    }
+    guard weights.allSatisfy({ $0.value.isFinite && $0.value >= 0 }) else {
+      return "Selection weights must be finite and not negative."
+    }
+    guard
+      tuningValues.allSatisfy({
+        tunable.contains($0.move) && $0.value.isFinite && $0.value > 0
+          && ($0.move == "subtree_slide" || $0.value < 1)
+      })
+    else { return "Step sizes must be positive; scale factors must be below 1." }
+    let active = Set(weights.filter { $0.value > 0 }.map(\.move)).union(tuningValues.map(\.move))
+    if clock != "reference", !active.isDisjoint(with: relaxedClockMoves) {
+      return "Gamma shape, clock sigma, branch rate and joint moves need the relaxed clock."
+    }
+    if !dating.enabled, !active.isDisjoint(with: datingMoves) {
+      return "Tip age, clock rate and FBD moves need fossil dating."
+    }
+    if dating.enabled, !active.isDisjoint(with: undatedMoves) {
+      return "Birth-difference and relative-death moves need the undated tree prior."
+    }
+    if dating.enabled, dating.clock == .fixed, active.contains("clock_rate_scale") {
+      return "The clock rate move needs an estimated clock rate."
+    }
+    if active.contains(where: { changesFixedParameter($0, dating.estimation) }) {
+      return "FBD process moves need their parameter estimated."
+    }
+    return nil
+  }
+
+  /// Whether `move` scales an FBD parameter that `estimation` keeps fixed.
+  static func changesFixedParameter(_ move: String, _ estimation: ProcessEstimation) -> Bool {
+    switch move {
+    case "fbd_birth_scale": !estimation.birth.estimated
+    case "fbd_death_scale": !estimation.death.estimated
+    case "fbd_sampling_scale": !estimation.fossilSampling.estimated
+    case "fbd_rho_logit": !estimation.estimateSampling
+    case "fbd_origin_scale": !estimation.origin.estimated
+    default: false
+    }
+  }
+}
+
 struct AnalysisSettings: Codable, Equatable, Sendable {
   var dating = DatingSettings()
   var clock = "reference"
@@ -119,12 +227,24 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   var gapsAsMissing = false
   var chains = 1
   var stopWhenConverged = false
+  /// Ignore the characters and sample the priors alone.
+  var sampleFromPrior = false
+  /// Stopping thresholds; nil keeps the engine's defaults.
+  var minESS: Double? = nil
+  var maxRhat: Double? = nil
+  var checkEvery: Int? = nil
+  /// Checkpoint interval in steps; nil keeps the engine's time-based default.
+  var checkpointEvery: Int? = nil
+  var tuning = true
+  var weights: [MoveOverride] = []
+  var tuningValues: [MoveOverride] = []
 
   init() {}
 
   private enum CodingKeys: String, CodingKey {
     case dating, clock, conditioning, partitioning, steps, sampleEvery, seed, gapsAsMissing, chains,
-      stopWhenConverged
+      stopWhenConverged, sampleFromPrior, minESS, maxRhat, checkEvery, checkpointEvery, tuning,
+      weights, tuningValues
   }
 
   init(from decoder: Decoder) throws {
@@ -139,6 +259,22 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     gapsAsMissing = try values.decode(Bool.self, forKey: .gapsAsMissing)
     chains = try values.decodeIfPresent(Int.self, forKey: .chains) ?? 1
     stopWhenConverged = try values.decodeIfPresent(Bool.self, forKey: .stopWhenConverged) ?? false
+    sampleFromPrior = try values.decodeIfPresent(Bool.self, forKey: .sampleFromPrior) ?? false
+    minESS = try values.decodeIfPresent(Double.self, forKey: .minESS)
+    maxRhat = try values.decodeIfPresent(Double.self, forKey: .maxRhat)
+    checkEvery = try values.decodeIfPresent(Int.self, forKey: .checkEvery)
+    checkpointEvery = try values.decodeIfPresent(Int.self, forKey: .checkpointEvery)
+    tuning = try values.decodeIfPresent(Bool.self, forKey: .tuning) ?? true
+    weights = try values.decodeIfPresent([MoveOverride].self, forKey: .weights) ?? []
+    tuningValues = try values.decodeIfPresent([MoveOverride].self, forKey: .tuningValues) ?? []
+  }
+
+  /// Whether any option beyond the exploration plan is in effect; such setups
+  /// use format 5 so that earlier app versions do not run them without it.
+  /// Thresholds are kept but inert while automatic stopping is off.
+  var usesAdvancedOptions: Bool {
+    sampleFromPrior || (stopWhenConverged && (minESS != nil || maxRhat != nil || checkEvery != nil))
+      || checkpointEvery != nil || !tuning || !weights.isEmpty || !tuningValues.isEmpty
   }
 
   var validationError: String? {
@@ -156,6 +292,21 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     }
     guard steps > 0, sampleEvery > 0, steps % sampleEvery == 0 else {
       return "The sampling interval must divide the number of steps exactly."
+    }
+    if let value = minESS, !(value.isFinite && value > 0) {
+      return "The minimum ESS must be a positive number."
+    }
+    if let value = maxRhat, !(value.isFinite && value >= 1) {
+      return "The maximum R-hat must be at least 1."
+    }
+    for value in [checkEvery, checkpointEvery].compactMap({ $0 })
+    where value <= 0 || value % sampleEvery != 0 {
+      return "Check and checkpoint intervals must be positive multiples of the sampling interval."
+    }
+    if let issue = ProposalSchedule.validate(
+      weights: weights, tuningValues: tuningValues, clock: clock, dating: dating)
+    {
+      return issue
     }
     return dating.validationError()
   }
@@ -176,7 +327,21 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       "--partitioning", partitioning,
     ]
     if chains > 1 { arguments += ["--chains", String(chains)] }
-    if stopWhenConverged { arguments.append("--stop-when-converged") }
+    if stopWhenConverged {
+      arguments.append("--stop-when-converged")
+      if let minESS { arguments += ["--min-ess", String(minESS)] }
+      if let maxRhat { arguments += ["--max-rhat", String(maxRhat)] }
+      if let checkEvery { arguments += ["--check-every", String(checkEvery)] }
+    }
+    if let checkpointEvery { arguments += ["--checkpoint-every", String(checkpointEvery)] }
+    if sampleFromPrior { arguments.append("--sample-from-prior") }
+    if !tuning { arguments.append("--no-tuning") }
+    for override in weights {
+      arguments += ["--weight", "\(override.move)=\(String(override.value))"]
+    }
+    for override in tuningValues {
+      arguments += ["--tuning", "\(override.move)=\(String(override.value))"]
+    }
     for clade in monophyly { arguments += ["--monophyly", clade.joined(separator: ",")] }
     arguments += datingArguments
     return arguments
@@ -211,7 +376,9 @@ struct AnalysisDraft: Codable, Sendable {
     matrix: URL, report: MatrixReport, settings: AnalysisSettings,
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
-    formatVersion = settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)
+    formatVersion =
+      settings.usesAdvancedOptions
+      ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2))
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -235,7 +402,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard [1, 2, 3, 4].contains(formatVersion),
+    guard [1, 2, 3, 4, 5].contains(formatVersion),
+      formatVersion >= 5 || !settings.usesAdvancedOptions,
       formatVersion >= 4 || !settings.dating.estimatesProcess,
       formatVersion >= 3 || !settings.dating.enabled, (matrixPath as NSString).isAbsolutePath,
       matrixSHA256.count == 64,

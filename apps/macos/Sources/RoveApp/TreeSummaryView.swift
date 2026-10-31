@@ -17,12 +17,20 @@ struct TreeSummaryView: View {
       .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
       HStack(alignment: .top, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text(strings("Burn-in (%)")).font(.system(size: 12, weight: .medium))
-          TextField(strings("Burn-in (%)"), text: $model.burnin).textFieldStyle(.roundedBorder)
-            .frame(width: 90)
+          Text(strings("Burn-in")).font(.system(size: 12, weight: .medium))
+          HStack(spacing: 8) {
+            TextField(strings("Burn-in"), text: $model.burnin).textFieldStyle(.roundedBorder)
+              .frame(width: 90)
+            Picker(strings("Burn-in unit"), selection: $model.burninUnit) {
+              Text(strings("Percent")).tag("percent")
+              Text(strings("Samples")).tag("samples")
+            }.pickerStyle(.segmented).labelsHidden().frame(width: 170)
+          }
           Text(
             strings(
-              "Discard this percentage of the first samples, rounded down. Choose it after checking the trace."
+              model.burninUnit == "samples"
+                ? "Discard this many of the first samples, counting the state before the first step. Choose it after checking the trace."
+                : "Discard this percentage of the first samples, rounded down. Choose it after checking the trace."
             )
           )
           .font(.system(size: 11)).foregroundStyle(Lab.secondary).fixedSize(

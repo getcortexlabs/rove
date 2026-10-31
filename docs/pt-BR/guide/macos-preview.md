@@ -229,8 +229,9 @@ O burn-in descarta as primeiras `floor(total de amostras × porcentagem / 100)`
 árvores, arredondando para baixo. `STATE_0` conta como amostra. Os 10% iniciais
 são uma sugestão editável, não uma avaliação de convergência; escolha após
 inspecionar o trace. O painel mostra quantas árvores foram mantidas e
-descartadas. Execuções parciais, canceladas ou interrompidas não podem ser
-resumidas pelo app.
+descartadas. O burn-in também pode ser dado como número de amostras, como em
+`--burnin-samples`. Execuções parciais, canceladas ou interrompidas não podem
+ser resumidas pelo app.
 
 MCC (máxima credibilidade dos clados) seleciona uma **topologia amostrada**, não
 um consenso de maioria. O Rove soma os logaritmos das frequências dos clados
@@ -411,6 +412,8 @@ Em **Modelo → O plano de exploração**, escolha **1, 2 ou 4 cadeias**. O núm
 Os grupos concluídos e seus detalhes no Histórico incluem **As cadeias concordam?**, com R-hat e ESS para todas as estatísticas registradas e comparação das frequências de clados. Selecione uma cadeia para abrir seus diagnósticos, resumir suas árvores ou ver sua pasta. As configurações salvas preservam a quantidade de cadeias; configurações antigas continuam com uma cadeia. Os arquivos ficam separados para que o burn-in de uma não seja tratado como continuação de outra.
 
 **Parar quando os critérios dos diagnósticos forem atingidos** é opcional e vem desligado. Usa 10% de burn-in, ESS ≥ 200 por cadeia, R-hat ≤ 1,01 em todas as estatísticas escalares registradas, pelo menos 1.000 amostras mantidas por cadeia e duas verificações positivas seguidas. O passo e o motivo da parada são salvos. São critérios de diagnóstico escalar, não uma garantia de convergência das topologias; confira clados e traces. Veja [cadeias independentes](./sampler#cadeias-independentes) para opções e limites da CLI.
+
+**Amostragem avançada**, recolhida abaixo do plano de exploração, expõe as demais opções do `rove sample`. **Amostrar só os priors** roda sem os caracteres. Com a parada automática ligada, o ESS mínimo, o R-hat máximo e o intervalo de verificação podem substituir os padrões do motor, 200, 1,01 e o cronograma próprio dele. O intervalo de checkpoint pode ser dado em passos em vez do padrão de cerca de 30 segundos. O esquema de propostas oferece o padrão clássico, os dois esquemas avaliados nos relatórios do [relógio relaxado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md) e da [frequência da gama](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md), e pesos e tamanhos de passo iniciais personalizados por movimento, com o ajuste de passo que pode ser desligado. Cada opção é validada antes de o motor iniciar, gravada no registro da execução e no Histórico, e salva nas configurações como formato 5, que versões anteriores do app recusam em vez de rodar sem ela. Nenhum dos esquemas avaliados é recomendado; os relatórios registram o que cada um ganhou e perdeu.
 
 ## Testar este Mac
 

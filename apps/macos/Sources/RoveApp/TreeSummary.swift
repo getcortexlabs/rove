@@ -59,27 +59,30 @@ final class TreeSummaryProcess: @unchecked Sendable {
     input = nil
   }
 
-  func execute(directory: URL, executable: URL, burnin: Int, heights: String) async throws
-    -> SavedSummary
-  {
+  func execute(
+    directory: URL, executable: URL, burnin: Int, unit: String = "percent", heights: String
+  ) async throws -> SavedSummary {
     try await withCheckedThrowingContinuation { continuation in
       Thread.detachNewThread {
         autoreleasepool {
           continuation.resume(
             with: Result {
               try self.executeBlocking(
-                directory: directory, executable: executable, burnin: burnin, heights: heights)
+                directory: directory, executable: executable, burnin: burnin, unit: unit,
+                heights: heights)
             })
         }
       }
     }
   }
 
-  private func executeBlocking(directory: URL, executable: URL, burnin: Int, heights: String)
-    throws -> SavedSummary
-  {
-    guard (0..<100).contains(burnin), ["keep", "ca"].contains(heights) else {
-      throw ImportError.message("Choose a burn-in from 0 to 99 percent.")
+  private func executeBlocking(
+    directory: URL, executable: URL, burnin: Int, unit: String, heights: String
+  ) throws -> SavedSummary {
+    guard ["percent", "samples"].contains(unit), burnin >= 0,
+      unit == "samples" || burnin < 100, ["keep", "ca"].contains(heights)
+    else {
+      throw ImportError.message("Choose a burn-in from 0 to 99 percent or a sample count.")
     }
     guard HistoryEntry.read(RunFiles.session(in: directory)).status == .completed else {
       throw ImportError.message("Only completed runs can be summarized.")
@@ -98,7 +101,7 @@ final class TreeSummaryProcess: @unchecked Sendable {
     child.executableURL = executable
     child.arguments = [
       "summarize", RunFiles.output(in: directory).appendingPathComponent("trees.nexus").path,
-      "--output", output.path, "--burnin-percent", String(burnin), "--heights", heights,
+      "--output", output.path, "--burnin-\(unit)", String(burnin), "--heights", heights,
       "--cancel-on-stdin-close",
     ]
     child.standardInput = pipe
@@ -139,6 +142,7 @@ final class TreeSummaryModel: Identifiable {
   let directory: URL
   let executable: URL
   var burnin = "10"
+  var burninUnit = "percent"
   var heights = "ca"
   private(set) var busy = false
   private(set) var summaries: [SavedSummary] = []
@@ -146,7 +150,10 @@ final class TreeSummaryModel: Identifiable {
   private(set) var details: String?
   private var task: Task<Void, Never>?
   private var worker: TreeSummaryProcess?
-  var valid: Bool { Int(burnin).map { (0..<100).contains($0) } == true }
+  var valid: Bool {
+    guard let value = Int(burnin), value >= 0 else { return false }
+    return burninUnit == "samples" || value < 100
+  }
 
   init(directory: URL, executable: URL) {
     self.directory = directory
@@ -178,10 +185,12 @@ final class TreeSummaryModel: Identifiable {
     let directory = directory
     let executable = executable
     let heights = heights
+    let unit = burninUnit
     task = Task {
       do {
         let result = try await process.execute(
-          directory: directory, executable: executable, burnin: percent, heights: heights)
+          directory: directory, executable: executable, burnin: percent, unit: unit,
+          heights: heights)
         summaries.append(result)
       } catch is CancellationError {
         error = "Tree summarization was cancelled."

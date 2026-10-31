@@ -166,6 +166,7 @@ struct SetupView: View {
           .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
         }
       }
+      AdvancedOptionsSection(workspace: workspace)
       GroupSection(workspace: workspace)
       if let error = workspace.settings.validationError {
         InlineMessage(text: strings(error), isError: true)
@@ -278,6 +279,9 @@ struct ReviewView: View {
           row("Independent chains", String(workspace.settings.chains))
           row("Sampling", strings("Every %@ steps", strings.number(workspace.settings.sampleEvery)))
           row("Gaps", workspace.settings.gapsAsMissing ? "Treat as missing" : "Reject")
+          ForEach(workspace.settings.advancedRows(strings: strings), id: \.0) { label, value in
+            row(label, value)
+          }
         }
       }
 
