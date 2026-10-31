@@ -1,6 +1,7 @@
 mod benchmark;
 mod checkpoint;
 mod compare;
+mod coupled;
 mod dating;
 mod diagnose;
 mod events;
@@ -38,6 +39,9 @@ const USAGE: &str =
                    [--print-every <n>] [--events-json] [--cancel-on-stdin-close]
                    [--expect-input-sha256 <hash>] [--checkpoint-every <n>]
        rove sample --resume <run-directory> [--events-json] [--cancel-on-stdin-close]
+       rove coupled <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
+                    --likelihood-powers <1,beta,...> [--swap-every <n>] [sample model/output options]
+       rove coupled --resume <run-directory> [--events-json] [--cancel-on-stdin-close]
        rove marginal <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                      --powers <2..256> [--alpha <x>] [--burnin-percent <0..99>]
                      [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
@@ -509,6 +513,9 @@ impl Json {
 }
 
 fn run(arguments: &[String]) -> Result<bool, Box<dyn Error>> {
+    if arguments.first().is_some_and(|a| a == "coupled") {
+        return coupled::run(arguments);
+    }
     let (command, mut options, _guard) = if arguments.iter().any(|a| a == "--resume") {
         let (command, options, guard) = checkpoint::load(arguments)?;
         (command, options, Some(guard))

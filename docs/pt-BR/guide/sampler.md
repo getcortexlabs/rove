@@ -131,3 +131,41 @@ O salvamento inclui árvore, taxas, estado do gerador de números aleatórios, a
 Antes de continuar, o motor verifica todos os membros. Trechos gravados depois das posições salvas são descartados e esses passos são refeitos. Os números e a ordem da amostragem são preservados exatamente; as amostras coincidem com uma execução contínua usando o mesmo executável e configurações. Isso verifica a reprodução da retomada, não a convergência. `run.json` continua sendo um relatório; para retomar, são necessários `checkpoint.json` e os arquivos binários que ele indica.
 
 Com `--cancel-on-stdin-close`, enviar `pause\n` pela entrada padrão salva no próximo passo amostrado comum e encerra com status `paused` (código 130). Fechar essa entrada cancela. Uma interrupção abrupta permite recuperar apenas o último checkpoint confirmado.
+
+## Cadeias acopladas experimentais
+
+`rove coupled` mantém uma cadeia fria junto de cadeias aquecidas. As aquecidas
+podem explorar outras árvores com mais facilidade; trocas aceitas levam esses
+estados à cadeia fria. Por enquanto, a opção é experimental e fica apenas na
+CLI. A concordância dos resultados e o desempenho seguem este
+[protocolo](https://github.com/getcortexlabs/rove/blob/main/benchmarks/coupled/PROTOCOL.md).
+
+```sh
+rove coupled matrix.nex --output coupled-run --model reference \
+  --seed 710000 --steps 1000000 --sample-every 1000 \
+  --likelihood-powers 1,0.9,0.8,0.7 --swap-every 1000
+```
+
+A primeira potência precisa ser 1; as seguintes devem ser positivas e diminuir.
+Cada cadeia amostra `prior × verossimilhança^potência`, sem aquecer o prior.
+A cada intervalo, uma dupla de temperaturas vizinhas é escolhida ao acaso para
+tentar uma troca. Os valores do exemplo não são uma recomendação para toda matriz.
+
+`trace.log` e `trees.nexus` guardam somente a cadeia fria, com posterior,
+verossimilhança e prior originais. `run.json` registra as potências, tentativas e
+aceites de cada dupla, propostas por temperatura e viagens completas da cadeia
+fria à mais quente e de volta. Muitas trocas sem essas viagens podem esconder
+uma comunicação ruim entre temperaturas. Mesmo muitas viagens não provam convergência.
+
+Faça execuções independentes e compare suas cadeias frias com `rove compare`.
+As sementes internas são a semente inicial mais o índice da cadeia: com quatro
+cadeias, deixe ao menos quatro entre sementes iniciais. Um grupo de quatro usa
+quatro trabalhadores e produz **uma** sequência de amostras frias. Ele não
+substitui as verificações entre execuções. `--chains` e a parada automática não
+estão disponíveis neste comando; `rove sample` continua funcionando como antes.
+
+Para retomar, use `rove coupled --resume /caminho/coupled-run`. Preserve
+`coupling.json`, o `ensemble-<passo>.bin` indicado nele, a matriz, o executável e
+as saídas. O checkpoint guarda todas as cadeias, o gerador das trocas e as viagens.
+As regras de pausa, cancelamento e verificação acima também se aplicam.
+Retomar não permite prolongar uma execução já concluída.

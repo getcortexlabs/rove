@@ -131,3 +131,21 @@ rove sample --resume /path/to/run-directory
 恢复在追加数据前验证所有成员。保存位置之后的输出将被丢弃，对应步骤会重新计算。浮点数的位和采样顺序完整保留，因此样本与相同程序及设置下的连续运行一致。这验证恢复的可重复性，不证明收敛。`run.json` 仍是报告；恢复需要 `checkpoint.json` 及其引用的二进制文件。
 
 使用 `--cancel-on-stdin-close` 时，向标准输入发送 `pause\n` 会在下一个共同采样步保存并以 `paused` 状态退出（退出码 130）。关闭标准输入会取消运行。突然终止后只能恢复最后提交的检查点。
+
+## 实验性耦合链
+
+`rove coupled` 同时运行一条冷链和多条加热链。加热链可以探索其他树，接受的状态交换再将这些状态带到冷链。目前该功能仅在 CLI 中实验性提供；后验一致性与性能按照[预先记录的方案](https://github.com/getcortexlabs/rove/blob/main/benchmarks/coupled/PROTOCOL.md)进行评估。
+
+```sh
+rove coupled matrix.nex --output coupled-run --model reference \
+  --seed 710000 --steps 1000000 --sample-every 1000 \
+  --likelihood-powers 1,0.9,0.8,0.7 --swap-every 1000
+```
+
+第一个幂必须为 1，后续幂必须为正且严格递减。各链的目标为 `prior × likelihood^power`，先验不加热。每个交换间隔均匀随机选择一对相邻温度尝试交换。示例参数不是适用于所有矩阵的温度建议。
+
+`trace.log` 和 `trees.nexus` 只保存冷链样本，记录未经加热的后验、似然和先验值。`run.json` 保存所有幂、各相邻对的交换次数、各温度的提议统计，以及状态从冷链到最热链再回到冷链的完整往返次数。交换接受率高但没有往返，可能说明温度之间的信息传递不足；往返多也不证明收敛。
+
+运行多个独立耦合组，并使用 `rove compare` 比较各组的冷链输出。内部种子为基础种子加槽位索引；四条链的基础种子之间至少相差四。一个四链组使用四个工作线程，只产生**一条**冷链样本序列，不能替代独立运行之间的检验。此命令不支持 `--chains` 或自动停止；普通 `rove sample` 的行为不变。
+
+使用 `rove coupled --resume /path/to/coupled-run` 恢复。保留 `coupling.json`、其中引用的 `ensemble-<step>.bin`、原始矩阵、可执行文件和输出。检查点保存所有槽位、交换随机数状态和往返记录。上述暂停、取消和指纹验证规则同样适用；已完成的运行不能通过恢复来延长。
