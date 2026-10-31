@@ -17,7 +17,7 @@ hero:
   actions:
     - theme: brand
       text: 下载 Mac 版
-      link: https://github.com/getcortexlabs/rove/releases/latest
+      link: https://getcortexlabs.com/download/rove
     - theme: alt
       text: Rove 是什么？
       link: /zh-CN/guide/
