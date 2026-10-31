@@ -113,6 +113,63 @@ those workloads, then this entire profiling suite was restarted in a fresh
 directory using the same frozen binaries and protocol. No pair from that
 interrupted attempt enters these tables; all partial outputs remain local.
 
+## Cost from the terminal inference states
+
+The [supplement protocol](../TERMINAL-STATES.md) was committed in `5800321`
+before these measurements, after the 90-taxon diagnosis was known and while
+the 500-taxon chains were still running. Its harness ran from `1362ed7`, with
+unchanged engine sources, Cargo files and compiler relative to the original
+experiment. It selected chains 1 and 2 by index, copied their 20M / 5M states,
+and continued each for 1M / 100,000 proposals with the saved RNG and tuning.
+These draws do not enter the convergence study or extend its caps.
+
+All four pairs round-tripped the original checkpoints exactly and produced
+matching final full-state hashes between normal and instrumented builds.
+The original checkpoints were unchanged. The timed loop contains only
+`Sampler::step`: parsing, restoration, serialization and trace/tree/checkpoint
+output are excluded. Whole-process time is reported separately. Normal runs
+first for chain 1 and instrumented first for chain 2.
+
+| Source state | Proposals in window | Normal sampling seconds | Normal process seconds | Sampling steps/s | Instrumented / normal sampling time | Phase samples |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 90 taxa, 20M, chain 1 | 1,000,000 | 16.938 | 17.236 | 59,037 | 1.002 | 11,276 |
+| 90 taxa, 20M, chain 2 | 1,000,000 | 16.454 | 16.485 | 60,774 | 1.004 | 10,959 |
+| 500 taxa, 5M, chain 1 | 100,000 | 31.807 | 32.512 | 3,144 | 0.987 | 20,838 |
+| 500 taxa, 5M, chain 2 | 100,000 | 29.665 | 30.350 | 3,371 | 0.998 | 19,606 |
+
+Phase fractions below average the two selected states equally, as in the main
+report. These are single-chain continuation windows, not four-chain timings.
+
+| Phase | 90 taxa, from 20M | 500 taxa, from 5M |
+| --- | ---: | ---: |
+| Node partials | 48.51% | 60.57% |
+| Rescaling | 22.46% | 23.13% |
+| Root likelihood | 6.81% | 1.28% |
+| Likelihood update | 12.93% | 12.27% |
+| Proposal construction and bookkeeping | 2.63% | 0.77% |
+| Priors | 6.58% | 1.97% |
+| Random generation | 0.07% | 0.01% |
+| Output | 0.00% | 0.00% |
+| Other | 0.02% | 0.01% |
+
+Node partials plus rescaling account for **70.97% / 83.70%** of these late
+observations. The same phases dominate after the full inference budgets.
+Since these windows omit output and start from different states, their
+fractions cannot isolate the effect of chain age or replace the full CLI
+rates above. Eliminating this kernel would imply bounds of
+3.44× / 6.13× for these **output-free sampled windows only**.
+The 500-taxon states still fail the convergence criteria; profiling them is
+not evidence of successful posterior exploration.
+
+There were 10,959–20,838 phase observations per window; the largest observer
+gap was 4.28 ms. One-minute load ranged from 11.95 to 15.14, on AC power;
+thermal status remained unavailable. No builds, tests or inference studies
+ran alongside these measurements. The small paired time differences include
+environmental and instrumentation effects, as in the main experiment.
+[terminal-states.json](terminal-states.json) retains commands, build/source/input/
+state hashes, both timings, power/load, raw counts and fractions. Private
+checkpoints and job files remain local.
+
 ## Consequences and reproduction
 
 Node arithmetic is the largest measured phase in the 500-taxon relaxed case.

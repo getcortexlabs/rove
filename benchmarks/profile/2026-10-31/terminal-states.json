@@ -1,0 +1,524 @@
+{
+  "source_commit": "1362ed7ae4d7b8e8a68ced628618723050394a37",
+  "parent_source_commit": "ee592836b5234d7af562e265ff5170438063cb3d",
+  "protocol_sha256": "cdb6dc9bf84d24861dd721b3fa31fe4f5d847c86ff5b8131086bd02f00c132b2",
+  "build_commands": [
+    [
+      "cargo",
+      "build",
+      "--locked",
+      "--release",
+      "--example",
+      "profile_checkpoint"
+    ],
+    [
+      "cargo",
+      "build",
+      "--locked",
+      "--release",
+      "--example",
+      "profile_checkpoint",
+      "--features",
+      "profile-sampler"
+    ]
+  ],
+  "binaries": {
+    "profile": "5023c4a249ca89a353c00b65bf45d547561fd16d62c54829a56987da67b79f83",
+    "normal": "22493d85f75ba7fa1172db25e5a3ce10e5320cd2ab7851789151f202933ceffd"
+  },
+  "parent_metadata_sha256": "5ff7b28eeefa179ae4c9b2fc5b6512b2563787af02740533c38291d2f59deaba",
+  "results": [
+    {
+      "case": "morphology90",
+      "source_chain": 1,
+      "source_seed": 2026103101,
+      "source_state_sha256": "a7614decd89ab02b9cee691a548e34b379d5ae663cedf0b3ef28600c082bf422",
+      "steps": 1000000,
+      "normal": {
+        "command": [
+          "$RUN/bin/normal",
+          "$RUN/morphology90-1.json",
+          "$RUN/morphology90-1-normal"
+        ],
+        "whole_process_seconds": 17.235966165999997,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t93%; charging; 0:25 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            11.9453125,
+            15.20849609375,
+            19.833984375
+          ],
+          "unix_seconds": 1793472561.0998468
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t93%; charging; 0:25 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            12.25439453125,
+            15.08935546875,
+            19.708984375
+          ],
+          "unix_seconds": 1793472578.356713
+        },
+        "final_state_sha256": "ef2ade97278b5eb813bcf91fcb87d951d9f9aefa660b0792bdf00fb6438a8765",
+        "final_step": 21000000,
+        "initial_step": 20000000,
+        "input_sha256": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+        "instrumented": false,
+        "output_in_timed_loop": false,
+        "sampling_seconds": 16.938454334,
+        "source_state_sha256": "a7614decd89ab02b9cee691a548e34b379d5ae663cedf0b3ef28600c082bf422",
+        "state_round_trip_identical": true,
+        "steps": 1000000
+      },
+      "profile": {
+        "command": [
+          "$RUN/bin/profile",
+          "$RUN/morphology90-1.json",
+          "$RUN/morphology90-1-profile"
+        ],
+        "whole_process_seconds": 17.273994083,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t93%; charging; 0:25 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            12.25439453125,
+            15.08935546875,
+            19.708984375
+          ],
+          "unix_seconds": 1793472578.373217
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t94%; charging; 0:23 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.8427734375,
+            15.28759765625,
+            19.67333984375
+          ],
+          "unix_seconds": 1793472595.664331
+        },
+        "final_state_sha256": "ef2ade97278b5eb813bcf91fcb87d951d9f9aefa660b0792bdf00fb6438a8765",
+        "final_step": 21000000,
+        "initial_step": 20000000,
+        "input_sha256": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+        "instrumented": true,
+        "output_in_timed_loop": false,
+        "sampling_seconds": 16.969756666,
+        "source_state_sha256": "a7614decd89ab02b9cee691a548e34b379d5ae663cedf0b3ef28600c082bf422",
+        "state_round_trip_identical": true,
+        "steps": 1000000
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 1451,
+          "node_partials": 5515,
+          "other": 1,
+          "output": 0,
+          "priors": 737,
+          "random": 6,
+          "rescaling": 2507,
+          "root_likelihood": 757,
+          "tree_and_bookkeeping": 302
+        },
+        "first_sample_seconds": 0.001507959,
+        "last_sample_seconds": 16.970788209,
+        "maximum_gap_seconds": 0.0038028340000000327,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 21000000,
+        "samples": 11276,
+        "warmup_steps": 100000
+      },
+      "fractions": {
+        "likelihood_update": 0.12868038311457963,
+        "node_partials": 0.4890918765519688,
+        "other": 8.86839304717985e-05,
+        "output": 0.0,
+        "priors": 0.0653600567577155,
+        "random": 0.000532103582830791,
+        "rescaling": 0.22233061369279886,
+        "root_likelihood": 0.06713373536715148,
+        "tree_and_bookkeeping": 0.02678254700248315
+      },
+      "sampling_time_ratio": 1.0018480040376039
+    },
+    {
+      "case": "morphology90",
+      "source_chain": 2,
+      "source_seed": 2026103102,
+      "source_state_sha256": "6a59b89cf4387d8f78b54fe7179883954078784ed9de91f7ab7354aad8e22821",
+      "steps": 1000000,
+      "profile": {
+        "command": [
+          "$RUN/bin/profile",
+          "$RUN/morphology90-2.json",
+          "$RUN/morphology90-2-profile"
+        ],
+        "whole_process_seconds": 16.557163166000002,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t94%; charging; 0:23 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.8427734375,
+            15.28759765625,
+            19.67333984375
+          ],
+          "unix_seconds": 1793472595.684333
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t94%; charging; 0:23 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.01025390625,
+            15.015625,
+            19.498046875
+          ],
+          "unix_seconds": 1793472612.257249
+        },
+        "final_state_sha256": "854941abed10a8940f26412bf26839bf6b6b88069fd6b6e3a298c6b9d83c3e63",
+        "final_step": 21000000,
+        "initial_step": 20000000,
+        "input_sha256": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+        "instrumented": true,
+        "output_in_timed_loop": false,
+        "sampling_seconds": 16.525216834,
+        "source_state_sha256": "6a59b89cf4387d8f78b54fe7179883954078784ed9de91f7ab7354aad8e22821",
+        "state_round_trip_identical": true,
+        "steps": 1000000
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 1423,
+          "node_partials": 5272,
+          "other": 3,
+          "output": 0,
+          "priors": 725,
+          "random": 10,
+          "rescaling": 2487,
+          "root_likelihood": 757,
+          "tree_and_bookkeeping": 282
+        },
+        "first_sample_seconds": 0.001514542,
+        "last_sample_seconds": 16.525722292,
+        "maximum_gap_seconds": 0.004203791000000123,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 21000000,
+        "samples": 10959,
+        "warmup_steps": 100000
+      },
+      "normal": {
+        "command": [
+          "$RUN/bin/normal",
+          "$RUN/morphology90-2.json",
+          "$RUN/morphology90-2-normal"
+        ],
+        "whole_process_seconds": 16.484745958999994,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t94%; charging; 0:23 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.01025390625,
+            15.015625,
+            19.498046875
+          ],
+          "unix_seconds": 1793472612.2718668
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t94%; charging; 0:23 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.94921875,
+            15.11474609375,
+            19.4541015625
+          ],
+          "unix_seconds": 1793472628.773568
+        },
+        "final_state_sha256": "854941abed10a8940f26412bf26839bf6b6b88069fd6b6e3a298c6b9d83c3e63",
+        "final_step": 21000000,
+        "initial_step": 20000000,
+        "input_sha256": "9fb2cc1d22a32723fb9cd958d5c9a0f4edffad3c70e123461e3cab14bb644e4f",
+        "instrumented": false,
+        "output_in_timed_loop": false,
+        "sampling_seconds": 16.45441125,
+        "source_state_sha256": "6a59b89cf4387d8f78b54fe7179883954078784ed9de91f7ab7354aad8e22821",
+        "state_round_trip_identical": true,
+        "steps": 1000000
+      },
+      "fractions": {
+        "likelihood_update": 0.12984761383337895,
+        "node_partials": 0.4810657906743316,
+        "other": 0.0002737476047084588,
+        "output": 0.0,
+        "priors": 0.06615567113787754,
+        "random": 0.0009124920156948627,
+        "rescaling": 0.22693676430331233,
+        "root_likelihood": 0.0690756455881011,
+        "tree_and_bookkeeping": 0.02573227484259513
+      },
+      "sampling_time_ratio": 1.0043031368867725
+    },
+    {
+      "case": "zilla",
+      "source_chain": 1,
+      "source_seed": 2026103111,
+      "source_state_sha256": "39a1e1a7847b0b944d86fed79ab85d7f043ec03fe308ad68c1a16699ba5038a9",
+      "steps": 100000,
+      "normal": {
+        "command": [
+          "$RUN/bin/normal",
+          "$RUN/zilla-1.json",
+          "$RUN/zilla-1-normal"
+        ],
+        "whole_process_seconds": 32.51167020800001,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t94%; charging; 0:23 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.94921875,
+            15.11474609375,
+            19.4541015625
+          ],
+          "unix_seconds": 1793472628.834718
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t94%; charging; 0:21 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.2158203125,
+            14.7763671875,
+            19.15283203125
+          ],
+          "unix_seconds": 1793472661.36354
+        },
+        "final_state_sha256": "c4e6285e9acbd347bb2df8618caaefd8461ddade47a1fa72db6851d58336af58",
+        "final_step": 5100000,
+        "initial_step": 5000000,
+        "input_sha256": "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+        "instrumented": false,
+        "output_in_timed_loop": false,
+        "sampling_seconds": 31.806543958,
+        "source_state_sha256": "39a1e1a7847b0b944d86fed79ab85d7f043ec03fe308ad68c1a16699ba5038a9",
+        "state_round_trip_identical": true,
+        "steps": 100000
+      },
+      "profile": {
+        "command": [
+          "$RUN/bin/profile",
+          "$RUN/zilla-1.json",
+          "$RUN/zilla-1-profile"
+        ],
+        "whole_process_seconds": 32.10091224999999,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t94%; charging; 0:21 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.2158203125,
+            14.7763671875,
+            19.15283203125
+          ],
+          "unix_seconds": 1793472661.3779871
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t95%; charging; 0:19 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.83544921875,
+            14.7294921875,
+            18.98095703125
+          ],
+          "unix_seconds": 1793472693.4962418
+        },
+        "final_state_sha256": "c4e6285e9acbd347bb2df8618caaefd8461ddade47a1fa72db6851d58336af58",
+        "final_step": 5100000,
+        "initial_step": 5000000,
+        "input_sha256": "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+        "instrumented": true,
+        "output_in_timed_loop": false,
+        "sampling_seconds": 31.407035,
+        "source_state_sha256": "39a1e1a7847b0b944d86fed79ab85d7f043ec03fe308ad68c1a16699ba5038a9",
+        "state_round_trip_identical": true,
+        "steps": 100000
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 2491,
+          "node_partials": 12705,
+          "other": 2,
+          "output": 0,
+          "priors": 378,
+          "random": 0,
+          "rescaling": 4878,
+          "root_likelihood": 252,
+          "tree_and_bookkeeping": 132
+        },
+        "first_sample_seconds": 0.001302042,
+        "last_sample_seconds": 31.40712725,
+        "maximum_gap_seconds": 0.00386612500000183,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 5100000,
+        "samples": 20838,
+        "warmup_steps": 100000
+      },
+      "fractions": {
+        "likelihood_update": 0.1195412227661004,
+        "node_partials": 0.6097034264324791,
+        "other": 9.597850081581725e-05,
+        "output": 0.0,
+        "priors": 0.018139936654189462,
+        "random": 0.0,
+        "rescaling": 0.23409156348977828,
+        "root_likelihood": 0.012093291102792975,
+        "tree_and_bookkeeping": 0.006334581053843939
+      },
+      "sampling_time_ratio": 0.9874394099991642
+    },
+    {
+      "case": "zilla",
+      "source_chain": 2,
+      "source_seed": 2026103112,
+      "source_state_sha256": "4f3a9cd81f33d3c7dfd8fa277a1b617332981da21c9f3549ddfa331de8388c13",
+      "steps": 100000,
+      "profile": {
+        "command": [
+          "$RUN/bin/profile",
+          "$RUN/zilla-2.json",
+          "$RUN/zilla-2-profile"
+        ],
+        "whole_process_seconds": 30.302638124999987,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t95%; charging; 0:19 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            13.83544921875,
+            14.7294921875,
+            18.98095703125
+          ],
+          "unix_seconds": 1793472693.5950458
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t95%; charging; 0:19 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            15.140625,
+            14.845703125,
+            18.86865234375
+          ],
+          "unix_seconds": 1793472723.9148018
+        },
+        "final_state_sha256": "b031e63dc8fda2c499083a8ed9cbab716fe0c89985c513ca3992755fde1bde56",
+        "final_step": 5100000,
+        "initial_step": 5000000,
+        "input_sha256": "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+        "instrumented": true,
+        "output_in_timed_loop": false,
+        "sampling_seconds": 29.612521958,
+        "source_state_sha256": "4f3a9cd81f33d3c7dfd8fa277a1b617332981da21c9f3549ddfa331de8388c13",
+        "state_round_trip_identical": true,
+        "steps": 100000
+      },
+      "occupancy": {
+        "counts": {
+          "likelihood_update": 2468,
+          "node_partials": 11795,
+          "other": 1,
+          "output": 0,
+          "priors": 417,
+          "random": 4,
+          "rescaling": 4481,
+          "root_likelihood": 263,
+          "tree_and_bookkeeping": 177
+        },
+        "first_sample_seconds": 0.001513584,
+        "last_sample_seconds": 29.612708125,
+        "maximum_gap_seconds": 0.004283624999999347,
+        "method": "single-chain wall-clock phase sampling; nominal 1 ms sleep",
+        "observed_steps": 5100000,
+        "samples": 19606,
+        "warmup_steps": 100000
+      },
+      "normal": {
+        "command": [
+          "$RUN/bin/normal",
+          "$RUN/zilla-2.json",
+          "$RUN/zilla-2-normal"
+        ],
+        "whole_process_seconds": 30.3498295,
+        "before": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t95%; charging; 0:19 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            15.140625,
+            14.845703125,
+            18.86865234375
+          ],
+          "unix_seconds": 1793472723.9305978
+        },
+        "after": {
+          "power": {
+            "batt": "Now drawing from 'AC Power'\n -InternalBattery-0\t95%; charging; 0:17 remaining present: true",
+            "therm": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+          },
+          "load": [
+            14.53466796875,
+            14.7177734375,
+            18.68115234375
+          ],
+          "unix_seconds": 1793472754.298539
+        },
+        "final_state_sha256": "b031e63dc8fda2c499083a8ed9cbab716fe0c89985c513ca3992755fde1bde56",
+        "final_step": 5100000,
+        "initial_step": 5000000,
+        "input_sha256": "fd3ed2bb5b35e9814cae9b033f1c78fc473a0a01b846fde2eddf495992f1482a",
+        "instrumented": false,
+        "output_in_timed_loop": false,
+        "sampling_seconds": 29.664579709,
+        "source_state_sha256": "4f3a9cd81f33d3c7dfd8fa277a1b617332981da21c9f3549ddfa331de8388c13",
+        "state_round_trip_identical": true,
+        "steps": 100000
+      },
+      "fractions": {
+        "likelihood_update": 0.1258798327042742,
+        "node_partials": 0.6016015505457513,
+        "other": 5.100479445067836e-05,
+        "output": 0.0,
+        "priors": 0.02126899928593288,
+        "random": 0.00020401917780271344,
+        "rescaling": 0.22855248393348976,
+        "root_likelihood": 0.01341426094052841,
+        "tree_and_bookkeeping": 0.009027848617770071
+      },
+      "sampling_time_ratio": 0.9982451208980315
+    }
+  ]
+}

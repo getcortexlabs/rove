@@ -191,6 +191,11 @@ The machine remained on AC power. The 500-taxon group's one-minute load was
 16.03 before and 15.85 after; thermal-status queries were unavailable. Timing
 is a record of this shared machine, not a pinned-core or dedicated-host result.
 
+The [terminal-state profile](../../profile/2026-10-31/README.md#cost-from-the-terminal-inference-states)
+measures short, separate copies of chains 1 and 2 after the 20M / 5M caps.
+Node partials plus rescaling still dominate the output-free sampling windows
+(70.97% / 83.70%). Those continuations do not enter any diagnostic above.
+
 ## Diagnostics and reproduction
 
 Every prefix discards floor(10%) of its draws, including state zero in the
