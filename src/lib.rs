@@ -5,6 +5,7 @@ pub mod dating;
 pub mod diagnostics;
 mod kernel;
 mod layout;
+pub mod marginal;
 pub mod mcmc;
 pub mod model;
 pub mod nexus;

@@ -1401,3 +1401,156 @@ fn estimated_processes_preserve_live_values_and_fixed_diagnostics() {
     ]);
     assert!(error(&run).contains("joint_sampling_v1"));
 }
+
+#[test]
+fn marginal_likelihood_runs_record_every_power_and_both_estimates() {
+    let directory = scratch("marginal-cli");
+    let matrix = directory.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let output = directory.join("run");
+    let run = rove(&[
+        "marginal",
+        matrix.to_str().unwrap(),
+        "--output",
+        output.to_str().unwrap(),
+        "--seed",
+        "5",
+        "--steps",
+        "4000",
+        "--sample-every",
+        "20",
+        "--powers",
+        "6",
+        "--alpha",
+        "0.3",
+        "--burnin-percent",
+        "25",
+        "--gaps",
+        "missing",
+        "--conditioning",
+        "none",
+        "--monophyly",
+        "A,B",
+    ]);
+    assert!(run.status.success(), "{}", error_text(&run));
+    let message = String::from_utf8_lossy(&run.stderr);
+    assert!(message.contains("stepping stone") && message.contains("path sampling"));
+    let record: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("run.json")).unwrap()).unwrap();
+    assert_eq!(record["status"], "completed");
+    assert_eq!(record["kind"], "marginal_likelihood_run");
+    assert_eq!(record["completed_steps"], 24_000);
+    assert_eq!(record["settings"]["powers"], 6);
+    assert_eq!(record["settings"]["alpha"], 0.3);
+    assert_eq!(record["settings"]["burnin_percent"], 25);
+    assert_eq!(record["model"]["conditioning"], "none (Mk)");
+    assert_eq!(
+        record["model"]["monophyly"][0],
+        serde_json::json!(["A", "B"])
+    );
+    let schedule = record["settings"]["schedule"].as_array().unwrap();
+    assert_eq!(schedule.len(), 6);
+    assert_eq!(schedule[0], 0.0);
+    assert_eq!(schedule[5], 1.0);
+    let results: serde_json::Value =
+        serde_json::from_slice(&fs::read(output.join("marginal.json")).unwrap()).unwrap();
+    assert_eq!(results["kind"], "marginal_likelihood");
+    for method in ["stepping_stone", "path_sampling"] {
+        let estimate = &results[method];
+        assert!(
+            estimate["log_marginal_likelihood"]
+                .as_f64()
+                .unwrap()
+                .is_finite()
+        );
+        assert!(estimate["standard_error"].as_f64().unwrap() > 0.0);
+    }
+    let powers = results["powers"].as_array().unwrap();
+    assert_eq!(powers.len(), 6);
+    assert_eq!(results["stones"].as_array().unwrap().len(), 5);
+    for (index, (power, expected)) in powers.iter().zip(schedule).enumerate() {
+        assert_eq!(power["index"], index);
+        assert_eq!(power["power"], *expected);
+        assert_eq!(power["samples"], 151);
+        let trace = fs::read_to_string(output.join(format!("power-{index:02}/trace.log"))).unwrap();
+        assert!(trace.contains(&format!("likelihood power {}", expected.as_f64().unwrap())));
+        assert_eq!(trace.lines().filter(|l| !l.starts_with('#')).count(), 202);
+    }
+    let last = &powers[5];
+    assert!(
+        last["mean_log_likelihood"].as_f64().unwrap()
+            > powers[0]["mean_log_likelihood"].as_f64().unwrap()
+    );
+    assert_eq!(results["input_sha256"], record["input"]["sha256"]);
+    let rejected = directory.join("x");
+    let rejected = rejected.to_str().unwrap();
+    assert!(
+        error(&rove(&[
+            "marginal",
+            matrix.to_str().unwrap(),
+            "--output",
+            rejected,
+            "--seed",
+            "1",
+            "--steps",
+            "100",
+            "--sample-every",
+            "10"
+        ]))
+        .contains("--powers is required")
+    );
+    for (extra, text) in [
+        (vec!["--powers", "1"], "--powers must be 2 to 256"),
+        (
+            vec!["--powers", "4", "--alpha", "0"],
+            "--alpha must be finite and positive",
+        ),
+        (
+            vec!["--powers", "4", "--chains", "2"],
+            "not available with rove marginal",
+        ),
+        (
+            vec!["--powers", "4", "--sample-from-prior"],
+            "not available with rove marginal",
+        ),
+        (
+            vec!["--powers", "4", "--checkpoint-every", "10"],
+            "not available with rove marginal",
+        ),
+    ] {
+        let mut args = vec![
+            "marginal",
+            matrix.to_str().unwrap(),
+            "--output",
+            rejected,
+            "--seed",
+            "1",
+            "--steps",
+            "100",
+            "--sample-every",
+            "10",
+            "--gaps",
+            "missing",
+        ];
+        args.extend(extra);
+        assert!(error(&rove(&args)).contains(text), "{text}");
+        assert!(!Path::new(rejected).exists());
+    }
+    assert!(
+        error(&rove(&[
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            rejected,
+            "--seed",
+            "1",
+            "--steps",
+            "100",
+            "--sample-every",
+            "10",
+            "--powers",
+            "4"
+        ]))
+        .contains("belong to rove marginal")
+    );
+}

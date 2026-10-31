@@ -54,6 +54,8 @@ pub enum Error {
     Rates(rates::Error),
     /// A rate move is selected without its corresponding model component.
     RateMove(Move),
+    /// The likelihood power is not between zero and one.
+    Power(f64),
 }
 
 impl fmt::Display for Error {
@@ -62,6 +64,12 @@ impl fmt::Display for Error {
             Self::Dating(error) => f.write_str(error),
             Self::Rates(error) => error.fmt(f),
             Self::RateMove(kind) => write!(f, "{} needs its rate model to be enabled", kind.name()),
+            Self::Power(power) => {
+                write!(
+                    f,
+                    "the likelihood power must be between 0 and 1, not {power}"
+                )
+            }
             Self::TooFewTaxa(taxa) => write!(f, "a tree needs at least two taxa, not {taxa}"),
             Self::States(states) => write!(f, "Mk needs at least two states, not {states}"),
             Self::Partitions => write!(f, "partitions must be nonempty and contain the same taxa"),
@@ -121,6 +129,11 @@ pub struct Settings {
     pub clock_sigma: Option<f64>,
     /// Ignore the data: the chain samples the prior.
     pub sample_from_prior: bool,
+    /// Exponent on the likelihood in the acceptance ratio. One samples the
+    /// posterior; zero samples the prior while still evaluating the
+    /// likelihood; values between define the power posteriors of a
+    /// marginal-likelihood path.
+    pub likelihood_power: f64,
     /// Tip sets that must stay monophyletic.
     pub monophyly: Vec<Vec<usize>>,
     pub birth_difference_upper: f64,
@@ -147,6 +160,7 @@ impl Default for Settings {
             gamma_shape: None,
             clock_sigma: None,
             sample_from_prior: false,
+            likelihood_power: 1.0,
             monophyly: Vec::new(),
             birth_difference_upper: 1000.0,
             initial: BirthDeath {
@@ -444,6 +458,7 @@ pub struct Sampler {
     order: Vec<usize>,
     below: Vec<(usize, usize)>,
     birth_difference_upper: f64,
+    likelihood_power: f64,
     tuning: bool,
     tuning_delay: u64,
     tunable_proposals: u64,
@@ -658,6 +673,9 @@ impl Sampler {
         if !settings.backend.is_available() {
             return Err(Error::Backend(settings.backend));
         }
+        if !(0.0..=1.0).contains(&settings.likelihood_power) {
+            return Err(Error::Power(settings.likelihood_power));
+        }
         let likelihoods = if settings.sample_from_prior {
             Vec::new()
         } else {
@@ -691,6 +709,7 @@ impl Sampler {
             order: Vec::with_capacity(tips * 2),
             below: vec![(0, 0); tips * 2 - 1],
             birth_difference_upper: settings.birth_difference_upper,
+            likelihood_power: settings.likelihood_power,
             tuning: settings.tuning,
             tuning_delay: settings.tuning_delay,
             tunable_proposals: 0,
@@ -730,6 +749,20 @@ impl Sampler {
 
     pub fn operators(&self) -> &[Operator] {
         &self.operators
+    }
+
+    pub fn likelihood_power(&self) -> f64 {
+        self.likelihood_power
+    }
+
+    /// Changes the likelihood exponent between steps. The state, its
+    /// components and the operator tuning are kept.
+    pub fn set_likelihood_power(&mut self, power: f64) -> Result<(), Error> {
+        if !(0.0..=1.0).contains(&power) {
+            return Err(Error::Power(power));
+        }
+        self.likelihood_power = power;
+        Ok(())
     }
 
     pub fn steps(&self) -> u64 {
@@ -863,7 +896,7 @@ impl Sampler {
             } else {
                 f64::NEG_INFINITY
             };
-            log_alpha = proposed.total() - self.posterior.total() + log_hastings;
+            log_alpha = self.log_density_change(&proposed) + log_hastings;
             accepted = log_alpha >= 0.0
                 || (log_alpha > f64::NEG_INFINITY && self.random.uniform() < log_alpha.exp());
             if accepted {
@@ -890,6 +923,19 @@ impl Sampler {
         }
         self.tune(index, log_alpha);
         (kind, accepted)
+    }
+
+    /// `power × Δlikelihood + Δprior`. At power one the untempered difference
+    /// keeps the default chain bit-identical to earlier releases.
+    fn log_density_change(&self, proposed: &Posterior) -> f64 {
+        if self.likelihood_power == 1.0 {
+            proposed.total() - self.posterior.total()
+        } else if proposed.likelihood.is_finite() {
+            self.likelihood_power * (proposed.likelihood - self.posterior.likelihood)
+                + (proposed.prior() - self.posterior.prior())
+        } else {
+            f64::NEG_INFINITY
+        }
     }
 
     fn choose(&mut self) -> usize {

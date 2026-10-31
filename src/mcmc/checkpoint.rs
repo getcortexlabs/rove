@@ -13,6 +13,9 @@ impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.
     /// Float bits are preserved; this format is local to the current executable.
     pub fn checkpoint(&self, settings: &Settings) -> io::Result<Vec<u8>> {
+        if settings.likelihood_power != self.likelihood_power {
+            return Err(invalid());
+        }
         let mut out = Vec::new();
         out.write_all(MAGIC)?;
         // A caller cannot accidentally resume with different model settings.
