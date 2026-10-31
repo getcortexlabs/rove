@@ -264,7 +264,9 @@ target/release/rove summarize /path/to/results/trees.nexus \
 ```
 
 Use `--burnin-samples N` instead of a percentage, or `--heights keep`. The output
-directory must not exist. Extensions do not change the input interpretation.
+directory must not exist. Tree files written by BEAST 2, which carry a
+zero-length root stem and a rate on the root, are accepted; the root rate is
+dropped. Extensions do not change the input interpretation.
 Without an adjacent `run.json`, completion is recorded as **unverified**;
 a syntactically complete file alone cannot prove a run finished. With a run
 record, the command verifies completion, sample count and every sampling interval.

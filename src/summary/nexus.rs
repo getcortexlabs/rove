@@ -244,9 +244,13 @@ impl<R: BufRead> Reader<R> {
                     if !p.done()? || tips.contains(&usize::MAX) {
                         return Err(Error("tree has missing taxa or trailing content".into()));
                     }
-                    if nodes[root].length != 0.0 || nodes[root].rate.is_some() {
-                        return Err(Error("root stems and root rates are not supported".into()));
+                    if nodes[root].length != 0.0 {
+                        return Err(Error("root stems are not supported".into()));
                     }
+                    // BEAST writes a zero-length root stem with a rate the
+                    // model never uses; the stem is accepted and the rate
+                    // dropped so its tree files can be summarized.
+                    nodes[root].rate = None;
                     let rated = nodes
                         .iter()
                         .enumerate()

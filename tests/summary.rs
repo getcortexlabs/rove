@@ -201,6 +201,33 @@ fn malformed_incomplete_mixed_and_nonclock_trees_are_rejected() {
 }
 
 #[test]
+fn beast_tree_files_keep_their_zero_length_root_stem_and_lose_the_root_rate() {
+    // BEAST 2 writes a rate on every branch, including a zero-length root stem.
+    let text = "#NEXUS\nBegin trees;Translate 1 A, 2 B, 3 C;\n\
+        tree STATE_0 = ((1[&rate=0.9]:1,2[&rate=1.1]:1)[&rate=1.0]:1,3[&rate=0.8]:2)[&rate=1.0]:0.0;\n\
+        tree STATE_100 = ((1[&rate=1.2]:1,3[&rate=0.7]:1)[&rate=0.9]:1,2[&rate=1.0]:2)[&rate=1.0]:0.0;\n\
+        End;";
+    let temp = Temp::new();
+    let summary = summarize(
+        &temp.input(text),
+        Burnin::Percent(0),
+        Heights::Keep,
+        &[],
+        &|| false,
+    )
+    .unwrap();
+    assert_eq!((summary.total, summary.retained()), (2, 2));
+    let root = summary.target.root;
+    assert!(summary.target.nodes[root].rate.is_none());
+    assert_eq!(summary.nodes[root].rate.count, 0);
+    for stem in [":0.5;", ":1e-9;"] {
+        let temp = Temp::new();
+        let path = temp.input(&text.replace(":0.0;", stem));
+        assert!(summarize(&path, Burnin::Percent(0), Heights::Keep, &[], &|| false).is_err());
+    }
+}
+
+#[test]
 fn quoted_translation_and_nested_comments_preserve_taxa() {
     let temp = Temp::new();
     let input = temp.input(
