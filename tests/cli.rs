@@ -1105,6 +1105,12 @@ fn dating_preserves_ages_in_outputs_summaries_and_prediction() {
         assert!(trace.contains("\tfossilized_birth_death\tclock_rate\tdating_parameter_prior\t"));
         assert!(trace.contains("\ttip_age_5\n"));
         let trees = output.join("trees.nexus");
+        let text = fs::read_to_string(&trees).unwrap();
+        for line in text.lines().filter(|line| line.starts_with("tree ")) {
+            assert!(line.contains("[&height="), "{line}");
+            assert!(!line.contains("][&"), "adjacent metadata blocks: {line}");
+            assert_eq!(line.contains(",rate="), model == "reference", "{line}");
+        }
         let mut reader = rove::summary::nexus::Reader::new(std::io::BufReader::new(
             fs::File::open(&trees).unwrap(),
         ))

@@ -314,13 +314,17 @@ impl Tree {
                 text.push(')');
             }
         }
-        if dated {
-            text.push_str(&format!("[&height={}]", self.height(node)));
+        let rate = if node == self.root { None } else { rate(node) };
+        // One metadata block per node: BEAST 2's NEXUS parser rejects a second one.
+        match (dated, rate) {
+            (true, Some(rate)) => {
+                text.push_str(&format!("[&height={},rate={rate}]", self.height(node)));
+            }
+            (true, None) => text.push_str(&format!("[&height={}]", self.height(node))),
+            (false, Some(rate)) => text.push_str(&format!("[&rate={rate}]")),
+            (false, None) => {}
         }
         if node != self.root {
-            if let Some(rate) = rate(node) {
-                text.push_str(&format!("[&rate={rate}]"));
-            }
             text.push(':');
             text.push_str(&self.branch_length(node).to_string());
         }
@@ -373,6 +377,25 @@ mod tests {
         assert_eq!(tree.tree_length(), 5.0);
         assert_eq!(tree.postorder(), vec![0, 1, 3, 2, 4]);
         assert_eq!(tree.to_newick(|t| format!("T{t}")), "((T0:1,T1:1):1,T2:2);");
+    }
+
+    #[test]
+    fn annotates_each_node_in_one_block() {
+        let tree = example();
+        let label = |t: usize| format!("T{t}");
+        let rate = |node: usize| (node + 1) as f64 * 0.5;
+        assert_eq!(
+            tree.to_newick_with_rates(label, rate),
+            "((T0[&rate=0.5]:1,T1[&rate=1]:1)[&rate=2]:1,T2[&rate=1.5]:2);"
+        );
+        assert_eq!(
+            tree.to_newick_dated(label, |node| Some(rate(node))),
+            "((T0[&height=0,rate=0.5]:1,T1[&height=0,rate=1]:1)[&height=1,rate=2]:1,T2[&height=0,rate=1.5]:2)[&height=2];"
+        );
+        assert_eq!(
+            tree.to_newick_dated(label, |_| None),
+            "((T0[&height=0]:1,T1[&height=0]:1)[&height=1]:1,T2[&height=0]:2)[&height=2];"
+        );
     }
 
     #[test]

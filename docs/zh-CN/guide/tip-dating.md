@@ -96,7 +96,7 @@ FBD 包括出生、灭绝、化石采样和不完全的现生采样。树限制�
 
 trace 包含 fossilized_birth_death、clock_rate、dating_parameter_prior，以及按矩阵顺序排列的 tip_age_1、tip_age_2 等。启用时仍保留 gamma 和相对时钟列。固定参数没有可用 ESS；链比较将其标记为 fixed_by_model，仅在核实其固定值后将其排除于自动停止检查之外。需要估计却变成常量的参数仍会阻止自动停止。
 
-`run.json` 保存完整设置及其指纹。检查点内嵌设置，恢复时不再需要原始 JSON。树保留明确的高度和分支持续时间；相对速率注释不包含全局时钟，后者保存在 trace 中。`rove summarize`、`inspect-tree`、`diagnose`、`compare` 和 `predict` 均支持这些输出。存在运行记录时，摘要保留时间单位名称。单独的树文件无法自行确定物理时间单位。
+`run.json` 保存完整设置及其指纹。检查点内嵌设置，恢复时不再需要原始 JSON。树保留明确的高度和分支持续时间；相对速率注释不包含全局时钟，后者保存在 trace 中。每个节点只带一个元数据块：严格时钟下为 `[&height=h]`，松弛时钟下非根节点为 `[&height=h,rate=r]`。BEAST 2.7.8 的 NEXUS 解析器可直接读取这些文件。早期松弛时钟运行在每个非根节点上写出 `[&height=h][&rate=r]`；Rove 仍能读取它们，将两个块合并为一个即可恢复与 BEAST 的兼容，且不改变任何数值。`rove summarize`、`inspect-tree`、`diagnose`、`compare` 和 `predict` 均支持这些输出。存在运行记录时，摘要保留时间单位名称。单独的树文件无法自行确定物理时间单位。
 
 验证将八个固定密度与 BEAST 2.7.8 / SA 2.1.1 比较，通过解析极限和独立微分方程积分检查小树先验分布，并测试似然恢复、单位变换、检查点、导出以及不分配堆内存的提议。这些检查不证明经验化石数据上的收敛或性能。[验证材料](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/dating) 记录公式、来源、版本和复现命令。
 

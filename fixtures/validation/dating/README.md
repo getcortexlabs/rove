@@ -82,6 +82,12 @@ Independent sampling checks include:
 - The CLI exports dates, summarizes keep/CA heights, predicts matrices, compares
   independent chains and resumes without the original JSON. The allocation
   test checks 20,000 dated relaxed-clock proposals without heap allocations.
+- Sampled trees carry one metadata block per node, `[&height=h]` or
+  `[&height=h,rate=r]`. `tools/tree-summary/ReadTrees.java` reads a complete
+  `trees.nexus` through BEAST.base 2.7.8's `NexusParser` and prints every
+  node's height and rate. Freshly written strict, relaxed and estimated-age
+  output must parse without preprocessing. Earlier relaxed-clock runs wrote
+  `[&height=h][&rate=r]`, which that parser rejects; Rove reads both forms.
 
 To regenerate the oracle, supply the pinned jars (validation only):
 
@@ -91,6 +97,13 @@ javac --release 17 -cp "$BEAST_BASE_JAR:$SA_JAR" -d /tmp/rove-fbd \
 java -cp "/tmp/rove-fbd:$BEAST_BASE_JAR:$SA_JAR" FossilizedBirthDeathStates \
   > /tmp/beast-sa-2.1.1.tsv
 cargo test --test dating
+```
+
+To check the tree export against the same parser (the tree parser loads classes from BEAST's `launcher.jar` at run time):
+
+```sh
+javac --release 17 -cp "$BEAST_BASE_JAR" -d /tmp/rove-trees tools/tree-summary/ReadTrees.java
+java -cp "/tmp/rove-trees:$BEAST_BASE_JAR:$BEAST_LAUNCHER_JAR" ReadTrees runs/dated-example/trees.nexus
 ```
 
 References: [Gavryushkina et al. 2014](https://doi.org/10.1371/journal.pcbi.1003919),

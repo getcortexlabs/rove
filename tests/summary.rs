@@ -135,6 +135,37 @@ fn rate_means_are_conditional_and_constraints_are_not_invented() {
 }
 
 #[test]
+fn dated_reader_accepts_single_and_adjacent_metadata_blocks() {
+    let single = "#NEXUS\nBegin trees;Translate 1 A,2 B,3 C;tree STATE_0 = [&R] \
+((1[&height=0,rate=0.5]:2,2[&height=1,rate=1.5]:1)[&height=2,rate=0.8]:1,3[&height=0.5,rate=2]:2.5)[&height=3];End;";
+    let adjacent = single
+        .replace("[&height=0,rate=0.5]", "[&height=0][&rate=0.5]")
+        .replace("[&height=1,rate=1.5]", "[&height=1][&rate=1.5]")
+        .replace("[&height=2,rate=0.8]", "[&height=2][&rate=0.8]")
+        .replace("[&height=0.5,rate=2]", "[&height=0.5][&rate=2]");
+    assert_ne!(single, adjacent);
+    let read = |text: &str| {
+        let mut reader = rove::summary::nexus::Reader::new(text.as_bytes()).unwrap();
+        let tree = reader.next_tree().unwrap().unwrap();
+        assert!(reader.next_tree().unwrap().is_none());
+        tree
+    };
+    let (a, b) = (read(single), read(&adjacent));
+    let values = |tree: &rove::summary::nexus::Tree| {
+        tree.nodes
+            .iter()
+            .map(|n| (n.height, n.length, n.rate))
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(values(&a), values(&b));
+    assert_eq!(a.nodes[a.tips[1]].height, 1.0);
+    assert_eq!(a.nodes[a.tips[1]].rate, Some(1.5));
+    assert_eq!(a.nodes[a.tips[2]].height, 0.5);
+    assert_eq!(a.nodes[a.root].height, 3.0);
+    assert_eq!(a.nodes[a.root].rate, None);
+}
+
+#[test]
 fn malformed_incomplete_mixed_and_nonclock_trees_are_rejected() {
     for text in [
         sample().replace("End;", ""),
