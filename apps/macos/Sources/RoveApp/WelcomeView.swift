@@ -39,6 +39,7 @@ struct WelcomeView: View {
 
       importCard
       exampleCard
+      treeCard
 
       HStack(spacing: 7) {
         Image(systemName: "lock.shield").font(.system(size: 10)).foregroundStyle(Lab.ice)
@@ -96,12 +97,12 @@ struct WelcomeView: View {
         workspace.error = "Drop one matrix at a time."
         return false
       }
-      workspace.load(url)
+      workspace.open(url)
       return true
     } isTargeted: {
       targeted = $0
     }
-    .accessibilityLabel(strings("Open or drop a morphological NEXUS matrix"))
+    .accessibilityLabel(strings("Open or drop a NEXUS matrix or tree file"))
   }
 
   private func headline(size: CGFloat) -> some View {
@@ -113,6 +114,31 @@ struct WelcomeView: View {
             colors: [Color(hex: 0xDDD5FF), Lab.accent, Lab.ice],
             startPoint: .leading, endPoint: .trailing))
     }.font(Lab.display(size)).tracking(-1.7).fixedSize(horizontal: true, vertical: false)
+  }
+
+  private var treeCard: some View {
+    HStack(spacing: 14) {
+      Image(systemName: "point.3.connected.trianglepath.dotted")
+        .font(.system(size: 18, weight: .light))
+        .foregroundStyle(Lab.ice).frame(width: 37, height: 37)
+        .background(Lab.ice.opacity(0.06), in: RoundedRectangle(cornerRadius: 11))
+      VStack(alignment: .leading, spacing: 5) {
+        Text(strings("Already have a tree sample?")).font(.system(size: 13, weight: .semibold))
+        Text(strings("Summarize trees from Rove, BEAST 2 or another program."))
+          .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+      }
+      Spacer(minLength: 10)
+      Button(action: workspace.summarizeTreeFile) {
+        HStack(spacing: 8) {
+          Text(strings("Summarize a tree file…"))
+          Image(systemName: "arrow.right").font(.system(size: 10)).accessibilityHidden(true)
+        }
+      }.buttonStyle(LabButtonStyle(compact: true))
+        .disabled(workspace.isRunning || workspace.loading || workspace.treeSummary != nil)
+    }.padding(19)
+      .background(.white.opacity(0.025), in: RoundedRectangle(cornerRadius: 17))
+      .overlay(
+        RoundedRectangle(cornerRadius: 17).strokeBorder(.white.opacity(0.07), lineWidth: 0.75))
   }
 
   private var exampleCard: some View {

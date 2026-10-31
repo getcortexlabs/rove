@@ -151,13 +151,13 @@ struct TreeFileTests {
     let preferences = AppPreferences(defaults: defaults, preferredLanguages: ["en-US"])
     let history = RunHistory(defaults: defaults, defaultRoot: folder.appendingPathComponent("runs"))
     let workspace = Workspace(executable: engine, preferences: preferences, history: history)
-    workspace.load(trees)
-    for _ in 0..<200 where workspace.loading { try await Task.sleep(for: .milliseconds(25)) }
-    #expect(workspace.error?.contains("holds trees") == true && workspace.report == nil)
-
     workspace.outputParent = folder.appendingPathComponent("runs")
-    workspace.openTreeFile(trees)
-    for _ in 0..<200 where workspace.loading { try await Task.sleep(for: .milliseconds(25)) }
+    // A tree sample handed to the matrix import opens the summary sheet instead.
+    workspace.load(trees)
+    for _ in 0..<200 where workspace.treeSummary == nil {
+      try await Task.sleep(for: .milliseconds(25))
+    }
+    #expect(workspace.error == nil && workspace.report == nil)
     let sheet = try #require(workspace.treeSummary)
     #expect(sheet.source == .file(trees))
     #expect(sheet.directory.lastPathComponent.hasPrefix("trees-sample-"))

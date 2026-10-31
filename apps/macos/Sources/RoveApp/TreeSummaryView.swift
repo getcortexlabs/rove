@@ -7,9 +7,35 @@ struct TreeSummaryView: View {
   @Environment(\.dismiss) private var dismiss
 
   var body: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      ScrollView {
+        content.frame(maxWidth: .infinity, alignment: .leading).padding(.bottom, 6)
+      }.frame(maxHeight: 560).scrollBounceBehavior(.basedOnSize)
+      HStack {
+        Button(strings("Close")) { dismiss() }.keyboardShortcut(.cancelAction).disabled(model.busy)
+        Spacer()
+        Button(strings("Create tree summary"), action: model.start)
+          .buttonStyle(LabButtonStyle(prominent: true)).disabled(!model.valid || model.busy)
+          .keyboardShortcut(.defaultAction)
+      }.padding(.top, 18)
+    }.padding(28).frame(width: 620).foregroundStyle(Lab.ink).background(Lab.background)
+      .preferredColorScheme(.dark).tint(Lab.accent)
+      .task { await model.load() }.onDisappear { model.cancel() }
+  }
+
+  private var content: some View {
     VStack(alignment: .leading, spacing: 20) {
       Eyebrow(text: strings("From samples to a tree"), color: Lab.ice)
       Text(strings("Find the shared branches.")).font(Lab.display(28))
+      if case .file(let url) = model.source {
+        HStack(spacing: 8) {
+          Image(systemName: "doc.text").foregroundStyle(Lab.ice)
+          Text(url.lastPathComponent).font(.system(size: 12, design: .monospaced))
+            .lineLimit(1).truncationMode(.middle)
+          Text(strings("Trees from another program")).font(.system(size: 11))
+            .foregroundStyle(Lab.muted)
+        }
+      }
       Text(
         strings(
           "Build an annotated MCC tree from the sampled trees. Your original files stay unchanged.")
@@ -69,7 +95,8 @@ struct TreeSummaryView: View {
         }
       }
       if !model.summaries.isEmpty {
-        ScrollView {
+        VStack(alignment: .leading, spacing: 12) {
+          Eyebrow(text: strings("Summaries"))
           VStack(alignment: .leading, spacing: 12) {
             ForEach(model.summaries.reversed()) { summary in
               VStack(alignment: .leading, spacing: 12) {
@@ -99,7 +126,7 @@ struct TreeSummaryView: View {
                 .background(Lab.surface, in: RoundedRectangle(cornerRadius: 12))
             }
           }
-        }.frame(maxHeight: 210)
+        }
       }
       Text(
         strings(
@@ -107,16 +134,7 @@ struct TreeSummaryView: View {
         )
       )
       .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
-      HStack {
-        Button(strings("Close")) { dismiss() }.keyboardShortcut(.cancelAction).disabled(model.busy)
-        Spacer()
-        Button(strings("Create tree summary"), action: model.start)
-          .buttonStyle(LabButtonStyle(prominent: true)).disabled(!model.valid || model.busy)
-          .keyboardShortcut(.defaultAction)
-      }
-    }.padding(28).frame(width: 620).foregroundStyle(Lab.ink).background(Lab.background)
-      .preferredColorScheme(.dark).tint(Lab.accent)
-      .task { await model.load() }.onDisappear { model.cancel() }
+    }
   }
 
   private func file(_ title: String, _ name: String, _ directory: URL) -> some View {

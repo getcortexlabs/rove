@@ -158,10 +158,18 @@ final class Workspace {
         guard values.isRegularFile == true else {
           throw ImportError.message("Choose a NEXUS file, rather than a folder.")
         }
+        // A tree sample is not a matrix: it goes to the summary sheet instead.
         if try await Task.detached { try Self.holdsTrees(url) }.value {
-          throw ImportError.message(
-            "This file holds trees, not a character matrix. Summarize and explore it with File → Summarize Tree File."
-          )
+          guard importID == id else { return }
+          guard !preserveSettings else {
+            throw ImportError.message("The matrix could not be read.")
+          }
+          guard treeSummary == nil else {
+            throw ImportError.message("The tree file could not be opened.")
+          }
+          loading = false
+          openTreeFile(url)
+          return
         }
         guard (values.fileSize ?? 0) <= 32 * 1024 * 1024 else {
           throw ImportError.message("The matrix preview supports files up to 32 MB.")
@@ -251,6 +259,8 @@ final class Workspace {
         guard importID == id else { return }
         history.rememberLocation(parent)
         history.rememberRun(container)
+        loading = false
+        preparingTrees = false
         treeSummary = TreeSummaryModel(
           directory: container, executable: executable, source: .file(url))
         await history.reload()
@@ -262,8 +272,6 @@ final class Workspace {
           self.error = "The tree file could not be opened."
           errorDetails = error.localizedDescription
         }
-      }
-      if importID == id {
         loading = false
         preparingTrees = false
       }

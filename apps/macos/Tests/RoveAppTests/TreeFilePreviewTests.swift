@@ -39,21 +39,34 @@ struct TreeFilePreviewTests {
     workspace.selectedHistoryID = try #require(history.entries.first { $0.status == .treeFile }).id
     for language in [AppLanguage.english, .portuguese] {
       preferences.language = language
-      let view = NSHostingView(rootView: RootView(workspace: workspace))
-      let window = NSWindow(
-        contentRect: NSRect(x: 0, y: 0, width: 1240, height: 1100),
-        styleMask: [.borderless], backing: .buffered, defer: false)
-      window.isReleasedWhenClosed = false
-      window.appearance = NSAppearance(named: .darkAqua)
-      window.contentView = view
-      window.orderBack(nil)
-      try await Task.sleep(for: .milliseconds(600))
-      view.layoutSubtreeIfNeeded()
-      let bitmap = try #require(view.bitmapImageRepForCachingDisplay(in: view.bounds))
-      view.cacheDisplay(in: view.bounds, to: bitmap)
-      try #require(bitmap.representation(using: .png, properties: [:])).write(
+      try await render(
+        RootView(workspace: workspace), size: NSSize(width: 1240, height: 1100),
         to: output.appendingPathComponent("history-\(language.rawValue).png"))
-      window.close()
+      try await render(
+        TreeSummaryView(model: model, strings: preferences.strings) { _ in },
+        size: NSSize(width: 620, height: 720),
+        to: output.appendingPathComponent("sheet-\(language.rawValue).png"))
     }
+    workspace.showingHistory = false
+    try await render(
+      RootView(workspace: workspace), size: NSSize(width: 1240, height: 900),
+      to: output.appendingPathComponent("welcome-pt-BR.png"))
+  }
+
+  @MainActor private func render(_ view: some View, size: NSSize, to file: URL) async throws {
+    let host = NSHostingView(rootView: view)
+    let window = NSWindow(
+      contentRect: NSRect(origin: .zero, size: size), styleMask: [.borderless],
+      backing: .buffered, defer: false)
+    window.isReleasedWhenClosed = false
+    window.appearance = NSAppearance(named: .darkAqua)
+    window.contentView = host
+    window.orderBack(nil)
+    try await Task.sleep(for: .milliseconds(600))
+    host.layoutSubtreeIfNeeded()
+    let bitmap = try #require(host.bitmapImageRepForCachingDisplay(in: host.bounds))
+    host.cacheDisplay(in: host.bounds, to: bitmap)
+    try #require(bitmap.representation(using: .png, properties: [:])).write(to: file)
+    window.close()
   }
 }
