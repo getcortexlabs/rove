@@ -45,7 +45,9 @@ access or these network services.
 
 ## Build and open
 
-The app targets macOS 14 or newer. To build it, install Xcode 26.3 or newer and Rust on a Mac supported by that Xcode version, then run
+Each [release](https://github.com/getcortexlabs/rove/releases) attaches `Rove-<version>.dmg` for Apple silicon, signed with a Developer ID certificate and notarized by Apple: open the image, drag Rove to Applications and launch it. The app targets macOS 14 or newer.
+
+To build it yourself, install Xcode 26.3 or newer and Rust on a Mac supported by that Xcode version, then run
 these commands from the repository root:
 
 ```sh
@@ -53,8 +55,7 @@ scripts/build-macos.sh
 open build/macos/Rove.app
 ```
 
-This builds a local application with an ad-hoc signature. It is not a
-notarized release or an installer. The app has a dark appearance inspired by
+This builds a local application with an ad-hoc signature. `scripts/package-macos.sh` builds the release configuration and wraps it in a disk image; with `CODESIGN_ID` and `NOTARY_PROFILE` set, it signs and notarizes the app and the image the way releases are built. The app has a dark appearance inspired by
 Cortex Labs and supports English and Brazilian Portuguese.
 
 ## Language and settings

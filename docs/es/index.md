@@ -16,6 +16,9 @@ hero:
     alt: El logo de Rove, una letra R dibujada como nodos conectados.
   actions:
     - theme: brand
+      text: Descargar para Mac
+      link: https://github.com/getcortexlabs/rove/releases/latest
+    - theme: alt
       text: ¿Qué es Rove?
       link: /es/guide/
     - theme: alt
@@ -43,7 +46,7 @@ features:
 <div class="home-status">
 
 ::: info Etapa inicial
-El núcleo de verosimilitud con la ruta directa de Mk y un kernel NEON, la corrección Mkv, las pruebas de igualdad y un muestreador independiente mínimo están implementados. El modelo de referencia con reloj relajado está implementado y comprobado en estados fijos. Las comparaciones de posterior cubren seis casos construidos con 20 taxones. El [benchmark ampliado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) cubre 20, 90 y 500 taxones y compara adaptadores de núcleo de BEAST/BEAGLE, separando tiempo y calidad del muestreo. Las ejecuciones mayores no cumplieron los criterios de convergencia. Una ruta AVX2 sigue pendiente. [Ver lo que existe hoy →](/es/guide/#lo-que-existe-hoy)
+El núcleo de verosimilitud con la ruta directa de Mk y un kernel NEON, la corrección Mkv, las pruebas de igualdad y un muestreador independiente mínimo están implementados. El modelo de referencia con reloj relajado está implementado y comprobado en estados fijos. Las comparaciones de posterior cubren seis casos construidos con 20 taxones. El [benchmark ampliado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md) cubre 20, 90 y 500 taxones y compara adaptadores de núcleo de BEAST/BEAGLE, separando tiempo y calidad del muestreo. Las ejecuciones mayores no cumplieron los criterios de convergencia. Una ruta AVX2 sigue pendiente. La app nativa para Mac se distribuye como imagen de disco firmada y notarizada para Apple silicon en [GitHub Releases](https://github.com/getcortexlabs/rove/releases/latest). [Ver lo que existe hoy →](/es/guide/#lo-que-existe-hoy)
 :::
 
 </div>

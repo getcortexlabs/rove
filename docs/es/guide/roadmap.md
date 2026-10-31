@@ -4,7 +4,7 @@ description: "El orden de implementación de Rove: establecer la corrección y l
 
 # Roadmap
 
-Rove está en una etapa inicial. No hay versiones publicadas, ni crate publicado, ni fechas. Esto es el orden de implementación, no un calendario.
+Rove está en una etapa inicial. No hay crate publicado ni fechas. Esto es el orden de implementación, no un calendario.
 
 | Paso | Estado |
 | --- | --- |

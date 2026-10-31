@@ -16,6 +16,9 @@ hero:
     alt: Rove 的标志，由相连节点构成的字母 R。
   actions:
     - theme: brand
+      text: 下载 Mac 版
+      link: https://github.com/getcortexlabs/rove/releases/latest
+    - theme: alt
       text: Rove 是什么？
       link: /zh-CN/guide/
     - theme: alt
@@ -43,7 +46,7 @@ features:
 <div class="home-status">
 
 ::: info 早期
-带直接 Mk 路径及 NEON 内核的似然核心、Mkv 校正、等价性测试和一个最小的独立采样器已经实现。松弛时钟参考模型已实现并通过固定状态检查。后验比较已覆盖六个含 20 个分类单元的构造案例。[扩展基准测试](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md)覆盖 20、90 和 500 个分类单元，并比较 BEAST/BEAGLE 内核适配器，分别报告运行时间与采样质量。较大规模的运行未达到收敛标准。AVX2 路径仍待完成。[看看今天已有什么 →](/zh-CN/guide/#今天已有什么)
+带直接 Mk 路径及 NEON 内核的似然核心、Mkv 校正、等价性测试和一个最小的独立采样器已经实现。松弛时钟参考模型已实现并通过固定状态检查。后验比较已覆盖六个含 20 个分类单元的构造案例。[扩展基准测试](https://github.com/getcortexlabs/rove/blob/main/benchmarks/expanded/2026-10-30/README.md)覆盖 20、90 和 500 个分类单元，并比较 BEAST/BEAGLE 内核适配器，分别报告运行时间与采样质量。较大规模的运行未达到收敛标准。AVX2 路径仍待完成。原生 Mac 应用以面向 Apple 芯片、已签名并经公证的磁盘镜像形式发布在 [GitHub Releases](https://github.com/getcortexlabs/rove/releases/latest)。[看看今天已有什么 →](/zh-CN/guide/#今天已有什么)
 :::
 
 </div>

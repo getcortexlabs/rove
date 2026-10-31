@@ -4,7 +4,7 @@ description: "A ordem de implementação do Rove: estabelecer a corretude e base
 
 # Roadmap
 
-O Rove está em estágio inicial. Não há releases, nem crate publicada, nem datas. Esta é a ordem de implementação, não um cronograma.
+O Rove está em estágio inicial. Não há crate publicada nem datas. Esta é a ordem de implementação, não um cronograma.
 
 | Etapa | Estado |
 | --- | --- |
