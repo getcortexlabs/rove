@@ -961,3 +961,13 @@
 "Summarize trees from Rove, BEAST 2 or another program." = "Resuma árvores do Rove, do BEAST 2 ou de outro programa.";
 "Summarize a tree file…" = "Resumir um arquivo de árvores…";
 "Open or drop a NEXUS matrix or tree file" = "Abra ou arraste uma matriz NEXUS ou um arquivo de árvores";
+
+/* Release notes 0.1.1. */
+"Trees from anywhere." = "Árvores de\nqualquer lugar.";
+"A tree sample from BEAST 2 or another program now has a home in Rove: summarize it, explore it and find it again in History." = "Uma amostra de árvores do BEAST 2 ou de outro programa agora tem lugar no Rove: resuma, explore e reencontre no Histórico.";
+"Bring the trees you already have." = "Traga as árvores que você já tem.";
+"Summarize a tree file from another program and explore its MCC tree." = "Resuma um arquivo de árvores de outro programa e explore a árvore MCC.";
+"Choose a NEXUS tree sample from the welcome screen, the sidebar, File → Summarize Tree File… or the matrix import, which recognizes it. Summaries live in a folder named after the file and History lists it as a tree file. The engine now reads BEAST 2 trees, root stem included." = "Escolha uma amostra de árvores NEXUS pela tela inicial, pela barra lateral, por Arquivo → Resumir arquivo de árvores… ou pela importação de matriz, que a reconhece. Os resumos ficam em uma pasta com o nome do arquivo e o Histórico o lista como arquivo de árvores. O motor agora lê árvores do BEAST 2, com o ramo da raiz.";
+"A summary that fits the window." = "Um resumo que cabe na janela.";
+"No truncated text, whole summary cards, the file named at the top." = "Sem texto cortado, cartões de resumo inteiros, o arquivo nomeado no topo.";
+"The summary sheet scrolls above a fixed footer, so the options, the explanation and every saved summary stay visible on a small screen." = "O painel de resumo rola acima de um rodapé fixo, então as opções, a explicação e cada resumo salvo continuam visíveis em uma tela pequena.";
