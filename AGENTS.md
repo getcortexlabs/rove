@@ -65,8 +65,13 @@ not document planned behavior as available.
 - For inference, report sampling quality as well as runtime, including ESS
   per time and tree diagnostics where applicable. Posterior support imposed
   by a monophyly constraint is not independent recovery from the data.
-- Do not promise speedups from the choice of language or architecture alone.
+- Do not promise speedups from the choice of language or architecture alone,
+  nor from hardware that has not been measured, such as a GPU path. Record such
+  ideas as hypotheses with acceptance criteria, labelled `research`.
   Results for one BEAST implementation do not establish results for another.
+- An experiment issue states its hypothesis and acceptance criteria before any
+  run, keeps the data used to tune apart from the data used to confirm, and
+  may close with a negative result.
 
 ## Repository and private notes
 
@@ -79,7 +84,11 @@ not document planned behavior as available.
   Post the completion comment on the issue after the merge, with the merged
   commit and the CI run.
 - Check existing issues before creating new ones. Keep scope, dependencies,
-  and completion criteria current as the implementation changes.
+  and completion criteria current as the implementation changes. Label issues
+  with `engine`, `mac-app`, `sampling`, `performance`, `benchmark`, `research`
+  or `release` as they apply.
+- Collaborators' contact details and the private 500-taxon matrix never enter
+  the repository, issues, reports or release notes.
 - `DIARIO-LOCAL.md` and `GUIA-DO-ZERO-LOCAL.md` are private, local-only notes.
   Keep them excluded through `.git/info/exclude`. Never stage, commit,
   upload, or quote their contents in public artifacts.
@@ -87,3 +96,19 @@ not document planned behavior as available.
   generated output.
 - Review the staged file list before committing. Keep build output, caches,
   local experiment logs, and unrelated changes out of commits.
+
+## Releases
+
+- A release bumps `CFBundleShortVersionString` and `CFBundleVersion` in
+  `apps/macos/Info.plist`, the version in `Cargo.toml` with its lock file, and
+  adds a `RoveRelease` entry in `LaunchExperience.swift` with English and
+  Portuguese strings, all in one pull request.
+- `scripts/package-macos.sh` with `CODESIGN_ID` and `NOTARY_PROFILE` builds,
+  signs and notarizes the app and the disk image. Check `spctl` and the
+  fingerprint of the image it prints.
+- Create the GitHub release as a draft targeting `main`, titled
+  `Rove X.Y.Z — <headline of the What's New entry>`, with HTML notes and the
+  image attached, and publish it after the release pull request merges so the
+  tag points at the merge commit.
+- The Cortex Labs site serves the download: update its catalog, product
+  version and release notes, upload the image to the R2 bucket, then deploy.
