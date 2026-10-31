@@ -220,8 +220,9 @@ runs outside the interface thread and can be cancelled.
 Burn-in discards the first `floor(total samples × percentage / 100)` trees.
 `STATE_0` counts as a sample. The initial 10% is an editable suggestion, not a
 convergence assessment; choose it after inspecting the trace. The panel reports
-discarded and retained counts. Partial, cancelled and interrupted runs cannot
-be summarized through the app.
+discarded and retained counts. The burn-in can also be given as a number of
+samples, as with `--burnin-samples`. Partial, cancelled and interrupted runs
+cannot be summarized through the app.
 
 MCC (maximum clade credibility) selects a **sampled topology**, not a
 majority-rule consensus. Rove scores each retained tree by the sum of log clade
@@ -397,6 +398,8 @@ In **Model → The exploration plan**, choose **1, 2 or 4 chains**. The step cou
 Completed groups and their History details include **Do the chains agree?**, with R-hat and ESS for every traced statistic and a clade-frequency comparison. Select a chain to open its diagnostics, summarize its trees or inspect its folder. Saved setups preserve the chain count; older setups remain single-chain. Outputs stay separate so one chain's burn-in is never mistaken for another's continuation.
 
 **Stop when diagnostic thresholds are met** is optional and off by default. It uses 10% burn-in, ESS ≥ 200 per chain, R-hat ≤ 1.01 for all traced scalar statistics, at least 1,000 retained samples per chain and two consecutive checks. The actual stopping step and reason are saved. These are scalar diagnostic criteria, not a guarantee of topology convergence; inspect the clades and traces. See [independent chains](./sampler#independent-chains) for the CLI options and limits.
+
+**Advanced sampling**, collapsed below the exploration plan, exposes the remaining `rove sample` options. **Sample from the priors only** runs without the characters. With automatic stopping on, the minimum ESS, maximum R-hat and check interval can replace the engine's defaults of 200, 1.01 and its own schedule. The checkpoint interval can be set in steps instead of the default of about every 30 seconds. The proposal schedule offers the classical default, the two schedules evaluated in the [relaxed-clock](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md) and [gamma-frequency](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md) reports, and custom weights and starting step sizes per move, with step-size tuning that can be turned off. Each option is validated before the engine starts, recorded in the run record and in History, and saved in setups as format 5, which earlier app versions refuse rather than run without it. Neither evaluated schedule is recommended; the reports record what each one gained and lost.
 
 ## Benchmark this Mac
 

@@ -276,6 +276,9 @@ private struct HistoryDetail: View {
             field("Independent chains", String(draft.settings.chains))
             field("Sampling", strings("Every %@ steps", strings.number(draft.settings.sampleEvery)))
             field("Gaps", strings(draft.settings.gapsAsMissing ? "Treat as missing" : "Reject"))
+            ForEach(draft.settings.advancedRows(strings: strings), id: \.0) { label, value in
+              field(label, value)
+            }
             Divider().overlay(Lab.border)
             if draft.settings.dating.enabled {
               DatingSummary(dating: draft.settings.dating, strings: strings)

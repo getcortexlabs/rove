@@ -36,6 +36,7 @@ struct EngineRecord: Decodable, Sendable {
     let steps: UInt64
     let sampleEvery: UInt64
     let seed: UInt64
+    var tuning: Bool? = nil
   }
   struct Model: Decodable, Sendable {
     let dating: EngineDatingModel?
@@ -43,6 +44,12 @@ struct EngineRecord: Decodable, Sendable {
     let preset: String
     let partitioning: String?
     let partitions: [CharacterPartition]?
+    var sampleFromPrior: Bool? = nil
+  }
+  struct MoveRecord: Decodable, Sendable {
+    let name: String
+    let weight: Double
+    let initialTuning: Double?
   }
   let status: String
   let completedSteps: UInt64
@@ -56,6 +63,7 @@ struct EngineRecord: Decodable, Sendable {
   let chainCount: Int?
   let terminationReason: String?
   let chains: [Chain]?
+  var moves: [MoveRecord]? = nil
 
   struct Chain: Decodable, Sendable {
     let index: Int
@@ -88,6 +96,20 @@ struct EngineRecord: Decodable, Sendable {
       && settings.seed == (seed ?? UInt64(draft.settings.seed))
       && model.monophyly == draft.constraints
       && completedSteps <= settings.steps
+      && (model.sampleFromPrior ?? false) == draft.settings.sampleFromPrior
+      && (settings.tuning ?? true) == draft.settings.tuning
+      && (kind == "independent_chains" || schedule(matches: draft.settings))
+  }
+
+  /// Group records summarize chain-01 without the move table; each chain's
+  /// own record carries it.
+  private func schedule(matches settings: AnalysisSettings) -> Bool {
+    settings.weights.allSatisfy { override in
+      moves?.first { $0.name == override.move }?.weight == override.value
+    }
+      && settings.tuningValues.allSatisfy { override in
+        moves?.first { $0.name == override.move }?.initialTuning == override.value
+      }
   }
 
   static func verify(directory: URL, draft: AnalysisDraft) throws -> Self {
