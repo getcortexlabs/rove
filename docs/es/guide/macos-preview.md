@@ -304,7 +304,8 @@ contraídos y expande sus ancestros al seleccionarlos. **Rotate**, **Collapse
 clade** y **Reset display** cambian solo el dibujo. Con el lienzo enfocado,
 Arriba/Abajo recorren nodos visibles, Izquierda selecciona el padre, Derecha un
 hijo y Espacio contrae o expande. El inspector ofrece también botones nativos
-de navegación. Estas operaciones no tienen animación.
+de navegación. Señalar un nodo o una punta resalta su camino hasta la raíz
+sin cambiar la selección. Estas operaciones no tienen animación.
 
 **Support** controla las etiquetas; se omiten algunas en ramas cortas o filas
 cercanas para evitar superposiciones, pero sus valores siguen en el inspector.

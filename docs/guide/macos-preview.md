@@ -293,7 +293,8 @@ readable. Search finds taxa inside collapsed clades and expands their ancestors
 when selected. **Rotate**, **Collapse clade** and **Reset display** affect only
 the drawing. With the canvas focused, use Up/Down for visible nodes, Left for
 the parent, Right for a child and Space to collapse/expand. The inspector also
-provides native navigation buttons. These operations do not animate.
+provides native navigation buttons. Pointing at a node or tip highlights its
+path to the root without changing the selection. These operations do not animate.
 
 **Support** toggles labels; short branches and crowded rows omit labels to avoid
 overlap, while the inspector retains every available value. Long tip labels

@@ -306,7 +306,8 @@ expande seus ancestrais ao selecioná-los. **Girar**, **Recolher clado** e
 **Restaurar visualização** mudam somente o desenho. Com o desenho em foco, use
 Cima/Baixo para percorrer nós visíveis, Esquerda para o ancestral, Direita para
 um filho e Espaço para recolher ou expandir. O painel também oferece botões
-nativos de navegação. Essas operações não têm animação.
+nativos de navegação. Apontar para um nó ou ponta destaca o caminho até a
+raiz sem mudar a seleção. Essas operações não têm animação.
 
 **Suporte** controla os rótulos; ramos curtos e linhas próximas omitem alguns
 para evitar sobreposição, mas os valores continuam disponíveis no painel.

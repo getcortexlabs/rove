@@ -111,10 +111,19 @@ struct TreeFigure: Sendable {
         .replacingOccurrences(of: ">", with: "&gt;").replacingOccurrences(of: "\"", with: "&quot;")
         .replacingOccurrences(of: "'", with: "&apos;")
     }
-    func text(_ value: String, x: Double, y: Double, size: Int = 12, color: String = "#303141")
-      -> String
-    {
-      "<text x=\"\(x)\" y=\"\(y)\" font-size=\"\(size)\" fill=\"\(color)\">\(escape(value))</text>"
+    let paper = TreeStyle.paper
+    func text(
+      _ value: String, x: Double, y: Double, size: Int = 12, color: String = paper.ink.css,
+      halo: Bool = false
+    ) -> String {
+      // A stroked copy underneath keeps support values legible across branches
+      // in renderers without SVG 2 paint order.
+      let underlay =
+        halo
+        ? "<text x=\"\(x)\" y=\"\(y)\" font-size=\"\(size)\" fill=\"none\" stroke=\"\(paper.canvas.css)\" stroke-width=\"3\">\(escape(value))</text>"
+        : ""
+      return underlay
+        + "<text x=\"\(x)\" y=\"\(y)\" font-size=\"\(size)\" fill=\"\(color)\">\(escape(value))</text>"
     }
     let highlighted = Set(selected.map { tree.descendants(of: $0) } ?? [])
     let width = max(760, Double(size.width), Double(runName.count) * 7 + 64)
@@ -124,19 +133,20 @@ struct TreeFigure: Sendable {
       <svg xmlns="http://www.w3.org/2000/svg" width="\(width)" height="\(height)" viewBox="0 0 \(width) \(height)">
       <title>\(escape(strings("Posterior tree summary")))</title>
       <metadata>Rove MCC; tree SHA-256: \(escape(tree.treeSha256)); selected sample: STATE_\(tree.summary.selectedState); source SHA-256: \(escape(tree.summary.sourceSha256)); constraints: \(escape(tree.constraints.map { $0.joined(separator: ", ") }.joined(separator: "; "))); display rotation and collapse only.</metadata>
-      <rect width="100%" height="100%" fill="#F8F7FC"/>
-      <g font-family="Helvetica,Arial,sans-serif">
+      <rect width="100%" height="100%" fill="\(paper.canvas.css)"/>
+      <g font-family="Helvetica,Arial,sans-serif" stroke-linecap="round" stroke-linejoin="round">
       """
-    svg += text("Rove · MCC", x: 32, y: 30, size: 18)
+    svg += "<text x=\"32\" y=\"30\" font-size=\"18\" font-weight=\"bold\" fill=\"\(paper.ink.css)\">Rove · MCC</text>"
     svg += text(runName, x: 32, y: 50, size: 11)
     svg += "<g transform=\"translate(0,64)\">"
     for id in layout.order {
       let node = tree.nodes[id]
       let p = point(id)!
       if let parent = node.parent, let q = point(parent) {
-        let color = highlighted.contains(id) ? "#8064C1" : "#75798D"
+        let color = highlighted.contains(id) ? paper.highlight.css : paper.branch.css
+        let width = highlighted.contains(id) ? paper.branchWidth + 0.6 : paper.branchWidth
         svg +=
-          "<path d=\"M \(q.x) \(q.y) V \(p.y) H \(p.x)\" stroke=\"\(color)\" stroke-width=\"1.3\" fill=\"none\"/>"
+          "<path d=\"M \(q.x) \(q.y) V \(p.y) H \(p.x)\" stroke=\"\(color)\" stroke-width=\"\(width)\" fill=\"none\"/>"
       }
     }
     for id in layout.order {
@@ -145,14 +155,14 @@ struct TreeFigure: Sendable {
       svg += "<g><title>\(escape(label(id)))</title>"
       if collapsed.contains(id) && node.children != nil {
         svg +=
-          "<path d=\"M \(p.x) \(p.y) L \(tipX) \(p.y-8) V \(p.y+8) Z\" fill=\"#DED5F3\" stroke=\"#8064C1\"/>"
+          "<path d=\"M \(p.x) \(p.y) L \(tipX) \(p.y-8) V \(p.y+8) Z\" fill=\"\(paper.highlight.css)\" fill-opacity=\"0.18\" stroke=\"\(paper.highlight.css)\"/>"
       }
       if node.constrained {
         svg +=
-          "<path d=\"M \(p.x) \(p.y-5) L \(p.x+5) \(p.y) L \(p.x) \(p.y+5) L \(p.x-5) \(p.y) Z\" fill=\"#B65C7C\"/>"
+          "<path d=\"M \(p.x) \(p.y-5) L \(p.x+5) \(p.y) L \(p.x) \(p.y+5) L \(p.x-5) \(p.y) Z\" fill=\"\(paper.constrained.css)\"/>"
       } else {
         svg +=
-          "<circle cx=\"\(p.x)\" cy=\"\(p.y)\" r=\"\(id == selected ? 4 : 2.5)\" fill=\"#8064C1\"/>"
+          "<circle cx=\"\(p.x)\" cy=\"\(p.y)\" r=\"\(id == selected ? 4 : 2.5)\" fill=\"\(paper.node.css)\"/>"
       }
       if node.taxon != nil || collapsed.contains(id) {
         let q = labelPoint(id)
@@ -160,14 +170,14 @@ struct TreeFigure: Sendable {
       }
       if let support = support(id) {
         let q = supportPoint(id)
-        svg += text(support, x: q.x, y: q.y + 11, size: 10)
+        svg += text(support, x: q.x, y: q.y + 11, size: 10, color: paper.support.css, halo: true)
       }
       svg += "</g>"
     }
     let sy = Double(size.height) - 35
     if scale.value > 0 {
       svg +=
-        "<path d=\"M 32 \(sy-3) V \(sy) H \(32+scale.width) V \(sy-3)\" stroke=\"#303141\" fill=\"none\"/>"
+        "<path d=\"M 32 \(sy-4) V \(sy) H \(32+scale.width) V \(sy-4)\" stroke=\"\(paper.scale.css)\" stroke-width=\"1.5\" fill=\"none\"/>"
     }
     svg += text(scaleLabel, x: 32, y: sy + 18, size: 10)
     svg += "</g>"
