@@ -13,6 +13,7 @@ mod checkpoint;
 mod coupled;
 mod moves;
 pub mod output;
+pub mod tempering;
 
 use std::fmt;
 
