@@ -809,3 +809,19 @@
 "The origin must be older than the root and every allowed tip age, including interval maxima." = "The origin must be older than the root and every allowed tip age, including interval maxima.";
 "How the fossils inform the process" = "How the fossils inform the process";
 "The observed sample count, fossil age evidence and imposed terminal/clade constraints inform the estimated rates and origin. A run without character data still uses that information." = "The observed sample count, fossil age evidence and imposed terminal/clade constraints inform the estimated rates and origin. A run without character data still uses that information.";
+
+/* Comparing runs from History. */
+"Compare with other runs" = "Compare with other runs";
+"Do independent runs agree?" = "Do independent runs agree?";
+"Runs with the same matrix, model and constraints and different seeds can be compared. Agreement between runs is not convergence of either." = "Runs with the same matrix, model and constraints and different seeds can be compared. Agreement between runs is not convergence of either.";
+"No other completed run matches this setup." = "No other completed run matches this setup.";
+"Compare runs" = "Compare runs";
+"Comparing runs…" = "Comparing runs…";
+"The comparison was cancelled." = "The comparison was cancelled.";
+"The runs could not be compared." = "The runs could not be compared.";
+"Saved comparisons" = "Saved comparisons";
+"%@ chains · %@%% burn-in" = "%@ chains · %@%% burn-in";
+"%@ chains" = "%@ chains";
+"%@ · ESS" = "%@ · ESS";
+"Choose runs with 2 to 16 chains in total." = "Choose runs with 2 to 16 chains in total.";
+"Runs with seeds that overlap a selected run, or beyond 16 chains in total, are unavailable." = "Runs with seeds that overlap a selected run, or beyond 16 chains in total, are unavailable.";

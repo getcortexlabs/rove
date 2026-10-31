@@ -421,6 +421,10 @@ final class Workspace {
     treeSummary = TreeSummaryModel(directory: directory, executable: executable)
   }
 
+  func runComparison(for entry: HistoryEntry) -> RunComparisonModel {
+    RunComparisonModel(entry: entry, executable: executable)
+  }
+
   func openHistory() {
     showingHistory = true
     selectedHistoryID = nil

@@ -19,8 +19,13 @@ struct ChainComparison: Decodable, Sendable {
     let constantInEveryChain: Bool
     var id: String { taxa.joined(separator: "\u{0}") }
   }
+  struct Source: Decodable, Sendable {
+    let directory: String
+    let samples: Int
+  }
   let schemaVersion: Int
   let chainCount: Int
+  var sources: [Source]? = nil
   let burninPercent: Int
   let retainedPerChain: Int
   let lastState: UInt64
@@ -47,6 +52,7 @@ struct ChainComparison: Decodable, Sendable {
           && value.means.allSatisfy(\.isFinite)
           && (value.rhat.map { $0.isFinite && $0 >= 0 } ?? true)
       }),
+      report.sources.map({ $0.count == report.chainCount }) ?? true,
       report.clades.allSatisfy({ value in
         value.frequencies.count == report.chainCount && !value.taxa.isEmpty
           && value.frequencies.allSatisfy { $0.isFinite && (0...1).contains($0) }

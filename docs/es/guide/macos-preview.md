@@ -194,6 +194,14 @@ analysis**; reutilizar ajustes queda deshabilitado hasta que termine o se cancel
 **Back to workspace** (**Command-Shift-R**) conserva la matriz y los ajustes
 abiertos. El historial no elimina archivos ni demuestra convergencia.
 
+**Compare with other runs** aparece en una ejecución completada. Lista las
+demás ejecuciones completadas de History con la misma matriz, modelo,
+restricciones e intervalo de muestreo y semillas que no se solapan, incluidos
+los grupos. Elige las ejecuciones y un burn-in, y la app ejecuta `rove compare`
+sobre las carpetas de cada cadena. El informe es el que se muestra para un grupo
+de cadenas, con una columna por cadena, y se guarda en la carpeta `comparisons`
+de la ejecución. La concordancia entre ejecuciones no es convergencia de ninguna.
+
 ## Inspeccionar desde el terminal
 
 ```sh

@@ -337,6 +337,9 @@ private struct HistoryDetail: View {
         Button(strings("Summarize trees")) { workspace.summarizeTrees(in: entry.directory) }
           .buttonStyle(LabButtonStyle(prominent: true))
       }
+      if entry.status == .completed, entry.draft != nil {
+        RunComparisonView(workspace: workspace, entry: entry)
+      }
       HStack(alignment: .center, spacing: 18) {
         Button {
           workspace.reuseSetup(entry)
