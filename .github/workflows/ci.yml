@@ -62,6 +62,7 @@ jobs:
       - name: Validate sampler measurement tools
         run: |
           cargo test --locked --example convergence_budget
+          cargo test --locked --example profile_checkpoint
           cargo clippy --locked --all-targets --features profile-sampler -- -D warnings
           cargo test --locked --features profile-sampler --lib profiling::tests -- --test-threads=1
       - name: Run numerical and rate-model tests in an optimized build
