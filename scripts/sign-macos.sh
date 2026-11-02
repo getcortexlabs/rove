@@ -11,5 +11,10 @@ for component in Autoupdate Updater.app XPCServices/Downloader.xpc XPCServices/I
 done
 "${sign[@]}" "$framework"
 "${sign[@]}" "$app/Contents/Helpers/rove"
-"${sign[@]}" "$app/Contents/Resources/Rove_RoveApp.bundle"
+resources="$app/Contents/Resources/Rove_RoveApp.bundle"
+# Xcode creates a macOS bundle; SwiftPM can create a plain resource directory.
+# The latter is sealed by the enclosing app's signature.
+if [[ -f "$resources/Contents/Info.plist" ]]; then
+    "${sign[@]}" "$resources"
+fi
 "${sign[@]}" "$app"
