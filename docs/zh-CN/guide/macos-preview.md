@@ -10,6 +10,35 @@ Rove 已有使用 SwiftUI 和 AppKit 构建的首个原生 macOS 工作区。
 
 ![Rove 原生工作区](/images/macos-preview.png)
 
+## 更新与原生控件
+
+签名分发版本提供 **Rove → Check for Updates…** 和 Settings 中的 **Updates**。
+自动检查默认开启；自动下载并在退出时安装可自行选择。安装会等待正在进行的计算。
+如果计算期间已请求安装，完成工作后再点击 **Install update and relaunch**。
+本地构建不会查询分发更新源。现有 0.1.1 没有更新器，需要先手动安装一次。
+首次发布更新前还需要配置签名密钥，并在两个签名构建之间验证更新；参见
+[发布流程](https://github.com/getcortexlabs/rove/blob/main/scripts/RELEASES.md)。
+
+探索计划支持 1–16 条独立链。**Custom sampling plan** 接受正整数步数及能整除步数的
+采样间隔。比较的 burn-in 可以修改。**Advanced sampling → Computation** 可选择
+Automatic、ARM NEON 或 Portable，并设置进度报告间隔。Automatic 使用本机优化实现；
+进度更新不改变样本保存频率。
+
+**File → Open trace file…** 可以分析外部 trace，且不修改原文件。burn-in 可按百分比
+或保存的样本数指定，包括初始状态；样本数不等于 MCMC 步数。报告保存在 Rove 输出目录下。
+**History → Add a run folder** 也支持导入已完成的 CLI 采样运行；选择原始矩阵以核对
+指纹。Rove 创建指向原始结果的历史目录，因此请保留原始输出目录。
+
+复核页面的 **Estimate model evidence…** 可直接打开 power posterior 计划，无需先完成
+普通采样运行。配置以 **Model setup** 保存在 History 中。幂数、alpha、步数、采样间隔、
+burn-in 和种子均可编辑；已完成的运行提供相同控件。由于模型比较指南所述的科学限制，
+估计 FBD 过程参数的模型仍不支持该计算。后验预测检查还可设置每个性状的最大模拟尝试次数；
+达到上限会停止检查，不会改变模型。
+
+新增 CLI 分析能力必须在同一次变更中提供 Swift 界面。JSON 事件、输入指纹和取消管道
+自动处理。该要求与命令映射已加入贡献规范和 CI 检查。
+
+
 ## Beta 访问与首次使用
 
 原生 Beta 应用启动后显示 **I have an invitation** 和 **Join the beta list**。
@@ -35,7 +64,7 @@ Cloudflare 验证访问权限，Resend 发送验证码。服务保存邮箱、�
 新闻邮件。如需从名单中删除，请联系 [Cortex Labs](https://getcortexlabs.com/)。
 独立的 Rust CLI 不要求 Beta 访问权限，也不依赖这些网络服务。
 
-持有效邀请的测试者会收到新版本邮件，包含 Mac 下载链接和更新说明。仅在候补名单上不会收到这些通知。如需退出测试，可回复版本通知邮件。
+配置发布通知后，持有效邀请的测试者会收到新版本邮件，包含 Mac 下载链接和更新说明。仅在候补名单上不会收到这些通知。如需退出测试，可回复版本通知邮件。
 
 ## 构建与打开
 
@@ -319,11 +348,11 @@ target/release/rove diagnose /path/to/results/trace.log --burnin-percent 25 \
 
 ![四条短独立链的比较](/images/macos-chains.png)
 
-在 **Model → The exploration plan** 中选择 **1、2 或 4 条链**。步数适用于每条链。多条链使用不同且已记录的种子同时运行，界面分别显示各链进度。取消操作会关闭整个组。
+在 **Model → The exploration plan** 中选择 **1–16 条链**。步数适用于每条链。多条链使用不同且已记录的种子同时运行，界面分别显示各链进度。取消操作会关闭整个组。
 
 完成的组及其 History 详情中有 **Do the chains agree?** 面板，展示所有记录统计量的 R-hat、各链 ESS 和支系频率比较。选择一条链即可打开其诊断、汇总树或查看目录。保存的设置保留链数，旧设置仍使用单链。各链输出独立保存，不会把一条链的 burn-in 当作另一条链的延续。
 
-**Stop when diagnostic thresholds are met** 为可选项，默认关闭。它使用 10% burn-in，要求所有记录的标量统计量满足每链 ESS ≥ 200、R-hat ≤ 1.01，每链至少保留 1,000 个样本，且连续两次检查通过。停止步数和原因会被保存。这些标量诊断标准不保证拓扑收敛，仍需检查支系和 trace。CLI 选项和限制见[独立链](./sampler#独立链)。
+**Stop when diagnostic thresholds are met** 为可选项，默认关闭。默认比较 burn-in 为 10%，所有记录的标量统计量的默认阈值为每链 ESS ≥ 200、R-hat ≤ 1.01，每链至少保留 1,000 个样本，且连续两次检查通过。停止步数和原因会被保存。这些标量诊断标准不保证拓扑收敛，仍需检查支系和 trace。CLI 选项和限制见[独立链](./sampler#独立链)。
 
 **Advanced sampling** 折叠在探索计划下方，提供 `rove sample` 的其余选项。**Sample from the priors only** 在不使用性状的情况下运行。开启自动停止后，最小 ESS、最大 R-hat 和检查间隔可以替代引擎的默认值 200、1.01 及其自身的检查节奏。检查点间隔可以按步数设置，而不是默认的约每 30 秒一次。提议方案提供经典默认方案、[松弛时钟](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md)和[伽马频率](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md)报告中评估过的两种方案，以及按移动自定义的权重和初始步长，步长调节可以关闭。每个选项都会在引擎启动前验证，记录在运行记录和 History 中，并以格式 5 保存在配置中；旧版应用会拒绝打开，而不是忽略这些选项继续运行。两种评估过的方案都不作为推荐；报告记录了各自的得失。
 

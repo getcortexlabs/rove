@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SetupView: View {
   @Bindable var workspace: Workspace
+  @State private var customPlan = false
   private var strings: AppStrings { workspace.strings }
 
   var body: some View {
@@ -94,10 +95,10 @@ struct SetupView: View {
             VStack(alignment: .leading, spacing: 8) {
               Eyebrow(text: strings("Independent chains"))
               Picker(strings("Independent chains"), selection: $workspace.settings.chains) {
-                Text(strings("1 chain")).tag(1)
-                Text(strings("2 chains")).tag(2)
-                Text(strings("4 chains")).tag(4)
-              }.pickerStyle(.segmented).labelsHidden().frame(width: 290)
+                ForEach(1...16, id: \.self) { count in
+                  Text(strings(count == 1 ? "1 chain" : "%@ chains", String(count))).tag(count)
+                }
+              }.labelsHidden().frame(width: 200)
                 .onChange(of: workspace.settings.chains) { _, count in
                   if count == 1 { workspace.settings.stopWhenConverged = false }
                 }
@@ -110,6 +111,14 @@ struct SetupView: View {
             .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
           }
           if workspace.settings.chains > 1 {
+            HStack {
+              Text(strings("Comparison burn-in (%)")).font(.system(size: 12))
+              TextField(
+                strings("Comparison burn-in (%)"),
+                text: integerText($workspace.settings.comparisonBurnin)
+              )
+              .textFieldStyle(.roundedBorder).frame(width: 70)
+            }
             Toggle(
               strings("Stop when diagnostic thresholds are met"),
               isOn: $workspace.settings.stopWhenConverged
@@ -117,52 +126,67 @@ struct SetupView: View {
             .font(.system(size: 12))
             Text(
               strings(
-                "Uses 10% burn-in, ESS ≥ 200 per chain and R-hat ≤ 1.01 for every traced statistic, with two consecutive checks and at least 1,000 retained samples per chain. Tree agreement still needs review."
+                "Uses the comparison burn-in above and the advanced stopping thresholds (default ESS ≥ 200 and R-hat ≤ 1.01), with two consecutive checks and at least 1,000 retained samples per chain. Tree agreement still needs review."
               )
             )
             .font(.system(size: 10)).foregroundStyle(Lab.muted).lineSpacing(3)
           }
+          Toggle(strings("Custom sampling plan"), isOn: $customPlan).font(.system(size: 12))
           HStack(alignment: .top, spacing: 25) {
             VStack(alignment: .leading, spacing: 9) {
               Eyebrow(text: strings("Chain length"))
-              Picker(
-                strings("Chain length"),
-                selection: Binding(
-                  get: { workspace.settings.samplingPreset?.steps ?? 0 },
-                  set: { value in
-                    if let preset = SamplingPreset.all.first(where: { $0.steps == value }) {
-                      workspace.settings.apply(preset)
-                    }
-                  })
-              ) {
-                if workspace.settings.samplingPreset == nil {
-                  Text(strings("%@ steps · custom", strings.number(workspace.settings.steps))).tag(
-                    0)
-                }
-                ForEach(SamplingPreset.all) { preset in
-                  Text(
-                    preset.millions == 1
-                      ? strings("1 million steps")
-                      : strings("%@ million steps", strings.number(preset.millions))
-                  ).tag(preset.steps)
-                }
-              }.labelsHidden().frame(maxWidth: .infinity)
+              if customPlan {
+                TextField(strings("Steps"), text: integerText($workspace.settings.steps))
+                  .textFieldStyle(.roundedBorder)
+              } else {
+                Picker(
+                  strings("Chain length"),
+                  selection: Binding(
+                    get: { workspace.settings.samplingPreset?.steps ?? 0 },
+                    set: { value in
+                      if let preset = SamplingPreset.all.first(where: { $0.steps == value }) {
+                        workspace.settings.apply(preset)
+                      }
+                    })
+                ) {
+                  if workspace.settings.samplingPreset == nil {
+                    Text(strings("%@ steps · custom", strings.number(workspace.settings.steps)))
+                      .tag(
+                        0)
+                  }
+                  ForEach(SamplingPreset.all) { preset in
+                    Text(
+                      preset.millions == 1
+                        ? strings("1 million steps")
+                        : strings("%@ million steps", strings.number(preset.millions))
+                    ).tag(preset.steps)
+                  }
+                }.labelsHidden().frame(maxWidth: .infinity)
+              }
               Text(strings("More steps allow more exploration.")).font(.system(size: 10))
                 .foregroundStyle(
                   Lab.muted)
             }
             VStack(alignment: .leading, spacing: 9) {
               Eyebrow(text: strings("Save a sample every"))
-              Picker(strings("Sampling interval"), selection: $workspace.settings.sampleEvery) {
-                if !SamplingPreset.all.map(\.sampleEvery).contains(workspace.settings.sampleEvery) {
-                  Text(strings("%@ steps", strings.number(workspace.settings.sampleEvery))).tag(
-                    workspace.settings.sampleEvery)
-                }
-                ForEach(SamplingPreset.all) { preset in
-                  Text(strings("%@ steps", strings.number(preset.sampleEvery))).tag(
-                    preset.sampleEvery)
-                }
-              }.labelsHidden().frame(maxWidth: .infinity)
+              if customPlan {
+                TextField(
+                  strings("Sampling interval"), text: integerText($workspace.settings.sampleEvery)
+                )
+                .textFieldStyle(.roundedBorder)
+              } else {
+                Picker(strings("Sampling interval"), selection: $workspace.settings.sampleEvery) {
+                  if !SamplingPreset.all.map(\.sampleEvery).contains(workspace.settings.sampleEvery)
+                  {
+                    Text(strings("%@ steps", strings.number(workspace.settings.sampleEvery))).tag(
+                      workspace.settings.sampleEvery)
+                  }
+                  ForEach(SamplingPreset.all) { preset in
+                    Text(strings("%@ steps", strings.number(preset.sampleEvery))).tag(
+                      preset.sampleEvery)
+                  }
+                }.labelsHidden().frame(maxWidth: .infinity)
+              }
               Text(strings("Controls how often a state is recorded.")).font(.system(size: 10))
                 .foregroundStyle(Lab.muted)
             }
@@ -207,12 +231,21 @@ struct SetupView: View {
           .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
         }
       }
+      .onAppear { customPlan = workspace.settings.samplingPreset == nil }
       AdvancedOptionsSection(workspace: workspace)
       GroupSection(workspace: workspace)
       if let error = workspace.settings.validationError {
         InlineMessage(text: strings(error), isError: true)
       }
     }
+  }
+
+  // Invalid or incomplete input clears the numeric value, so Review cannot
+  // silently run the previous plan while a field displays something else.
+  private func integerText(_ value: Binding<Int>) -> Binding<String> {
+    Binding(
+      get: { value.wrappedValue < 0 ? "" : String(value.wrappedValue) },
+      set: { value.wrappedValue = Int($0) ?? -1 })
   }
 
   private func clockCard(
@@ -366,6 +399,17 @@ struct ReviewView: View {
       }
       if let issue = workspace.issue { InlineMessage(text: strings(issue), isError: true) }
       if let notice = workspace.notice { InlineMessage(text: strings(notice)) }
+      if !workspace.settings.sampleFromPrior && !workspace.settings.dating.estimatesProcess {
+        Button(action: workspace.prepareModelComparison) {
+          Label(strings("Estimate model evidence…"), systemImage: "scalemass")
+        }.buttonStyle(LabButtonStyle(compact: true)).disabled(!workspace.canStartRun)
+        Text(
+          strings(
+            "Open a separate power-posterior plan for this model. No earlier sampling run is required."
+          )
+        )
+        .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+      }
       HStack(spacing: 12) {
         Button(action: workspace.saveDraft) {
           Label(strings("Save setup"), systemImage: "square.and.arrow.down")

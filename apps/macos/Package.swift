@@ -5,8 +5,16 @@ let package = Package(
   name: "Rove",
   platforms: [.macOS(.v14)],
   products: [.executable(name: "Rove", targets: ["RoveApp"])],
+  dependencies: [
+    .package(url: "https://github.com/sparkle-project/Sparkle", exact: "2.10.1")
+  ],
   targets: [
-    .executableTarget(name: "RoveApp", resources: [.copy("Resources")]),
+    .executableTarget(
+      name: "RoveApp", dependencies: [.product(name: "Sparkle", package: "Sparkle")],
+      resources: [.copy("Resources")],
+      linkerSettings: [
+        .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"])
+      ]),
     .testTarget(name: "RoveAppTests", dependencies: ["RoveApp"]),
   ]
 )

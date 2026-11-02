@@ -22,8 +22,9 @@ struct RunRequest: Sendable {
         matrix: URL(fileURLWithPath: draft.matrixPath), output: output,
         monophyly: draft.constraints, datingFile: datingFile) + [
           "--events-json", "--cancel-on-stdin-close", "--expect-input-sha256", draft.matrixSHA256,
-          "--print-every", String(max(1, min(100_000, draft.settings.steps / 100))),
         ]
+        + (draft.settings.printEvery == nil
+          ? ["--print-every", String(max(1, min(100_000, draft.settings.steps / 100)))] : [])
     }
   }
 }
@@ -181,6 +182,8 @@ final class RunProcess: @unchecked Sendable {
         try? owner.fileHandleForWriting.close()
       }
       let child = Process()
+      EngineActivity.shared.begin()
+      defer { EngineActivity.shared.end() }
       child.executableURL = request.executable
       child.arguments = try request.arguments
       child.standardOutput = pipe

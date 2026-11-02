@@ -10,6 +10,45 @@ con progreso real y cancelación. No requiere BEAST ni Java.
 
 ![La interfaz nativa de Rove](/images/macos-preview.png)
 
+## Actualizaciones y controles nativos
+
+Las versiones firmadas para distribución incluyen **Rove → Check for Updates…**
+y **Updates** en Settings. La búsqueda automática está activada; descargar e
+instalar al salir es opcional. La instalación espera a los cálculos activos.
+Si se solicitó mientras había trabajo, termine ese trabajo y pulse **Install
+update and relaunch**. Las compilaciones locales no consultan el feed.
+La versión 0.1.1 necesita una primera actualización manual porque no tiene
+actualizador. Antes de la primera actualización publicada hay que configurar
+la clave y probar dos versiones firmadas; consulte el
+[procedimiento de publicación](https://github.com/getcortexlabs/rove/blob/main/scripts/RELEASES.md).
+
+El plan admite de 1 a 16 cadenas y **Custom sampling plan**, con un número positivo
+de pasos y un intervalo que lo divida. El burn-in de comparación es editable.
+**Advanced sampling → Computation** permite elegir Automatic, ARM NEON o Portable
+y el intervalo de progreso. Automatic usa la implementación nativa; el progreso
+no cambia la frecuencia de guardado de muestras.
+
+**File → Open trace file…** analiza un trace externo sin modificarlo. El burn-in
+puede ser un porcentaje o un número de muestras guardadas, incluido el estado
+inicial; las muestras no son pasos de MCMC. Los informes quedan bajo la carpeta
+de salida de Rove. **History → Add a run folder** también importa ejecuciones de
+muestreo CLI completadas: seleccione su matriz original para comprobar la huella.
+Rove crea una carpeta de historial que apunta a los resultados originales;
+mantenga disponible la carpeta original.
+
+**Estimate model evidence…**, en la revisión, abre un plan de power posteriors
+sin exigir una ejecución previa. Queda en History como **Model setup**. Potencias,
+alpha, pasos, intervalo, burn-in y semilla son editables; las ejecuciones terminadas
+ofrecen los mismos controles. Se mantiene la exclusión de parámetros del proceso
+FBD estimados por los motivos científicos del manual. Las comprobaciones
+predictivas permiten ajustar el límite de intentos por carácter; alcanzarlo
+detiene la comprobación sin cambiar el modelo.
+
+Las capacidades de análisis CLI deben llegar a Swift en el mismo cambio. Eventos
+JSON, huellas y cancelación se conectan automáticamente. La regla y el mapa de
+comandos forman parte de las instrucciones de contribución y las comprobaciones CI.
+
+
 ## Acceso a la beta y primera visita
 
 La beta nativa comienza con **I have an invitation** y **Join the beta list**.
@@ -43,7 +82,7 @@ una suscripción a un boletín. Contacta con [Cortex Labs](https://getcortexlabs
 para solicitar la eliminación de la lista. La CLI Rust independiente no requiere
 acceso a la beta ni estos servicios de red.
 
-Los participantes con invitación activa reciben avisos de nuevas versiones, con enlaces de descarga para Mac y notas de versión. Estar solo en la lista de espera no genera estos avisos. Para salir del beta, responde a un aviso.
+Una vez configurados los avisos de lanzamiento, los participantes con invitación activa reciben avisos de nuevas versiones, con enlaces de descarga para Mac y notas de versión. Estar solo en la lista de espera no genera estos avisos. Para salir del beta, responde a un aviso.
 
 ## Compilar y abrir
 
@@ -408,11 +447,11 @@ incluyen series sintéticas y una referencia BEAST con versión fijada.
 
 ![Comparación de cuatro cadenas independientes cortas](/images/macos-chains.png)
 
-En **Model → The exploration plan**, elige **1, 2 o 4 cadenas**. El número de pasos se aplica a cada cadena. Varias cadenas se ejecutan a la vez con semillas distintas y registradas; el progreso muestra cada una por separado. Cancelar cierra todo el grupo.
+En **Model → The exploration plan**, elige **1 a 16 cadenas**. El número de pasos se aplica a cada cadena. Varias cadenas se ejecutan a la vez con semillas distintas y registradas; el progreso muestra cada una por separado. Cancelar cierra todo el grupo.
 
 Los grupos completados y sus detalles en History incluyen **Do the chains agree?**, con R-hat y ESS para todas las estadísticas registradas y una comparación de frecuencias de clados. Selecciona una cadena para abrir sus diagnósticos, resumir sus árboles o ver su carpeta. Las configuraciones guardadas conservan el número de cadenas; las antiguas siguen usando una sola. Los archivos permanecen separados para no tratar el burn-in de una cadena como continuación de otra.
 
-**Stop when diagnostic thresholds are met** es opcional y está desactivado por defecto. Usa 10% de burn-in, ESS ≥ 200 por cadena, R-hat ≤ 1,01 en todas las estadísticas escalares registradas, al menos 1.000 muestras retenidas por cadena y dos comprobaciones satisfactorias consecutivas. Se guardan el paso y el motivo de parada. Son criterios escalares, no una garantía de convergencia topológica; revisa clados y traces. Consulta [cadenas independientes](./sampler#cadenas-independientes) para las opciones y límites de la CLI.
+**Stop when diagnostic thresholds are met** es opcional y está desactivado por defecto. Los valores predeterminados son 10% de burn-in de comparación, ESS ≥ 200 por cadena y R-hat ≤ 1,01 en todas las estadísticas escalares registradas, al menos 1.000 muestras retenidas por cadena y dos comprobaciones satisfactorias consecutivas. Se guardan el paso y el motivo de parada. Son criterios escalares, no una garantía de convergencia topológica; revisa clados y traces. Consulta [cadenas independientes](./sampler#cadenas-independientes) para las opciones y límites de la CLI.
 
 **Advanced sampling**, plegado bajo el plan de exploración, expone las demás opciones de `rove sample`. **Sample from the priors only** se ejecuta sin los caracteres. Con la parada automática activada, el ESS mínimo, el R-hat máximo y el intervalo de comprobación pueden sustituir los valores por defecto del motor, 200, 1,01 y su propia cadencia de comprobación. El intervalo de checkpoint puede darse en pasos en lugar del valor por defecto de unos 30 segundos. El esquema de propuestas ofrece el clásico por defecto, los dos esquemas evaluados en los informes del [reloj relajado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md) y de la [frecuencia de la gamma](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md), y pesos y tamaños de paso iniciales personalizados por movimiento, con un ajuste de paso que puede desactivarse. Cada opción se valida antes de iniciar el motor, se registra en el registro de la ejecución y en History, y se guarda en las configuraciones como formato 5, que las versiones anteriores de la app rechazan en lugar de ejecutar sin ella. Ninguno de los esquemas evaluados se recomienda; los informes registran lo que cada uno ganó y perdió.
 

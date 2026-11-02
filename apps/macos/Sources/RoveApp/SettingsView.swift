@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
   @Bindable var preferences: AppPreferences
+  @ObservedObject var updater: AppUpdater
   private var strings: AppStrings { preferences.strings }
 
   var body: some View {
@@ -49,6 +50,46 @@ struct SettingsView: View {
           Text(strings("Your Mac's accessibility preferences always take priority."))
             .font(.system(size: 11)).foregroundStyle(Lab.muted).lineSpacing(3)
         }
+      }
+
+      LabPanel {
+        VStack(alignment: .leading, spacing: 12) {
+          Label(strings("Updates"), systemImage: "arrow.triangle.2.circlepath")
+            .font(.system(size: 13, weight: .semibold))
+          if updater.configured {
+            Toggle(
+              strings("Check for updates automatically"),
+              isOn: Binding(
+                get: { updater.automaticChecks }, set: { updater.setAutomaticChecks($0) })
+            ).toggleStyle(.switch)
+            Toggle(
+              strings("Download updates and install when I quit"),
+              isOn: Binding(
+                get: { updater.automaticDownloads }, set: { updater.setAutomaticDownloads($0) })
+            )
+            .toggleStyle(.switch).disabled(!updater.automaticChecks)
+            Text(
+              strings(
+                updater.installationPending
+                  ? "Your update is ready. Finish your work, then install it here."
+                  : "Rove waits for active calculations before installing an update.")
+            )
+            .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+            if updater.installationPending {
+              Button(strings("Install update and relaunch"), action: updater.install)
+                .disabled(updater.workActive)
+            } else {
+              Button(strings("Check for Updates…"), action: updater.check)
+                .disabled(!updater.canCheck || updater.workActive)
+            }
+            if let error = updater.startupError {
+              Text(error).font(.system(size: 11)).foregroundStyle(Lab.coral)
+            }
+          } else {
+            Text(strings("In-app updates are available in signed distribution builds."))
+              .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+          }
+        }.frame(maxWidth: .infinity, alignment: .leading)
       }
 
       HStack(spacing: 7) {

@@ -41,6 +41,8 @@ final class BenchmarkProcess: @unchecked Sendable {
     let pipe = Pipe()
     let owner = Pipe()
     let process = Process()
+    EngineActivity.shared.begin()
+    defer { EngineActivity.shared.end() }
     process.executableURL = executable
     process.arguments = ["benchmark", "--cancel-on-stdin-close"]
     process.standardOutput = pipe

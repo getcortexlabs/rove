@@ -49,6 +49,7 @@ struct PredictiveCheckView: View {
     @Bindable var model = model
     HStack(alignment: .top, spacing: 18) {
       field("Burn-in (%)", text: $model.burnin, width: 70)
+      field("Attempts per character", text: $model.maxAttempts, width: 110)
       field("Replicates", text: $model.replicates, width: 80)
       field("Seed", text: $model.seed, width: 130)
       if model.chains > 1 {
@@ -60,6 +61,12 @@ struct PredictiveCheckView: View {
         }
       }
     }.disabled(model.busy)
+    Text(
+      strings(
+        "Attempts per character limits retries when simulating characters that meet your selection rule. It must be between 1 and 10,000,000; reaching it stops the check instead of changing the model."
+      )
+    )
+    .font(.system(size: 10)).foregroundStyle(Lab.muted).lineSpacing(3)
     Text(
       strings(
         "Each replicate draws a retained posterior sample with replacement, so repeated draws are expected. Chains are not pooled: a group is checked one chain at a time."
@@ -139,6 +146,12 @@ struct PredictiveReportView: View {
   var body: some View {
     let report = prediction.report
     VStack(alignment: .leading, spacing: 14) {
+      Text(
+        strings(
+          "Simulation limit: %@ attempts per character.",
+          strings.number(report.maxAttemptsPerCharacter))
+      )
+      .font(.system(size: 11)).foregroundStyle(Lab.secondary)
       Text(
         strings(
           "%@ posterior samples retained after discarding %@; the first retained state is %@. The reconstructed likelihood differed from the trace by at most %@.",

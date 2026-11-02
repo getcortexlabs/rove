@@ -11,6 +11,7 @@ enum HistoryStatus: String, CaseIterable, Sendable {
   case unavailable = "Unavailable"
   case unreadable = "Unreadable record"
   case treeFile = "Tree file"
+  case modelSetup = "Model setup"
 }
 
 struct HistoryEntry: Identifiable, Sendable {
@@ -110,6 +111,10 @@ struct HistoryEntry: Identifiable, Sendable {
             "This run has no confirmed finish. If a saved checkpoint is available, you can resume from it."
         }
       }
+    } else if draft != nil,
+      manager.fileExists(atPath: directory.appendingPathComponent("model-setup").path)
+    {
+      status = .modelSetup
     } else {
       status = .unreadable
       message = "The run record is missing, damaged or from an unsupported version."

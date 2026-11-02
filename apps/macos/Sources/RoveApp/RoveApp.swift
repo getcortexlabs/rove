@@ -6,6 +6,7 @@ struct RoveApp: App {
   @State private var workspace: Workspace
   @State private var access: BetaAccess
   @State private var experience = LaunchExperience()
+  @StateObject private var updater: AppUpdater
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
   @Environment(\.openWindow) private var openWindow
   private var strings: AppStrings { workspace.strings }
@@ -14,8 +15,11 @@ struct RoveApp: App {
     Lab.registerFonts()
     let access = BetaAccess()
     _access = State(initialValue: access)
-    _workspace = State(
-      initialValue: Workspace(accessAllowed: { [weak access] in access?.canUse == true }))
+    let workspace = Workspace(accessAllowed: { [weak access] in access?.canUse == true })
+    _workspace = State(initialValue: workspace)
+    _updater = StateObject(
+      wrappedValue: AppUpdater(
+        busy: { workspace.hasActiveWork }, strings: { workspace.strings }))
   }
 
   var body: some Scene {
@@ -30,7 +34,11 @@ struct RoveApp: App {
             experience.pendingURL = $0
           }
         }
-        .onAppear { delegate.workspace = workspace }
+        .onAppear {
+          delegate.workspace = workspace
+          delegate.updater = updater
+        }
+        .onChange(of: workspace.hasActiveWork) { _, _ in updater.workDidChange() }
     }
     .windowStyle(.hiddenTitleBar)
     .defaultSize(width: 1240, height: 850)
@@ -38,6 +46,12 @@ struct RoveApp: App {
     .commands {
       CommandGroup(replacing: .appInfo) {
         Button(strings("About Rove")) { openWindow(id: "about") }
+        Button(strings("Check for Updates…"), action: updater.check)
+          .disabled(!updater.canCheck || workspace.hasActiveWork)
+        if updater.installationPending {
+          Button(strings("Install update and relaunch"), action: updater.install)
+            .disabled(workspace.hasActiveWork)
+        }
       }
       CommandGroup(replacing: .appSettings) {
         SettingsLink { Text(strings("Settings…")) }.keyboardShortcut(",", modifiers: .command)
@@ -52,6 +66,11 @@ struct RoveApp: App {
         ).disabled(workspace.isRunning || !access.canUse || !experience.ready)
         Button(strings("Try Example Matrix"), action: workspace.loadExample).disabled(
           workspace.isRunning || !access.canUse || !experience.ready)
+        Button(strings("Open trace file…")) {
+          if workspace.chooseTraceFile() { openWindow(id: "trace-diagnostics") }
+        }.disabled(
+          workspace.loading || workspace.traceDiagnostics?.busy == true || !access.canUse
+            || !experience.ready)
         Button(strings("Summarize Tree File…"), action: workspace.summarizeTreeFile)
           .keyboardShortcut("t", modifiers: [.command, .shift])
           .disabled(
@@ -133,7 +152,7 @@ struct RoveApp: App {
     .windowResizability(.contentMinSize)
 
     Settings {
-      SettingsView(preferences: workspace.preferences)
+      SettingsView(preferences: workspace.preferences, updater: updater)
     }.windowResizability(.contentSize)
   }
 }
@@ -141,9 +160,22 @@ struct RoveApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
   var workspace: Workspace?
+  var updater: AppUpdater?
   private var quitting = false
 
   func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+    if let workspace, workspace.hasActiveWork,
+      updater?.installationRequested == true || !workspace.isRunning
+    {
+      if updater?.installationRequested != true {
+        let alert = NSAlert()
+        alert.messageText = workspace.strings("A calculation is still running.")
+        alert.informativeText = workspace.strings(
+          "Wait for it to finish or cancel it in its window before closing Rove.")
+        alert.runModal()
+      }
+      return .terminateCancel
+    }
     guard let workspace, workspace.isRunning else { return .terminateNow }
     guard !quitting, confirmStop(workspace) else { return .terminateCancel }
     quitting = true
@@ -170,6 +202,17 @@ struct WindowSetup: NSViewRepresentable {
       self.confirm = confirm ?? { confirmStop(workspace) }
     }
     func windowShouldClose(_ sender: NSWindow) -> Bool {
+      if !workspace.isRunning
+        && (workspace.loading || workspace.toolsBusy
+          || workspace.treeSummary?.busy == true || workspace.traceDiagnostics?.busy == true)
+      {
+        let alert = NSAlert()
+        alert.messageText = workspace.strings("A calculation is still running.")
+        alert.informativeText = workspace.strings(
+          "Wait for it to finish or cancel it in its window before closing Rove.")
+        alert.runModal()
+        return false
+      }
       guard workspace.isRunning else { return true }
       guard !closing, confirm() else { return false }
       closing = true

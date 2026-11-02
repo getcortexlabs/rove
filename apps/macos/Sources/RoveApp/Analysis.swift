@@ -86,6 +86,8 @@ enum MatrixInspector {
         try? stderr.close()
       }
       let process = Process()
+      EngineActivity.shared.begin()
+      defer { EngineActivity.shared.end() }
       process.executableURL = executable
       process.arguments = [
         "inspect", url.path, "--gaps", gapsAsMissing ? "missing" : "reject", "--partitioning",
@@ -228,6 +230,9 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   var seed = "42"
   var gapsAsMissing = false
   var chains = 1
+  var comparisonBurnin = 10
+  var backend = "automatic"
+  var printEvery: Int? = nil
   var stopWhenConverged = false
   /// Ignore the characters and sample the priors alone.
   var sampleFromPrior = false
@@ -245,7 +250,7 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
 
   private enum CodingKeys: String, CodingKey {
     case dating, clock, clockSigmaShape, clockSigmaScale, conditioning, partitioning, steps,
-      sampleEvery, seed, gapsAsMissing, chains,
+      sampleEvery, seed, gapsAsMissing, chains, comparisonBurnin, backend, printEvery,
       stopWhenConverged, sampleFromPrior, minESS, maxRhat, checkEvery, checkpointEvery, tuning,
       weights, tuningValues
   }
@@ -263,6 +268,9 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     seed = try values.decode(String.self, forKey: .seed)
     gapsAsMissing = try values.decode(Bool.self, forKey: .gapsAsMissing)
     chains = try values.decodeIfPresent(Int.self, forKey: .chains) ?? 1
+    comparisonBurnin = try values.decodeIfPresent(Int.self, forKey: .comparisonBurnin) ?? 10
+    backend = try values.decodeIfPresent(String.self, forKey: .backend) ?? "automatic"
+    printEvery = try values.decodeIfPresent(Int.self, forKey: .printEvery)
     stopWhenConverged = try values.decodeIfPresent(Bool.self, forKey: .stopWhenConverged) ?? false
     sampleFromPrior = try values.decodeIfPresent(Bool.self, forKey: .sampleFromPrior) ?? false
     minESS = try values.decodeIfPresent(Double.self, forKey: .minESS)
@@ -280,6 +288,19 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   var usesAdvancedOptions: Bool {
     sampleFromPrior || (stopWhenConverged && (minESS != nil || maxRhat != nil || checkEvery != nil))
       || checkpointEvery != nil || !tuning || !weights.isEmpty || !tuningValues.isEmpty
+  }
+
+  var usesExecutionOptions: Bool {
+    comparisonBurnin != 10 || backend != "automatic" || printEvery != nil
+      || ![1, 2, 4].contains(chains)
+  }
+
+  static var backends: [String] {
+    #if arch(arm64)
+      ["automatic", "neon", "portable"]
+    #else
+      ["automatic", "portable"]
+    #endif
   }
 
   var clockSigmaPrior: ClockSigmaPrior? {
@@ -306,8 +327,14 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     if clock == "reference" && clockSigmaPrior == nil {
       return "Use positive, finite shape and scale values for the clock sigma prior."
     }
-    guard [1, 2, 4].contains(chains), !stopWhenConverged || chains > 1 else {
-      return "Choose one, two or four chains. Automatic stopping needs multiple chains."
+    guard (1...16).contains(chains), !stopWhenConverged || chains > 1 else {
+      return "Choose 1 to 16 chains. Automatic stopping needs multiple chains."
+    }
+    guard (0..<100).contains(comparisonBurnin), Self.backends.contains(backend),
+      printEvery.map({ $0 > 0 }) ?? true
+    else {
+      return
+        "Choose a supported backend, a burn-in from 0 to 99 percent and a positive progress interval."
     }
     guard UInt64(seed) != nil else {
       return "Use a whole-number seed from 0 to 18446744073709551615."
@@ -341,6 +368,10 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       "--steps", String(steps), "--sample-every", String(sampleEvery),
     ]
     if chains > 1 { arguments += ["--chains", String(chains)] }
+    if chains > 1 && comparisonBurnin != 10 {
+      arguments += ["--burnin-percent", String(comparisonBurnin)]
+    }
+    if let printEvery { arguments += ["--print-every", String(printEvery)] }
     if stopWhenConverged {
       arguments.append("--stop-when-converged")
       if let minESS { arguments += ["--min-ess", String(minESS)] }
@@ -358,6 +389,7 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       "--model", clock, "--conditioning", conditioning,
       "--gaps", gapsAsMissing ? "missing" : "reject", "--partitioning", partitioning,
     ]
+    if backend != "automatic" { arguments += ["--backend", backend] }
     if clock == "reference" {
       guard let prior = clockSigmaPrior else {
         throw ImportError.message(
@@ -411,10 +443,12 @@ struct AnalysisDraft: Codable, Sendable {
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
     formatVersion =
-      settings.usesCustomSigmaPrior
-      ? 6
-      : (settings.usesAdvancedOptions
-        ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
+      settings.usesExecutionOptions
+      ? 7
+      : settings.usesCustomSigmaPrior
+        ? 6
+        : (settings.usesAdvancedOptions
+          ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -438,7 +472,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard [1, 2, 3, 4, 5, 6].contains(formatVersion),
+    guard (1...7).contains(formatVersion),
+      formatVersion >= 7 || !settings.usesExecutionOptions,
       formatVersion >= 6 || !settings.usesCustomSigmaPrior,
       formatVersion >= 5 || !settings.usesAdvancedOptions,
       formatVersion >= 4 || !settings.dating.estimatesProcess,

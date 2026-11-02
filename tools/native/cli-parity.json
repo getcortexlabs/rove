@@ -1,0 +1,163 @@
+{
+  "commands": {
+    "sample": "apps/macos/Sources/RoveApp/SetupView.swift",
+    "marginal": "apps/macos/Sources/RoveApp/MarginalLikelihoodView.swift",
+    "benchmark": "apps/macos/Sources/RoveApp/BenchmarkView.swift",
+    "inspect": "apps/macos/Sources/RoveApp/MatrixView.swift",
+    "inspect-tree": "apps/macos/Sources/RoveApp/TreeExplorerView.swift",
+    "diagnose": "apps/macos/Sources/RoveApp/TraceDiagnosticsView.swift",
+    "summarize": "apps/macos/Sources/RoveApp/TreeSummaryView.swift",
+    "predict": "apps/macos/Sources/RoveApp/PredictiveCheckView.swift",
+    "compare": "apps/macos/Sources/RoveApp/RunComparisonView.swift"
+  },
+  "flags": {
+    "--alpha": {
+      "native": "apps/macos/Sources/RoveApp/MarginalLikelihoodView.swift",
+      "control": "Model comparison"
+    },
+    "--backend": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--burnin-percent": {
+      "native": "apps/macos/Sources/RoveApp/TraceDiagnosticsView.swift",
+      "control": "Setup comparison burn-in, diagnostics, summary and model tools"
+    },
+    "--burnin-samples": {
+      "native": "apps/macos/Sources/RoveApp/TraceDiagnosticsView.swift",
+      "control": "Diagnostics and tree summary burn-in units"
+    },
+    "--cancel-on-stdin-close": {
+      "native": "apps/macos/Sources/RoveApp/RunProcess.swift",
+      "control": "Automatic progress, cancellation and input verification"
+    },
+    "--chains": {
+      "native": "apps/macos/Sources/RoveApp/SetupView.swift",
+      "control": "Exploration plan"
+    },
+    "--check-every": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--checkpoint-every": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--clock-sigma-scale": {
+      "native": "apps/macos/Sources/RoveApp/ClockSigmaPrior.swift",
+      "control": "Clock sigma prior"
+    },
+    "--clock-sigma-shape": {
+      "native": "apps/macos/Sources/RoveApp/ClockSigmaPrior.swift",
+      "control": "Clock sigma prior"
+    },
+    "--conditioning": {
+      "native": "apps/macos/Sources/RoveApp/SetupView.swift",
+      "control": "Clock and character selection"
+    },
+    "--dating": {
+      "native": "apps/macos/Sources/RoveApp/DatingView.swift",
+      "control": "Fossil dating; JSON serialization is automatic"
+    },
+    "--dating-json": {
+      "native": "apps/macos/Sources/RoveApp/DatingView.swift",
+      "control": "Fossil dating; JSON serialization is automatic"
+    },
+    "--events-json": {
+      "native": "apps/macos/Sources/RoveApp/RunProcess.swift",
+      "control": "Automatic progress, cancellation and input verification"
+    },
+    "--expect-input-sha256": {
+      "native": "apps/macos/Sources/RoveApp/RunProcess.swift",
+      "control": "Automatic progress, cancellation and input verification"
+    },
+    "--gaps": {
+      "native": "apps/macos/Sources/RoveApp/MatrixView.swift",
+      "control": "Matrix import options"
+    },
+    "--heights": {
+      "native": "apps/macos/Sources/RoveApp/TreeSummaryView.swift",
+      "control": "Tree summary heights"
+    },
+    "--matrix": {
+      "native": "apps/macos/Sources/RoveApp/PredictiveCheck.swift",
+      "control": "Original matrix supplied and fingerprint checked automatically"
+    },
+    "--max-attempts": {
+      "native": "apps/macos/Sources/RoveApp/PredictiveCheckView.swift",
+      "control": "Predictive simulation plan"
+    },
+    "--max-rhat": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--min-ess": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--model": {
+      "native": "apps/macos/Sources/RoveApp/SetupView.swift",
+      "control": "Clock and character selection"
+    },
+    "--monophyly": {
+      "native": "apps/macos/Sources/RoveApp/GroupEditor.swift",
+      "control": "Outgroup and constrained groups"
+    },
+    "--no-tuning": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--output": {
+      "native": "apps/macos/Sources/RoveApp/Workspace.swift",
+      "control": "Output folder chooser and separate folders for derived results"
+    },
+    "--partitioning": {
+      "native": "apps/macos/Sources/RoveApp/MatrixView.swift",
+      "control": "Matrix import options"
+    },
+    "--powers": {
+      "native": "apps/macos/Sources/RoveApp/MarginalLikelihoodView.swift",
+      "control": "Model comparison"
+    },
+    "--print-every": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--replicates": {
+      "native": "apps/macos/Sources/RoveApp/PredictiveCheckView.swift",
+      "control": "Predictive simulation plan"
+    },
+    "--resume": {
+      "native": "apps/macos/Sources/RoveApp/HistoryView.swift",
+      "control": "Resume from checkpoint"
+    },
+    "--sample-every": {
+      "native": "apps/macos/Sources/RoveApp/SetupView.swift",
+      "control": "Exploration plan"
+    },
+    "--sample-from-prior": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--seed": {
+      "native": "apps/macos/Sources/RoveApp/SetupView.swift",
+      "control": "Exploration plan"
+    },
+    "--steps": {
+      "native": "apps/macos/Sources/RoveApp/SetupView.swift",
+      "control": "Exploration plan"
+    },
+    "--stop-when-converged": {
+      "native": "apps/macos/Sources/RoveApp/SetupView.swift",
+      "control": "Exploration plan"
+    },
+    "--tuning": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    },
+    "--weight": {
+      "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
+      "control": "Advanced sampling"
+    }
+  }
+}

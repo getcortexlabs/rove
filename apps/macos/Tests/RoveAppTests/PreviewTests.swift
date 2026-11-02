@@ -317,7 +317,10 @@ struct PreviewTests {
       window.close()
     }
     workspace.showingHistory = false
-    let settings = NSHostingView(rootView: SettingsView(preferences: preferences))
+    let settings = NSHostingView(
+      rootView: SettingsView(
+        preferences: preferences,
+        updater: AppUpdater(busy: { false }, strings: { preferences.strings })))
     let settingsWindow = NSWindow(
       contentRect: NSRect(x: 0, y: 0, width: 560, height: 590),
       styleMask: [.borderless], backing: .buffered, defer: false)

@@ -62,11 +62,14 @@ struct TraceReport: Decodable, Sendable {
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     let value = try decoder.decode(Self.self, from: Data(contentsOf: path))
     guard value.schemaVersion == 1, value.kind == "within_chain_diagnostics",
-      value.burnin.unit == "percent", (0..<100).contains(value.burnin.value),
+      ["percent", "samples"].contains(value.burnin.unit), value.burnin.value >= 0,
+      value.burnin.unit == "samples" || value.burnin.value < 100,
       (1...1_000_000).contains(value.totalSamples), value.discardedSamples >= 0,
       value.retainedSamples > 0,
       value.totalSamples - value.discardedSamples == value.retainedSamples,
-      value.discardedSamples == value.totalSamples * value.burnin.value / 100,
+      value.discardedSamples
+        == (value.burnin.unit == "samples"
+          ? value.burnin.value : value.totalSamples * value.burnin.value / 100),
       value.firstState <= value.firstRetainedState, value.firstRetainedState <= value.lastState,
       value.statisticsUseAllRetainedSamples, !value.convergenceAssessed, !value.topologyAssessed,
       value.rhat == nil, value.source.sha256.count == 64, value.createdUnixSeconds.isFinite,
@@ -112,24 +115,33 @@ final class TraceDiagnosticsProcess: @unchecked Sendable {
     input = nil
   }
 
-  func execute(directory: URL, executable: URL, burnin: Int) async throws -> SavedDiagnostics {
+  func execute(
+    directory: URL, executable: URL, burnin: Int, unit: String = "percent", source: URL? = nil
+  ) async throws -> SavedDiagnostics {
     try await withCheckedThrowingContinuation { continuation in
       Thread.detachNewThread {
         autoreleasepool {
           continuation.resume(
             with: Result {
-              try self.executeBlocking(directory: directory, executable: executable, burnin: burnin)
+              try self.executeBlocking(
+                directory: directory, executable: executable, burnin: burnin, unit: unit,
+                source: source)
             })
         }
       }
     }
   }
 
-  private func executeBlocking(directory: URL, executable: URL, burnin: Int) throws
+  private func executeBlocking(
+    directory: URL, executable: URL, burnin: Int, unit: String, source: URL?
+  ) throws
     -> SavedDiagnostics
   {
-    guard (0..<100).contains(burnin) else {
-      throw ImportError.message("Choose a burn-in from 0 to 99 percent.")
+    guard ["percent", "samples"].contains(unit), burnin >= 0,
+      unit == "samples" || burnin < 100
+    else {
+      throw ImportError.message(
+        "Choose a nonnegative sample count or a burn-in from 0 to 99 percent.")
     }
     let parent = directory.appendingPathComponent("diagnostics")
     try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
@@ -143,10 +155,13 @@ final class TraceDiagnosticsProcess: @unchecked Sendable {
     defer { try? errors.close() }
     let pipe = Pipe()
     let child = Process()
+    EngineActivity.shared.begin()
+    defer { EngineActivity.shared.end() }
     child.executableURL = executable
     child.arguments = [
-      "diagnose", RunFiles.output(in: directory).appendingPathComponent("trace.log").path,
-      "--burnin-percent", String(burnin), "--output", output.path, "--cancel-on-stdin-close",
+      "diagnose",
+      (source ?? RunFiles.output(in: directory).appendingPathComponent("trace.log")).path,
+      "--burnin-\(unit)", String(burnin), "--output", output.path, "--cancel-on-stdin-close",
     ]
     child.standardInput = pipe
     child.standardOutput = FileHandle.nullDevice
@@ -184,8 +199,10 @@ final class TraceDiagnosticsProcess: @unchecked Sendable {
 final class TraceDiagnosticsModel: Identifiable {
   let id = UUID()
   let directory: URL
+  let source: URL?
   let executable: URL
   var burnin = "10"
+  var burninUnit = "percent"
   var selected = "posterior"
   var query = ""
   private(set) var result: SavedDiagnostics?
@@ -195,7 +212,12 @@ final class TraceDiagnosticsModel: Identifiable {
   private var loaded = false
   private var task: Task<Void, Never>?
   private var worker: TraceDiagnosticsProcess?
-  var valid: Bool { Int(burnin).map { (0..<100).contains($0) } == true }
+  var valid: Bool {
+    guard ["percent", "samples"].contains(burninUnit), let count = Int(burnin), count >= 0 else {
+      return false
+    }
+    return burninUnit == "samples" || count < 100
+  }
   var statistic: TraceStatistic? { result?.report.columns.first { $0.name == selected } }
   var columns: [TraceStatistic] {
     let priority = ["posterior", "likelihood", "prior"]
@@ -209,9 +231,10 @@ final class TraceDiagnosticsModel: Identifiable {
     }
   }
 
-  init(directory: URL, executable: URL) {
+  init(directory: URL, executable: URL, source: URL? = nil) {
     self.directory = directory
     self.executable = executable
+    self.source = source
   }
 
   func load() async {
@@ -226,12 +249,15 @@ final class TraceDiagnosticsModel: Identifiable {
       for folder in folders.filter({ $0.lastPathComponent.hasPrefix("trace-") }).sorted(by: {
         $0.lastPathComponent > $1.lastPathComponent
       }).prefix(20) {
-        if let record = try? TraceReport.read(folder) { return record.burnin.value }
+        if let record = try? TraceReport.read(folder) {
+          return (record.burnin.unit, record.burnin.value)
+        }
       }
-      return 10
+      return ("percent", 10)
     }.value
     guard !Task.isCancelled else { return }
-    burnin = String(previous)
+    burninUnit = previous.0
+    burnin = String(previous.1)
     start()
     await waitForExit()
   }
@@ -245,10 +271,12 @@ final class TraceDiagnosticsModel: Identifiable {
     worker = process
     let directory = directory
     let executable = executable
+    let unit = burninUnit
+    let source = source
     task = Task {
       do {
         let saved = try await process.execute(
-          directory: directory, executable: executable, burnin: percent)
+          directory: directory, executable: executable, burnin: percent, unit: unit, source: source)
         result = saved
         if statistic == nil { selected = saved.report.columns.first?.name ?? "posterior" }
       } catch is CancellationError {
