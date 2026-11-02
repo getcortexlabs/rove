@@ -60,12 +60,12 @@ struct SettingsView: View {
             Toggle(
               strings("Check for updates automatically"),
               isOn: Binding(
-                get: { updater.automaticChecks }, set: updater.setAutomaticChecks)
+                get: { updater.automaticChecks }, set: { updater.setAutomaticChecks($0) })
             ).toggleStyle(.switch)
             Toggle(
               strings("Download updates and install when I quit"),
               isOn: Binding(
-                get: { updater.automaticDownloads }, set: updater.setAutomaticDownloads)
+                get: { updater.automaticDownloads }, set: { updater.setAutomaticDownloads($0) })
             )
             .toggleStyle(.switch).disabled(!updater.automaticChecks)
             Text(
