@@ -88,7 +88,11 @@ struct SavedEstimate: Identifiable, Sendable {
       throw RunFailure.invalidCompletion
     }
     let estimate = try MarginalEstimate.read(directory)
-    guard estimate.inputSha256 == record.input.sha256 else { throw RunFailure.invalidCompletion }
+    guard estimate.inputSha256 == record.input.sha256,
+      UInt64(exactly: estimate.settings.stepsPerPower) == record.settings.stepsPerPower,
+      UInt64(exactly: estimate.settings.sampleEvery) == record.settings.sampleEvery,
+      estimate.settings.seed == record.settings.seed
+    else { throw RunFailure.invalidCompletion }
     return Self(directory: directory, run: run, estimate: estimate, record: record)
   }
 
@@ -107,7 +111,6 @@ struct SavedEstimate: Identifiable, Sendable {
       && record.model.dating == dating
       && (settings.clock != "reference"
         || (record.model.clockSigmaPriorParameters ?? .reference) == settings.clockSigmaPrior)
-      && record.settings.sampleEvery == UInt64(settings.sampleEvery)
       && (record.settings.tuning ?? true) == settings.tuning
       && settings.weights.allSatisfy { override in
         record.moves?.first { $0.name == override.move }?.weight == override.value
@@ -140,7 +143,7 @@ struct MarginalSchedule: Sendable {
 
   var valid: Bool {
     (2...256).contains(powers) && alpha.isFinite && alpha > 0 && steps > 0 && sampleEvery > 0
-      && steps % sampleEvery == 0 && (0..<100).contains(burnin)
+      && steps % sampleEvery == 0 && (0..<100).contains(burnin) && steps <= Int.max / powers
   }
 
   func arguments(draft: AnalysisDraft, output: URL) throws -> [String] {
@@ -148,6 +151,7 @@ struct MarginalSchedule: Sendable {
       "marginal", draft.matrixPath, "--output", output.path, "--seed", String(seed),
       "--steps", String(steps), "--sample-every", String(sampleEvery),
       "--powers", String(powers), "--alpha", String(alpha), "--burnin-percent", String(burnin),
+      "--print-every", String(draft.settings.printEvery ?? max(1, min(100_000, steps / 100))),
     ] + draft.settings.modelArguments(monophyly: draft.constraints)
       + ["--cancel-on-stdin-close", "--expect-input-sha256", draft.matrixSHA256]
   }
@@ -166,6 +170,7 @@ final class MarginalLikelihoodModel {
   var powers = "32"
   var alpha = "0.3"
   var steps: String
+  var samplingInterval: String
   var burnin = "20"
   var seed: String
   private(set) var busy = false
@@ -186,16 +191,17 @@ final class MarginalLikelihoodModel {
     seed = settings.seed
     // A tenth of the run per power, as a multiple of its sampling interval.
     let interval = max(settings.sampleEvery, 1)
+    samplingInterval = String(interval)
     steps = String(max(settings.steps / 10 / interval, 1) * interval)
   }
 
-  var sampleEvery: Int { entry.draft?.settings.sampleEvery ?? 1 }
+  var sampleEvery: Int { Int(samplingInterval) ?? 0 }
 
   /// Estimated FBD parameters add observation factors whose normalization is
   /// not derived for model comparison, so no estimate is offered for them.
   /// Prior-only runs stand for their priors, not for a fitted model.
   var available: Bool {
-    entry.status == .completed
+    (entry.status == .completed || entry.status == .modelSetup)
       && entry.draft.map { !$0.settings.dating.estimatesProcess && !$0.settings.sampleFromPrior }
         == true
   }
@@ -216,7 +222,8 @@ final class MarginalLikelihoodModel {
   /// constraints and gap policy, and either no dating or identical dating
   /// with a fixed process.
   static func comparable(_ a: HistoryEntry, _ b: HistoryEntry) -> Bool {
-    guard a.id != b.id, a.status == .completed, b.status == .completed,
+    guard a.id != b.id, [.completed, .modelSetup].contains(a.status),
+      [.completed, .modelSetup].contains(b.status),
       let x = a.draft, let y = b.draft, x.matrixSHA256 == y.matrixSHA256,
       x.constraints == y.constraints, x.settings.gapsAsMissing == y.settings.gapsAsMissing,
       !x.settings.sampleFromPrior, !y.settings.sampleFromPrior

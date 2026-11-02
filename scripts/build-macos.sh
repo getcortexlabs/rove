@@ -30,10 +30,14 @@ app="$repo_root/build/macos/Rove.app"
 # signature's seal and would otherwise survive re-signing.
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Helpers" "$app/Contents/Resources"
+mkdir -p "$app/Contents/Frameworks"
+ditto "$swift_bin/Sparkle.framework" "$app/Contents/Frameworks/Sparkle.framework"
 cp "$swift_bin/Rove" "$app/Contents/MacOS/Rove"
 cp target/release/rove "$app/Contents/Helpers/rove"
 cp -R "$swift_bin/Rove_RoveApp.bundle" "$app/Contents/Resources/"
 cp apps/macos/Info.plist "$app/Contents/Info.plist"
+cp apps/macos/.build/artifacts/sparkle/Sparkle/LICENSE "$app/Contents/Resources/Sparkle-LICENSE"
+python3 scripts/configure-updates.py "$app/Contents/Info.plist"
 
 iconset="$repo_root/build/macos/Rove.iconset"
 mkdir -p "$iconset"
@@ -62,6 +66,5 @@ for kind, filename in representations.items():
 payload = b''.join(chunks)
 destination.write_bytes(b'icns' + struct.pack('>I', len(payload) + 8) + payload)
 PY
-codesign --force --sign - "$app/Contents/Helpers/rove"
-codesign --force --sign - "$app"
+scripts/sign-macos.sh "$app" -
 echo "Built $app"

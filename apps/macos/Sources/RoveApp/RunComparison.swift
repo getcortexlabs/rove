@@ -83,6 +83,8 @@ final class RunComparisonProcess: @unchecked Sendable {
       try? errors.close()
     }
     let process = Process()
+    EngineActivity.shared.begin()
+    defer { EngineActivity.shared.end() }
     process.executableURL = executable
     process.arguments =
       ["compare"] + directories.map(\.path) + ["--burnin-percent", String(burnin)]

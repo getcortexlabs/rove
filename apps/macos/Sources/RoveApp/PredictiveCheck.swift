@@ -85,11 +85,14 @@ struct PredictiveRequest: Sendable {
   let replicates: Int
   let seed: UInt64
 
+  var maxAttempts = 100_000
+
   var arguments: [String] {
     [
       "predict", source.path, "--matrix", matrix.path, "--output", output.path,
       "--burnin-percent", String(burnin), "--seed", String(seed),
       "--replicates", String(replicates), "--cancel-on-stdin-close",
+      "--max-attempts", String(maxAttempts),
     ]
   }
 
@@ -97,7 +100,9 @@ struct PredictiveRequest: Sendable {
   func execute(with tool: EngineTool, onProgress: @escaping @Sendable (Int) -> Void)
     async throws -> SavedPrediction
   {
-    guard (0..<100).contains(burnin), (1...10_000).contains(replicates) else {
+    guard (0..<100).contains(burnin), (1...10_000).contains(replicates),
+      (1...10_000_000).contains(maxAttempts)
+    else {
       throw ImportError.message(
         "Choose a burn-in from 0 to 99 percent and 1 to 10,000 replicates.")
     }
@@ -124,6 +129,7 @@ final class PredictiveCheckModel {
   let entry: HistoryEntry
   let executable: URL
   var burnin = "10"
+  var maxAttempts = "100000"
   var replicates = "100"
   var seed: String
   var chain = 1
@@ -151,6 +157,7 @@ final class PredictiveCheckModel {
 
   var valid: Bool {
     Int(burnin).map { (0..<100).contains($0) } == true
+      && Int(maxAttempts).map { (1...10_000_000).contains($0) } == true
       && Int(replicates).map { (1...10_000).contains($0) } == true && UInt64(seed) != nil
       && (1...chains).contains(chain)
   }
@@ -184,7 +191,8 @@ final class PredictiveCheckModel {
       source: source, matrix: URL(fileURLWithPath: draft.matrixPath),
       output: entry.directory.appendingPathComponent(
         "predictions/prediction-\(UUID().uuidString)"),
-      executable: executable, burnin: percent, replicates: count, seed: seed)
+      executable: executable, burnin: percent, replicates: count, seed: seed,
+      maxAttempts: Int(maxAttempts) ?? 0)
     busy = true
     completed = 0
     total = count

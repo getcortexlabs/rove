@@ -10,6 +10,47 @@ incluído com progresso real e cancelamento. Não precisa de BEAST nem Java.
 
 ![A interface nativa do Rove](/images/macos-preview.png)
 
+## Atualizações e controles no app
+
+As versões assinadas para distribuição têm **Rove → Buscar atualizações…** e a
+seção **Atualizações** nos Ajustes. A busca automática vem ligada; baixar e
+instalar ao sair é opcional. A instalação espera os cálculos terminarem. Se você
+pediu para instalar durante um cálculo, termine o trabalho e escolha **Instalar
+atualização e reabrir**. Builds locais não consultam o feed de distribuição.
+Quem está na versão 0.1.1 precisa instalar uma primeira atualização manualmente,
+porque ela ainda não tem atualizador. A primeira atualização publicada também
+exige configurar a chave de assinatura e testar a troca entre dois builds
+assinados; veja o [procedimento de release](https://github.com/getcortexlabs/rove/blob/main/scripts/RELEASES.md).
+
+O plano de exploração aceita de 1 a 16 cadeias independentes. Em **Plano de
+amostragem personalizado**, informe os passos e um intervalo positivo que divida
+esse total. O burn-in da comparação também pode ser alterado. Em **Amostragem
+avançada → Cálculo**, escolha Automático, ARM NEON ou Portável e o intervalo de
+atualização do progresso. Automático usa a implementação nativa. Atualizar o
+progresso não altera a frequência de salvamento das amostras.
+
+**Arquivo → Abrir arquivo de traço…** analisa um traço externo sem alterá-lo.
+O burn-in pode ser uma porcentagem ou uma quantidade de amostras salvas, incluindo
+o estado inicial. Quantidade de amostras não é quantidade de passos de MCMC.
+Os relatórios ficam na pasta de saídas escolhida no Rove. **Histórico → Adicionar
+pasta de execução** também importa amostragens concluídas pela CLI: escolha a
+matriz original para conferir sua assinatura. O app cria uma pasta de histórico
+que aponta para os resultados; mantenha a pasta original disponível.
+
+**Estimar evidência do modelo…**, na revisão, abre um plano de power posteriors
+sem exigir uma execução anterior. A configuração fica no histórico como
+**Configuração de modelo**. Potências, alpha, passos, intervalo de amostragem,
+burn-in e semente podem ser alterados. Execuções já concluídas oferecem os mesmos
+controles. A estimação de parâmetros do processo FBD continua excluída, pelos
+motivos científicos explicados no guia de comparação de modelos. As verificações
+preditivas também permitem definir o máximo de tentativas de simulação por
+caráter; atingir o limite encerra a verificação sem flexibilizar o modelo.
+
+Recursos de análise da CLI precisam chegar ao Swift na mesma alteração. Eventos
+JSON, assinatura dos arquivos e cancelamento são automáticos. Essa regra e o mapa
+de comandos fazem parte das orientações de contribuição e das verificações do CI.
+
+
 ## Acesso ao beta e primeira visita
 
 O beta nativo começa com **Já tenho convite** e **Entrar na lista**. Use um e-mail
@@ -44,7 +85,7 @@ de newsletter. Fale com a [Cortex Labs](https://getcortexlabs.com/) para pedir a
 remoção da lista. A CLI Rust independente não exige acesso ao beta nem esses
 serviços de rede.
 
-Participantes com convite ativo recebem e-mails de novas versões, com link para baixar no Mac e ver as novidades. Estar apenas na lista de interessados não gera esses avisos. Para sair do beta, responda a um desses e-mails.
+Depois de configurar os avisos de lançamento, participantes com convite ativo recebem e-mails de novas versões, com link para baixar no Mac e ver as novidades. Estar apenas na lista de interessados não gera esses avisos. Para sair do beta, responda a um desses e-mails.
 
 ## Compilar e abrir
 
@@ -410,11 +451,11 @@ incluem séries sintéticas e uma referência BEAST com versão fixada.
 
 ![Comparação de quatro cadeias independentes curtas](/images/macos-chains.png)
 
-Em **Modelo → O plano de exploração**, escolha **1, 2 ou 4 cadeias**. O número de passos vale para cada cadeia. Várias cadeias rodam ao mesmo tempo, com sementes distintas e registradas; o progresso mostra cada uma separadamente. Cancelar encerra o grupo inteiro.
+Em **Modelo → O plano de exploração**, escolha **1 a 16 cadeias**. O número de passos vale para cada cadeia. Várias cadeias rodam ao mesmo tempo, com sementes distintas e registradas; o progresso mostra cada uma separadamente. Cancelar encerra o grupo inteiro.
 
 Os grupos concluídos e seus detalhes no Histórico incluem **As cadeias concordam?**, com R-hat e ESS para todas as estatísticas registradas e comparação das frequências de clados. Selecione uma cadeia para abrir seus diagnósticos, resumir suas árvores ou ver sua pasta. As configurações salvas preservam a quantidade de cadeias; configurações antigas continuam com uma cadeia. Os arquivos ficam separados para que o burn-in de uma não seja tratado como continuação de outra.
 
-**Parar quando os critérios dos diagnósticos forem atingidos** é opcional e vem desligado. Usa 10% de burn-in, ESS ≥ 200 por cadeia, R-hat ≤ 1,01 em todas as estatísticas escalares registradas, pelo menos 1.000 amostras mantidas por cadeia e duas verificações positivas seguidas. O passo e o motivo da parada são salvos. São critérios de diagnóstico escalar, não uma garantia de convergência das topologias; confira clados e traces. Veja [cadeias independentes](./sampler#cadeias-independentes) para opções e limites da CLI.
+**Parar quando os critérios dos diagnósticos forem atingidos** é opcional e vem desligado. Os padrões são 10% de burn-in da comparação, ESS ≥ 200 por cadeia e R-hat ≤ 1,01 em todas as estatísticas escalares registradas, pelo menos 1.000 amostras mantidas por cadeia e duas verificações positivas seguidas. O passo e o motivo da parada são salvos. São critérios de diagnóstico escalar, não uma garantia de convergência das topologias; confira clados e traces. Veja [cadeias independentes](./sampler#cadeias-independentes) para opções e limites da CLI.
 
 **Amostragem avançada**, recolhida abaixo do plano de exploração, expõe as demais opções do `rove sample`. **Amostrar só os priors** roda sem os caracteres. Com a parada automática ligada, o ESS mínimo, o R-hat máximo e o intervalo de verificação podem substituir os padrões do motor, 200, 1,01 e o cronograma próprio dele. O intervalo de checkpoint pode ser dado em passos em vez do padrão de cerca de 30 segundos. O esquema de propostas oferece o padrão clássico, os dois esquemas avaliados nos relatórios do [relógio relaxado](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md) e da [frequência da gama](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md), e pesos e tamanhos de passo iniciais personalizados por movimento, com o ajuste de passo que pode ser desligado. Cada opção é validada antes de o motor iniciar, gravada no registro da execução e no Histórico, e salva nas configurações como formato 5, que versões anteriores do app recusam em vez de rodar sem ela. Nenhum dos esquemas avaliados é recomendado; os relatórios registram o que cada um ganhou e perdeu.
 

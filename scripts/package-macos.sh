@@ -15,6 +15,10 @@ if [[ -n "${NOTARY_PROFILE:-}" && -z "${CODESIGN_ID:-}" ]]; then
     echo "NOTARY_PROFILE needs CODESIGN_ID: Apple rejects ad-hoc signatures" >&2
     exit 2
 fi
+if [[ -n "${CODESIGN_ID:-}" ]]; then
+    : "${ROVE_SPARKLE_PUBLIC_KEY:?Set the Rove Ed25519 public key before packaging a distribution build}"
+    export ROVE_UPDATES_ENABLED=1
+fi
 
 app="$repo_root/build/macos/Rove.app"
 version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' apps/macos/Info.plist)"
@@ -47,10 +51,7 @@ if [[ -n "${CODESIGN_ID:-}" ]]; then
     echo "Signing with $CODESIGN_ID"
     # Nested code first, then the bundle that seals it. --deep is deprecated
     # for signing and would not apply the hardened runtime to the helper.
-    sign=(codesign --force --options runtime --timestamp --sign "$CODESIGN_ID")
-    "${sign[@]}" "$app/Contents/Helpers/rove"
-    "${sign[@]}" "$app/Contents/Resources/Rove_RoveApp.bundle"
-    "${sign[@]}" "$app"
+    scripts/sign-macos.sh "$app" "$CODESIGN_ID"
     codesign --verify --deep --strict --verbose=2 "$app"
 fi
 
@@ -63,7 +64,7 @@ fi
 # The volume name carries the version so each release mounts at a new path.
 root="$staging/root"
 mkdir -p "$root"
-cp -R "$app" "$root/"
+ditto "$app" "$root/Rove.app"
 image="$staging/Rove-$version.dmg"
 if command -v uvx >/dev/null; then
     uvx --from "dmgbuild==1.6.7" dmgbuild -s scripts/dmg-settings.py \

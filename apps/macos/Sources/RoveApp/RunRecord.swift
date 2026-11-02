@@ -37,6 +37,7 @@ struct EngineRecord: Decodable, Sendable {
     let sampleEvery: UInt64
     let seed: UInt64
     var tuning: Bool? = nil
+    var backend: String? = nil
   }
   struct Model: Decodable, Sendable {
     let dating: EngineDatingModel?
@@ -98,9 +99,12 @@ struct EngineRecord: Decodable, Sendable {
   }
 
   func matches(_ draft: AnalysisDraft, seed: UInt64? = nil) -> Bool {
-    guard let conditioningIndex = command.firstIndex(of: "--conditioning"),
-      command.indices.contains(conditioningIndex + 1)
-    else { return false }
+    let conditioning: String?
+    if let index = command.firstIndex(of: "--conditioning"), command.indices.contains(index + 1) {
+      conditioning = command[index + 1]
+    } else {
+      conditioning = Model.conditioningDescriptions.first { $0.value == model.conditioning }?.key
+    }
     let expectedDating: EngineDatingModel?
     do { expectedDating = try draft.settings.dating.model() } catch { return false }
     return draft.settings.validationError == nil && input.sha256 == draft.matrixSHA256
@@ -110,7 +114,7 @@ struct EngineRecord: Decodable, Sendable {
       && (model.preset != "reference"
         || (model.clockSigmaPriorParameters ?? .reference) == draft.settings.clockSigmaPrior)
       && (model.partitioning ?? "declared") == draft.settings.partitioning
-      && command[conditioningIndex + 1] == draft.settings.conditioning
+      && conditioning == draft.settings.conditioning
       && settings.steps == UInt64(draft.settings.steps)
       && settings.sampleEvery == UInt64(draft.settings.sampleEvery)
       && settings.seed == (seed ?? UInt64(draft.settings.seed))
@@ -118,6 +122,7 @@ struct EngineRecord: Decodable, Sendable {
       && completedSteps <= settings.steps
       && (model.sampleFromPrior ?? false) == draft.settings.sampleFromPrior
       && (settings.tuning ?? true) == draft.settings.tuning
+      && (draft.settings.backend == "automatic" || settings.backend == draft.settings.backend)
       && (kind == "independent_chains" || schedule(matches: draft.settings))
   }
 
@@ -182,7 +187,8 @@ struct EngineRecord: Decodable, Sendable {
       guard minimum == record.completedSteps else { throw RunFailure.invalidCompletion }
       if record.status == "completed" {
         let comparison = try ChainComparison.read(output.appendingPathComponent("comparison.json"))
-        guard comparison.chainCount == members.count, comparison.lastState == record.completedSteps
+        guard comparison.chainCount == members.count, comparison.lastState == record.completedSteps,
+          comparison.burninPercent == draft.settings.comparisonBurnin
         else {
           throw RunFailure.invalidCompletion
         }

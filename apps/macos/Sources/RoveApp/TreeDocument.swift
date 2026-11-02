@@ -169,6 +169,8 @@ enum TreeInspector {
       try? stderr.close()
     }
     let process = Process()
+    EngineActivity.shared.begin()
+    defer { EngineActivity.shared.end() }
     process.executableURL = executable
     process.arguments = ["inspect-tree", directory.path]
     process.standardOutput = stdout

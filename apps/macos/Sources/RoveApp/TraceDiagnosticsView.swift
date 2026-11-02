@@ -13,8 +13,11 @@ struct TraceDiagnosticsView: View {
     VStack(spacing: 0) {
       header.padding(22)
       HStack(spacing: 12) {
-        Text(strings("Burn-in (%)")).font(.system(size: 12, weight: .medium))
-        TextField(strings("Burn-in (%)"), text: $model.burnin).textFieldStyle(.roundedBorder)
+        Picker(strings("Burn-in unit"), selection: $model.burninUnit) {
+          Text(strings("Percent")).tag("percent")
+          Text(strings("Samples")).tag("samples")
+        }.frame(width: 180).disabled(model.busy)
+        TextField(strings("Burn-in"), text: $model.burnin).textFieldStyle(.roundedBorder)
           .frame(width: 58).disabled(model.busy).onSubmit { model.start() }
         Button(strings("Apply"), action: model.start)
           .buttonStyle(LabButtonStyle(compact: true)).disabled(!model.valid || model.busy)
@@ -46,10 +49,14 @@ struct TraceDiagnosticsView: View {
                 )
                 .foregroundStyle(Lab.coral).font(.system(size: 12))
               }
-              if model.burnin != String(saved.report.burnin.value) || model.busy {
+              if model.burnin != String(saved.report.burnin.value)
+                || model.burninUnit != saved.report.burnin.unit || model.busy
+              {
                 Text(
                   strings(
-                    "Displayed results use %@% burn-in. Apply your change to update them.",
+                    saved.report.burnin.unit == "samples"
+                      ? "Displayed results discard %@ samples. Apply your change to update them."
+                      : "Displayed results use %@% burn-in. Apply your change to update them.",
                     String(saved.report.burnin.value))
                 )
                 .font(.system(size: 11)).foregroundStyle(Lab.ice)
@@ -95,8 +102,10 @@ struct TraceDiagnosticsView: View {
           Lab.ice.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
       VStack(alignment: .leading, spacing: 5) {
         Text(strings("Look inside the run.")).font(Lab.display(28))
-        Text(model.directory.lastPathComponent).font(.system(size: 10, design: .monospaced))
-          .foregroundStyle(Lab.secondary).lineLimit(1).truncationMode(.middle)
+        Text((model.source ?? model.directory).lastPathComponent).font(
+          .system(size: 10, design: .monospaced)
+        )
+        .foregroundStyle(Lab.secondary).lineLimit(1).truncationMode(.middle)
         if let report = model.result?.report {
           Text(
             strings(
@@ -226,10 +235,11 @@ struct TraceDiagnosticsView: View {
         )
       )
       .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
-      if report.source.completion == "completed" {
+      if model.source == nil && report.source.completion == "completed" {
         Button(strings("Summarize trees with this burn-in")) {
           let value = TreeSummaryModel(directory: model.directory, executable: model.executable)
           value.burnin = String(report.burnin.value)
+          value.burninUnit = report.burnin.unit
           summary = value
         }.buttonStyle(LabButtonStyle(compact: true)).disabled(model.busy)
       }

@@ -116,6 +116,10 @@ jobs:
         run: npm ci
       - name: Test release notification client
         run: node --test scripts/notify-beta.test.mjs
+      - name: Check native parity and update publishing
+        run: |
+          python3 scripts/check-native-parity.py
+          python3 -m unittest discover -s scripts -p 'test_*.py'
       - name: Build documentation
         run: npm run docs:build
 

@@ -212,7 +212,9 @@ private struct HistoryDetail: View {
     VStack(alignment: .leading, spacing: 22) {
       VStack(alignment: .leading, spacing: 10) {
         HStack {
-          Eyebrow(text: strings("Run details"), color: Lab.accent)
+          Eyebrow(
+            text: strings(entry.status == .modelSetup ? "Model setup" : "Run details"),
+            color: Lab.accent)
           Spacer()
           HistoryStatusBadge(status: entry.status, strings: strings)
         }
@@ -254,15 +256,18 @@ private struct HistoryDetail: View {
       }
       LabPanel {
         VStack(alignment: .leading, spacing: 16) {
-          HStack(spacing: 36) {
-            metric("Elapsed", Self.duration(entry.elapsedSeconds))
-            if let draft = entry.draft {
-              metric(
-                "Completed steps",
-                entry.completedSteps.map {
-                  strings("%@ of %@", strings.number(Int($0)), strings.number(draft.settings.steps))
-                } ?? "—")
-              metric("Random seed", draft.settings.seed)
+          if entry.status != .modelSetup {
+            HStack(spacing: 36) {
+              metric("Elapsed", Self.duration(entry.elapsedSeconds))
+              if let draft = entry.draft {
+                metric(
+                  "Completed steps",
+                  entry.completedSteps.map {
+                    strings(
+                      "%@ of %@", strings.number(Int($0)), strings.number(draft.settings.steps))
+                  } ?? "—")
+                metric("Random seed", draft.settings.seed)
+              }
             }
           }
           if let draft = entry.draft {
@@ -280,14 +285,19 @@ private struct HistoryDetail: View {
               "Character model",
               strings(
                 draft.settings.conditioning == "variable"
-                  ? "Mkv · variable characters" : "Mk · all characters"))
+                  ? "Mkv · variable characters"
+                  : draft.settings.conditioning == "informative"
+                    ? "Mkparsinf · informative characters" : "Mk · all characters"))
             field(
               "State partitions",
               strings(
                 draft.settings.partitioning == "observed"
                   ? "By observed states" : "Declared alphabet"))
-            field("Independent chains", String(draft.settings.chains))
-            field("Sampling", strings("Every %@ steps", strings.number(draft.settings.sampleEvery)))
+            if entry.status != .modelSetup {
+              field("Independent chains", String(draft.settings.chains))
+              field(
+                "Sampling", strings("Every %@ steps", strings.number(draft.settings.sampleEvery)))
+            }
             field("Gaps", strings(draft.settings.gapsAsMissing ? "Treat as missing" : "Reject"))
             ForEach(draft.settings.advancedRows(strings: strings), id: \.0) { label, value in
               field(label, value)
@@ -313,7 +323,9 @@ private struct HistoryDetail: View {
       }
       Text(
         strings(
-          "A completed run records finished steps, not evidence of convergence. Review sampling diagnostics before interpreting the result."
+          entry.status == .modelSetup
+            ? "This setup has no posterior samples. Configure the power-posterior plan below to estimate model evidence."
+            : "A completed run records finished steps, not evidence of convergence. Review sampling diagnostics before interpreting the result."
         )
       )
       .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
@@ -345,7 +357,7 @@ private struct HistoryDetail: View {
           openWindow(id: "trace-diagnostics")
         }.buttonStyle(LabButtonStyle(compact: true))
       }
-      if let draft = entry.draft, draft.settings.chains > 1 {
+      if let draft = entry.draft, draft.settings.chains > 1, entry.status != .modelSetup {
         ChainResultsView(
           workspace: workspace, directory: entry.directory,
           settings: draft.settings, completed: entry.status == .completed)
@@ -361,6 +373,7 @@ private struct HistoryDetail: View {
           MarginalLikelihoodView(workspace: workspace, entry: entry)
         }
       }
+      if entry.status == .modelSetup { MarginalLikelihoodView(workspace: workspace, entry: entry) }
       HStack(alignment: .center, spacing: 18) {
         Button {
           workspace.reuseSetup(entry)

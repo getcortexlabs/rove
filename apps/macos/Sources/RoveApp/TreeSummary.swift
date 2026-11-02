@@ -190,6 +190,8 @@ final class TreeSummaryProcess: @unchecked Sendable {
     defer { try? errors.close() }
     let pipe = Pipe()
     let child = Process()
+    EngineActivity.shared.begin()
+    defer { EngineActivity.shared.end() }
     child.executableURL = executable
     child.arguments = [
       "summarize", trees.path, "--output", output.path, "--burnin-\(unit)", String(burnin),

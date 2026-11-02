@@ -151,7 +151,7 @@ includes its BEAST 2 XML and provenance. Do not substitute one fixture for the
 other when reproducing a result.
 
 Independent chains now run in parallel with `rove sample --chains 2` or `--chains 4`.
-The native app offers 1, 2 or 4 chains, progress per chain, saved group history,
+The native app offers 1 to 16 chains, custom sampling plans, progress per chain, saved group history,
 R-hat, per-chain ESS and clade-frequency comparisons. Each chain keeps its own
 trace and tree files. Optional scalar diagnostic stopping is off by default;
 it does not certify topology convergence. See the [sampler guide](https://rove.getcortexlabs.com/guide/sampler).
@@ -173,7 +173,7 @@ it does not certify topology convergence. See the [sampler guide](https://rove.g
 12. Rescale by powers of two. Done.
 13. Partition characters by number of states and condition on parsimony-informative
     characters. Done, including ordered Mk and Mkv.
-14. Add posterior predictive simulation and morphology checks. Done in the CLI.
+14. Add posterior predictive simulation and morphology checks. Done in the CLI and native app.
 15. Add fossil tip dating with fixed or estimated FBD process parameters. Done in the CLI and native app;
     sampled ancestors remain future work.
     `rove marginal` estimates marginal likelihoods for model comparison
@@ -243,6 +243,10 @@ npm run docs:dev
 ```
 
 Build with `npm run docs:build`; preview the build with `npm run docs:preview`.
+
+## Contributing
+
+New CLI analysis features must include native controls in the same PR. See [Contributing](CONTRIBUTING.md) and the [native capability map](tools/native/cli-parity.json). Signed in-app updates use Sparkle; provisioning and the first manual upgrade are covered in the [release procedure](scripts/RELEASES.md).
 
 ## License
 

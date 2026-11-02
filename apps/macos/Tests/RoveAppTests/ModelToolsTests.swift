@@ -60,6 +60,7 @@ struct ModelToolsTests {
     model.replicates = "0"
     #expect(!model.valid)
     model.replicates = "5"
+    model.maxAttempts = "200000"
     model.seed = "3"
     model.start()
     await model.waitForExit()
@@ -68,15 +69,20 @@ struct ModelToolsTests {
     let saved = try #require(model.predictions.first)
     // 2,000 steps sampled every 100 give 21 samples; 10% burn-in discards 2.
     let source = saved.report.source
-    #expect(source.totalSamples == 21 && source.discardedSamples == 2 && source.retainedSamples == 19)
+    #expect(
+      source.totalSamples == 21 && source.discardedSamples == 2 && source.retainedSamples == 19)
     #expect(saved.report.replicates == 5 && saved.report.seed == 3)
+    #expect(saved.report.maxAttemptsPerCharacter == 200_000)
     #expect(saved.report.global["parsimony_length"]?.validPairs == 5)
     #expect(
       PredictiveReport.statistics.allSatisfy { name in
         saved.report.global[name].map { $0.validPairs + $0.undefinedPairs == 5 } == true
       })
-    for file in ["predictive.json", "replicates.jsonl", "characters.tsv", "matrices/replicate-00001.nex"] {
-      #expect(FileManager.default.fileExists(atPath: saved.directory.appendingPathComponent(file).path))
+    for file in [
+      "predictive.json", "replicates.jsonl", "characters.tsv", "matrices/replicate-00001.nex",
+    ] {
+      #expect(
+        FileManager.default.fileExists(atPath: saved.directory.appendingPathComponent(file).path))
     }
     #expect(saved.directory.deletingLastPathComponent().lastPathComponent == "predictions")
     await model.load()
@@ -102,7 +108,9 @@ struct ModelToolsTests {
       source: model.source, matrix: other,
       output: folder.appendingPathComponent("predictions/rejected"), executable: engine,
       burnin: 10, replicates: 2, seed: 1)
-    await #expect(throws: ImportError.self) { try await request.execute(with: EngineTool()) { _ in } }
+    await #expect(throws: ImportError.self) {
+      try await request.execute(with: EngineTool()) { _ in }
+    }
     do {
       _ = try await request.execute(with: EngineTool()) { _ in }
     } catch {
@@ -132,13 +140,16 @@ struct ModelToolsTests {
     // A finished command is not reported as cancelled, whatever the flag says.
     let late = EngineTool()
     let done = try await late.execute(
-      executable: URL(fileURLWithPath: "/bin/sh"), arguments: ["-c", "exit 0"]) { _ in }
+      executable: URL(fileURLWithPath: "/bin/sh"), arguments: ["-c", "exit 0"]
+    ) { _ in }
     late.cancel()
     #expect(done.status == 0)
     let early = EngineTool()
     early.cancel()
     await #expect(throws: CancellationError.self) {
-      try await early.execute(executable: URL(fileURLWithPath: "/bin/sh"), arguments: ["-c", "exit 0"]) { _ in }
+      try await early.execute(
+        executable: URL(fileURLWithPath: "/bin/sh"), arguments: ["-c", "exit 0"]
+      ) { _ in }
     }
   }
 
@@ -147,13 +158,15 @@ struct ModelToolsTests {
     defer { try? FileManager.default.removeItem(at: folder) }
     let matrix = try copy("fixtures/reference/20x50/matrix.nex", to: folder, as: "matrix.nex")
     let other = try copy("fixtures/synthetic/control_20x50.nex", to: folder, as: "control.nex")
-    let relaxed = try await run(folder.appendingPathComponent("relaxed"), matrix: matrix, seed: "42")
+    let relaxed = try await run(
+      folder.appendingPathComponent("relaxed"), matrix: matrix, seed: "42")
     let strict = try await run(
       folder.appendingPathComponent("strict"), matrix: matrix, seed: "43", clock: "strict")
     let control = try await run(folder.appendingPathComponent("control"), matrix: other, seed: "9")
 
     let model = MarginalLikelihoodModel(entry: relaxed, executable: engine)
-    #expect(model.available && model.sampleEvery == 100 && model.steps == "200" && model.seed == "42")
+    #expect(
+      model.available && model.sampleEvery == 100 && model.steps == "200" && model.seed == "42")
     model.powers = "4"
     model.alpha = "0.3"
     model.steps = "400"
@@ -163,7 +176,8 @@ struct ModelToolsTests {
     let arguments = try schedule.arguments(
       draft: try #require(relaxed.draft), output: URL(fileURLWithPath: "/tmp/estimate"))
     #expect(arguments.first == "marginal")
-    #expect(contiguous(["--powers", "4", "--alpha", "0.3", "--burnin-percent", "25"], in: arguments))
+    #expect(
+      contiguous(["--powers", "4", "--alpha", "0.3", "--burnin-percent", "25"], in: arguments))
     #expect(contiguous(["--model", "reference", "--conditioning", "variable"], in: arguments))
     #expect(!arguments.contains("--chains") && arguments.contains("--expect-input-sha256"))
     model.steps = "450"
@@ -209,9 +223,14 @@ struct ModelToolsTests {
       #expect(delta.standardError == nil)
     }
 
-    #expect(MarginalLikelihoodModel.progress(from: "0.300000\t20\t-1.0\t-2.0\t3.0\t0.1")?.step == 20)
-    #expect(MarginalLikelihoodModel.progress(from: "0.300000\t20\t-1.0\t-2.0\t3.0\t0.1")?.power == "0.300000")
-    #expect(MarginalLikelihoodModel.progress(from: "power\tstep\tposterior\tlikelihood\tprior\tseconds") == nil)
+    #expect(
+      MarginalLikelihoodModel.progress(from: "0.300000\t20\t-1.0\t-2.0\t3.0\t0.1")?.step == 20)
+    #expect(
+      MarginalLikelihoodModel.progress(from: "0.300000\t20\t-1.0\t-2.0\t3.0\t0.1")?.power
+        == "0.300000")
+    #expect(
+      MarginalLikelihoodModel.progress(from: "power\tstep\tposterior\tlikelihood\tprior\tseconds")
+        == nil)
 
     // A cancelled estimate is not listed; its folder keeps the partial traces.
     let long = MarginalLikelihoodModel(entry: relaxed, executable: engine)
@@ -222,7 +241,8 @@ struct ModelToolsTests {
     let estimates = relaxed.directory.appendingPathComponent("marginal")
     func partial() -> URL? {
       let children =
-        (try? FileManager.default.contentsOfDirectory(at: estimates, includingPropertiesForKeys: nil))
+        (try? FileManager.default.contentsOfDirectory(
+          at: estimates, includingPropertiesForKeys: nil))
         ?? []
       return children.first {
         $0.lastPathComponent != own.directory.lastPathComponent
@@ -244,10 +264,20 @@ struct ModelToolsTests {
     // An estimate of another model under this run's folder is not this run's.
     var changed = try #require(relaxed.draft?.settings)
     changed.conditioning = "none"
-    #expect(!own.matches(AnalysisDraft(matrix: matrix, report: try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine), settings: changed)))
+    #expect(
+      !own.matches(
+        AnalysisDraft(
+          matrix: matrix,
+          report: try await MatrixInspector.inspect(
+            matrix, gapsAsMissing: false, executable: engine), settings: changed)))
     changed = try #require(relaxed.draft?.settings)
     changed.sampleEvery = 50
-    #expect(!own.matches(AnalysisDraft(matrix: matrix, report: try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine), settings: changed)))
+    #expect(
+      own.matches(
+        AnalysisDraft(
+          matrix: matrix,
+          report: try await MatrixInspector.inspect(
+            matrix, gapsAsMissing: false, executable: engine), settings: changed)))
   }
 
   private func contiguous(_ part: [String], in whole: [String]) -> Bool {

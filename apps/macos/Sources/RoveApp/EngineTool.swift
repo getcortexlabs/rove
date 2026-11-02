@@ -45,6 +45,8 @@ final class EngineTool: @unchecked Sendable {
     let errors = Pipe()
     let owner = Pipe()
     let child = Process()
+    EngineActivity.shared.begin()
+    defer { EngineActivity.shared.end() }
     child.executableURL = executable
     child.arguments = arguments
     child.standardInput = owner

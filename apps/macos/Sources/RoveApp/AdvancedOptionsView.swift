@@ -14,6 +14,7 @@ struct AdvancedOptionsSection: View {
           prior
           if settings.chains > 1 && settings.stopWhenConverged { thresholds }
           checkpoints
+          computation
           schedule
         }.padding(.top, 18)
       } label: {
@@ -24,7 +25,7 @@ struct AdvancedOptionsSection: View {
               .font(.system(size: 11)).foregroundStyle(Lab.secondary)
           }
           Spacer()
-          if settings.usesAdvancedOptions {
+          if settings.usesAdvancedOptions || settings.usesExecutionOptions {
             Text(strings("In use")).font(.system(size: 10, weight: .medium))
               .foregroundStyle(Lab.ice).padding(.horizontal, 9).padding(.vertical, 5)
               .background(.white.opacity(0.045), in: Capsule())
@@ -32,7 +33,37 @@ struct AdvancedOptionsSection: View {
         }
       }.font(.system(size: 12))
     }
-    .onAppear { if settings.usesAdvancedOptions { expanded = true } }
+    .onAppear {
+      if settings.usesAdvancedOptions || settings.usesExecutionOptions { expanded = true }
+    }
+  }
+
+  private var computation: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Eyebrow(text: strings("Computation"))
+      Picker(strings("Likelihood backend"), selection: $workspace.settings.backend) {
+        Text(strings("Automatic · recommended")).tag("automatic")
+        if AnalysisSettings.backends.contains("neon") { Text("ARM NEON").tag("neon") }
+        Text(strings("Portable")).tag("portable")
+      }.frame(maxWidth: 400)
+      Text(
+        strings(
+          "Automatic uses the optimized backend for this Mac. Portable is useful for numerical comparisons."
+        )
+      )
+      .font(.system(size: 10)).foregroundStyle(Lab.muted)
+      Text(strings("Update progress every (steps)")).font(.system(size: 11, weight: .medium))
+      TextField(
+        strings("Update progress every (steps)"),
+        text: Binding(
+          get: { settings.printEvery.map(String.init) ?? "" },
+          set: { workspace.settings.printEvery = $0.isEmpty ? nil : (Int($0) ?? 0) }),
+        prompt: Text(strings("Automatic"))
+      )
+      .textFieldStyle(.roundedBorder).frame(maxWidth: 400)
+      Text(strings("Changes progress reporting, not how often samples are saved."))
+        .font(.system(size: 10)).foregroundStyle(Lab.muted)
+    }
   }
 
   private var prior: some View {
@@ -201,6 +232,11 @@ extension AnalysisSettings {
     var rows: [(String, String)] = []
     if sampleFromPrior {
       rows.append(("Sampling target", strings("Priors only · characters ignored")))
+    }
+    if chains > 1 { rows.append(("Comparison burn-in", "\(comparisonBurnin)%")) }
+    if backend != "automatic" { rows.append(("Likelihood backend", backend)) }
+    if let printEvery {
+      rows.append(("Progress interval", strings("Every %@ steps", strings.number(printEvery))))
     }
     if stopWhenConverged {
       var thresholds = strings(

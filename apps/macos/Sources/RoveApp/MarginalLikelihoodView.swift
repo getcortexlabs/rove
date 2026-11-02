@@ -23,7 +23,7 @@ struct MarginalLikelihoodView: View {
         }
         Text(
           strings(
-            "Power posteriors estimate the log marginal likelihood of this run's model: the probability of the matrix with every tree and parameter integrated out, priors included. The difference between two models is a log Bayes factor."
+            "Power posteriors estimate the log marginal likelihood of the selected model: the probability of the matrix with every tree and parameter integrated out, priors included. The difference between two models is a log Bayes factor."
           )
         )
         .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(4)
@@ -59,12 +59,13 @@ struct MarginalLikelihoodView: View {
         field("Powers", text: $model.powers, width: 60)
         field("Alpha", text: $model.alpha, width: 60)
         field("Steps per power", text: $model.steps, width: 110)
+        field("Sampling interval", text: $model.samplingInterval, width: 110)
         field("Burn-in (%)", text: $model.burnin, width: 70)
         field("Seed", text: $model.seed, width: 130)
       }.disabled(model.busy)
       Text(
         strings(
-          "Powers are quantiles of Beta(alpha, 1), from one down to zero; a smaller alpha places more of them near zero, where the mean log-likelihood changes fastest. Each power runs the steps above and logs every %@ steps, as the run did. Chains, checkpoints and automatic stopping are not available.",
+          "Powers are quantiles of Beta(alpha, 1), from one down to zero; a smaller alpha places more of them near zero, where the mean log-likelihood changes fastest. Each power runs the steps above and logs every %@ steps. Chains, checkpoints and automatic stopping are not available.",
           strings.number(model.sampleEvery))
       )
       .font(.system(size: 10)).foregroundStyle(Lab.muted).lineSpacing(3)
@@ -218,6 +219,7 @@ struct MarginalLikelihoodView: View {
       "%@ powers · alpha %@ · %@ steps per power · %@%% burn-in · seed %@",
       strings.number(value.powers), number(value.alpha, digits: 2),
       strings.number(value.stepsPerPower), String(value.burninPercent), String(value.seed))
+      + " · " + strings("Every %@ steps", strings.number(value.sampleEvery))
   }
 
   private func number(_ value: Double, digits: Int) -> String {

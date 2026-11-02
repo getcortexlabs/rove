@@ -53,6 +53,10 @@ final class Workspace {
   var outputParent = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(
     "Rove Runs")
   var isRunning: Bool { run?.isActive == true || benchmark.isRunning }
+  var hasActiveWork: Bool {
+    isRunning || loading || toolsBusy || treeSummary?.busy == true
+      || traceDiagnostics?.busy == true || EngineActivity.shared.isActive
+  }
   var canOpenBenchmark: Bool {
     accessAllowed() && run?.isActive != true && !loading && treeSummary == nil && !toolsBusy
   }
@@ -238,6 +242,20 @@ final class Workspace {
     panel.canChooseDirectories = false
     panel.allowsMultipleSelection = false
     if panel.runModal() == .OK, let url = panel.url { openTreeFile(url) }
+  }
+
+  func chooseTraceFile() -> Bool {
+    guard !loading, traceDiagnostics?.busy != true else { return false }
+    let panel = NSOpenPanel()
+    panel.title = strings("Open trace file…")
+    panel.canChooseDirectories = false
+    panel.allowsMultipleSelection = false
+    guard panel.runModal() == .OK, let file = panel.url else { return false }
+    // Reports stay under Rove's output folder; the selected trace is read only.
+    let directory = outputParent.appendingPathComponent("trace-\(UUID())")
+    traceDiagnostics = TraceDiagnosticsModel(
+      directory: directory, executable: executable, source: file)
+    return true
   }
 
   /// Prepares the folder that keeps the file's summaries, lists it in History
@@ -509,15 +527,20 @@ final class Workspace {
   }
 
   func runComparison(for entry: HistoryEntry) -> RunComparisonModel {
-    RunComparisonModel(entry: entry, executable: executable)
+    if let model = runComparisons[entry.id] { return model }
+    let model = RunComparisonModel(entry: entry, executable: executable)
+    runComparisons[entry.id] = model
+    return model
   }
 
   /// Checks and estimates keep running while History shows another run.
   var predictiveChecks: [String: PredictiveCheckModel] = [:]
   var marginalEstimates: [String: MarginalLikelihoodModel] = [:]
+  var runComparisons: [String: RunComparisonModel] = [:]
   var toolsBusy: Bool {
     predictiveChecks.values.contains(where: \.busy)
       || marginalEstimates.values.contains(where: \.busy)
+      || runComparisons.values.contains(where: \.busy)
   }
 
   func predictiveCheck(for entry: HistoryEntry) -> PredictiveCheckModel {
@@ -550,6 +573,31 @@ final class Workspace {
     panel.canChooseFiles = false
     panel.allowsMultipleSelection = false
     guard panel.runModal() == .OK, let url = panel.url else { return }
+    if FileManager.default.fileExists(atPath: url.appendingPathComponent("run.json").path) {
+      let matrix = NSOpenPanel()
+      matrix.title = strings("Choose the original matrix")
+      matrix.message = strings(
+        "Rove checks its fingerprint before importing this command-line run. The results stay in their original folder."
+      )
+      matrix.canChooseDirectories = false
+      matrix.allowsMultipleSelection = false
+      guard matrix.runModal() == .OK, let input = matrix.url else { return }
+      loading = true
+      Task {
+        defer { loading = false }
+        do {
+          let directory = try await CommandLineImport.prepare(
+            url, matrix: input, under: outputParent, executable: executable)
+          history.rememberRun(directory)
+          await history.reload()
+          selectedHistoryID = directory.path
+        } catch {
+          self.error = "The run could not be imported."
+          errorDetails = error.localizedDescription
+        }
+      }
+      return
+    }
     guard
       ["session.json", "setup.rove.json"].contains(where: {
         FileManager.default.fileExists(atPath: url.appendingPathComponent($0).path)
@@ -561,6 +609,37 @@ final class Workspace {
     }
     history.rememberRun(url)
     Task { await history.reload() }
+  }
+
+  func prepareModelComparison() {
+    guard canStartRun, let file, let report, !settings.sampleFromPrior,
+      !settings.dating.estimatesProcess
+    else { return }
+    let directory = outputParent.appendingPathComponent("model-\(UUID())")
+    var modelSettings = settings
+    modelSettings.chains = 1
+    modelSettings.stopWhenConverged = false
+    modelSettings.minESS = nil
+    modelSettings.maxRhat = nil
+    modelSettings.checkEvery = nil
+    modelSettings.checkpointEvery = nil
+    modelSettings.comparisonBurnin = 10
+    do {
+      let draft = AnalysisDraft(
+        matrix: file, report: report, settings: modelSettings, monophyly: monophyly,
+        outgroup: outgroup)
+      try draft.validate()
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      try draft.write(to: directory.appendingPathComponent("setup.rove.json"))
+      try Data().write(to: directory.appendingPathComponent("model-setup"))
+      history.rememberRun(directory)
+      showingHistory = true
+      selectedHistoryID = directory.path
+      Task { await history.reload() }
+    } catch {
+      self.error = "The model comparison setup could not be saved."
+      errorDetails = error.localizedDescription
+    }
   }
 
 }

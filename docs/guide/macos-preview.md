@@ -10,6 +10,45 @@ live progress and cancellation. BEAST and Java are not required.
 
 ![The native Rove workspace](/images/macos-preview.png)
 
+## Updates and native controls
+
+Signed distribution builds include **Rove → Check for Updates…** and an
+**Updates** section in Settings. Automatic checks are enabled; automatic
+downloads and installation on quit are optional. Installation waits for active
+calculations. If an installation was requested while work was running, finish
+that work and choose **Install update and relaunch**. Local builds do not check
+the distribution feed. Existing 0.1.1 installations require one manual upgrade
+because they have no updater. The first live update also requires release-key
+provisioning and a test between two signed builds; see the
+[release procedure](https://github.com/getcortexlabs/rove/blob/main/scripts/RELEASES.md).
+
+The exploration plan accepts 1–16 independent chains and a **Custom sampling
+plan** with any positive step count and sampling interval that divides it.
+Comparison burn-in is editable. **Advanced sampling → Computation** selects
+Automatic, ARM NEON or Portable and the progress reporting interval. Automatic
+uses the native backend. Progress updates do not change sample saving.
+
+**File → Open trace file…** analyzes an external trace without changing it.
+Diagnostics accept burn-in as a percentage or a count of saved samples, including
+the initial state. Sample counts are not MCMC steps. Reports stay under the
+selected Rove output folder. **History → Add a run folder** also imports completed
+CLI sampling runs: select their original matrix so Rove can check its fingerprint.
+The app creates a history wrapper and leaves the original output folder in place;
+keep that folder available.
+
+**Estimate model evidence…** on the review screen opens a separate power-posterior
+plan without requiring an earlier sampling run. The setup stays in History as
+**Model setup**. Powers, alpha, steps, sampling interval, burn-in and seed are
+editable. Existing completed runs offer the same controls. Estimated FBD process
+parameters remain excluded for the scientific reasons in the model comparison
+guide. Predictive checks also expose the maximum simulation attempts per
+character; reaching that limit stops the check rather than relaxing its model.
+
+CLI analysis capabilities must ship through Swift in the same change. JSON events,
+input hashes and cancellation pipes are handled automatically. This requirement
+and the command map are part of the repository's contribution and CI checks.
+
+
 ## Beta access and your first visit
 
 The native beta opens with **I have an invitation** and **Join the beta list**.
@@ -42,7 +81,7 @@ list is not a newsletter subscription. Contact [Cortex Labs](https://getcortexla
 to request removal from the list. The standalone Rust CLI does not require beta
 access or these network services.
 
-Active beta participants receive release emails with a macOS download link and release notes. Waiting-list membership alone does not receive these notices. To leave the beta, reply to a release email.
+Once release notifications are configured, active beta participants receive release emails with a macOS download link and release notes. Waiting-list membership alone does not receive these notices. To leave the beta, reply to a release email.
 
 ## Build and open
 
@@ -56,7 +95,7 @@ scripts/build-macos.sh
 open build/macos/Rove.app
 ```
 
-This builds a local application with an ad-hoc signature. `scripts/package-macos.sh` builds the release configuration and wraps it in a disk image; with `CODESIGN_ID` and `NOTARY_PROFILE` set, it signs and notarizes the app and the image the way releases are built. The app has a dark appearance inspired by
+This builds a local application with an ad-hoc signature. `scripts/package-macos.sh` builds the release configuration and wraps it in a disk image; with `CODESIGN_ID`, `NOTARY_PROFILE` and `ROVE_SPARKLE_PUBLIC_KEY` set, it signs and notarizes the app and the image the way releases are built. The app has a dark appearance inspired by
 Cortex Labs and supports English and Brazilian Portuguese.
 
 ## Language and settings
@@ -396,11 +435,11 @@ cover synthetic traces and a pinned BEAST reference.
 
 ![Comparison of four short independent chains](/images/macos-chains.png)
 
-In **Model → The exploration plan**, choose **1, 2 or 4 chains**. The step count applies to each chain. Multiple chains run at the same time with distinct, recorded seeds; progress shows each chain separately. Cancellation closes the whole group.
+In **Model → The exploration plan**, choose **1 to 16 chains**. The step count applies to each chain. Multiple chains run at the same time with distinct, recorded seeds; progress shows each chain separately. Cancellation closes the whole group.
 
 Completed groups and their History details include **Do the chains agree?**, with R-hat and ESS for every traced statistic and a clade-frequency comparison. Select a chain to open its diagnostics, summarize its trees or inspect its folder. Saved setups preserve the chain count; older setups remain single-chain. Outputs stay separate so one chain's burn-in is never mistaken for another's continuation.
 
-**Stop when diagnostic thresholds are met** is optional and off by default. It uses 10% burn-in, ESS ≥ 200 per chain, R-hat ≤ 1.01 for all traced scalar statistics, at least 1,000 retained samples per chain and two consecutive checks. The actual stopping step and reason are saved. These are scalar diagnostic criteria, not a guarantee of topology convergence; inspect the clades and traces. See [independent chains](./sampler#independent-chains) for the CLI options and limits.
+**Stop when diagnostic thresholds are met** is optional and off by default. Its defaults are 10% comparison burn-in, ESS ≥ 200 per chain and R-hat ≤ 1.01 for all traced scalar statistics, at least 1,000 retained samples per chain and two consecutive checks. The actual stopping step and reason are saved. These are scalar diagnostic criteria, not a guarantee of topology convergence; inspect the clades and traces. See [independent chains](./sampler#independent-chains) for the CLI options and limits.
 
 **Advanced sampling**, collapsed below the exploration plan, exposes the remaining `rove sample` options. **Sample from the priors only** runs without the characters. With automatic stopping on, the minimum ESS, maximum R-hat and check interval can replace the engine's defaults of 200, 1.01 and its own schedule. The checkpoint interval can be set in steps instead of the default of about every 30 seconds. The proposal schedule offers the classical default, the two schedules evaluated in the [relaxed-clock](https://github.com/getcortexlabs/rove/blob/main/benchmarks/sampling/2026-10-29/README.md) and [gamma-frequency](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md) reports, and custom weights and starting step sizes per move, with step-size tuning that can be turned off. Each option is validated before the engine starts, recorded in the run record and in History, and saved in setups as format 5, which earlier app versions refuse rather than run without it. Neither evaluated schedule is recommended; the reports record what each one gained and lost.
 
