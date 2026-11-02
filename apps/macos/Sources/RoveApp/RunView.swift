@@ -84,6 +84,42 @@ struct RunView: View {
             metric("Groups constrained", strings.number(run.request.draft.constraints.count))
             Spacer()
           }
+          if run.status == .running || run.status == .preparing {
+            VStack(alignment: .leading, spacing: 12) {
+              HStack(spacing: 30) {
+                metric(
+                  "Estimated time to step limit",
+                  run.estimatedRemaining.map { "≈ " + duration($0) }
+                    ?? strings("Learning the pace…"))
+                if run.request.draft.settings.chains == 1,
+                  let estimate = run.chainTiming[1]?.estimate
+                {
+                  metric("Time per million steps", "≈ " + duration(estimate.secondsPerMillion))
+                }
+              }
+              if run.request.draft.settings.chains > 1 {
+                ForEach(1...run.request.draft.settings.chains, id: \.self) { chain in
+                  if let estimate = run.chainTiming[chain]?.estimate {
+                    Text(
+                      strings(
+                        "Chain %@ · ≈ %@ left · %@ per million steps", String(chain),
+                        duration(estimate.remainingSeconds), duration(estimate.secondsPerMillion))
+                    )
+                    .font(.system(size: 11, design: .monospaced)).foregroundStyle(Lab.secondary)
+                  } else {
+                    Text(strings("Chain %@ · learning the pace…", String(chain)))
+                      .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+                  }
+                }
+              }
+              Text(
+                strings(
+                  "Based on recent active time. CPU load can change this estimate. It predicts the requested step limit, not convergence; automatic stopping may finish earlier."
+                )
+              )
+              .font(.system(size: 11)).foregroundStyle(Lab.muted).lineSpacing(3)
+            }
+          }
           DisclosureGroup(strings("Applied analysis setup")) {
             VStack(alignment: .leading, spacing: 20) {
               DatingSummary(dating: run.request.draft.settings.dating, strings: strings)
@@ -138,6 +174,7 @@ struct RunView: View {
         VStack(alignment: .leading, spacing: 14) {
           HStack {
             Eyebrow(text: strings("Run folder"))
+            AnalysisHelpButton(topic: .files, strings: strings)
             Spacer()
             Button {
               NSWorkspace.shared.open(run.request.directory)
@@ -223,7 +260,8 @@ struct RunView: View {
   }
 
   private func duration(_ seconds: TimeInterval) -> String {
-    let total = max(0, Int(seconds))
+    guard seconds.isFinite, seconds < Double(Int.max) else { return "—" }
+    let total = max(0, Int(seconds.rounded(.up)))
     return String(format: "%02d:%02d:%02d", total / 3600, (total / 60) % 60, total % 60)
   }
 

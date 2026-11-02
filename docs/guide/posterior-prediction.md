@@ -10,6 +10,14 @@ This feature is available through the Rust CLI and, for completed runs, from His
 
 Dated runs are also supported: predictions use the sampled tip ages, global clock rate and relative branch rates. See [fossil tip dating](./tip-dating).
 
+## A worked example in the app
+
+Use the bundled public 20 × 50 matrix, run an analysis and review Diagnostics and agreement between independent runs. Open **History → Posterior predictive check → Walk through an example** for the offline explanation. Choose a source chain, burn-in and number of replicates, then run the check. For 10,001 saved states and 10% burn-in, 1,000 are discarded and 9,001 remain. One replicate means one new simulated matrix, using a posterior state drawn with replacement.
+
+As an **illustrative report, not a measured result for that matrix**, suppose the observed data have 30 informative characters. Out of 100 valid simulations, 12 have at least 30, 96 have at most 30 and 8 have exactly 30. The upper tail is 0.12; the lower tail is 0.96. Ties count in both, so the tails need not sum to one. Inspect the report's **Informative characters** row, valid-pair count, ties and intervals, then open the replicate matrices to investigate discrepancies.
+
+A small tail identifies a feature to investigate, not an automatic failure. A tail is not the probability that the model or tree is correct. Adequacy, convergence, clade support and comparison between models answer different questions. More replicates reduce simulation noise but cannot repair poor posterior sampling; the intervals exclude MCMC error.
+
 ## Run a check
 
 First inspect sampling and convergence diagnostics. Then supply a completed run directory containing `run.json`, `trace.log` and `trees.nexus`, plus its exact original NEXUS input:

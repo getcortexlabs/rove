@@ -123,14 +123,27 @@ struct SetupView: View {
           HStack(alignment: .top, spacing: 25) {
             VStack(alignment: .leading, spacing: 9) {
               Eyebrow(text: strings("Chain length"))
-              Picker(strings("Chain length"), selection: $workspace.settings.steps) {
-                if ![1_000_000, 10_000_000, 100_000_000].contains(workspace.settings.steps) {
-                  Text(strings("%@ steps", strings.number(workspace.settings.steps))).tag(
-                    workspace.settings.steps)
+              Picker(
+                strings("Chain length"),
+                selection: Binding(
+                  get: { workspace.settings.samplingPreset?.steps ?? 0 },
+                  set: { value in
+                    if let preset = SamplingPreset.all.first(where: { $0.steps == value }) {
+                      workspace.settings.apply(preset)
+                    }
+                  })
+              ) {
+                if workspace.settings.samplingPreset == nil {
+                  Text(strings("%@ steps · custom", strings.number(workspace.settings.steps))).tag(
+                    0)
                 }
-                Text(strings("1 million steps")).tag(1_000_000)
-                Text(strings("10 million steps")).tag(10_000_000)
-                Text(strings("100 million steps")).tag(100_000_000)
+                ForEach(SamplingPreset.all) { preset in
+                  Text(
+                    preset.millions == 1
+                      ? strings("1 million steps")
+                      : strings("%@ million steps", strings.number(preset.millions))
+                  ).tag(preset.steps)
+                }
               }.labelsHidden().frame(maxWidth: .infinity)
               Text(strings("More steps allow more exploration.")).font(.system(size: 10))
                 .foregroundStyle(
@@ -139,13 +152,14 @@ struct SetupView: View {
             VStack(alignment: .leading, spacing: 9) {
               Eyebrow(text: strings("Save a sample every"))
               Picker(strings("Sampling interval"), selection: $workspace.settings.sampleEvery) {
-                if ![100, 1_000, 10_000].contains(workspace.settings.sampleEvery) {
+                if !SamplingPreset.all.map(\.sampleEvery).contains(workspace.settings.sampleEvery) {
                   Text(strings("%@ steps", strings.number(workspace.settings.sampleEvery))).tag(
                     workspace.settings.sampleEvery)
                 }
-                Text(strings("100 steps")).tag(100)
-                Text(strings("1,000 steps")).tag(1_000)
-                Text(strings("10,000 steps")).tag(10_000)
+                ForEach(SamplingPreset.all) { preset in
+                  Text(strings("%@ steps", strings.number(preset.sampleEvery))).tag(
+                    preset.sampleEvery)
+                }
               }.labelsHidden().frame(maxWidth: .infinity)
               Text(strings("Controls how often a state is recorded.")).font(.system(size: 10))
                 .foregroundStyle(Lab.muted)
@@ -157,6 +171,31 @@ struct SetupView: View {
               Text(strings("A repeatable starting point.")).font(.system(size: 10)).foregroundStyle(
                 Lab.muted)
             }.frame(width: 155)
+          }
+          Text(
+            strings(
+              "Presets save 10,000 samples per chain, plus the initial state, before burn-in. Changing the interval makes the plan custom. Saved samples are not independent samples (ESS)."
+            )
+          )
+          .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
+          if !workspace.settings.samplingIntervalAdjustments.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+              Text(
+                strings(
+                  "These intervals must be multiples of the sampling interval. Review the suggested values before applying them."
+                )
+              )
+              .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+              ForEach(workspace.settings.samplingIntervalAdjustments, id: \.label) { adjustment in
+                Text("\(strings(adjustment.label)): \(strings.number(adjustment.value))")
+                  .font(.system(size: 11, design: .monospaced))
+              }
+              Button(strings("Apply interval adjustments")) {
+                workspace.settings.alignSamplingIntervals()
+              }
+              .buttonStyle(LabButtonStyle(compact: true))
+            }.padding(14).background(
+              Lab.lilac.opacity(0.06), in: RoundedRectangle(cornerRadius: 12))
           }
           Text(
             strings(

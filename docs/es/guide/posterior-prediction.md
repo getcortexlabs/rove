@@ -10,6 +10,14 @@ La función está disponible mediante el CLI en Rust y, para ejecuciones complet
 
 También se admiten ejecuciones con datación: las predicciones usan edades muestreadas, tasa global del reloj y tasas relativas de ramas. Consulte [datación de fósiles](./tip-dating).
 
+## Un ejemplo en la aplicación
+
+Usa la matriz pública de 20 × 50 incluida en la aplicación, ejecuta un análisis y revisa Diagnostics y la concordancia entre ejecuciones independientes. Abre **History → Posterior predictive check → Walk through an example** para consultar la explicación sin conexión. Elige cadena de origen, burn-in y réplicas, y ejecuta la comprobación. Con 10.001 estados guardados y 10% de burn-in, se descartan 1.000 y quedan 9.001. Cada réplica es una matriz simulada nueva, basada en un estado posterior seleccionado con reemplazo.
+
+Como **informe ilustrativo, no un resultado medido de esa matriz**, supongamos que los datos observados tienen 30 caracteres informativos. De 100 simulaciones válidas, 12 tienen al menos 30, 96 tienen como máximo 30 y 8 tienen exactamente 30. La cola superior es 0,12 y la inferior 0,96. Los empates cuentan en ambas, por lo que no tienen que sumar uno. Revisa **Informative characters**, los pares válidos, empates e intervalos, y abre las matrices replicadas para investigar discrepancias.
+
+Una cola pequeña señala una característica que investigar, no un fallo automático. No es la probabilidad de que el modelo o árbol sea correcto. Adecuación, convergencia, soporte de clados y comparación de modelos responden preguntas distintas. Más réplicas reducen el ruido de simulación pero no corrigen un muestreo posterior deficiente; los intervalos excluyen el error MCMC.
+
 ## Ejecutar una comprobación
 
 Primero revisa los diagnósticos de muestreo y convergencia. Proporciona un directorio completado con `run.json`, `trace.log` y `trees.nexus`, junto con su entrada NEXUS original exacta:

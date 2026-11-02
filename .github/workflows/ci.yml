@@ -114,6 +114,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Test release notification client
+        run: node --test scripts/notify-beta.test.mjs
       - name: Build documentation
         run: npm run docs:build
 

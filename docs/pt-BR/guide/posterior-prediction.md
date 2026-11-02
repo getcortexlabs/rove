@@ -10,6 +10,14 @@ O recurso está disponível pelo CLI em Rust e, para execuções concluídas, no
 
 Execuções com datação também são aceitas: as previsões usam as idades amostradas, a taxa global do relógio e as taxas relativas dos ramos. Veja [datação de fósseis](./tip-dating).
 
+## Um exemplo no aplicativo
+
+Use a matriz pública de 20 × 50 incluída no aplicativo, execute a análise e confira os Diagnósticos e a concordância entre execuções independentes. Abra **Histórico → Checagem preditiva posterior → Veja um exemplo passo a passo** para consultar a explicação offline. Escolha a cadeia de origem, o burn-in e a quantidade de réplicas e execute a checagem. Com 10.001 estados salvos e burn-in de 10%, são descartados 1.000 e restam 9.001. Cada réplica é uma matriz simulada nova, a partir de um estado posterior sorteado com reposição.
+
+Em um **relatório ilustrativo, não um resultado medido dessa matriz**, suponha que os dados observados tenham 30 caracteres informativos. Das 100 simulações válidas, 12 têm pelo menos 30, 96 têm no máximo 30 e 8 têm exatamente 30. A cauda superior é 0,12 e a inferior é 0,96. Empates contam nas duas, então as caudas não precisam somar um. Confira a linha **Caracteres informativos**, a quantidade de pares válidos, os empates e os intervalos; abra as matrizes replicadas para investigar diferenças.
+
+Uma cauda pequena aponta uma característica a investigar, não uma reprovação automática. A cauda não é a probabilidade de o modelo ou a árvore estarem corretos. Adequação, convergência, suporte de clados e comparação entre modelos respondem perguntas diferentes. Mais réplicas reduzem o ruído de simulação, mas não corrigem amostragem posterior ruim; os intervalos não incluem erro de MCMC.
+
 ## Rodar uma checagem
 
 Primeiro examine os diagnósticos de amostragem e convergência. Depois informe a pasta de uma execução concluída, com `run.json`, `trace.log` e `trees.nexus`, junto do NEXUS original exato:

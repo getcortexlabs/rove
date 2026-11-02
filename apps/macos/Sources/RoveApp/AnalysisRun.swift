@@ -8,6 +8,14 @@ final class AnalysisRun {
   private(set) var status = RunStatus.preparing
   private(set) var progress: RunEvent?
   private(set) var chainProgress: [Int: RunEvent] = [:]
+  private(set) var chainTiming: [Int: RunTiming] = [:]
+  var estimatedRemaining: Double? {
+    guard status == .running else { return nil }
+    return RunTiming.remaining(
+      chains: (1...request.draft.settings.chains).map {
+        chainTiming[$0] ?? RunTiming()
+      })
+  }
   var completedSteps: UInt64 {
     if request.draft.settings.chains == 1 { return progress?.step ?? 0 }
     return (1...request.draft.settings.chains).map { chainProgress[$0]?.step ?? 0 }.min() ?? 0
@@ -47,6 +55,9 @@ final class AnalysisRun {
     guard runID == id, isActive else { return }
     if event.step != nil { progress = event }
     if let chain = event.chain { chainProgress[chain] = event }
+    if request.draft.settings.chains == 1 || event.chain != nil {
+      chainTiming[event.chain ?? 1, default: RunTiming()].receive(event)
+    }
     if status == .preparing, event.event != "failed" { status = .running }
   }
 
