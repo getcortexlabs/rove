@@ -161,3 +161,22 @@ acima.
 ## Frequência das propostas da gama
 
 Um [estudo posterior](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md) encontrou apenas uma proposta para a forma da gama a cada 1.100–1.200 passos no exemplo construído de datação com quatro terminais. Aumentar o peso de `gamma_shape_scale` de 0,1 para 3 elevou a ESS da gama por segundo de tempo total do grupo em cerca de 22–24 vezes, mantendo a proposta e o prior. Outros parâmetros passaram a limitar a amostragem, e uma regressão de eficiência impediu a promoção pelos critérios definidos antes das corridas. **O peso padrão continua em 0,1**, inclusive no app Mac. A configuração testada pode ser usada com `--weight gamma_shape_scale=3`; examine todos os parâmetros e os diagnósticos das árvores antes de escolhê-la. Isso não representa uma análise inteira 22–24 vezes mais rápida nem uma medição em hardware M1.
+
+## Configurar o prior do sigma
+
+No app, abra **Prior do sigma do relógio** abaixo do relógio relaxado.
+**Forma · Alpha** e **Escala · Beta** começam em 5 e 0,2. O sigma continua sendo
+estimado; os campos descrevem seu prior, não fixam seu valor. A média da Gamma
+é forma × escala; a variância é forma × escala². Alterar esses valores muda
+as hipóteses da análise, não a gamma dos caracteres nem o tamanho dos passos.
+Beta é explicitamente uma escala, nunca uma taxa.
+
+Na CLI, use `--clock-sigma-shape 2.5 --clock-sigma-scale 0.4` com
+`--model reference`, em `sample` ou `marginal`. Os valores precisam ser positivos,
+finitos e ter normalização logarítmica representável. O relógio estrito rejeita
+essas opções. Checkpoints, execuções só do prior, predição e comparações de modelos
+preservam o prior; comparar cadeias exige priors iguais. `run.json` registra
+`clock_sigma_prior_parameters` com `shape` e `scale` numéricos, além da descrição.
+Registros antigos usam 5 e 0,2. Configurações personalizadas do app usam formato 6
+para impedir que apps antigos ignorem a escolha. Veja
+[Priors de árvore](./tree-priors) para a decisão separada sobre modelos de árvore.

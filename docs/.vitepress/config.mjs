@@ -33,6 +33,7 @@ const locales = {
       tipDating: 'Fossil tip dating',
       modelComparison: 'Model comparison',
       referenceModel: 'The reference model',
+      treePriors: 'Tree priors',
       nexus: 'Reading NEXUS',
       fixtures: 'Synthetic matrices',
       outline: 'On this page',
@@ -66,6 +67,7 @@ const locales = {
       tipDating: 'Datação de fósseis',
       modelComparison: 'Comparação de modelos',
       referenceModel: 'O modelo de referência',
+      treePriors: 'Priors de árvore',
       nexus: 'Lendo NEXUS',
       fixtures: 'Matrizes sintéticas',
       outline: 'Nesta página',
@@ -116,6 +118,7 @@ const locales = {
       tipDating: 'Datación de fósiles',
       modelComparison: 'Comparación de modelos',
       referenceModel: 'El modelo de referencia',
+      treePriors: 'Priors de árbol',
       nexus: 'Lectura de NEXUS',
       fixtures: 'Matrices sintéticas',
       outline: 'En esta página',
@@ -166,6 +169,7 @@ const locales = {
       tipDating: '化石末端定年',
       modelComparison: '模型比较',
       referenceModel: '参考模型',
+      treePriors: '树先验',
       nexus: '读取 NEXUS',
       fixtures: '合成矩阵',
       outline: '本页目录',
@@ -196,7 +200,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, macPreview, runFiles, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, tipDating, modelComparison, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, macPreview, runFiles, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, tipDating, modelComparison, referenceModel, treePriors, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -226,6 +230,7 @@ function themeFor(locale) {
             { text: tipDating, link: `${prefix}/guide/tip-dating` },
             { text: modelComparison, link: `${prefix}/guide/model-comparison` },
             { text: referenceModel, link: `${prefix}/guide/reference-model` },
+            { text: treePriors, link: `${prefix}/guide/tree-priors` },
             { text: nexus, link: `${prefix}/guide/nexus` },
             { text: fixtures, link: `${prefix}/guide/fixtures` }
           ]

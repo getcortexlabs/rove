@@ -2,7 +2,7 @@ use rove::Backend;
 use rove::data::{GapTreatment, Patterns};
 use rove::mcmc::{Conditioning, Move, Sampler, Settings};
 use rove::nexus;
-use rove::rates::{GammaRates, RateVariation, RelaxedClock};
+use rove::rates::{GammaRates, RateVariation, RelaxedClock, SigmaPrior};
 use rove::speciation::BirthDeath;
 use rove::tree::Tree;
 
@@ -284,53 +284,92 @@ fn relaxed_clock_backends_give_identical_samples() {
 
 #[test]
 fn rate_proposals_preserve_the_reference_hyperpriors() {
-    let patterns = data("#NEXUS\nBEGIN DATA; DIMENSIONS NTAX=2 NCHAR=1; MATRIX a 0 b 1; END;");
-    let settings = Settings {
-        sample_from_prior: true,
-        tuning: false,
-        // Holding the tree and its parameters fixed isolates this hierarchy.
-        weights: vec![
-            (Move::GammaShapeScale, 1.0),
-            (Move::ClockSigmaScale, 2.0),
-            (Move::BranchRateScale, 6.0),
-        ],
-        ..Settings::reference()
-    };
-    let mut chain = Sampler::new(&patterns, &settings, 191).unwrap();
-    let (mut shape, mut sigma, mut sigma_squared, mut z, mut z_squared, mut samples) =
-        (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    for step in 0..600_000 {
-        chain.step();
-        if step >= 10_000 && step % 10 == 0 {
-            let rates = chain.rates();
-            let clock = rates.clock.as_ref().unwrap();
-            shape += rates.gamma.unwrap().shape();
-            sigma += clock.sigma();
-            sigma_squared += clock.sigma().powi(2);
-            for rate in clock.rates() {
-                let standardized = (rate.ln() + 0.5 * clock.sigma().powi(2)) / clock.sigma();
-                z += standardized / 2.0;
-                z_squared += standardized.powi(2) / 2.0;
+    for (alpha, beta) in [(5.0, 0.2), (2.0, 0.3)] {
+        let patterns = data("#NEXUS\nBEGIN DATA; DIMENSIONS NTAX=2 NCHAR=1; MATRIX a 0 b 1; END;");
+        let settings = Settings {
+            sample_from_prior: true,
+            clock_sigma_prior: SigmaPrior::new(alpha, beta).unwrap(),
+            tuning: false,
+            // Holding the tree and its parameters fixed isolates this hierarchy.
+            weights: vec![
+                (Move::GammaShapeScale, 1.0),
+                (Move::ClockSigmaScale, 2.0),
+                (Move::BranchRateScale, 6.0),
+            ],
+            ..Settings::reference()
+        };
+        let mut chain = Sampler::new(&patterns, &settings, 191).unwrap();
+        let (mut shape, mut sigma, mut sigma_squared, mut z, mut z_squared, mut samples) =
+            (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        for step in 0..600_000 {
+            chain.step();
+            if step >= 10_000 && step % 10 == 0 {
+                let rates = chain.rates();
+                let clock = rates.clock.as_ref().unwrap();
+                shape += rates.gamma.unwrap().shape();
+                sigma += clock.sigma();
+                sigma_squared += clock.sigma().powi(2);
+                for rate in clock.rates() {
+                    let standardized = (rate.ln() + 0.5 * clock.sigma().powi(2)) / clock.sigma();
+                    z += standardized / 2.0;
+                    z_squared += standardized.powi(2) / 2.0;
+                }
+                samples += 1.0;
             }
-            samples += 1.0;
         }
+        // Shape is Exponential(1) restricted to [0.001, 1000], so its mean is
+        // 1.001 up to an unrepresentably small upper-tail correction. Sigma is
+        // Gamma(alpha, beta); standardized log rates are marginally standard normal.
+        close(shape / samples, 1.001, 0.05, "shape mean");
+        close(sigma / samples, alpha * beta, 0.05, "sigma mean");
+        close(
+            sigma_squared / samples - (sigma / samples).powi(2),
+            alpha * beta * beta,
+            0.04,
+            "sigma variance",
+        );
+        close(z / samples, 0.0, 0.05, "standardized log rate mean");
+        close(
+            z_squared / samples,
+            1.0,
+            0.06,
+            "standardized log rate square",
+        );
     }
-    // Shape is Exponential(1) restricted to [0.001, 1000], so its mean is
-    // 1.001 up to an unrepresentably small upper-tail correction. Sigma is
-    // Gamma(5, 0.2); standardized log rates are marginally standard normal.
-    close(shape / samples, 1.001, 0.05, "shape mean");
-    close(sigma / samples, 1.0, 0.05, "sigma mean");
-    close(
-        sigma_squared / samples - (sigma / samples).powi(2),
-        0.2,
-        0.04,
-        "sigma variance",
-    );
-    close(z / samples, 0.0, 0.05, "standardized log rate mean");
-    close(
-        z_squared / samples,
-        1.0,
-        0.06,
-        "standardized log rate square",
-    );
+}
+
+#[test]
+fn configurable_sigma_priors_match_beast_and_reject_invalid_settings() {
+    let fixture: serde_json::Value =
+        serde_json::from_str(include_str!("support/sigma_priors.json")).unwrap();
+    for row in fixture["sigma_priors"].as_array().unwrap() {
+        let prior = SigmaPrior::new(
+            row["shape"].as_f64().unwrap(),
+            row["scale"].as_f64().unwrap(),
+        )
+        .unwrap();
+        close(
+            prior.log_density(row["sigma"].as_f64().unwrap()),
+            row["log_density"].as_f64().unwrap(),
+            3e-12,
+            "BEAST Gamma density",
+        );
+    }
+    for invalid in [0.0, -1.0, f64::INFINITY, f64::NAN, f64::MAX] {
+        assert!(SigmaPrior::new(invalid, 0.2).is_err());
+    }
+    for invalid in [0.0, -1.0, f64::INFINITY, f64::NAN] {
+        assert!(SigmaPrior::new(5.0, invalid).is_err());
+        assert_eq!(
+            SigmaPrior::default().log_density(invalid),
+            f64::NEG_INFINITY
+        );
+    }
+    for sigma in [0.01_f64, 0.2, 1.0, 5.0, 20.0] {
+        let original = 4.0 * sigma.ln() - sigma / 0.2 - 24.0_f64.ln() - 5.0 * 0.2_f64.ln();
+        assert_eq!(
+            SigmaPrior::default().log_density(sigma).to_bits(),
+            original.to_bits()
+        );
+    }
 }

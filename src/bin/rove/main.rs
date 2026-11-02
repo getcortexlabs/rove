@@ -25,12 +25,14 @@ use partitions::Partitioning;
 use rove::data::GapTreatment;
 use rove::mcmc::output::{TraceWriter, TreeWriter, is_plain_label};
 use rove::mcmc::{Conditioning, Move, Sampler, Settings};
+use rove::rates::SigmaPrior;
 use rove::{Backend, nexus};
 
 const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|informative|none] [--sample-from-prior]
+                   [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
                    [--partitioning observed|declared] [--dating <settings.json>]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
@@ -42,6 +44,7 @@ const USAGE: &str =
                      --powers <2..256> [--alpha <x>] [--burnin-percent <0..99>]
                      [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                      [--model strict|reference] [--conditioning variable|informative|none]
+                     [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
                      [--partitioning observed|declared] [--dating <settings.json>]
                      [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                      [--backend portable|neon] [--print-every <n>] [--cancel-on-stdin-close]
@@ -93,6 +96,7 @@ struct Options {
     partitioning: Partitioning,
     conditioning: Conditioning,
     reference_model: bool,
+    clock_sigma_prior: SigmaPrior,
     sample_from_prior: bool,
     tuning: bool,
     tuning_values: Vec<(Move, f64)>,
@@ -128,6 +132,8 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut partitioning = Partitioning::Observed;
     let mut conditioning = Conditioning::Variable;
     let mut reference_model = false;
+    let mut sigma_shape = 5.0;
+    let mut sigma_scale = 0.2;
     let mut sample_from_prior = false;
     let mut tuning = true;
     let mut tuning_values = Vec::new();
@@ -188,6 +194,16 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 alpha = value("--alpha")?
                     .parse::<f64>()
                     .map_err(|_| "--alpha needs a number")?
+            }
+            "--clock-sigma-shape" | "--clock-sigma-scale" => {
+                let parsed = value(argument)?
+                    .parse::<f64>()
+                    .map_err(|_| format!("{argument} needs a number"))?;
+                if argument == "--clock-sigma-shape" {
+                    sigma_shape = parsed;
+                } else {
+                    sigma_scale = parsed;
+                }
             }
             "--events-json" => events_json = true,
             "--cancel-on-stdin-close" => cancel_on_stdin_close = true,
@@ -300,6 +316,12 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let required = |value: Option<u64>, name: &str| {
         value.ok_or_else(|| format!("{name} is required\n{USAGE}"))
     };
+    if !reference_model
+        && (seen.contains("--clock-sigma-shape") || seen.contains("--clock-sigma-scale"))
+    {
+        return Err("clock sigma prior options require --model reference".into());
+    }
+    let clock_sigma_prior = SigmaPrior::new(sigma_shape, sigma_scale).map_err(|e| e.to_string())?;
     let options = Options {
         command,
         powers: match command {
@@ -331,6 +353,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         partitioning,
         conditioning,
         reference_model,
+        clock_sigma_prior,
         sample_from_prior,
         tuning,
         tuning_values,
@@ -592,6 +615,7 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
     }
     let mut settings = Settings {
         conditioning: options.conditioning,
+        clock_sigma_prior: options.clock_sigma_prior,
         sample_from_prior: options.sample_from_prior,
         monophyly,
         tuning: options.tuning,
@@ -731,7 +755,22 @@ fn model_json(
         (
             "clock_sigma_prior",
             if options.reference_model {
-                Json::text("Gamma(shape=5, scale=0.2)")
+                Json::text(format!(
+                    "Gamma(shape={}, scale={})",
+                    settings.clock_sigma_prior.shape(),
+                    settings.clock_sigma_prior.scale()
+                ))
+            } else {
+                Json::Null
+            },
+        ),
+        (
+            "clock_sigma_prior_parameters",
+            if options.reference_model {
+                Json::Object(vec![
+                    ("shape", Json::Number(settings.clock_sigma_prior.shape())),
+                    ("scale", Json::Number(settings.clock_sigma_prior.scale())),
+                ])
             } else {
                 Json::Null
             },

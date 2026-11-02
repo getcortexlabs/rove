@@ -395,6 +395,16 @@ public final class ReferenceDiagnostics {
             priors.put(new JSONObject().put("sigma", sigma).put("sigma_log_density", gamma.logDensity(sigma))
                     .put("rate_densities", densities));
         }
+        JSONArray sigmaPriors = new JSONArray();
+        for (double[] pair : new double[][]{{5, 0.2}, {1, 2}, {0.5, 0.25}, {2.5, 0.4}, {10, 0.1}}) {
+            Gamma gamma = new Gamma();
+            gamma.initByName("alpha", new RealParameter(Double.toString(pair[0])),
+                    "beta", new RealParameter(Double.toString(pair[1])));
+            for (double sigma : new double[]{0.01, 0.2, 1, 5, 20}) {
+                sigmaPriors.put(new JSONObject().put("shape", pair[0]).put("scale", pair[1])
+                        .put("sigma", sigma).put("log_density", gamma.logDensity(sigma)));
+            }
+        }
         JSONArray mappings = new JSONArray();
         for (int rootIndex : new int[]{3, 4}) {
             Tree tree = new TreeParser("((A:1,B:1):1,C:2);");
@@ -417,7 +427,7 @@ public final class ReferenceDiagnostics {
                     .put("branch_rates", branches).put("lower_after_init", rates.getLower()));
         }
         return new JSONObject().put("gamma_categories", categories).put("clock_priors", priors)
-                .put("branch_mapping", mappings);
+                .put("branch_mapping", mappings).put("sigma_priors", sigmaPriors);
     }
 
     public static void main(String[] args) throws Exception {

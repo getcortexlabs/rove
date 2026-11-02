@@ -162,3 +162,22 @@ descrita arriba.
 ## Frecuencia de las propuestas gamma
 
 Un [estudio posterior](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md) encontró apenas una propuesta para la forma gamma cada 1.100–1.200 pasos en el ejemplo construido de datación con cuatro terminales. Aumentar el peso de `gamma_shape_scale` de 0,1 a 3 elevó la ESS gamma por segundo de tiempo total del grupo unas 22–24 veces, manteniendo la propuesta y el prior. Otros parámetros pasaron a limitar el muestreo y una regresión de eficiencia impidió la promoción según los criterios fijados antes de las ejecuciones. **El peso predeterminado sigue siendo 0,1**, también en la app Mac. La configuración evaluada está disponible mediante `--weight gamma_shape_scale=3`; examine todos los parámetros y los diagnósticos de árboles antes de elegirla. No equivale a un análisis completo 22–24 veces más rápido ni a una medición en hardware M1.
+
+## Configurar el prior de sigma
+
+En el app, abra **Clock sigma prior** debajo del reloj relajado (interfaz EN/PT-BR).
+**Shape · Alpha** y **Scale · Beta** tienen valores predeterminados 5 y 0,2.
+Sigma sigue estimándose: estos campos describen su prior, no fijan su valor.
+La media Gamma es forma × escala; su varianza, forma × escala². Cambiarlos
+modifica las hipótesis, no la gamma de caracteres ni el tamaño de las propuestas.
+Beta se interpreta como escala, nunca como tasa.
+
+La CLI acepta `--clock-sigma-shape 2.5 --clock-sigma-scale 0.4` con
+`--model reference`, tanto en `sample` como en `marginal`. Valores positivos,
+finitos y con normalización logarítmica representable. El reloj estricto rechaza
+estas opciones. Checkpoints, muestreo solo del prior, predicción y comparaciones
+de modelos conservan el prior; comparar cadenas exige priors iguales.
+`run.json` incluye `clock_sigma_prior_parameters` con `shape` y `scale` numéricos.
+Registros antiguos usan 5 y 0,2. Las configuraciones personalizadas del app usan
+formato 6 para que versiones antiguas no ignoren la elección. Véase
+[Priors de árbol](./tree-priors) para la decisión sobre modelos de árbol.

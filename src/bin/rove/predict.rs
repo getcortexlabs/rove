@@ -263,6 +263,22 @@ pub(super) fn run(args: &[String]) -> Result<()> {
         Some("reference") => true,
         _ => return Err("unsupported model preset".into()),
     };
+    let sigma_prior = match record["model"].get("clock_sigma_prior_parameters") {
+        None | Some(Value::Null) => {
+            if reference && record["model"]["clock_sigma_prior"] != "Gamma(shape=5, scale=0.2)" {
+                return Err("unrecognized legacy clock sigma prior".into());
+            }
+            super::SigmaPrior::default()
+        }
+        Some(v) => super::SigmaPrior::new(
+            v["shape"]
+                .as_f64()
+                .ok_or("missing clock sigma prior shape")?,
+            v["scale"]
+                .as_f64()
+                .ok_or("missing clock sigma prior scale")?,
+        )?,
+    };
     let dating = if record["model"]["dating"].is_null() {
         None
     } else {
@@ -364,6 +380,7 @@ pub(super) fn run(args: &[String]) -> Result<()> {
             // this tree, branch rates and gamma shape with its trace row.
             let mut settings = Settings {
                 conditioning,
+                clock_sigma_prior: sigma_prior,
                 ..if reference {
                     Settings::reference()
                 } else {

@@ -26,6 +26,8 @@ struct AdvancedPreviewTests {
     workspace.report = try await MatrixInspector.inspect(
       matrix, gapsAsMissing: false, executable: engine)
     workspace.file = matrix
+    workspace.settings.clockSigmaShape = "2.5"
+    workspace.settings.clockSigmaScale = "0.4"
     workspace.settings.chains = 2
     workspace.settings.stopWhenConverged = true
     workspace.settings.minESS = 300

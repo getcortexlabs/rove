@@ -273,6 +273,9 @@ private struct HistoryDetail: View {
                 draft.settings.clock == "reference"
                   ? "Lognormal relaxed clock · 4 gamma categories"
                   : "Strict clock · 1 rate category"))
+            if let prior = draft.settings.clockSigmaPrior {
+              field("Clock sigma prior", prior.description(strings: strings))
+            }
             field(
               "Character model",
               strings(

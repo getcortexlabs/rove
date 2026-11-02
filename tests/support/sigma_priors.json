@@ -1,0 +1,169 @@
+{
+  "sigma_priors": [
+    {
+      "shape": 5,
+      "scale": 0.2,
+      "sigma": 0.01,
+      "log_density": -13.60154501212981
+    },
+    {
+      "shape": 5,
+      "scale": 0.2,
+      "sigma": 0.2,
+      "log_density": -2.5686159179138452
+    },
+    {
+      "shape": 5,
+      "scale": 0.2,
+      "sigma": 1,
+      "log_density": -0.13086426817744395
+    },
+    {
+      "shape": 5,
+      "scale": 0.2,
+      "sigma": 5,
+      "log_density": -13.693112618441042
+    },
+    {
+      "shape": 5,
+      "scale": 0.2,
+      "sigma": 20,
+      "log_density": -83.14793517396149
+    },
+    {
+      "shape": 1,
+      "scale": 2,
+      "sigma": 0.01,
+      "log_density": -0.6981471805599448
+    },
+    {
+      "shape": 1,
+      "scale": 2,
+      "sigma": 0.2,
+      "log_density": -0.7931471805599448
+    },
+    {
+      "shape": 1,
+      "scale": 2,
+      "sigma": 1,
+      "log_density": -1.193147180559945
+    },
+    {
+      "shape": 1,
+      "scale": 2,
+      "sigma": 5,
+      "log_density": -3.1931471805599445
+    },
+    {
+      "shape": 1,
+      "scale": 2,
+      "sigma": 20,
+      "log_density": -10.693147180559945
+    },
+    {
+      "shape": 0.5,
+      "scale": 0.25,
+      "sigma": 0.01,
+      "log_density": 2.383367330629291
+    },
+    {
+      "shape": 0.5,
+      "scale": 0.25,
+      "sigma": 0.2,
+      "log_density": 0.12550119385229547
+    },
+    {
+      "shape": 0.5,
+      "scale": 0.25,
+      "sigma": 1,
+      "log_density": -3.879217762364755
+    },
+    {
+      "shape": 0.5,
+      "scale": 0.25,
+      "sigma": 5,
+      "log_density": -20.683936718581805
+    },
+    {
+      "shape": 0.5,
+      "scale": 0.25,
+      "sigma": 20,
+      "log_density": -81.37708389914175
+    },
+    {
+      "shape": 2.5,
+      "scale": 0.4,
+      "sigma": 0.01,
+      "log_density": -4.9267113197696695
+    },
+    {
+      "shape": 2.5,
+      "scale": 0.4,
+      "sigma": 0.2,
+      "log_density": -0.9081129094386824
+    },
+    {
+      "shape": 2.5,
+      "scale": 0.4,
+      "sigma": 1,
+      "log_density": -0.49395604078753186
+    },
+    {
+      "shape": 2.5,
+      "scale": 0.4,
+      "sigma": 5,
+      "log_density": -8.079799172136381
+    },
+    {
+      "shape": 2.5,
+      "scale": 0.4,
+      "sigma": 20,
+      "log_density": -43.50035763045655
+    },
+    {
+      "shape": 10,
+      "scale": 0.1,
+      "sigma": 0.01,
+      "log_density": -31.322508224033836
+    },
+    {
+      "shape": 10,
+      "scale": 0.1,
+      "sigma": 0.2,
+      "log_density": -6.2609177620479155
+    },
+    {
+      "shape": 10,
+      "scale": 0.1,
+      "sigma": 1,
+      "log_density": 0.22402344985898764
+    },
+    {
+      "shape": 10,
+      "scale": 0.1,
+      "sigma": 5,
+      "log_density": -25.29103533823411
+    },
+    {
+      "shape": 10,
+      "scale": 0.1,
+      "sigma": 20,
+      "log_density": -162.8143860881551
+    }
+  ],
+  "provenance": {
+    "beast_version": "2.7.8",
+    "java_version": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Temurin-17.0.15+6 (build 17.0.15+6)\nOpenJDK 64-Bit Server VM Temurin-17.0.15+6 (build 17.0.15+6, mixed mode, sharing)\n",
+    "machine": "arm64",
+    "source_sha256": "a71a34de15b65a75960c13abc5d43d0a5f6327540e85a399bc887f51ca3fd656",
+    "jar_sha256": {
+      "launcher.jar": "7d51654fd80dd4c32f64e02b02ca90aa6387c2c9837761befe665ff730a5dc01",
+      "BEAST.app.jar": "45949db1372c6dc874256754489b374c03f205c07af1d3513026664b20db32d2",
+      "BEAST.base.jar": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+      "BEASTlabs.v2.0.3.jar": "feea1bccaee3fe88868d2c60ffe72410f680f5e1301300b918517603e51aa259",
+      "MM.addon.jar": "78f02140b79f8061cbfacfe73600d6ecc2660af00d852a125bda2c683c595a68",
+      "ORC.addon.jar": "2fa7390b9313e769388ba5863f58807cf7bcc7a54b0cd22e2d72f9a618bbdb3e"
+    },
+    "command": "ReferenceDiagnostics rate-model <output.json>"
+  }
+}

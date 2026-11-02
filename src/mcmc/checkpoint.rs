@@ -13,7 +13,9 @@ impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.
     /// Float bits are preserved; this format is local to the current executable.
     pub fn checkpoint(&self, settings: &Settings) -> io::Result<Vec<u8>> {
-        if settings.likelihood_power != self.likelihood_power {
+        if settings.likelihood_power != self.likelihood_power
+            || settings.clock_sigma_prior != self.clock_sigma_prior
+        {
             return Err(invalid());
         }
         let mut out = Vec::new();
@@ -292,6 +294,9 @@ mod tests {
                     Settings::default()
                 };
                 settings.sample_from_prior = prior;
+                if reference {
+                    settings.clock_sigma_prior = crate::rates::SigmaPrior::new(2.5, 0.4).unwrap();
+                }
                 settings.tuning_delay = 10;
                 if reference {
                     settings.weights.extend([
@@ -306,6 +311,10 @@ mod tests {
                         chain.step();
                     }
                     let bytes = chain.checkpoint(&settings).unwrap();
+                    let mut different = settings.clone();
+                    different.clock_sigma_prior = crate::rates::SigmaPrior::new(3.0, 0.4).unwrap();
+                    assert!(Sampler::resume(&patterns, &different, &bytes).is_err());
+                    assert!(chain.checkpoint(&different).is_err());
                     let mut resumed = Sampler::resume(&patterns, &settings, &bytes).unwrap();
                     for _ in 0..100 {
                         assert_eq!(chain.step(), resumed.step());

@@ -11,6 +11,7 @@ const LOG_SQRT_TAU: f64 = 0.918_938_533_204_672_7;
 pub enum Error {
     Shape,
     Sigma,
+    SigmaPrior,
     BranchRates,
 }
 
@@ -19,6 +20,7 @@ impl fmt::Display for Error {
         f.write_str(match self {
             Self::Shape => "gamma shape must be finite and between 0.001 and 1000",
             Self::Sigma => "clock standard deviation must be positive and finite",
+            Self::SigmaPrior => "clock sigma prior shape and scale must be positive and finite, with a representable log normalizer",
             Self::BranchRates => {
                 "branch rates must be positive and finite, with one entry per non-root node"
             }
@@ -27,6 +29,60 @@ impl fmt::Display for Error {
 }
 
 impl std::error::Error for Error {}
+
+/// Gamma prior on the relaxed clock's standard deviation. Beta is a scale,
+/// not a rate. Cache the fixed normalization outside the proposal loop.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SigmaPrior {
+    shape: f64,
+    scale: f64,
+    log_gamma: f64,
+    log_scale: f64,
+}
+
+impl Default for SigmaPrior {
+    fn default() -> Self {
+        Self::new(5.0, 0.2).expect("valid reference sigma prior")
+    }
+}
+
+impl SigmaPrior {
+    pub fn new(shape: f64, scale: f64) -> Result<Self, Error> {
+        if !(shape.is_finite() && shape > 0.0 && scale.is_finite() && scale > 0.0) {
+            return Err(Error::SigmaPrior);
+        }
+        // Preserve the reference model's arithmetic, including its rounding.
+        let log_gamma = if shape == 5.0 {
+            24.0f64.ln()
+        } else {
+            log_gamma(shape)
+        };
+        let log_scale = shape * scale.ln();
+        if !log_gamma.is_finite() || !log_scale.is_finite() {
+            return Err(Error::SigmaPrior);
+        }
+        Ok(Self {
+            shape,
+            scale,
+            log_gamma,
+            log_scale,
+        })
+    }
+
+    pub fn shape(self) -> f64 {
+        self.shape
+    }
+    pub fn scale(self) -> f64 {
+        self.scale
+    }
+
+    pub fn log_density(self, sigma: f64) -> f64 {
+        if !sigma.is_finite() || sigma <= 0.0 {
+            return f64::NEG_INFINITY;
+        }
+        (self.shape - 1.0) * sigma.ln() - sigma / self.scale - self.log_gamma - self.log_scale
+    }
+}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct GammaRates {
@@ -205,7 +261,7 @@ impl RelaxedClock {
 
     /// Gamma(shape=5, scale=0.2), not Gamma(shape=5, rate=0.2).
     pub fn log_sigma_prior(&self) -> f64 {
-        4.0 * self.sigma.ln() - self.sigma / 0.2 - 24.0f64.ln() - 5.0 * 0.2f64.ln()
+        SigmaPrior::default().log_density(self.sigma)
     }
 
     pub(crate) fn set_sigma(&mut self, sigma: f64) -> bool {

@@ -153,3 +153,22 @@ maximum to 8.16e-8, from the same quantile approximation difference described ab
 ## Gamma proposal frequency
 
 A [follow-up study](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md) found that gamma shape received only about one proposal per 1,100–1,200 steps in the constructed four-tip dated workload. Raising `gamma_shape_scale` weight from 0.1 to 3 increased gamma ESS per group wall second by about 22–24 times, with the same proposal and prior. Other parameters became the bottleneck, and an efficiency regression prevented promotion under the frozen criteria. **Weight 0.1 remains the default**, including in the Mac app. The tested setting is available through `--weight gamma_shape_scale=3`; inspect all parameters and tree diagnostics before choosing it. This is not a 22–24-fold speedup of the full analysis or a measurement on M1 hardware.
+
+## Configuring the sigma prior
+
+In the Mac app, open **Clock sigma prior** below the relaxed-clock option.
+**Shape · Alpha** and **Scale · Beta** default to 5 and 0.2. Sigma is still
+estimated; these controls describe its prior, not a fixed sigma value.
+The Gamma mean is shape × scale and its variance is shape × scale².
+Changing them changes the analysis assumptions, not the character gamma model
+or the proposal step sizes. Beta is explicitly a scale, never a rate.
+
+The CLI accepts `--clock-sigma-shape 2.5 --clock-sigma-scale 0.4` with
+`--model reference`, for both `sample` and `marginal`. Values must be positive,
+finite and have a representable log normalizer. Strict-clock runs reject these
+flags. Checkpoints, prior-only runs, prediction and saved model comparisons
+preserve the chosen prior; chain comparisons require matching priors.
+`run.json` includes `clock_sigma_prior_parameters` with numeric `shape` and
+`scale`, alongside the readable description. Legacy records use 5 and 0.2.
+Custom app setups use format 6 so older apps cannot silently ignore the choice.
+See [Tree priors](./tree-priors) for the separate decision about tree models.
