@@ -318,6 +318,7 @@ private struct HistoryDetail: View {
         VStack(alignment: .leading, spacing: 14) {
           HStack {
             Eyebrow(text: strings("Run folder"))
+            AnalysisHelpButton(topic: .files, strings: strings)
             Spacer()
             Button {
               NSWorkspace.shared.open(entry.directory)

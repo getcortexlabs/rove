@@ -43,6 +43,7 @@ una suscripción a un boletín. Contacta con [Cortex Labs](https://getcortexlabs
 para solicitar la eliminación de la lista. La CLI Rust independiente no requiere
 acceso a la beta ni estos servicios de red.
 
+Los participantes con invitación activa reciben avisos de nuevas versiones, con enlaces de descarga para Mac y notas de versión. Estar solo en la lista de espera no genera estos avisos. Para salir del beta, responde a un aviso.
 
 ## Compilar y abrir
 
@@ -101,10 +102,7 @@ formar un clado. Los grupos deben estar anidados o separados. No se restringe
 nada automáticamente, tampoco el grupo interno del ejemplo. El soporte impuesto
 por una restricción no es recuperación independiente a partir de los datos.
 
-En **Outgroup**, puedes seleccionar un terminal como T20. Todos permanecen en
-el análisis: elegir T20 obliga a T1–T19 a formar un clado, con T20 al otro lado
-de la división de la raíz. El grupo externo es un terminal, no el ancestro de
-la raíz. Este control admite un grupo externo y comienza en **Not selected**.
+En **Rooting → Taxon used for rooting**, elige un terminal como T20. Sigue siendo una punta, opuesta al clado restringido de todos los demás taxones. Estos no son necesariamente un grupo interno biológico. La punta no es la raíz ancestral, y sus estados observados no se asignan al ancestro. No se impone una dirección como 0 → 1. El control admite un taxón y comienza en **Not selected**. Incluir taxones, restringir el enraizamiento y girar la vista son decisiones separadas.
 
 En **Additional groups**, añade grupos o usa el lápiz para editar uno existente.
 Marcar terminales prepara una selección; **Apply group** la confirma y **Cancel**
@@ -127,7 +125,7 @@ Revisa los ajustes y grupos, elige dónde guardar y pulsa **Start analysis** o
 **Command-Return**. El motor Rust incluido se ejecuta localmente mientras la
 ventana muestra los pasos realmente completados y el tiempo transcurrido.
 Las preferencias siguen disponibles; los ajustes científicos quedan bloqueados
-durante la ejecución. No hay estimaciones de finalización, ESS ni soporte inventados.
+durante la ejecución. El tiempo se estima a partir del progreso medido; ESS y soporte requieren sus propios diagnósticos.
 
 Cada ejecución tiene una carpeta nueva, por defecto en `~/Rove Runs`. **Open
 folder** muestra la configuración guardada, el registro de sesión, los eventos
@@ -429,3 +427,11 @@ Los mismos detalles incluyen **Which model explains the matrix better?**, que ej
 ## Probar este Mac
 
 [Probar este Mac](./mac-benchmark)
+
+## Duraciones predefinidas y estimaciones de tiempo
+
+El plan ofrece 1, 10, 20, 30, 50 y 100 millones de pasos, con intervalos de 100, 1.000, 2.000, 3.000, 5.000 y 10.000 pasos. Cada opción registra 10.000 muestras más `STATE_0`, antes del burn-in. Son estados guardados, no muestras independientes ni un objetivo de ESS. Elegir una opción aplica ambos valores; cambiar el intervalo personaliza el plan. Las configuraciones reabiertas conservan sus valores exactos. Si los intervalos explícitos de diagnóstico o checkpoint dejan de ser múltiplos del muestreo, revisa los valores redondeados hacia arriba y pulsa **Apply interval adjustments**, o edítalos manualmente, antes de iniciar.
+
+Durante la ejecución, **Estimated time to step limit** y **Time per million steps** usan diferencias recientes de pasos y tiempo activo del motor. Primero se recogen al menos tres intervalos que cubran diez segundos, y luego se usan hasta ocho intervalos recientes. Cada cadena se mide por separado; la estimación del grupo es el mayor tiempo restante. Reanudar inicia una medición nueva que excluye el tiempo en pausa. Las estimaciones desaparecen al detener o terminar. La carga del procesador puede cambiar el ritmo. La predicción corresponde al límite de pasos, no a la convergencia; la parada automática puede terminar antes.
+
+**What are these files?** en Resultados y History abre una explicación sin conexión. La [guía de la carpeta](./run-files) muestra los archivos y el recorrido desde la traza hasta el árbol anotado.

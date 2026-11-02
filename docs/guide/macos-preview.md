@@ -42,6 +42,7 @@ list is not a newsletter subscription. Contact [Cortex Labs](https://getcortexla
 to request removal from the list. The standalone Rust CLI does not require beta
 access or these network services.
 
+Active beta participants receive release emails with a macOS download link and release notes. Waiting-list membership alone does not receive these notices. To leave the beta, reply to a release email.
 
 ## Build and open
 
@@ -98,10 +99,7 @@ Groups must be nested or disjoint. Nothing is constrained automatically,
 including the example's ingroup. Support imposed by a constraint is not
 independent recovery from the data.
 
-In **Outgroup**, optionally select one terminal such as T20. All terminals remain
-in the analysis: choosing T20 requires T1–T19 to form a clade, with T20 on the
-other side of the root split. The outgroup is a terminal, not the ancestral root.
-This control supports one outgroup, and starts at **Not selected**.
+In **Rooting → Taxon used for rooting**, choose one terminal such as T20. It stays a tip, opposite the constrained clade of all remaining taxa. Those taxa are not necessarily a biological ingroup. The tip is not the ancestral root, and its observed character states are not assigned to the ancestor. This does not force a direction such as 0 → 1. This control supports one taxon and starts at **Not selected**. Inclusion, rooting constraints and rotating the display are separate choices.
 
 **Additional groups** can be added or edited with the pencil button. Checking
 terminals prepares a group; **Apply group** commits it and **Cancel** discards
@@ -123,7 +121,7 @@ Review the settings and groups, choose an output location, and press **Start
 analysis** or **Command-Return**. The bundled Rust engine runs locally while
 the window shows actual completed steps and elapsed time. Settings remain
 available during a run; editing its scientific configuration is locked.
-There is no estimated completion time or invented ESS or posterior support.
+Time estimates use measured progress; ESS and posterior support require their own diagnostics.
 
 Each run gets a new folder under `~/Rove Runs` by default. **Open folder** shows
 the saved setup, session record, progress events and engine log. The `results`
@@ -417,3 +415,11 @@ The same details include **Which model explains the matrix better?**, which runs
 ## Benchmark this Mac
 
 [Benchmark this Mac](./mac-benchmark)
+
+## Length presets and time estimates
+
+The exploration plan offers 1, 10, 20, 30, 50 and 100 million steps, paired with intervals of 100, 1,000, 2,000, 3,000, 5,000 and 10,000 steps. Each preset records 10,000 samples plus `STATE_0`, before burn-in. These are saved states, not independent samples or an ESS target. Selecting a preset applies both values; changing the sampling interval makes it custom. Reopened setups keep their exact values. If explicit diagnostic or checkpoint intervals no longer divide into whole sampling intervals, review the displayed rounded-up values and select **Apply interval adjustments**, or edit them manually, before launching.
+
+During a run, **Estimated time to step limit** and **Time per million steps** use recent step and engine active-time differences. Rove first collects at least three intervals spanning ten seconds, then uses up to eight recent intervals. Each chain is measured separately; the group estimate is the longest remaining time. Pausing and resuming starts a fresh measurement without counting paused time. Estimates disappear when stopping or finished. CPU load can change the pace. This predicts the requested step limit, not convergence; automatic stopping may finish earlier.
+
+**What are these files?** in Results and History opens an offline explanation. See the [run-folder guide](./run-files) for the file map and a worked path from trace to annotated tree.

@@ -26,6 +26,7 @@ struct PredictiveCheckView: View {
           )
         )
         .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(4)
+        AnalysisHelpButton(topic: .prediction, strings: strings)
         if let model {
           content(model)
             .onChange(of: model.predictions.first?.id, initial: true) { _, newest in

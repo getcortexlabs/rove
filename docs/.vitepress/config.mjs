@@ -16,6 +16,7 @@ const locales = {
     label: 'English',
     description: 'ARM-first phylogenetic inference in Rust. Starting with a likelihood kernel for morphological data, checked against a scalar reference.',
     ui: {
+      runFiles: 'Run files',
       guide: 'Guide',
       roadmap: 'Roadmap',
       project: 'The project',
@@ -48,6 +49,7 @@ const locales = {
     label: 'Português',
     description: 'Inferência filogenética em Rust, pensada primeiro para ARM. Começa por um kernel de verossimilhança para dados morfológicos, conferido contra uma referência escalar.',
     ui: {
+      runFiles: 'Arquivos da execução',
       guide: 'Guia',
       roadmap: 'Roadmap',
       project: 'O projeto',
@@ -97,6 +99,7 @@ const locales = {
     label: 'Español',
     description: 'Inferencia filogenética en Rust, pensada primero para ARM. Empieza por un kernel de verosimilitud para datos morfológicos, verificado contra una referencia escalar.',
     ui: {
+      runFiles: 'Archivos de ejecución',
       guide: 'Guía',
       roadmap: 'Roadmap',
       project: 'El proyecto',
@@ -146,6 +149,7 @@ const locales = {
     label: '简体中文',
     description: '用 Rust 编写、优先面向 ARM 的系统发育推断。从针对形态学数据的似然内核起步，并与标量参考实现相互校验。',
     ui: {
+      runFiles: '运行文件',
       guide: '指南',
       roadmap: '路线图',
       project: '项目',
@@ -192,7 +196,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, macPreview, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, tipDating, modelComparison, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, macPreview, runFiles, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, tipDating, modelComparison, referenceModel, nexus, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -205,6 +209,7 @@ function themeFor(locale) {
           items: [
             { text: what, link: `${prefix}/guide/` },
             { text: macPreview, link: `${prefix}/guide/macos-preview` },
+            { text: runFiles, link: `${prefix}/guide/run-files` },
             { text: macBenchmark, link: `${prefix}/guide/mac-benchmark` },
             { text: design, link: `${prefix}/guide/design` },
             { text: roadmap, link: `${prefix}/guide/roadmap` }

@@ -197,7 +197,7 @@ struct TreeExplorerView: View {
       Text(node.taxon ?? strings(node.id == tree.root ? "Root" : "Internal node"))
         .font(Lab.display(22)).textSelection(.enabled)
       if node.taxon == model.outgroup, node.taxon != nil {
-        Text(strings("Outgroup · a tip, not the root node.")).foregroundStyle(Lab.ice)
+        Text(strings("Taxon used for rooting · a tip, not the root node.")).foregroundStyle(Lab.ice)
       }
       if node.constrained {
         Label(strings("Imposed monophyly"), systemImage: "diamond.fill").foregroundStyle(Lab.coral)

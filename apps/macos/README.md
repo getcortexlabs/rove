@@ -103,7 +103,7 @@ The window is resizable down to 1080 × 700, with scrollable content.
 ## Execution and saved setups
 
 Review the configuration and press Start analysis (Command-Return). In Model,
-Outgroup optionally selects one terminal from a matrix with at least three taxa.
+**Rooting → Taxon used for rooting** optionally selects one terminal from a matrix with at least three taxa.
 The app passes a monophyly constraint for all remaining terminals to the existing
 Rust sampler. Every taxon stays in the analysis. T20 is never selected automatically;
 multiple outgroups are not supported by this control.
@@ -112,7 +112,7 @@ Additional groups remain explicit, nested or disjoint, with at least two known
 terminals each. The editor stages changes until Apply group; Cancel leaves the
 previous group untouched. Existing groups can be edited with the pencil button.
 Groups incompatible with the outgroup block review and execution. An identical
-manual ingroup is deduplicated in the applied constraints, but retained as a manual
+manual group of the remaining taxa is deduplicated in the applied constraints, but retained as a manual
 choice if the outgroup is later cleared.
 
 Review, running results and History show the outgroup, applied groups and retained
@@ -334,3 +334,11 @@ The view never infers cross-run or tree convergence from scalar ESS. See the
 [guide](../../docs/guide/macos-preview.md#inspect-trace-diagnostics) and
 [validation report](../../benchmarks/diagnostics/2026-10-29/README.md) for methods,
 input bounds, reference comparisons and measured cost.
+
+## Length presets and time estimates
+
+The exploration plan offers 1, 10, 20, 30, 50 and 100 million steps, paired with intervals of 100, 1,000, 2,000, 3,000, 5,000 and 10,000 steps. Each preset records 10,000 samples plus `STATE_0`, before burn-in. These are saved states, not independent samples or an ESS target. Selecting a preset applies both values; changing the sampling interval makes it custom. Reopened setups keep their exact values. If explicit diagnostic or checkpoint intervals no longer divide into whole sampling intervals, review the displayed rounded-up values and select **Apply interval adjustments**, or edit them manually, before launching.
+
+During a run, **Estimated time to step limit** and **Time per million steps** use recent step and engine active-time differences. Rove first collects at least three intervals spanning ten seconds, then uses up to eight recent intervals. Each chain is measured separately; the group estimate is the longest remaining time. Pausing and resuming starts a fresh measurement without counting paused time. Estimates disappear when stopping or finished. CPU load can change the pace. This predicts the requested step limit, not convergence; automatic stopping may finish earlier.
+
+**What are these files?** in Results and History opens an offline explanation. See the [run-folder guide](../../docs/guide/run-files.md) for the file map and a worked path from trace to annotated tree.

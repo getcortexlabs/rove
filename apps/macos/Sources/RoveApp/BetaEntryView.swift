@@ -123,6 +123,15 @@ struct BetaEntryView: View {
       )
       .font(.system(size: 11)).foregroundStyle(Lab.muted).lineSpacing(3)
       .fixedSize(horizontal: false, vertical: true)
+      if !waiting {
+        Text(
+          strings(
+            "Beta participants receive an email when a new version is published, with download links and release notes."
+          )
+        )
+        .font(.system(size: 11)).foregroundStyle(Lab.muted).lineSpacing(3)
+        .fixedSize(horizontal: false, vertical: true)
+      }
       if access.session != nil {
         Button(strings("Check my saved access again")) { Task { await access.refresh() } }
           .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(Lab.accent)
