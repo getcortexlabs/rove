@@ -1080,3 +1080,16 @@
 "This setup has no posterior samples. Configure the power-posterior plan below to estimate model evidence." = "This setup has no posterior samples. Configure the power-posterior plan below to estimate model evidence.";
 "Simulation limit: %@ attempts per character." = "Simulation limit: %@ attempts per character.";
 "Power posteriors estimate the log marginal likelihood of the selected model: the probability of the matrix with every tree and parameter integrated out, priors included. The difference between two models is a log Bayes factor." = "Power posteriors estimate the log marginal likelihood of the selected model: the probability of the matrix with every tree and parameter integrated out, priors included. The difference between two models is a log Bayes factor.";
+
+// Rove 0.1.2
+"A little more room to explore." = "A little more room to explore.";
+"More control over your analysis, more ways to open your results, and updates that come to you." = "More control over your analysis, more ways to open your results, and updates that come to you.";
+"Set your own pace." = "Set your own pace.";
+"Choose your sampling plan and run up to 16 independent chains." = "Choose your sampling plan and run up to 16 independent chains.";
+"Use intermediate presets or enter your own step count and sampling interval. Configure comparison burn-in, execution options and the relaxed-clock sigma prior in the app. Review and History keep those choices with the analysis." = "Use intermediate presets or enter your own step count and sampling interval. Configure comparison burn-in, execution options and the relaxed-clock sigma prior in the app. Review and History keep those choices with the analysis.";
+"Your results, within reach." = "Your results, within reach.";
+"Open an external trace, import a completed CLI run or compare models from Review." = "Open an external trace, import a completed CLI run or compare models from Review.";
+"Trace diagnostics accept burn-in as a percentage or a number of samples. Model evidence has its own sampling interval and no longer needs an ordinary analysis first. Imported CLI runs are checked against their original matrix." = "Trace diagnostics accept burn-in as a percentage or a number of samples. Model evidence has its own sampling interval and no longer needs an ordinary analysis first. Imported CLI runs are checked against their original matrix.";
+"The next update comes to you." = "The next update comes to you.";
+"Check for signed updates from the Rove menu or Settings." = "Check for signed updates from the Rove menu or Settings.";
+"This first upgrade from 0.1.1 needs a manual DMG installation. After that, Rove can find and install updates itself. Active calculations delay installation; when your work finishes, you choose when to relaunch." = "This first upgrade from 0.1.1 needs a manual DMG installation. After that, Rove can find and install updates itself. Active calculations delay installation; when your work finishes, you choose when to relaunch.";

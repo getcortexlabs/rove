@@ -38,6 +38,36 @@ struct RoveRelease: Identifiable {
 
   static let all = [
     RoveRelease(
+      version: "0.1.2",
+      headline: "A little more room to explore.",
+      introduction:
+        "More control over your analysis, more ways to open your results, and updates that come to you.",
+      highlights: [
+        ReleaseHighlight(
+          id: "analysis-controls", symbol: "slider.horizontal.3",
+          title: "Set your own pace.",
+          summary: "Choose your sampling plan and run up to 16 independent chains.",
+          detail:
+            "Use intermediate presets or enter your own step count and sampling interval. Configure comparison burn-in, execution options and the relaxed-clock sigma prior in the app. Review and History keep those choices with the analysis.",
+          action: "Try the example", destination: .example),
+        ReleaseHighlight(
+          id: "results-tools", symbol: "chart.xyaxis.line",
+          title: "Your results, within reach.",
+          summary:
+            "Open an external trace, import a completed CLI run or compare models from Review.",
+          detail:
+            "Trace diagnostics accept burn-in as a percentage or a number of samples. Model evidence has its own sampling interval and no longer needs an ordinary analysis first. Imported CLI runs are checked against their original matrix.",
+          action: "Open History", destination: .history),
+        ReleaseHighlight(
+          id: "native-updates", symbol: "arrow.triangle.2.circlepath",
+          title: "The next update comes to you.",
+          summary: "Check for signed updates from the Rove menu or Settings.",
+          detail:
+            "This first upgrade from 0.1.1 needs a manual DMG installation. After that, Rove can find and install updates itself. Active calculations delay installation; when your work finishes, you choose when to relaunch.",
+          action: "Explore the field guide", destination: .guide),
+      ]
+    ),
+    RoveRelease(
       version: "0.1.1",
       headline: "Trees from anywhere.",
       introduction:
@@ -86,7 +116,7 @@ struct RoveRelease: Identifiable {
             "Review burn-in, ESS and agreement between chains before interpreting a tree. Rove can summarize posterior trees and export an annotated tree or an SVG figure.",
           action: "Explore the field guide", destination: .guide),
       ]
-    )
+    ),
   ]
 }
 
