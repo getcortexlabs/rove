@@ -122,6 +122,10 @@ struct RunView: View {
           }
           DisclosureGroup(strings("Applied analysis setup")) {
             VStack(alignment: .leading, spacing: 20) {
+              if let prior = run.request.draft.settings.clockSigmaPrior {
+                Text(strings("Clock sigma prior") + ": " + prior.description(strings: strings))
+                  .foregroundStyle(Lab.secondary)
+              }
               DatingSummary(dating: run.request.draft.settings.dating, strings: strings)
               ConstraintSummary(
                 outgroup: run.request.draft.outgroup, taxa: run.request.draft.taxa,

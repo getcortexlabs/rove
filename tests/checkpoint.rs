@@ -76,6 +76,7 @@ fn interrupt(mut cmd: Command, step: u64, kill: bool) {
 fn pause_crash_and_resume_preserve_all_samples_and_moves() {
     for (kind, matrix, conditioning) in [
         ("binary", MATRIX, "variable"),
+        ("sigma-prior", MATRIX, "variable"),
         ("dated", MATRIX, "variable"),
         (
             "multistate",
@@ -98,6 +99,9 @@ fn pause_crash_and_resume_preserve_all_samples_and_moves() {
             fs::write(root.join("matrix.nex"), matrix).unwrap();
             let configured = |name: &str| {
                 let mut cmd = command(&root, name, chains);
+                if kind == "sigma-prior" {
+                    cmd.args(["--clock-sigma-shape", "2.5", "--clock-sigma-scale", "0.4"]);
+                }
                 if kind == "dated" {
                     let config = root.join("dating.json");
                     fs::write(

@@ -105,6 +105,8 @@ struct SavedEstimate: Identifiable, Sendable {
         == EngineRecord.Model.conditioningDescriptions[settings.conditioning]
       && (record.model.partitioning ?? "declared") == settings.partitioning
       && record.model.dating == dating
+      && (settings.clock != "reference"
+        || (record.model.clockSigmaPriorParameters ?? .reference) == settings.clockSigmaPrior)
       && record.settings.sampleEvery == UInt64(settings.sampleEvery)
       && (record.settings.tuning ?? true) == settings.tuning
       && settings.weights.allSatisfy { override in

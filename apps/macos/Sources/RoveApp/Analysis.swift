@@ -219,6 +219,8 @@ enum ProposalSchedule {
 struct AnalysisSettings: Codable, Equatable, Sendable {
   var dating = DatingSettings()
   var clock = "reference"
+  var clockSigmaShape = "5"
+  var clockSigmaScale = "0.2"
   var conditioning = "variable"
   var partitioning = "observed"
   var steps = 10_000_000
@@ -242,7 +244,8 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   init() {}
 
   private enum CodingKeys: String, CodingKey {
-    case dating, clock, conditioning, partitioning, steps, sampleEvery, seed, gapsAsMissing, chains,
+    case dating, clock, clockSigmaShape, clockSigmaScale, conditioning, partitioning, steps,
+      sampleEvery, seed, gapsAsMissing, chains,
       stopWhenConverged, sampleFromPrior, minESS, maxRhat, checkEvery, checkpointEvery, tuning,
       weights, tuningValues
   }
@@ -251,6 +254,8 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     dating = try values.decodeIfPresent(DatingSettings.self, forKey: .dating) ?? DatingSettings()
     clock = try values.decode(String.self, forKey: .clock)
+    clockSigmaShape = try values.decodeIfPresent(String.self, forKey: .clockSigmaShape) ?? "5"
+    clockSigmaScale = try values.decodeIfPresent(String.self, forKey: .clockSigmaScale) ?? "0.2"
     conditioning = try values.decode(String.self, forKey: .conditioning)
     partitioning = try values.decodeIfPresent(String.self, forKey: .partitioning) ?? "declared"
     steps = try values.decode(Int.self, forKey: .steps)
@@ -277,12 +282,29 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       || checkpointEvery != nil || !tuning || !weights.isEmpty || !tuningValues.isEmpty
   }
 
+  var clockSigmaPrior: ClockSigmaPrior? {
+    guard clock == "reference" else { return nil }
+    guard let shape = Double(clockSigmaShape.replacingOccurrences(of: ",", with: ".")),
+      let scale = Double(clockSigmaScale.replacingOccurrences(of: ",", with: ".")),
+      shape.isFinite, shape > 0, scale.isFinite, scale > 0,
+      lgamma(shape).isFinite, (shape * log(scale)).isFinite
+    else { return nil }
+    return ClockSigmaPrior(shape: shape, scale: scale)
+  }
+
+  var usesCustomSigmaPrior: Bool {
+    clock == "reference" && clockSigmaPrior != .reference
+  }
+
   var validationError: String? {
     guard ["strict", "reference"].contains(clock),
       ["variable", "informative", "none"].contains(conditioning),
       ["observed", "declared"].contains(partitioning)
     else {
       return "This setup uses an unsupported model."
+    }
+    if clock == "reference" && clockSigmaPrior == nil {
+      return "Use positive, finite shape and scale values for the clock sigma prior."
     }
     guard [1, 2, 4].contains(chains), !stopWhenConverged || chains > 1 else {
       return "Choose one, two or four chains. Automatic stopping needs multiple chains."
@@ -336,6 +358,15 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       "--model", clock, "--conditioning", conditioning,
       "--gaps", gapsAsMissing ? "missing" : "reject", "--partitioning", partitioning,
     ]
+    if clock == "reference" {
+      guard let prior = clockSigmaPrior else {
+        throw ImportError.message(
+          "Use positive, finite shape and scale values for the clock sigma prior.")
+      }
+      arguments += [
+        "--clock-sigma-shape", String(prior.shape), "--clock-sigma-scale", String(prior.scale),
+      ]
+    }
     if !tuning { arguments.append("--no-tuning") }
     for override in weights {
       arguments += ["--weight", "\(override.move)=\(String(override.value))"]
@@ -380,8 +411,10 @@ struct AnalysisDraft: Codable, Sendable {
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
     formatVersion =
-      settings.usesAdvancedOptions
-      ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2))
+      settings.usesCustomSigmaPrior
+      ? 6
+      : (settings.usesAdvancedOptions
+        ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -405,7 +438,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard [1, 2, 3, 4, 5].contains(formatVersion),
+    guard [1, 2, 3, 4, 5, 6].contains(formatVersion),
+      formatVersion >= 6 || !settings.usesCustomSigmaPrior,
       formatVersion >= 5 || !settings.usesAdvancedOptions,
       formatVersion >= 4 || !settings.dating.estimatesProcess,
       formatVersion >= 3 || !settings.dating.enabled, (matrixPath as NSString).isAbsolutePath,

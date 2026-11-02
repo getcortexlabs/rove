@@ -19,7 +19,8 @@ struct SavedComparison: Identifiable, Sendable {
     }
     let created = try? file.resourceValues(forKeys: [.creationDateKey]).creationDate
     let seeds = sources.map { source in
-      (try? EngineRecord.read(URL(fileURLWithPath: source.directory).appendingPathComponent("run.json")))?
+      (try? EngineRecord.read(
+        URL(fileURLWithPath: source.directory).appendingPathComponent("run.json")))?
         .settings.seed
     }
     return Self(file: file, report: report, createdAt: created, seeds: seeds)
@@ -146,6 +147,8 @@ final class RunComparisonModel {
     guard a.id != b.id, a.status == .completed, b.status == .completed,
       let x = a.draft, let y = b.draft, x.matrixSHA256 == y.matrixSHA256,
       x.constraints == y.constraints, x.settings.clock == y.settings.clock,
+      x.settings.clockSigmaPrior == y.settings.clockSigmaPrior,
+      x.settings.sampleFromPrior == y.settings.sampleFromPrior,
       x.settings.conditioning == y.settings.conditioning,
       x.settings.partitioning == y.settings.partitioning,
       x.settings.gapsAsMissing == y.settings.gapsAsMissing,
@@ -198,7 +201,8 @@ final class RunComparisonModel {
     let directory = entry.directory.appendingPathComponent("comparisons")
     let values = await Task.detached {
       let children =
-        (try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil))
+        (try? FileManager.default.contentsOfDirectory(
+          at: directory, includingPropertiesForKeys: nil))
         ?? []
       return children.filter { $0.pathExtension == "json" }
         .compactMap { try? SavedComparison.read($0) }
@@ -214,7 +218,9 @@ final class RunComparisonModel {
     let directories = ([entry] + chosen).flatMap(Self.chainDirectories)
     guard !chosen.isEmpty, ranges.count == chosen.count + 1,
       (2...Self.maximumChains).contains(directories.count),
-      ranges.indices.allSatisfy({ i in ranges.indices.allSatisfy { $0 == i || !ranges[$0].overlaps(ranges[i]) } })
+      ranges.indices.allSatisfy({ i in
+        ranges.indices.allSatisfy { $0 == i || !ranges[$0].overlaps(ranges[i]) }
+      })
     else { return }
     let output = entry.directory.appendingPathComponent(
       "comparisons/comparison-\(UUID().uuidString).json")

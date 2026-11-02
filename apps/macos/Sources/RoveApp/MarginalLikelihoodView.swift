@@ -182,6 +182,11 @@ struct MarginalLikelihoodView: View {
     let model = saved.record.model
     var text = strings(model.preset == "reference" ? "Relaxed clock" : "Strict clock")
     text += " · " + model.conditioningLabel
+    if model.preset == "reference" {
+      text +=
+        "\n" + strings("Clock sigma prior") + ": "
+        + (model.clockSigmaPriorParameters ?? .reference).description(strings: strings)
+    }
     if model.partitioning != own.record.model.partitioning {
       let observed = model.partitioning == "observed"
       text += " · " + strings(observed ? "By observed states" : "Declared alphabet")

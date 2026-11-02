@@ -1026,3 +1026,12 @@
 "Open Check record for predictive.json, Replicate matrices for the simulated data, or Open folder for all outputs. The record preserves the source samples, burn-in and seed so the check can be inspected later." = "Abra Registro da checagem para ver predictive.json, Matrizes replicadas para os dados simulados ou Abrir pasta para todas as saídas. O registro preserva as amostras de origem, o burn-in e a semente para consultar a checagem depois.";
 
 "Beta participants receive an email when a new version is published, with download links and release notes." = "Participantes do beta recebem um e-mail quando uma versão é publicada, com links para baixar e ver as novidades.";
+
+"Clock sigma prior" = "Prior do sigma do relógio";
+"Gamma · shape %@ · scale %@" = "Gamma · forma %@ · escala %@";
+"Shape · Alpha" = "Forma · Alpha";
+"Scale · Beta" = "Escala · Beta";
+"Restore defaults" = "Restaurar padrão";
+"Use positive, finite shape and scale values for the clock sigma prior." = "Use valores positivos e finitos de forma e escala para o prior do sigma do relógio.";
+"Sigma controls how much branch rates can differ. This Gamma distribution expresses what you expect about sigma before looking at the characters." = "Sigma controla quanto as taxas dos ramos podem variar. Esta distribuição Gamma expressa o que você espera sobre o sigma antes de olhar os caracteres.";
+"Beta is a scale, not a rate. The expected sigma is Alpha × Beta (1 with the defaults). These settings do not change gamma variation across characters and are not a shortcut to convergence." = "Beta é uma escala, não uma taxa. O sigma esperado é Alpha × Beta (1 no padrão). Essas opções não alteram a variação gamma entre caracteres e não são um atalho para a convergência.";

@@ -44,6 +44,7 @@ struct EngineRecord: Decodable, Sendable {
     let preset: String
     let partitioning: String?
     let partitions: [CharacterPartition]?
+    var clockSigmaPriorParameters: ClockSigmaPrior? = nil
     var sampleFromPrior: Bool? = nil
     var conditioning: String? = nil
 
@@ -106,6 +107,8 @@ struct EngineRecord: Decodable, Sendable {
       && model.dating == expectedDating
       && input.gaps == (draft.settings.gapsAsMissing ? "missing" : "reject")
       && model.preset == draft.settings.clock
+      && (model.preset != "reference"
+        || (model.clockSigmaPriorParameters ?? .reference) == draft.settings.clockSigmaPrior)
       && (model.partitioning ?? "declared") == draft.settings.partitioning
       && command[conditioningIndex + 1] == draft.settings.conditioning
       && settings.steps == UInt64(draft.settings.steps)

@@ -1026,3 +1026,12 @@
 "Open Check record for predictive.json, Replicate matrices for the simulated data, or Open folder for all outputs. The record preserves the source samples, burn-in and seed so the check can be inspected later." = "Open Check record for predictive.json, Replicate matrices for the simulated data, or Open folder for all outputs. The record preserves the source samples, burn-in and seed so the check can be inspected later.";
 
 "Beta participants receive an email when a new version is published, with download links and release notes." = "Beta participants receive an email when a new version is published, with download links and release notes.";
+
+"Clock sigma prior" = "Clock sigma prior";
+"Gamma · shape %@ · scale %@" = "Gamma · shape %@ · scale %@";
+"Shape · Alpha" = "Shape · Alpha";
+"Scale · Beta" = "Scale · Beta";
+"Restore defaults" = "Restore defaults";
+"Use positive, finite shape and scale values for the clock sigma prior." = "Use positive, finite shape and scale values for the clock sigma prior.";
+"Sigma controls how much branch rates can differ. This Gamma distribution expresses what you expect about sigma before looking at the characters." = "Sigma controls how much branch rates can differ. This Gamma distribution expresses what you expect about sigma before looking at the characters.";
+"Beta is a scale, not a rate. The expected sigma is Alpha × Beta (1 with the defaults). These settings do not change gamma variation across characters and are not a shortcut to convergence." = "Beta is a scale, not a rate. The expected sigma is Alpha × Beta (1 with the defaults). These settings do not change gamma variation across characters and are not a shortcut to convergence.";

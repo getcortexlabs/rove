@@ -102,6 +102,169 @@ fn error_text(output: &Output) -> String {
 }
 
 #[test]
+fn chain_comparisons_distinguish_sigma_priors_and_accept_legacy_defaults() {
+    let root = scratch("compare-sigma-priors");
+    let matrix = root.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    let dirs: Vec<_> = (0..4).map(|i| root.join(i.to_string())).collect();
+    for (i, dir) in dirs.iter().enumerate() {
+        let seed = (42 + i).to_string();
+        let mut args = vec![
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            dir.to_str().unwrap(),
+            "--model",
+            "reference",
+            "--gaps",
+            "missing",
+            "--conditioning",
+            "none",
+            "--seed",
+            &seed,
+            "--steps",
+            "300",
+            "--sample-every",
+            "10",
+        ];
+        if i < 2 {
+            args.extend(["--clock-sigma-shape", "2.5", "--clock-sigma-scale", "0.4"]);
+        }
+        let result = rove(&args);
+        assert!(result.status.success(), "{}", error_text(&result));
+    }
+    let compare = |a: usize, b: usize| {
+        rove(&[
+            "compare",
+            dirs[a].to_str().unwrap(),
+            dirs[b].to_str().unwrap(),
+        ])
+    };
+    assert!(compare(0, 1).status.success());
+    assert!(error(&compare(0, 2)).contains("same input and model"));
+    let file = dirs[2].join("run.json");
+    let mut old: serde_json::Value = serde_json::from_slice(&fs::read(&file).unwrap()).unwrap();
+    old["model"]
+        .as_object_mut()
+        .unwrap()
+        .remove("clock_sigma_prior_parameters");
+    fs::write(file, old.to_string()).unwrap();
+    assert!(compare(2, 3).status.success());
+}
+
+#[test]
+fn custom_sigma_prior_reaches_sampling_prediction_and_marginal_likelihood() {
+    let root = scratch("sigma-prior-cli");
+    let matrix = root.join("matrix.nex");
+    fs::write(&matrix, MATRIX).unwrap();
+    for mode in ["sample", "marginal"] {
+        let out = root.join(mode);
+        let mut args = vec![
+            mode,
+            matrix.to_str().unwrap(),
+            "--output",
+            out.to_str().unwrap(),
+            "--seed",
+            "42",
+            "--steps",
+            "1000",
+            "--sample-every",
+            "10",
+            "--model",
+            "reference",
+            "--gaps",
+            "missing",
+            "--conditioning",
+            "none",
+            "--clock-sigma-shape",
+            "2.5",
+            "--clock-sigma-scale",
+            "0.4",
+        ];
+        if mode == "marginal" {
+            args.extend(["--powers", "2"]);
+        }
+        let result = rove(&args);
+        assert!(result.status.success(), "{}", error_text(&result));
+        let file = "run.json";
+        let record: serde_json::Value =
+            serde_json::from_slice(&fs::read(out.join(file)).unwrap()).unwrap();
+        assert_eq!(
+            record["model"]["clock_sigma_prior_parameters"],
+            serde_json::json!({"shape":2.5,"scale":0.4})
+        );
+        if mode == "sample" {
+            let trace = fs::read_to_string(out.join("trace.log")).unwrap();
+            let mut lines = trace.lines().filter(|l| !l.starts_with('#'));
+            let header: Vec<_> = lines.next().unwrap().split_whitespace().collect();
+            let sigma = header.iter().position(|s| *s == "clock_sigma").unwrap();
+            let density = header
+                .iter()
+                .position(|s| *s == "clock_sigma_prior")
+                .unwrap();
+            for line in lines {
+                let row: Vec<f64> = line
+                    .split_whitespace()
+                    .map(|s| s.parse().unwrap())
+                    .collect();
+                let expected = rove::rates::SigmaPrior::new(2.5, 0.4)
+                    .unwrap()
+                    .log_density(row[sigma]);
+                assert!((row[density] - expected).abs() < 1e-10);
+            }
+            let prediction = root.join("prediction");
+            let result = rove(&[
+                "predict",
+                out.to_str().unwrap(),
+                "--matrix",
+                matrix.to_str().unwrap(),
+                "--output",
+                prediction.to_str().unwrap(),
+                "--seed",
+                "7",
+                "--burnin-percent",
+                "10",
+                "--replicates",
+                "3",
+            ]);
+            assert!(result.status.success(), "{}", error_text(&result));
+            let source: serde_json::Value =
+                serde_json::from_slice(&fs::read(prediction.join("source/run.json")).unwrap())
+                    .unwrap();
+            assert_eq!(source["model"], record["model"]);
+        }
+    }
+    for (model, shape, scale) in [
+        ("strict", "5", "0.2"),
+        ("reference", "NaN", "0.2"),
+        ("reference", "5", "0"),
+        ("reference", "-1", "0.2"),
+    ] {
+        let out = root.join("invalid");
+        let result = rove(&[
+            "sample",
+            matrix.to_str().unwrap(),
+            "--output",
+            out.to_str().unwrap(),
+            "--seed",
+            "42",
+            "--steps",
+            "10",
+            "--sample-every",
+            "10",
+            "--model",
+            model,
+            "--clock-sigma-shape",
+            shape,
+            "--clock-sigma-scale",
+            scale,
+        ]);
+        assert!(!result.status.success());
+        assert!(!out.exists());
+    }
+}
+
+#[test]
 fn informative_coding_checks_input_and_records_the_selected_model() {
     let directory = scratch("informative-cli");
     let matrix = directory.join("matrix.nex");

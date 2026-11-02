@@ -123,3 +123,17 @@ Rove 的 6.63 倍（90% 自举区间：5.89–7.32）。但 gamma 效率在控�
 ## Gamma 提案频率
 
 一项[后续研究](https://github.com/getcortexlabs/rove/blob/main/benchmarks/gamma-mixing/2026-10-30/README.md)发现，在构造的四末端化石定年示例中，gamma 形状参数每 1,100–1,200 步才获得一次提案。将 `gamma_shape_scale` 权重从 0.1 提高到 3，在保持提案与先验不变的情况下，使 gamma ESS 与整组运行墙钟时间之比提高约 22–24 倍。但其他参数成为瓶颈，且一项效率回退未通过运行前确定的标准，因此**默认权重仍为 0.1**，Mac 应用也一样。可通过 `--weight gamma_shape_scale=3` 使用已评估的设置；选择前应检查所有参数及树的诊断结果。这并不意味着整个分析加速了 22–24 倍，也不是 M1 硬件上的测量。
+
+## 配置 sigma 先验
+
+在 Mac 应用的宽松时钟选项下展开 **Clock sigma prior**（界面为英文/葡萄牙文）。
+**Shape · Alpha** 和 **Scale · Beta** 默认为 5 和 0.2。Sigma 仍由采样估计；
+这些字段指定其先验，不固定 sigma。Gamma 的均值为 shape × scale，方差为 shape × scale²。
+修改它们会改变分析假设，不会改变性状 gamma 模型或提议步长。Beta 明确表示尺度，不是速率。
+
+CLI 在 `--model reference` 下接受 `--clock-sigma-shape 2.5 --clock-sigma-scale 0.4`，
+适用于 `sample` 和 `marginal`。参数必须为正、有限，且对数归一化项可表示。
+严格时钟拒绝这些选项。检查点、仅先验运行、预测及模型比较均保留该先验；链比较要求先验一致。
+`run.json` 中的 `clock_sigma_prior_parameters` 记录数值 `shape` 和 `scale`，并保留文字说明。
+旧记录按 5 和 0.2 解释。自定义应用设置使用格式 6，防止旧应用忽略设置。
+树模型的独立决策见[树先验](./tree-priors)。

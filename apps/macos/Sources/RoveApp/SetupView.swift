@@ -36,6 +36,8 @@ struct SetupView: View {
         }
       }
 
+      if workspace.settings.clock == "reference" { ClockSigmaPriorSection(workspace: workspace) }
+
       DatingSection(workspace: workspace)
 
       LabPanel {
@@ -302,6 +304,9 @@ struct ReviewView: View {
             "Evolutionary clock",
             workspace.settings.clock == "reference"
               ? "Lognormal relaxed clock · 4 gamma categories" : "Strict clock · 1 rate category")
+          if let prior = workspace.settings.clockSigmaPrior {
+            row("Clock sigma prior", prior.description(strings: strings))
+          }
           row(
             "Tree prior",
             workspace.settings.dating.estimatesProcess

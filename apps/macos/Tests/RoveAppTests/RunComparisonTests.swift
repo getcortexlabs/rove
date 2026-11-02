@@ -14,13 +14,15 @@ struct RunComparisonTests {
   }
 
   private func run(
-    _ directory: URL, matrix: URL, seed: String, chains: Int = 1, steps: Int = 2_000
+    _ directory: URL, matrix: URL, seed: String, chains: Int = 1, steps: Int = 2_000,
+    sigmaShape: String = "5"
   ) async throws -> HistoryEntry {
     let report = try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine)
     var settings = AnalysisSettings()
     settings.steps = steps
     settings.sampleEvery = 100
     settings.seed = seed
+    settings.clockSigmaShape = sigmaShape
     settings.chains = chains
     let request = RunRequest(
       id: UUID(), executable: engine, directory: directory,
@@ -49,6 +51,9 @@ struct RunComparisonTests {
     let sameSeed = try await run(folder.appendingPathComponent("same"), matrix: matrix, seed: "42")
     let different = try await run(folder.appendingPathComponent("other"), matrix: other, seed: "7")
 
+    let customPrior = try await run(
+      folder.appendingPathComponent("custom-prior"), matrix: matrix, seed: "60", sigmaShape: "2.5")
+    #expect(!RunComparisonModel.compatible(first, customPrior))
     #expect(RunComparisonModel.compatible(first, second))
     #expect(RunComparisonModel.compatible(first, group))
     #expect(!RunComparisonModel.compatible(first, first))
@@ -132,6 +137,7 @@ struct RunComparisonTests {
         executable: engine, burnin: 10,
         output: folder.appendingPathComponent("cancelled.json"))
     }
-    #expect(!FileManager.default.fileExists(atPath: folder.appendingPathComponent("cancelled.json").path))
+    #expect(
+      !FileManager.default.fileExists(atPath: folder.appendingPathComponent("cancelled.json").path))
   }
 }

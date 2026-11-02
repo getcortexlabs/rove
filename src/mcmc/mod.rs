@@ -127,6 +127,8 @@ pub struct Settings {
     /// Explicit lognormal branch rates, starting at 0.5 with this sigma.
     /// None uses a strict clock. Dating supplies a separate global clock rate.
     pub clock_sigma: Option<f64>,
+    /// Gamma(shape, scale) prior on sigma; independent of character-rate gamma.
+    pub clock_sigma_prior: crate::rates::SigmaPrior,
     /// Ignore the data: the chain samples the prior.
     pub sample_from_prior: bool,
     /// Exponent on the likelihood in the acceptance ratio. One samples the
@@ -159,6 +161,7 @@ impl Default for Settings {
             conditioning: Conditioning::Variable,
             gamma_shape: None,
             clock_sigma: None,
+            clock_sigma_prior: crate::rates::SigmaPrior::default(),
             sample_from_prior: false,
             likelihood_power: 1.0,
             monophyly: Vec::new(),
@@ -462,6 +465,7 @@ pub struct Sampler {
     order: Vec<usize>,
     below: Vec<(usize, usize)>,
     birth_difference_upper: f64,
+    clock_sigma_prior: crate::rates::SigmaPrior,
     likelihood_power: f64,
     tuning: bool,
     tuning_delay: u64,
@@ -713,6 +717,7 @@ impl Sampler {
             order: Vec::with_capacity(tips * 2),
             below: vec![(0, 0); tips * 2 - 1],
             birth_difference_upper: settings.birth_difference_upper,
+            clock_sigma_prior: settings.clock_sigma_prior,
             likelihood_power: settings.likelihood_power,
             tuning: settings.tuning,
             tuning_delay: settings.tuning_delay,
@@ -805,11 +810,9 @@ impl Sampler {
                 .clock
                 .as_ref()
                 .map_or(0.0, RelaxedClock::log_rate_prior),
-            clock_sigma_prior: self
-                .rates
-                .clock
-                .as_ref()
-                .map_or(0.0, RelaxedClock::log_sigma_prior),
+            clock_sigma_prior: self.rates.clock.as_ref().map_or(0.0, |clock| {
+                self.clock_sigma_prior.log_density(clock.sigma())
+            }),
         }
     }
 

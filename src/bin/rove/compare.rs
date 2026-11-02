@@ -274,7 +274,24 @@ pub(super) fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     let records = directories
         .iter()
         .map(|d| -> Result<Value, Box<dyn Error>> {
-            Ok(serde_json::from_slice(&fs::read(d.join("run.json"))?)?)
+            let mut record: Value = serde_json::from_slice(&fs::read(d.join("run.json"))?)?;
+            // Records before configurable sigma priors used the reference prior.
+            if record["model"]
+                .get("clock_sigma_prior_parameters")
+                .is_none()
+            {
+                record["model"]["clock_sigma_prior_parameters"] = if record["model"]["preset"]
+                    == "reference"
+                    && record["model"]["clock_sigma_prior"] == "Gamma(shape=5, scale=0.2)"
+                {
+                    json!({"shape":5.0,"scale":0.2})
+                } else if record["model"]["preset"] == "strict" {
+                    Value::Null
+                } else {
+                    return Err("unrecognized legacy clock sigma prior".into());
+                };
+            }
+            Ok(record)
         })
         .collect::<Result<Vec<_>, _>>()?;
     let first = &records[0];
