@@ -14,14 +14,19 @@ automatic downloads/install-on-quit off until the user chooses them in Settings.
 Updates never cancel an analysis. An installation requested during active work
 waits for another click in Settings or the Rove menu after the work finishes.
 
+The [0.1.2 distribution record](release-checks/0.1.2.md) tracks the first signed
+upgrade exercise and the remaining publication checks.
+
 Before the first distribution using Sparkle:
 
-1. Resolve the Swift package and use its `bin/generate_keys --account rove`
-   tool to generate a **Rove-specific** key in the release machine's Keychain.
-   Export a protected backup with `--account rove -x /secure/path/rove.key`.
-   Keep it outside the repository and restrict it to its owner. Never reuse
-   Lily's signing key. Losing this key requires a planned key migration.
-2. Set `ROVE_SPARKLE_PUBLIC_KEY` to the generated public key when packaging.
+1. The Rove-specific key is provisioned in the release machine's Keychain under
+   the `rove` account. Resolve the Swift package and use its
+   `bin/generate_keys --account rove -p` tool to confirm the public key matches
+   `apps/macos/SparklePublicKey.txt`. Keep its protected backup outside the
+   repository. Never regenerate the key for a release or reuse Lily's key.
+   Losing this key requires a planned key migration.
+2. Distribution packaging reads `apps/macos/SparklePublicKey.txt` by default.
+   `ROVE_SPARKLE_PUBLIC_KEY` can override it for an isolated signing test.
    The private key is never put in the bundle or passed as a command argument.
    If packaging moves to CI, store the private key in its secret store and
    supply it through a restricted temporary file.

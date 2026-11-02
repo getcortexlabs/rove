@@ -1080,3 +1080,16 @@
 "This setup has no posterior samples. Configure the power-posterior plan below to estimate model evidence." = "Esta configuração não tem amostras posteriores. Defina o plano de power posteriors abaixo para estimar a evidência do modelo.";
 "Simulation limit: %@ attempts per character." = "Limite de simulação: %@ tentativas por caráter.";
 "Power posteriors estimate the log marginal likelihood of the selected model: the probability of the matrix with every tree and parameter integrated out, priors included. The difference between two models is a log Bayes factor." = "Power posteriors estimam a log-verossimilhança marginal do modelo escolhido: a probabilidade da matriz integrando todas as árvores e parâmetros, incluindo os priors. A diferença entre dois modelos é um log fator de Bayes.";
+
+// Rove 0.1.2
+"A little more room to explore." = "Mais espaço para explorar.";
+"More control over your analysis, more ways to open your results, and updates that come to you." = "Mais controle sobre a análise, mais formas de abrir seus resultados e atualizações que chegam até você.";
+"Set your own pace." = "No seu ritmo.";
+"Choose your sampling plan and run up to 16 independent chains." = "Escolha o plano de amostragem e rode até 16 cadeias independentes.";
+"Use intermediate presets or enter your own step count and sampling interval. Configure comparison burn-in, execution options and the relaxed-clock sigma prior in the app. Review and History keep those choices with the analysis." = "Use as opções intermediárias ou defina a quantidade de passos e o intervalo de amostragem. Configure o burn-in da comparação, as opções de execução e o prior do sigma do relógio relaxado no app. A revisão e o Histórico guardam essas escolhas junto da análise.";
+"Your results, within reach." = "Seus resultados, à mão.";
+"Open an external trace, import a completed CLI run or compare models from Review." = "Abra um traço externo, importe uma execução concluída pela CLI ou compare modelos a partir da revisão.";
+"Trace diagnostics accept burn-in as a percentage or a number of samples. Model evidence has its own sampling interval and no longer needs an ordinary analysis first. Imported CLI runs are checked against their original matrix." = "Os diagnósticos de traço aceitam burn-in em porcentagem ou número de amostras. A evidência do modelo tem seu próprio intervalo de amostragem e pode ser calculada sem rodar uma análise comum antes. As execuções importadas da CLI são conferidas com a matriz original.";
+"The next update comes to you." = "A próxima atualização vem até você.";
+"Check for signed updates from the Rove menu or Settings." = "Busque atualizações assinadas pelo menu do Rove ou pelas Configurações.";
+"This first upgrade from 0.1.1 needs a manual DMG installation. After that, Rove can find and install updates itself. Active calculations delay installation; when your work finishes, you choose when to relaunch." = "Esta primeira atualização da versão 0.1.1 precisa ser instalada pelo DMG. Depois disso, o Rove pode buscar e instalar as próximas. A instalação espera os cálculos terminarem; você escolhe quando reiniciar o app.";

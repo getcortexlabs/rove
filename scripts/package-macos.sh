@@ -16,6 +16,7 @@ if [[ -n "${NOTARY_PROFILE:-}" && -z "${CODESIGN_ID:-}" ]]; then
     exit 2
 fi
 if [[ -n "${CODESIGN_ID:-}" ]]; then
+    export ROVE_SPARKLE_PUBLIC_KEY="${ROVE_SPARKLE_PUBLIC_KEY:-$(cat apps/macos/SparklePublicKey.txt)}"
     : "${ROVE_SPARKLE_PUBLIC_KEY:?Set the Rove Ed25519 public key before packaging a distribution build}"
     export ROVE_UPDATES_ENABLED=1
 fi
