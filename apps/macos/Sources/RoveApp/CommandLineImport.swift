@@ -64,12 +64,12 @@ enum CommandLineImport {
     }
     guard let steps = Int(exactly: record.settings.steps),
       let interval = Int(exactly: record.settings.sampleEvery),
-      let conditioning = EngineRecord.Model.conditioningDescriptions.first(where: {
-        $0.value == record.model.conditioning
-      })?.key
+      let conditioning = record.model.conditioningKind
         ?? option("--conditioning")
     else { throw RunFailure.invalidCompletion }
     var value = AnalysisSettings()
+    value.dataType = record.model.resolvedDataType
+    guard record.model.dataModelMatches(value) else { throw RunFailure.invalidCompletion }
     value.treePrior = record.model.treePriorKind ?? "birth-death"
     if value.treePrior == "yule" {
       guard let prior = record.model.birthRatePriorParameters, prior.valid else {

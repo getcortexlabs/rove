@@ -1174,3 +1174,24 @@
 "Birth-difference and relative-death moves require the birth-death prior." = "Birth-difference and relative-death moves require the birth-death prior.";
 "The birth-rate move requires Yule without fossil dating." = "The birth-rate move requires Yule without fossil dating.";
 "Speciation rate under Yule, per source tree-height unit." = "Speciation rate under Yule, per source tree-height unit.";
+
+// Aligned DNA
+"DNA · JC69" = "DNA · JC69";
+"Aligned DNA · JC69" = "Aligned DNA · JC69";
+"JC69 treats A, C, G and T equally. All four states remain possible at every site, and constant sites stay in the alignment." = "JC69 treats A, C, G and T equally. All four states remain possible at every site, and constant sites stay in the alignment.";
+"Import sequences that are already aligned. Ambiguous IUPAC bases represent possible states, not extra nucleotides. Choose a gap policy in the matrix preview." = "Import sequences that are already aligned. Ambiguous IUPAC bases represent possible states, not extra nucleotides. Choose a gap policy in the matrix preview.";
+"DNA JC69 keeps all four A/C/G/T states and all aligned sites, including constant sites." = "DNA JC69 keeps all four A/C/G/T states and all aligned sites, including constant sites.";
+"The saved data type does not match the input." = "The saved data type does not match the input.";
+"SITES" = "SITES";
+"Aligned positions" = "Aligned positions";
+"Constant sites are retained and contribute to the JC69 likelihood." = "Constant sites are retained and contribute to the JC69 likelihood.";
+"IUPAC codes and braces specify possible bases: R means A or G, and N permits all four. These observations contribute to inference without being recoded as extra states." = "IUPAC codes and braces specify possible bases: R means A or G, and N permits all four. These observations contribute to inference without being recoded as extra states.";
+"Predictive checks currently require single bases or missing cells. Ambiguous observations need an explicit observation model for simulation." = "Predictive checks currently require single bases or missing cells. Ambiguous observations need an explicit observation model for simulation.";
+"Open a NEXUS matrix or aligned DNA in FASTA. Your data stays on this Mac." = "Open a NEXUS matrix or aligned DNA in FASTA. Your data stays on this Mac.";
+"Choose a local NEXUS or aligned FASTA file from your Mac." = "Choose a local NEXUS or aligned FASTA file from your Mac.";
+"Choose a NEXUS or aligned FASTA file, rather than a folder." = "Choose a NEXUS or aligned FASTA file, rather than a folder.";
+"Drop a NEXUS or aligned FASTA file here, or browse your Mac." = "Drop a NEXUS or aligned FASTA file here, or browse your Mac.";
+"Open or drop a NEXUS matrix, tree file or aligned DNA in FASTA" = "Open or drop a NEXUS matrix, tree file or aligned DNA in FASTA";
+"Import a morphological NEXUS matrix or aligned DNA in NEXUS or FASTA. Inspect the observations and review the model before starting an analysis." = "Import a morphological NEXUS matrix or aligned DNA in NEXUS or FASTA. Inspect the observations and review the model before starting an analysis.";
+"Declared states: %@ · DNA" = "Declared states: %@ · DNA";
+"Choose a matrix or DNA alignment" = "Choose a matrix or DNA alignment";

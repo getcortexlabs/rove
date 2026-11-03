@@ -1174,3 +1174,24 @@
 "Birth-difference and relative-death moves require the birth-death prior." = "Movimentos de diversificação líquida e morte relativa exigem o prior de nascimento-morte.";
 "The birth-rate move requires Yule without fossil dating." = "O movimento da taxa de nascimento exige Yule sem datação fóssil.";
 "Speciation rate under Yule, per source tree-height unit." = "Taxa de especiação sob Yule, por unidade de altura da árvore de origem.";
+
+// Aligned DNA
+"DNA · JC69" = "DNA · JC69";
+"Aligned DNA · JC69" = "DNA alinhado · JC69";
+"JC69 treats A, C, G and T equally. All four states remain possible at every site, and constant sites stay in the alignment." = "JC69 trata A, C, G e T igualmente. Os quatro estados permanecem possíveis em cada sítio, e sítios constantes ficam no alinhamento.";
+"Import sequences that are already aligned. Ambiguous IUPAC bases represent possible states, not extra nucleotides. Choose a gap policy in the matrix preview." = "Importe sequências já alinhadas. Bases IUPAC ambíguas representam estados possíveis, não nucleotídeos adicionais. Escolha como tratar gaps na prévia da matriz.";
+"DNA JC69 keeps all four A/C/G/T states and all aligned sites, including constant sites." = "JC69 para DNA mantém os quatro estados A/C/G/T e todos os sítios alinhados, inclusive os constantes.";
+"The saved data type does not match the input." = "O tipo de dados salvo não corresponde ao arquivo de entrada.";
+"SITES" = "SÍTIOS";
+"Aligned positions" = "Posições alinhadas";
+"Constant sites are retained and contribute to the JC69 likelihood." = "Sítios constantes são mantidos e contribuem para a verossimilhança de JC69.";
+"IUPAC codes and braces specify possible bases: R means A or G, and N permits all four. These observations contribute to inference without being recoded as extra states." = "Códigos IUPAC e chaves especificam bases possíveis: R significa A ou G, e N permite as quatro. Essas observações entram na inferência sem se tornarem estados adicionais.";
+"Predictive checks currently require single bases or missing cells. Ambiguous observations need an explicit observation model for simulation." = "As verificações preditivas atualmente exigem bases individuais ou células ausentes. Observações ambíguas precisam de um modelo de observação explícito para simulação.";
+"Open a NEXUS matrix or aligned DNA in FASTA. Your data stays on this Mac." = "Abra uma matriz NEXUS ou DNA alinhado em FASTA. Seus dados ficam neste Mac.";
+"Choose a local NEXUS or aligned FASTA file from your Mac." = "Escolha um arquivo NEXUS ou FASTA alinhado neste Mac.";
+"Choose a NEXUS or aligned FASTA file, rather than a folder." = "Escolha um arquivo NEXUS ou FASTA alinhado, em vez de uma pasta.";
+"Drop a NEXUS or aligned FASTA file here, or browse your Mac." = "Solte um arquivo NEXUS ou FASTA alinhado aqui, ou procure no Mac.";
+"Open or drop a NEXUS matrix, tree file or aligned DNA in FASTA" = "Abra ou solte uma matriz NEXUS, arquivo de árvores ou DNA alinhado em FASTA";
+"Import a morphological NEXUS matrix or aligned DNA in NEXUS or FASTA. Inspect the observations and review the model before starting an analysis." = "Importe uma matriz morfológica NEXUS ou DNA alinhado em NEXUS ou FASTA. Confira as observações e revise o modelo antes de iniciar a análise.";
+"Declared states: %@ · DNA" = "Estados declarados: %@ · DNA";
+"Choose a matrix or DNA alignment" = "Escolha uma matriz ou um alinhamento de DNA";

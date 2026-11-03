@@ -4,6 +4,8 @@ description: "Read morphological NEXUS matrices in Rust, preserve observation se
 
 # Reading morphological NEXUS
 
+Aligned DNA in NEXUS and FASTA is also supported under [JC69](./dna). The morphology rules below describe `STANDARD` matrices.
+
 `nexus::parse` reads a UTF-8 string into a `data::Matrix`. It preserves taxon order, the declared state alphabet, character and state labels, and every observed cell. It has no runtime dependencies and does not invoke BEAST.
 
 Try the supplied reference matrix from the repository root:
@@ -39,7 +41,7 @@ With `TAXLABELS`, returned rows follow the declared order even if matrix rows ap
 
 Defaults are case-insensitive states, missing symbol `?`, no gap symbol, and sequential rows. Thus `-` is not a gap unless declared with `GAP=-`. State, missing and gap symbols must be distinct under the chosen case policy.
 
-Molecular or continuous datatypes, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, state ranges, frequencies/counts, `ELIMINATE`, multiple matrices and unsupported commands are rejected. `SETS`, unsupported `ASSUMPTIONS` directives and application-specific blocks are also rejected: their partitions, weights, ordering or exclusions must not disappear on import. XML parsing is outside this API.
+RNA, protein or continuous datatypes, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, state ranges, frequencies/counts, `ELIMINATE`, multiple matrices and unsupported commands are rejected. `SETS`, unsupported `ASSUMPTIONS` directives and application-specific blocks are also rejected: their partitions, weights, ordering or exclusions must not disappear on import. XML parsing is outside this API.
 
 ## Observations and tip likelihoods
 

@@ -151,6 +151,7 @@ final class RunComparisonModel {
       x.constraints == y.constraints, x.settings.clock == y.settings.clock,
       x.settings.clockSigmaPrior == y.settings.clockSigmaPrior,
       x.settings.treePrior == y.settings.treePrior,
+      x.settings.dataType == y.settings.dataType,
       x.settings.treePrior != "yule"
         || x.settings.yuleBirthRateUpper == y.settings.yuleBirthRateUpper,
       x.settings.sampleFromPrior == y.settings.sampleFromPrior,

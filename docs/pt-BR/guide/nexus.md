@@ -4,6 +4,8 @@ description: "Leia matrizes NEXUS morfológicas em Rust, preserve a semântica d
 
 # Lendo NEXUS morfológico
 
+DNA alinhado em NEXUS e FASTA também é aceito com [JC69](./dna). As regras morfológicas abaixo descrevem matrizes `STANDARD`.
+
 `nexus::parse` lê uma string UTF-8 e produz uma `data::Matrix`. Ele preserva a ordem dos táxons, o alfabeto de estados declarado, os rótulos de caracteres e de estados e cada célula observada. Não tem dependências em tempo de execução e não invoca o BEAST.
 
 Experimente a matriz de referência fornecida, a partir da raiz do repositório:
@@ -39,7 +41,7 @@ Com `TAXLABELS`, as linhas devolvidas seguem a ordem declarada mesmo que as linh
 
 Sem declaração em contrário, os estados não distinguem maiúsculas de minúsculas, o símbolo de faltante é `?`, não há símbolo de gap e as linhas são sequenciais. Assim, `-` não é um gap a menos que seja declarado com `GAP=-`. Os símbolos de estado, de faltante e de gap devem ser distintos sob a política de maiúsculas e minúsculas escolhida.
 
-Tipos de dados moleculares ou contínuos, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, intervalos de estados, frequências/contagens, `ELIMINATE`, múltiplas matrizes e comandos não suportados são rejeitados. `SETS`, diretivas não suportadas de `ASSUMPTIONS` e blocos específicos de aplicativos também são rejeitados: suas partições, pesos, ordenação ou exclusões não devem desaparecer na importação. O parsing de XML está fora desta API.
+Tipos de dados de RNA, proteínas ou contínuos, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, intervalos de estados, frequências/contagens, `ELIMINATE`, múltiplas matrizes e comandos não suportados são rejeitados. `SETS`, diretivas não suportadas de `ASSUMPTIONS` e blocos específicos de aplicativos também são rejeitados: suas partições, pesos, ordenação ou exclusões não devem desaparecer na importação. O parsing de XML está fora desta API.
 
 ## Observações e verossimilhanças dos terminais
 

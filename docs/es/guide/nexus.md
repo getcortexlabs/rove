@@ -4,6 +4,8 @@ description: "Leer matrices NEXUS morfológicas en Rust, preservar la semántica
 
 # Lectura de NEXUS morfológico
 
+También se admite ADN alineado en NEXUS y FASTA con [JC69](./dna). Las reglas morfológicas siguientes describen matrices `STANDARD`.
+
 `nexus::parse` lee una cadena UTF-8 en una `data::Matrix`. Preserva el orden de los taxones, el alfabeto de estados declarado, las etiquetas de caracteres y de estados, y cada celda observada. No tiene dependencias en tiempo de ejecución y no invoca a BEAST.
 
 Prueba la matriz de referencia incluida desde la raíz del repositorio:
@@ -39,7 +41,7 @@ Con `TAXLABELS`, las filas devueltas siguen el orden declarado aunque las filas 
 
 Los valores por defecto son estados sin distinción de mayúsculas y minúsculas, símbolo de faltante `?`, ningún símbolo de gap y filas secuenciales. Por tanto, `-` no es un gap salvo que se declare con `GAP=-`. Los símbolos de estado, de faltante y de gap deben ser distintos bajo la política de mayúsculas elegida.
 
-Los tipos de datos moleculares o continuos, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, los rangos de estados, las frecuencias/recuentos, `ELIMINATE`, las matrices múltiples y los comandos no admitidos se rechazan. `SETS`, las directivas no admitidas de `ASSUMPTIONS` y los bloques específicos de aplicaciones también se rechazan: sus particiones, pesos, orden o exclusiones no deben desaparecer en la importación. El análisis sintáctico de XML queda fuera de esta API.
+Los tipos de datos de ARN, proteínas o continuos, `TOKENS`, `TRANSPOSE`, `NOLABELS`, `EQUATE`, `MATCHCHAR`, los rangos de estados, las frecuencias/recuentos, `ELIMINATE`, las matrices múltiples y los comandos no admitidos se rechazan. `SETS`, las directivas no admitidas de `ASSUMPTIONS` y los bloques específicos de aplicaciones también se rechazan: sus particiones, pesos, orden o exclusiones no deben desaparecer en la importación. El análisis sintáctico de XML queda fuera de esta API.
 
 ## Observaciones y verosimilitudes de los terminales
 

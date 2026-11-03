@@ -4,6 +4,8 @@ description: "在 Rust 中读取形态学 NEXUS 矩阵，保留观测语义，�
 
 # 读取形态学 NEXUS
 
+也支持通过 [JC69](./dna) 分析 NEXUS 和 FASTA 中已比对的 DNA。以下形态学规则描述 `STANDARD` 矩阵。
+
 `nexus::parse` 把一个 UTF-8 字符串读入 `data::Matrix`。它保留分类单元的顺序、声明的状态字母表、性状标签和状态标签，以及每一个观测单元格。它没有运行时依赖，也不会调用 BEAST。
 
 在代码仓库根目录下试试随附的参考矩阵：
@@ -39,7 +41,7 @@ cargo run --release --example read_nexus -- fixtures/reference/20x50/matrix.nex
 
 默认值是：状态不区分大小写，缺失符号为 `?`，没有缺口符号，顺序行。因此除非用 `GAP=-` 声明，`-` 不是缺口。在所选的大小写策略下，状态、缺失和缺口符号必须互不相同。
 
-分子或连续数据类型、`TOKENS`、`TRANSPOSE`、`NOLABELS`、`EQUATE`、`MATCHCHAR`、状态范围、频率/计数、`ELIMINATE`、多个矩阵和不支持的命令都会被拒绝。`SETS`、不支持的 `ASSUMPTIONS` 指令和应用程序特有的块同样会被拒绝：它们的分区、权重、排序或排除项不能在导入时消失。XML 解析不在这个 API 的范围内。
+RNA、蛋白质或连续数据类型、`TOKENS`、`TRANSPOSE`、`NOLABELS`、`EQUATE`、`MATCHCHAR`、状态范围、频率/计数、`ELIMINATE`、多个矩阵和不支持的命令都会被拒绝。`SETS`、不支持的 `ASSUMPTIONS` 指令和应用程序特有的块同样会被拒绝：它们的分区、权重、排序或排除项不能在导入时消失。XML 解析不在这个 API 的范围内。
 
 ## 观测与末端节点似然
 

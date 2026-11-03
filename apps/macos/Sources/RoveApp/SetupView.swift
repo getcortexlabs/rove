@@ -42,51 +42,56 @@ struct SetupView: View {
       TreePriorSection(workspace: workspace)
       DatingSection(workspace: workspace)
 
-      LabPanel {
-        VStack(alignment: .leading, spacing: 15) {
-          HStack {
-            VStack(alignment: .leading, spacing: 6) {
-              Text(strings("Which characters did you include?")).font(
-                .system(size: 13, weight: .semibold))
-              Text(strings("Match the model to how your matrix was collected."))
-                .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+      if workspace.settings.dataType == "dna" {
+        NucleotideModelSection(strings: strings)
+      } else {
+        LabPanel {
+          VStack(alignment: .leading, spacing: 15) {
+            HStack {
+              VStack(alignment: .leading, spacing: 6) {
+                Text(strings("Which characters did you include?")).font(
+                  .system(size: 13, weight: .semibold))
+                Text(strings("Match the model to how your matrix was collected."))
+                  .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+              }
+              Spacer()
+              Picker(strings("Character selection"), selection: $workspace.settings.conditioning) {
+                Text(strings("Variable only · Mkv")).tag("variable")
+                Text(strings("Informative only · Mkparsinf")).tag("informative")
+                Text(strings("All characters · Mk")).tag("none")
+              }.labelsHidden().frame(width: 230).tint(Lab.accent)
             }
-            Spacer()
-            Picker(strings("Character selection"), selection: $workspace.settings.conditioning) {
-              Text(strings("Variable only · Mkv")).tag("variable")
-              Text(strings("Informative only · Mkparsinf")).tag("informative")
-              Text(strings("All characters · Mk")).tag("none")
-            }.labelsHidden().frame(width: 230).tint(Lab.accent)
-          }
-          Text(
-            strings(
-              workspace.settings.conditioning == "variable"
-                ? "Use Mkv when constant characters were excluded. Missing observations can make a character's variability impossible to establish."
-                : workspace.settings.conditioning == "informative"
-                  ? "Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations."
-                  : "Use Mk when your sampling includes constant as well as variable characters. The matrix can contain both."
+            Text(
+              strings(
+                workspace.settings.conditioning == "variable"
+                  ? "Use Mkv when constant characters were excluded. Missing observations can make a character's variability impossible to establish."
+                  : workspace.settings.conditioning == "informative"
+                    ? "Use Mkparsinf only when constant and other parsimony-uninformative characters were excluded when the matrix was collected. Every retained character must remain informative despite missing or uncertain observations."
+                    : "Use Mk when your sampling includes constant as well as variable characters. The matrix can contain both."
+              )
             )
-          )
-          .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
-          if workspace.settings.conditioning == "variable",
-            let issue = workspace.report?.variableError
-          {
-            DiagnosticMessage(
-              title: strings(
-                "Mkv requires characters known to be variable. Check the matrix or choose Mk if it matches how your data were collected."
-              ), details: issue, strings: strings)
-          }
-          if workspace.settings.conditioning == "informative",
-            let issue = workspace.report?.informativeError
-          {
-            DiagnosticMessage(
-              title: strings(
-                workspace.report?.partitions?.contains(where: { $0.ordering == .ordered }) == true
-                  ? "Informative-only coding is not available for ordered characters. Keep the coding consistent with how your matrix was collected."
-                  : "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected."
-              ), details: issue, strings: strings)
+            .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
+            if workspace.settings.conditioning == "variable",
+              let issue = workspace.report?.variableError
+            {
+              DiagnosticMessage(
+                title: strings(
+                  "Mkv requires characters known to be variable. Check the matrix or choose Mk if it matches how your data were collected."
+                ), details: issue, strings: strings)
+            }
+            if workspace.settings.conditioning == "informative",
+              let issue = workspace.report?.informativeError
+            {
+              DiagnosticMessage(
+                title: strings(
+                  workspace.report?.partitions?.contains(where: { $0.ordering == .ordered }) == true
+                    ? "Informative-only coding is not available for ordered characters. Keep the coding consistent with how your matrix was collected."
+                    : "Informative-only coding requires at least two states each shared by two or more taxa. Check the matrix and how its characters were selected."
+                ), details: issue, strings: strings)
+            }
           }
         }
+
       }
 
       LabPanel {
@@ -318,16 +323,15 @@ struct ReviewView: View {
               .font(.system(size: 11)).foregroundStyle(Lab.secondary)
             }
             Spacer()
-            Text("NEXUS").font(.system(size: 10, design: .monospaced)).foregroundStyle(Lab.muted)
+            Text((report.inputFormat ?? "nexus").uppercased()).font(
+              .system(size: 10, design: .monospaced)
+            ).foregroundStyle(Lab.muted)
           }.padding(.bottom, 22)
           rule
           row("Tree prior", workspace.settings.treePriorDescription(strings: strings))
           row(
             "Character model",
-            workspace.settings.conditioning == "variable"
-              ? "Mkv · variable characters"
-              : workspace.settings.conditioning == "informative"
-                ? "Mkparsinf · informative characters" : "Mk · all characters")
+            workspace.settings.characterModelLabel)
           if let partitions = report.partitions {
             row(
               "Alphabet choice", AnalysisSettings.partitioningLabel(workspace.settings.partitioning)
@@ -345,13 +349,6 @@ struct ReviewView: View {
           if let prior = workspace.settings.clockSigmaPrior {
             row("Clock sigma prior", prior.description(strings: strings))
           }
-          row(
-            "Tree prior",
-            workspace.settings.dating.estimatesProcess
-              ? "Fossilized birth–death · estimated parameters"
-              : workspace.settings.dating.enabled
-                ? "Fossilized birth–death · fixed process" : "Birth–death · all tips at height zero"
-          )
           rule
           row(
             "Chain",

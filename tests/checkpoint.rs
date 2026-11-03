@@ -358,3 +358,59 @@ fn restarting_keeps_the_diagnostic_stopping_history() {
         }
     }
 }
+
+#[test]
+fn dna_formats_resume_to_identical_samples() {
+    for (format, matrix) in [
+        (
+            "nexus",
+            include_str!("../fixtures/validation/dna/matrix.nex"),
+        ),
+        (
+            "fasta",
+            include_str!("../fixtures/validation/dna/matrix.fasta"),
+        ),
+    ] {
+        for chains in [1, 4] {
+            let root = scratch(&format!("checkpoint-dna-{format}-{chains}"));
+            fs::write(root.join("matrix.nex"), matrix).unwrap();
+            let configured = |name: &str| {
+                let mut cmd = command(&root, name, chains);
+                cmd.args(["--gaps", "missing", "--monophyly", "Alpha_one,Beta_two"]);
+                cmd
+            };
+            assert!(
+                configured("full")
+                    .stdout(Stdio::null())
+                    .stderr(Stdio::null())
+                    .status()
+                    .unwrap()
+                    .success()
+            );
+            interrupt(configured("paused"), 230, false);
+            let outcome = Command::new(BIN)
+                .args(["sample", "--resume"])
+                .arg(root.join("paused"))
+                .output()
+                .unwrap();
+            assert!(
+                outcome.status.success(),
+                "{}",
+                String::from_utf8_lossy(&outcome.stderr)
+            );
+            for c in 0..chains {
+                let member = if chains == 1 {
+                    String::new()
+                } else {
+                    format!("chain-{:02}", c + 1)
+                };
+                for file in ["trace.log", "trees.nexus"] {
+                    assert_eq!(
+                        content(&root.join("full").join(&member).join(file)),
+                        content(&root.join("paused").join(&member).join(file))
+                    );
+                }
+            }
+        }
+    }
+}

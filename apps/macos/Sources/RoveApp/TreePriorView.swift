@@ -7,6 +7,11 @@ extension AnalysisSettings {
   }
 
   func treePriorDescription(strings: AppStrings) -> String {
+    if dating.enabled {
+      return strings(dating.estimatesProcess
+        ? "Fossilized birth–death · estimated parameters"
+        : "Fossilized birth–death · fixed process")
+    }
     guard treePrior == "yule" else { return strings(treePriorLabel) }
     return strings(
       "Yule · birth rate Uniform(0, %@)", yuleBirthRateUpper.map(String.init(describing:)) ?? "—")

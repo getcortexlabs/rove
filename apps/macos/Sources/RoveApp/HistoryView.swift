@@ -285,10 +285,7 @@ private struct HistoryDetail: View {
             field(
               "Character model",
               strings(
-                draft.settings.conditioning == "variable"
-                  ? "Mkv · variable characters"
-                  : draft.settings.conditioning == "informative"
-                    ? "Mkparsinf · informative characters" : "Mk · all characters"))
+                draft.settings.characterModelLabel))
             field(
               "State partitions",
               strings(

@@ -4,6 +4,8 @@ description: "The standalone model of the supplied BEAST XML: gamma categories, 
 
 # The reference model
 
+Aligned DNA in NEXUS and FASTA is also supported under [JC69](./dna)
+
 `rove sample --model reference` runs the probability model of the supplied
 20 × 50 XML without BEAST. It uses the same binary Mk model, Mkv conditioning
 by default, birth–death prior and parameter conventions. The default

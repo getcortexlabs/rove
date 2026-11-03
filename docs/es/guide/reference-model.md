@@ -4,6 +4,8 @@ description: "El modelo independiente del XML suministrado: categorías gamma, t
 
 # El modelo de referencia
 
+También se admite ADN alineado en NEXUS y FASTA con [JC69](./dna)
+
 `rove sample --model reference` ejecuta el modelo probabilístico del XML
 20 × 50 suministrado, sin BEAST. Usa el mismo Mk binario, la corrección Mkv
 por defecto, el prior de nacimiento–muerte y las convenciones de parámetros.

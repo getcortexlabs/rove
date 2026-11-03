@@ -48,6 +48,21 @@ struct EngineRecord: Decodable, Sendable {
     var clockSigmaPriorParameters: ClockSigmaPrior? = nil
     var sampleFromPrior: Bool? = nil
     var conditioning: String? = nil
+    var dataType: String? = nil
+    var substitutionModel: String? = nil
+    var resolvedDataType: String { dataType ?? "standard" }
+
+    func dataModelMatches(_ settings: AnalysisSettings) -> Bool {
+      resolvedDataType == settings.dataType
+        && (resolvedDataType == "dna"
+          ? substitutionModel == "jc69" && conditioning == "none (JC69)" : substitutionModel == nil)
+    }
+
+    var conditioningKind: String? {
+      if conditioning == "none (JC69)", resolvedDataType == "dna" { return "none" }
+      return Self.conditioningDescriptions.first { $0.value == conditioning }?.key
+    }
+
     var treePriorKind: String? = nil
     var birthRatePriorParameters: BirthRatePrior? = nil
 
@@ -78,7 +93,8 @@ struct EngineRecord: Decodable, Sendable {
 
     /// The model name in the engine's description of its conditioning.
     var conditioningLabel: String {
-      switch conditioning {
+      if resolvedDataType == "dna" { return "JC69" }
+      return switch conditioning {
       case "none (Mk)": "Mk"
       case "variable characters (Mkv)": "Mkv"
       case "parsimony-informative characters (Mkparsinf)": "Mkparsinf"
@@ -124,12 +140,13 @@ struct EngineRecord: Decodable, Sendable {
     if let index = command.firstIndex(of: "--conditioning"), command.indices.contains(index + 1) {
       conditioning = command[index + 1]
     } else {
-      conditioning = Model.conditioningDescriptions.first { $0.value == model.conditioning }?.key
+      conditioning = model.conditioningKind
     }
     let expectedDating: EngineDatingModel?
     do { expectedDating = try draft.settings.dating.model() } catch { return false }
     return draft.settings.validationError == nil && input.sha256 == draft.matrixSHA256
       && model.dating == expectedDating && model.treePriorMatches(draft.settings)
+      && model.dataModelMatches(draft.settings)
       && input.gaps == (draft.settings.gapsAsMissing ? "missing" : "reject")
       && model.preset == draft.settings.clock
       && (model.preset != "reference"

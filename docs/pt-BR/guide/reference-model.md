@@ -4,6 +4,8 @@ description: "O modelo independente do XML fornecido: categorias gama, taxas log
 
 # O modelo de referência
 
+DNA alinhado em NEXUS e FASTA também é aceito com [JC69](./dna)
+
 `rove sample --model reference` executa o modelo probabilístico do XML
 20 × 50 fornecido, sem o BEAST. Usa o mesmo Mk binário, a correção Mkv por
 padrão, o prior de nascimento–morte e as convenções dos parâmetros. A opção

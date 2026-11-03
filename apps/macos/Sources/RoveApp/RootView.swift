@@ -125,7 +125,7 @@ struct RootView: View {
           Text(strings("A first look at Rove")).font(Lab.display(23))
           Text(
             strings(
-              "Import a morphological NEXUS matrix, inspect its characters and prepare an analysis. The preview supports the engine's current binary Mk and Mkv models."
+              "Import a morphological NEXUS matrix or aligned DNA in NEXUS or FASTA. Inspect the observations and review the model before starting an analysis."
             )
           )
           Text(
@@ -158,7 +158,8 @@ struct RootView: View {
         } else {
           Text(
             strings(
-              "Declared states: %@ · morphological data",
+              workspace.report?.isDNA == true
+                ? "Declared states: %@ · DNA" : "Declared states: %@ · morphological data",
               strings.number(workspace.report?.symbols.count ?? 0))
           )
           .font(.system(size: 11)).foregroundStyle(Lab.muted)

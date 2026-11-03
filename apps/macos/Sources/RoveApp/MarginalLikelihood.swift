@@ -105,8 +105,8 @@ struct SavedEstimate: Identifiable, Sendable {
     return record.input.sha256 == draft.matrixSHA256
       && record.input.gaps == (settings.gapsAsMissing ? "missing" : "reject")
       && record.model.monophyly == draft.constraints && record.model.preset == settings.clock
-      && record.model.conditioning
-        == EngineRecord.Model.conditioningDescriptions[settings.conditioning]
+      && record.model.conditioningKind == settings.conditioning
+      && record.model.dataModelMatches(settings)
       && (record.model.partitioning ?? "declared") == settings.partitioning
       && record.model.dating == dating && record.model.treePriorMatches(settings)
       && (settings.clock != "reference"

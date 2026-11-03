@@ -1,9 +1,24 @@
-//! Morphological observations and lossless compression within model partitions.
+//! Morphological and nucleotide observations, compressed within model partitions.
 
 use crate::model::CharacterOrdering;
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
 use std::ops::Range;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum DataType {
+    Standard,
+    Dna,
+}
+
+impl DataType {
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Standard => "standard",
+            Self::Dna => "dna",
+        }
+    }
+}
 
 /// State indices refer to the matrix's declared alphabet, including unobserved states.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -17,6 +32,7 @@ pub enum Cell {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Matrix {
+    pub(crate) data_type: DataType,
     pub(crate) taxa: Vec<String>,
     pub(crate) symbols: Vec<char>,
     pub(crate) rows: Vec<Vec<Cell>>,
@@ -41,11 +57,13 @@ pub enum CompressionError {
     Gap { taxon: String, site: usize },
     Polymorphism { taxon: String, site: usize },
     OrderedAlphabet { site: usize },
+    DnaModel,
 }
 
 impl fmt::Display for CompressionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::DnaModel => f.write_str("DNA requires the complete A/C/G/T alphabet and unordered JC69; morphology's state recoding and ordering do not apply"),
             Self::StateLabels { site } => write!(
                 f,
                 "character {} needs at least two state labels for labeled-alphabet partitioning; declare every possible state in SYMBOLS order or choose another explicit alphabet",
@@ -89,6 +107,7 @@ impl std::error::Error for CompressionError {}
 /// Observed patterns from one partition, numbered by first occurrence.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Patterns {
+    data_type: DataType,
     ordering: CharacterOrdering,
     sites: Vec<usize>,
     symbols: Vec<char>,
@@ -106,6 +125,10 @@ pub struct CharacterSet {
 }
 
 impl Matrix {
+    pub fn data_type(&self) -> DataType {
+        self.data_type
+    }
+
     pub fn taxa(&self) -> &[String] {
         &self.taxa
     }
@@ -184,6 +207,9 @@ impl Matrix {
         &self,
         gaps: GapTreatment,
     ) -> Result<Vec<Patterns>, CompressionError> {
+        if self.data_type == DataType::Dna {
+            return self.compress(std::slice::from_ref(&(0..self.character_count())), gaps);
+        }
         // Mk needs at least two states, so a binary declared alphabet leaves
         // no state-count ambiguity even when a character is constant or missing.
         if self.symbols.len() == 2 {
@@ -232,6 +258,9 @@ impl Matrix {
         &self,
         gaps: GapTreatment,
     ) -> Result<Vec<Patterns>, CompressionError> {
+        if self.data_type == DataType::Dna {
+            return Err(CompressionError::DnaModel);
+        }
         let mut groups = BTreeMap::<usize, Vec<usize>>::new();
         for (site, labels) in self.state_labels.iter().enumerate() {
             if labels.len() < 2 || labels.len() > self.symbols.len() {
@@ -260,6 +289,9 @@ impl Matrix {
         let mut covered = vec![false; self.character_count()];
         let mut mapped = Vec::new();
         for partition in partitions {
+            if self.data_type == DataType::Dna && partition.symbols != ['A', 'C', 'G', 'T'] {
+                return Err(CompressionError::DnaModel);
+            }
             let states = partition
                 .symbols
                 .iter()
@@ -317,6 +349,9 @@ impl Matrix {
     }
 
     fn validate_observations(&self, gaps: GapTreatment) -> Result<(), CompressionError> {
+        if self.data_type == DataType::Dna && self.ordering.contains(&CharacterOrdering::Ordered) {
+            return Err(CompressionError::DnaModel);
+        }
         // Validate before allocating partials so unsupported observations cannot
         // produce a partially usable likelihood input.
         for (taxon, row) in self.taxa.iter().zip(&self.rows) {
@@ -408,6 +443,7 @@ impl Matrix {
             })
             .collect();
         Patterns {
+            data_type: self.data_type,
             ordering: self.ordering[sites[0].0],
             sites: sites.iter().map(|(site, _)| *site).collect(),
             symbols: sites[0].1.iter().map(|&s| self.symbols[s]).collect(),
@@ -423,6 +459,10 @@ impl Matrix {
 }
 
 impl Patterns {
+    pub fn data_type(&self) -> DataType {
+        self.data_type
+    }
+
     pub fn ordering(&self) -> CharacterOrdering {
         self.ordering
     }

@@ -23,6 +23,9 @@ struct MatrixReport: Decodable, Sendable {
   let unobservedCharacters: [Int]?
   let observationExamples: [ObservationExample]?
   let stateLabels: [[String]]?
+  var dataType: String? = nil
+  var inputFormat: String? = nil
+  var isDNA: Bool { dataType == "dna" }
   var allTaxa: [String] { taxonNames ?? taxa }
 
   var missingPercent: Double {
@@ -33,7 +36,8 @@ struct MatrixReport: Decodable, Sendable {
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     let value = try decoder.decode(Self.self, from: data)
-    guard value.schemaVersion == 1, value.taxonCount > 0, value.characterCount > 0,
+    guard value.schemaVersion == 1, ["standard", "dna"].contains(value.dataType ?? "standard"),
+      value.taxonCount > 0, value.characterCount > 0,
       value.cells.count == value.taxa.count, !value.cells.isEmpty,
       value.cells.allSatisfy({ $0.count == value.characterLabels.count })
     else {
@@ -245,6 +249,7 @@ enum ProposalSchedule {
 }
 
 struct AnalysisSettings: Codable, Equatable, Sendable {
+  var dataType = "standard"
   var dating = DatingSettings()
   var treePrior = "birth-death"
   var birthRateUpper = "1000"
@@ -285,7 +290,8 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   }
 
   private enum CodingKeys: String, CodingKey {
-    case dating, treePrior, birthRateUpper, clock, clockSigmaShape, clockSigmaScale, conditioning,
+    case dataType, dating, treePrior, birthRateUpper, clock, clockSigmaShape, clockSigmaScale,
+      conditioning,
       partitioning, steps,
       sampleEvery, seed, gapsAsMissing, chains, comparisonBurnin, backend, printEvery,
       stopWhenConverged, sampleFromPrior, minESS, maxRhat, checkEvery, checkpointEvery, tuning,
@@ -294,6 +300,7 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
 
   init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
+    dataType = try values.decodeIfPresent(String.self, forKey: .dataType) ?? "standard"
     dating = try values.decodeIfPresent(DatingSettings.self, forKey: .dating) ?? DatingSettings()
     treePrior = try values.decodeIfPresent(String.self, forKey: .treePrior) ?? "birth-death"
     birthRateUpper = try values.decodeIfPresent(String.self, forKey: .birthRateUpper) ?? "1000"
@@ -367,13 +374,25 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     return value
   }
 
+  var characterModelLabel: String {
+    if dataType == "dna" { return "DNA · JC69" }
+    return conditioning == "variable"
+      ? "Mkv · variable characters"
+      : conditioning == "informative" ? "Mkparsinf · informative characters" : "Mk · all characters"
+  }
+
   var validationError: String? {
-    guard ["birth-death", "yule"].contains(treePrior),
+    guard ["standard", "dna"].contains(dataType),
+      ["birth-death", "yule"].contains(treePrior),
       ["strict", "reference"].contains(clock),
       ["variable", "informative", "none"].contains(conditioning),
       ["observed", "declared", "labels"].contains(partitioning)
     else {
       return "This setup uses an unsupported model."
+    }
+    if dataType == "dna" && (conditioning != "none" || partitioning != "declared") {
+      return
+        "DNA JC69 keeps all four A/C/G/T states and all aligned sites, including constant sites."
     }
     if treePrior == "yule" {
       if dating.enabled {
@@ -509,18 +528,20 @@ struct AnalysisDraft: Codable, Sendable {
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
     formatVersion =
-      settings.treePrior == "yule"
-      ? 10
-      : settings.usesJointExchange
-        ? 9
-        : settings.partitioning == "labels"
-          ? 8
-          : settings.usesExecutionOptions
-            ? 7
-            : settings.usesCustomSigmaPrior
-              ? 6
-              : (settings.usesAdvancedOptions
-                ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
+      settings.dataType == "dna"
+      ? 11
+      : settings.treePrior == "yule"
+        ? 10
+        : settings.usesJointExchange
+          ? 9
+          : settings.partitioning == "labels"
+            ? 8
+            : settings.usesExecutionOptions
+              ? 7
+              : settings.usesCustomSigmaPrior
+                ? 6
+                : (settings.usesAdvancedOptions
+                  ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -544,7 +565,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard (1...10).contains(formatVersion),
+    guard (1...11).contains(formatVersion),
+      formatVersion >= 11 || settings.dataType != "dna",
       formatVersion >= 10 || settings.treePrior != "yule",
       formatVersion >= 9 || !settings.usesJointExchange,
       formatVersion >= 8 || settings.partitioning != "labels",

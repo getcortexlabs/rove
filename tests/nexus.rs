@@ -342,7 +342,7 @@ fn malformed_data_produces_located_errors() {
 #[test]
 fn unsupported_semantics_are_rejected_instead_of_ignored() {
     for option in [
-        "DATATYPE=DNA",
+        "DATATYPE=PROTEIN",
         "TOKENS",
         "TRANSPOSE",
         "NOLABELS",
