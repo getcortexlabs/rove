@@ -8,7 +8,9 @@
     "diagnose": "apps/macos/Sources/RoveApp/TraceDiagnosticsView.swift",
     "summarize": "apps/macos/Sources/RoveApp/TreeSummaryView.swift",
     "predict": "apps/macos/Sources/RoveApp/PredictiveCheckView.swift",
-    "compare": "apps/macos/Sources/RoveApp/RunComparisonView.swift"
+    "compare": "apps/macos/Sources/RoveApp/RunComparisonView.swift",
+    "assess": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",
+    "export-run": "apps/macos/Sources/RoveApp/RunAssessmentView.swift"
   },
   "flags": {
     "--alpha": {
@@ -158,6 +160,10 @@
     "--weight": {
       "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
       "control": "Advanced sampling"
+    },
+    "--include-matrix": {
+      "native": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",
+      "control": "Explicit original-matrix inclusion in local reproducibility export"
     }
   }
 }

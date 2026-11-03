@@ -537,10 +537,19 @@ final class Workspace {
   var predictiveChecks: [String: PredictiveCheckModel] = [:]
   var marginalEstimates: [String: MarginalLikelihoodModel] = [:]
   var runComparisons: [String: RunComparisonModel] = [:]
+  var runAssessments: [String: RunAssessmentModel] = [:]
   var toolsBusy: Bool {
     predictiveChecks.values.contains(where: \.busy)
       || marginalEstimates.values.contains(where: \.busy)
       || runComparisons.values.contains(where: \.busy)
+      || runAssessments.values.contains(where: \.busy)
+  }
+
+  func runAssessment(for entry: HistoryEntry) -> RunAssessmentModel {
+    if let model = runAssessments[entry.id] { return model }
+    let model = RunAssessmentModel(entry: entry, executable: executable)
+    runAssessments[entry.id] = model
+    return model
   }
 
   func predictiveCheck(for entry: HistoryEntry) -> PredictiveCheckModel {

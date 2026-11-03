@@ -271,10 +271,27 @@ pub(super) fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
             "compare needs 2 to 16 run directories and burn-in from 0 to 99 percent".into(),
         );
     }
+    let records = compatible_records(&directories)?;
+    let first = &records[0];
+    let constraints: Vec<Vec<String>> =
+        serde_json::from_value(first["model"]["monophyly"].clone())?;
+    let summary = summarize(
+        &directories,
+        burnin,
+        &constraints,
+        first["model"].get("dating"),
+        &|| false,
+        true,
+    )?;
+    println!("{}", serde_json::to_string_pretty(&summary)?);
+    Ok(())
+}
+
+pub(super) fn compatible_records(directories: &[PathBuf]) -> Result<Vec<Value>, Box<dyn Error>> {
     let records = directories
         .iter()
         .map(|d| -> Result<Value, Box<dyn Error>> {
-            let mut record: Value = serde_json::from_slice(&fs::read(d.join("run.json"))?)?;
+            let mut record = super::summarize::record(&d.join("run.json"))?;
             // Records before configurable sigma priors used the reference prior.
             if record["model"]
                 .get("clock_sigma_prior_parameters")
@@ -294,28 +311,18 @@ pub(super) fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
             Ok(record)
         })
         .collect::<Result<Vec<_>, _>>()?;
-    let first = &records[0];
+    let first = records.first().ok_or("no chain directories")?;
     let mut seeds = std::collections::HashSet::new();
     for record in &records {
         if record["input"]["sha256"] != first["input"]["sha256"]
+            || record["input"]["gaps"] != first["input"]["gaps"]
             || record["model"] != first["model"]
             || !seeds.insert(record["settings"]["seed"].as_u64().ok_or("missing seed")?)
         {
             return Err("comparison requires the same input and model, with distinct seeds".into());
         }
     }
-    let constraints: Vec<Vec<String>> =
-        serde_json::from_value(first["model"]["monophyly"].clone())?;
-    let summary = summarize(
-        &directories,
-        burnin,
-        &constraints,
-        first["model"].get("dating"),
-        &|| false,
-        true,
-    )?;
-    println!("{}", serde_json::to_string_pretty(&summary)?);
-    Ok(())
+    Ok(records)
 }
 
 #[cfg(test)]

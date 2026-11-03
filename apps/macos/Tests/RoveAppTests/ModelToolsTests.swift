@@ -67,6 +67,12 @@ struct ModelToolsTests {
     #expect(model.error == nil, Comment(rawValue: model.details ?? ""))
     #expect(model.completed == 5)
     let saved = try #require(model.predictions.first)
+    let distributions = try PredictiveDistribution.read(saved)
+    #expect(distributions.count == 5)
+    for distribution in distributions {
+      #expect(distribution.differences.count + distribution.undefined == 5)
+      #expect(distribution.bins.map(\.count).reduce(0, +) == distribution.differences.count)
+    }
     // 2,000 steps sampled every 100 give 21 samples; 10% burn-in discards 2.
     let source = saved.report.source
     #expect(
