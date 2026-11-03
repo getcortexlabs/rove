@@ -69,6 +69,23 @@ struct RunAssessmentTests {
         #expect(try TreeSource.fingerprint(package.appendingPathComponent(path)) == hash)
       }
       #expect(HistoryEntry.read(directory).status == .completed)
+      if chains == 1 {
+        let imported = try await CommandLineImport.prepare(
+          directory.appendingPathComponent("results"), matrix: matrix, under: parent,
+          executable: engine)
+        let wrapper = HistoryEntry.read(imported)
+        let importedPackage = parent.appendingPathComponent("imported-package")
+        _ = try await AssessmentRequest(
+          entry: wrapper, executable: engine, output: importedPackage, options: AssessmentOptions(),
+          export: true
+        ).execute(with: EngineTool())
+        #expect(
+          HistoryEntry.read(importedPackage.appendingPathComponent("run")).status == .completed)
+        #expect(
+          try importedPackage.appendingPathComponent("run/results").resourceValues(forKeys: [
+            .isSymbolicLinkKey
+          ]).isSymbolicLink == false)
+      }
     }
     let entry = HistoryEntry.read(parent.appendingPathComponent("run-1"))
     try Data("changed".utf8).write(to: matrix)
