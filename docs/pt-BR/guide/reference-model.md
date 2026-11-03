@@ -180,3 +180,20 @@ preservam o prior; comparar cadeias exige priors iguais. `run.json` registra
 Registros antigos usam 5 e 0,2. Configurações personalizadas do app usam formato 6
 para impedir que apps antigos ignorem a escolha. Veja
 [Priors de árvore](./tree-priors) para a decisão separada sobre modelos de árvore.
+
+## Troca conjunta opcional de topologia e taxas
+
+`--weight narrow_exchange_rates=10` ativa uma proposta experimental junto às existentes. Seu peso padrão é zero e não há parâmetro de ajuste do passo. No app, use **Amostragem avançada → Experimentar troca conjunta de topologia e taxas**; o peso inicial é 10 e permanece editável. A escolha fica no formato 9 de configuração, revisão, histórico, registros e checkpoints. Por enquanto, exige relógio relaxado sem datação; relógio estrito e datação são recusados antes da amostragem. É uma proposta implementada independentemente, não o conjunto completo do BEAST ORC. Nenhum ganho de velocidade ou mistura para morfologia foi demonstrado; as medições comparativas da [#97](https://github.com/getcortexlabs/rove/issues/97) continuam adiadas.
+
+Seja `G` um nó interno com filho interno. Escolha `G` uniformemente entre os `C(T)` nós assim definidos, tome seu filho mais antigo `P` e o mais recente `U`, e escolha um dos filhos `X` de `P` com probabilidade 1/2. Troque `X` e `U`, mantendo alturas e raiz. Preserve a distância de entrada de cada subárvore realocada:
+
+```text
+rX' = rX (hP − hX) / (hG − hX)
+rU' = rU (hG − hU) / (hP − hU)
+J   = [(hP − hX) / (hG − hX)] [(hG − hU) / (hP − hU)]
+log Hastings = log C(T) − log C(T') + log J
+```
+
+Durações e taxas devem ser positivas e finitas, com `hP > hU`. Limites inválidos ou overflow são rejeitados antes da alteração. O reverso escolhe os mesmos `G` e `P` e troca `U` de volta com `X`; sua probabilidade é `1 / (2 C(T'))`, contra `1 / (2 C(T))` na ida. A transformação contínua preserva alturas, portanto o jacobiano é o produto dos dois fatores de escala das taxas. As taxas continuam associadas aos ramos de entrada indexados por nó, incluindo o índice especial quando a raiz não é o último nó. Restrições e rejeições pela verossimilhança/prior usam a restauração exata normal. Preservar as distâncias dos ramos realocados não preserva a verossimilhança, pois a topologia muda.
+
+Os testes cobrem inversão, jacobiano numérico completo, escolhas de ida/volta enumeradas, alvos conhecidos de topologias uniformes e taxas lognormais independentes, rejeição por restrições, verossimilhança recalculada versus cache, diferentes índices de raiz, checkpoints exatos, cancelamento/retomada no app e amostras idênticas nos backends portátil/ARM. Esses testes de correção não substituem estudos de posterior e desempenho. Métodos relacionados são descritos por [Douglas, Zhang e Bouckaert (2021)](https://doi.org/10.1371/journal.pcbi.1008322).

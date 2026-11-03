@@ -159,7 +159,7 @@
     },
     "--weight": {
       "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
-      "control": "Advanced sampling"
+      "control": "Advanced sampling, including opt-in undated joint topology/rate exchange"
     },
     "--include-matrix": {
       "native": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",

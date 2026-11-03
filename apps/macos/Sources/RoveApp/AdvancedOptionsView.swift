@@ -155,6 +155,29 @@ struct AdvancedOptionsSection: View {
       OverrideEditor(
         title: strings("Selection weights"), addLabel: strings("Add weight"),
         overrides: $workspace.settings.weights, moves: ProposalSchedule.moves, strings: strings)
+      Toggle(
+        strings("Try joint topology/rate exchange"),
+        isOn: Binding(
+          get: { settings.weights.contains { $0.move == "narrow_exchange_rates" && $0.value > 0 } },
+          set: { enabled in
+            workspace.settings.weights.removeAll { $0.move == "narrow_exchange_rates" }
+            if enabled {
+              workspace.settings.weights.append(
+                MoveOverride(move: "narrow_exchange_rates", value: 10))
+            }
+          })
+      )
+      .font(.system(size: 12))
+      .disabled(
+        (settings.clock != "reference" || settings.dating.enabled)
+          && !settings.weights.contains { $0.move == "narrow_exchange_rates" && $0.value > 0 })
+      Text(
+        strings(
+          "Experimental, off by default. Exchanges neighboring subtrees and compensates their branch rates. Requires an undated relaxed clock. The weight starts at 10 and can be edited above; no performance benefit has been established."
+        )
+      )
+      .font(.system(size: 10)).foregroundStyle(Lab.muted).fixedSize(
+        horizontal: false, vertical: true)
       Toggle(strings("Tune step sizes during the run"), isOn: $workspace.settings.tuning)
         .font(.system(size: 12))
       OverrideEditor(

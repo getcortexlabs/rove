@@ -181,3 +181,20 @@ de modelos conservan el prior; comparar cadenas exige priors iguales.
 Registros antiguos usan 5 y 0,2. Las configuraciones personalizadas del app usan
 formato 6 para que versiones antiguas no ignoren la elección. Véase
 [Priors de árbol](./tree-priors) para la decisión sobre modelos de árbol.
+
+## Intercambio conjunto opcional de topología y tasas
+
+`--weight narrow_exchange_rates=10` activa una propuesta experimental junto con las existentes. Su peso predeterminado es cero y no tiene parámetro de ajuste. En el app, use **Advanced sampling → Try joint topology/rate exchange**; el peso inicial 10 es editable. La selección se conserva en el formato 9 de configuración, revisión, historial, registros y checkpoints. Por ahora requiere reloj relajado sin datación; se rechazan reloj estricto y datación antes del muestreo. Es una propuesta independiente, no todo BEAST ORC. No se ha demostrado una mejora de velocidad o mezcla para morfología; las mediciones comparativas de [#97](https://github.com/getcortexlabs/rove/issues/97) siguen aplazadas.
+
+Sea `G` un nodo interno con hijo interno. Elija `G` uniformemente entre los `C(T)` nodos elegibles, tome su hijo más antiguo `P` y el más reciente `U`, y elija un hijo `X` de `P` con probabilidad 1/2. Intercambie `X` y `U` sin cambiar alturas ni raíz, preservando las distancias de entrada:
+
+```text
+rX' = rX (hP − hX) / (hG − hX)
+rU' = rU (hG − hU) / (hP − hU)
+J   = [(hP − hX) / (hG − hX)] [(hG − hU) / (hP − hU)]
+log Hastings = log C(T) − log C(T') + log J
+```
+
+Se exigen duraciones y tasas positivas y finitas, y `hP > hU`. Los límites inválidos y desbordamientos se rechazan antes de modificar el estado. La inversa elige los mismos `G` y `P` y devuelve `U` intercambiándolo con `X`; su probabilidad es `1 / (2 C(T'))` frente a `1 / (2 C(T))`. Como las alturas no cambian, el jacobiano continuo es el producto de ambos factores de escala. Las tasas siguen indexadas por los nodos de entrada, incluso cuando la raíz no es el último nodo. Restricciones y rechazos usan la restauración exacta habitual. Preservar estas distancias no preserva la verosimilitud: cambia la topología.
+
+Las pruebas cubren inversión, jacobiano numérico completo, selección directa/inversa enumerada, distribuciones conocidas de topologías uniformes y tasas lognormales independientes, restricciones, verosimilitud recalculada frente a caché, índices de raíz, checkpoints exactos, cancelación/reanudación nativa y muestras idénticas en portable/ARM. No sustituyen estudios de posterior y rendimiento. Véase [Douglas, Zhang y Bouckaert (2021)](https://doi.org/10.1371/journal.pcbi.1008322).

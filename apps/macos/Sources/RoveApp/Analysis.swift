@@ -143,10 +143,11 @@ enum ProposalSchedule {
     "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale", "node_time_rates",
     "root_time_rates", "clock_sigma_rates", "tip_age", "clock_rate_scale", "fbd_birth_scale",
     "fbd_death_scale", "fbd_sampling_scale", "fbd_rho_logit", "fbd_origin_scale",
+    "narrow_exchange_rates",
   ]
   static let relaxedClockMoves: Set<String> = [
     "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale", "node_time_rates",
-    "root_time_rates", "clock_sigma_rates",
+    "root_time_rates", "clock_sigma_rates", "narrow_exchange_rates",
   ]
   static let datingMoves: Set<String> = [
     "tip_age", "clock_rate_scale", "fbd_birth_scale", "fbd_death_scale", "fbd_sampling_scale",
@@ -198,6 +199,9 @@ enum ProposalSchedule {
       })
     else { return "Step sizes must be positive; scale factors must be below 1." }
     let active = Set(weights.filter { $0.value > 0 }.map(\.move)).union(tuningValues.map(\.move))
+    if dating.enabled, active.contains("narrow_exchange_rates") {
+      return "Joint topology/rate exchange is currently available only without fossil dating."
+    }
     if clock != "reference", !active.isDisjoint(with: relaxedClockMoves) {
       return "Gamma shape, clock sigma, branch rate and joint moves need the relaxed clock."
     }
@@ -312,6 +316,10 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   var usesExecutionOptions: Bool {
     comparisonBurnin != 10 || backend != "automatic" || printEvery != nil
       || ![1, 2, 4].contains(chains)
+  }
+
+  var usesJointExchange: Bool {
+    (weights + tuningValues).contains { $0.move == "narrow_exchange_rates" }
   }
 
   static var backends: [String] {
@@ -462,14 +470,16 @@ struct AnalysisDraft: Codable, Sendable {
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
     formatVersion =
-      settings.partitioning == "labels"
-      ? 8
-      : settings.usesExecutionOptions
-        ? 7
-        : settings.usesCustomSigmaPrior
-          ? 6
-          : (settings.usesAdvancedOptions
-            ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
+      settings.usesJointExchange
+      ? 9
+      : settings.partitioning == "labels"
+        ? 8
+        : settings.usesExecutionOptions
+          ? 7
+          : settings.usesCustomSigmaPrior
+            ? 6
+            : (settings.usesAdvancedOptions
+              ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -493,7 +503,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard (1...8).contains(formatVersion),
+    guard (1...9).contains(formatVersion),
+      formatVersion >= 9 || !settings.usesJointExchange,
       formatVersion >= 8 || settings.partitioning != "labels",
       formatVersion >= 7 || !settings.usesExecutionOptions,
       formatVersion >= 6 || !settings.usesCustomSigmaPrior,

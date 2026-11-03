@@ -121,6 +121,11 @@ fn invalid_rate_states_are_rejected() {
         ..Settings::default()
     };
     assert!(Sampler::new(small(), &settings, 1).is_err());
+    let settings = Settings {
+        weights: vec![(Move::NarrowExchangeRates, 1.0)],
+        ..Settings::default()
+    };
+    assert!(Sampler::new(small(), &settings, 1).is_err());
 }
 
 #[test]
@@ -203,6 +208,7 @@ fn rate_moves_and_root_changes_restore_all_cached_values() {
             (Move::NodeTimeRates, 10.0),
             (Move::RootTimeRates, 5.0),
             (Move::ClockSigmaRates, 10.0),
+            (Move::NarrowExchangeRates, 10.0),
         ]);
         let mut chain = Sampler::new(&patterns, &settings, 29).unwrap();
         let mut root_changes = 0;
@@ -242,6 +248,7 @@ fn rate_moves_and_root_changes_restore_all_cached_values() {
             Move::NodeTimeRates,
             Move::RootTimeRates,
             Move::ClockSigmaRates,
+            Move::NarrowExchangeRates,
         ] {
             let operator = chain.operators().iter().find(|o| o.kind == kind).unwrap();
             assert!(
@@ -267,6 +274,7 @@ fn relaxed_clock_backends_give_identical_samples() {
                 (Move::NodeTimeRates, 10.0),
                 (Move::RootTimeRates, 5.0),
                 (Move::ClockSigmaRates, 10.0),
+                (Move::NarrowExchangeRates, 10.0),
             ]);
             Sampler::new(&data, &settings, 21).unwrap()
         })

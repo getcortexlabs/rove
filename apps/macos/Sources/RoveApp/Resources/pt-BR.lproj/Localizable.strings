@@ -1154,3 +1154,8 @@
 "%@ valid pairs · %@ undefined" = "%@ pares válidos · %@ indefinidos";
 "Replicate details are missing or disagree with the check record. The distribution is unavailable." = "Os detalhes das réplicas estão ausentes ou não correspondem ao registro da verificação. A distribuição está indisponível.";
 "Each difference uses the simulated and observed matrix on the same posterior tree. The observed statistic can change with the tree. Zero means equality; this is a discrepancy plot, not a convergence test." = "Cada diferença usa a matriz simulada e a observada na mesma árvore posterior. A estatística observada pode variar conforme a árvore. Zero indica igualdade; este é um gráfico de discrepâncias, não um teste de convergência.";
+
+/* Optional joint topology/rate exchange. */
+"Try joint topology/rate exchange" = "Experimentar troca conjunta de topologia e taxas";
+"Joint topology/rate exchange is currently available only without fossil dating." = "A troca conjunta de topologia e taxas está disponível, por enquanto, apenas sem datação de fósseis.";
+"Experimental, off by default. Exchanges neighboring subtrees and compensates their branch rates. Requires an undated relaxed clock. The weight starts at 10 and can be edited above; no performance benefit has been established." = "Experimental, desativada por padrão. Troca subárvores vizinhas e compensa suas taxas de ramo. Exige relógio relaxado sem datação. O peso inicial é 10 e pode ser editado acima; ainda não foi demonstrado ganho de desempenho.";
