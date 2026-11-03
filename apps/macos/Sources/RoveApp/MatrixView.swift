@@ -45,6 +45,7 @@ struct MatrixView: View {
         .background(Lab.surface, in: RoundedRectangle(cornerRadius: 15))
         .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(Lab.border.opacity(0.7)))
 
+      if let metadata = report.mixed { MixedSourcesSection(metadata: metadata, strings: strings) }
       if report.isDNA {
         NucleotideModelSection(strings: strings)
       } else {
@@ -92,9 +93,11 @@ struct MatrixView: View {
               .font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
             Text(
               strings(
-                report.isDNA
-                  ? "Constant sites are retained and contribute to the JC69 likelihood."
-                  : "These characters remain in the matrix. Variable-only (Mkv) coding cannot include them. Review how characters were selected before choosing All characters (Mk)."
+                report.isMixed
+                  ? "Constant DNA sites remain in the JC69 block. Variable-only coding excludes constant morphological characters; review the partition and collection method before changing that choice."
+                  : report.isDNA
+                    ? "Constant sites are retained and contribute to the JC69 likelihood."
+                    : "These characters remain in the matrix. Variable-only (Mkv) coding cannot include them. Review how characters were selected before choosing All characters (Mk)."
               )
             )
             .font(.system(size: 11)).foregroundStyle(Lab.secondary)

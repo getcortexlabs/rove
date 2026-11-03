@@ -38,6 +38,11 @@ struct WelcomeView: View {
       }.padding(.top, 1).padding(.bottom, 5)
 
       importCard
+      Button {
+        workspace.showingMixedImport = true
+      } label: {
+        Label(strings("Combine morphology and DNA"), systemImage: "square.stack.3d.up")
+      }.buttonStyle(LabButtonStyle(compact: true))
       exampleCard
       treeCard
 
@@ -62,7 +67,7 @@ struct WelcomeView: View {
           HStack(spacing: 8) {
             Text(".nex").font(.system(size: 10, design: .monospaced))
             Text(".nexus · .fasta").font(.system(size: 10, design: .monospaced))
-            Text(strings("·  Morphological characters")).font(.system(size: 10))
+            Text(strings("·  Morphology or aligned DNA")).font(.system(size: 10))
           }.foregroundStyle(Lab.muted).padding(.top, 7)
         }
         Spacer(minLength: 4)

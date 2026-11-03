@@ -36,6 +36,7 @@ const locales = {
       treePriors: 'Tree priors',
       nexus: 'Reading NEXUS',
       dna: 'Aligned DNA · JC69',
+      mixedData: 'Morphology + DNA',
       fixtures: 'Synthetic matrices',
       outline: 'On this page',
       edit: 'Edit this page on GitHub',
@@ -71,6 +72,7 @@ const locales = {
       treePriors: 'Priors de árvore',
       nexus: 'Lendo NEXUS',
       dna: 'DNA alinhado · JC69',
+      mixedData: 'Morfologia + DNA',
       fixtures: 'Matrizes sintéticas',
       outline: 'Nesta página',
       edit: 'Editar esta página no GitHub',
@@ -123,6 +125,7 @@ const locales = {
       treePriors: 'Priors de árbol',
       nexus: 'Lectura de NEXUS',
       dna: 'ADN alineado · JC69',
+      mixedData: 'Morfología + ADN',
       fixtures: 'Matrices sintéticas',
       outline: 'En esta página',
       edit: 'Editar esta página en GitHub',
@@ -175,6 +178,7 @@ const locales = {
       treePriors: '树先验',
       nexus: '读取 NEXUS',
       dna: '已比对 DNA · JC69',
+      mixedData: '形态 + DNA',
       fixtures: '合成矩阵',
       outline: '本页目录',
       edit: '在 GitHub 上编辑此页',
@@ -204,7 +208,7 @@ const locales = {
 function themeFor(locale) {
   const prefix = locale.dir ? `/${locale.dir}` : ''
   const { ui } = locale
-  const { guide, roadmap, project, code, what, macPreview, runFiles, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, tipDating, modelComparison, referenceModel, treePriors, nexus, dna, fixtures, outline, edit, message, copyright, ...labels } = ui
+  const { guide, roadmap, project, code, what, macPreview, runFiles, design, kernel, sampler, characterSelection, macBenchmark, orderedCharacters, posteriorPrediction, tipDating, modelComparison, referenceModel, treePriors, nexus, dna, mixedData, fixtures, outline, edit, message, copyright, ...labels } = ui
   return {
     nav: [
       { text: guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/(?!roadmap)` },
@@ -237,6 +241,7 @@ function themeFor(locale) {
             { text: treePriors, link: `${prefix}/guide/tree-priors` },
             { text: nexus, link: `${prefix}/guide/nexus` },
             { text: dna, link: `${prefix}/guide/dna` },
+            { text: mixedData, link: `${prefix}/guide/mixed-data` },
             { text: fixtures, link: `${prefix}/guide/fixtures` }
           ]
         }

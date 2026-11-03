@@ -455,6 +455,8 @@ fn parse_data(
             };
             let mut data = Matrix {
                 data_type: fmt.data_type,
+                blocks: Vec::new(),
+                mixed: None,
                 taxa: names,
                 rows,
                 symbols: fmt.symbols.clone(),

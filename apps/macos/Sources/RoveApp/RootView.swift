@@ -67,6 +67,7 @@ struct RootView: View {
       reduceMotion || workspace.preferences.reduceMotion ? nil : .easeInOut(duration: 0.2),
       value: workspace.page
     )
+    .sheet(isPresented: $workspace.showingMixedImport) { MixedImportView(workspace: workspace) }
     .sheet(item: $workspace.treeSummary) { summary in
       TreeSummaryView(model: summary, strings: workspace.strings) { directory in
         workspace.openTree(directory, run: summary.directory)
@@ -158,8 +159,10 @@ struct RootView: View {
         } else {
           Text(
             strings(
-              workspace.report?.isDNA == true
-                ? "Declared states: %@ · DNA" : "Declared states: %@ · morphological data",
+              workspace.report?.isMixed == true
+                ? "Declared states: %@ · morphology + DNA"
+                : workspace.report?.isDNA == true
+                  ? "Declared states: %@ · DNA" : "Declared states: %@ · morphological data",
               strings.number(workspace.report?.symbols.count ?? 0))
           )
           .font(.system(size: 11)).foregroundStyle(Lab.muted)

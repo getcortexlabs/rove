@@ -17,7 +17,13 @@ pub fn is_fasta(input: &str) -> bool {
 
 pub fn parse(input: &str) -> Result<Matrix, Error> {
     let input = input.trim_start_matches('\u{feff}');
-    if is_fasta(input) {
+    if input.trim_start().starts_with('{') {
+        crate::mixed::parse(input).map_err(|message| Error {
+            line: 1,
+            column: 1,
+            message,
+        })
+    } else if is_fasta(input) {
         fasta(input)
     } else {
         nexus::parse(input)
@@ -136,6 +142,8 @@ fn fasta(input: &str) -> Result<Matrix, Error> {
     }
     Ok(Matrix {
         data_type: DataType::Dna,
+        blocks: Vec::new(),
+        mixed: None,
         taxa,
         rows,
         symbols: vec!['A', 'C', 'G', 'T'],

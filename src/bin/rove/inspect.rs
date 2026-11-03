@@ -49,18 +49,26 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
         .map_or(Json::Null, |p| partitions::describe(p));
     let (patterns, mut sampler_error, variable_error, informative_error) = match compressed {
         Ok(partitions) => {
-            let settings = Settings {
+            let mut settings = Settings {
                 conditioning: Conditioning::None,
                 ..Settings::default()
             };
+            if data.data_type() == rove::data::DataType::Mixed {
+                settings.set_morphology_rate(rove::mcmc::RelativeRate {
+                    value: 1.0,
+                    log_sd: None,
+                });
+            }
             let sampler_error = Sampler::new(&partitions, &settings, 1)
                 .err()
                 .map(|e| e.to_string());
             let variable_error = partitions
                 .iter()
+                .filter(|p| p.data_type() != rove::data::DataType::Dna)
                 .find_map(|p| VariableCharacters::new(p).err().map(|e| e.to_string()));
             let informative_error = partitions
                 .iter()
+                .filter(|p| p.data_type() != rove::data::DataType::Dna)
                 .find_map(|p| validate_informative(p).err().map(|e| e.to_string()));
             (
                 Json::Integer(partitions.iter().map(|p| p.weights().len() as u64).sum()),
@@ -118,6 +126,11 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
         }
     }
     Json::Object(vec![
+        (
+            "mixed",
+            data.mixed_metadata()
+                .map_or(Json::Null, |m| Json::Value(m.json())),
+        ),
         ("schema_version", Json::Integer(1)),
         ("input_sha256", Json::text(sha256::hex(bytes))),
         ("taxon_count", Json::Integer(data.taxa().len() as u64)),
@@ -129,13 +142,13 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
         ("data_type", Json::text(data.data_type().name())),
         (
             "input_format",
-            Json::text(
-                if rove::alignment::is_fasta(&String::from_utf8_lossy(bytes)) {
-                    "fasta"
-                } else {
-                    "nexus"
-                },
-            ),
+            Json::text(if data.data_type() == rove::data::DataType::Mixed {
+                "mixed"
+            } else if rove::alignment::is_fasta(&String::from_utf8_lossy(bytes)) {
+                "fasta"
+            } else {
+                "nexus"
+            }),
         ),
         (
             "partitioning",

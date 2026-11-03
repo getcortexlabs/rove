@@ -12,6 +12,8 @@
 mod checkpoint;
 mod coupled;
 mod moves;
+mod relative;
+pub use relative::RelativeRate;
 pub mod output;
 
 use std::fmt;
@@ -119,10 +121,22 @@ pub enum Conditioning {
     Informative,
 }
 
+impl Conditioning {
+    /// Nucleotide sites are always unconditioned in a mixed analysis.
+    pub fn for_data(self, data_type: crate::data::DataType) -> Self {
+        if data_type == crate::data::DataType::Dna {
+            Self::None
+        } else {
+            self
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Settings {
     pub dating: Option<crate::dating::Dating>,
     pub conditioning: Conditioning,
+    pub morphology_rate: Option<RelativeRate>,
     /// Four midpoint gamma categories, starting at this shape; None uses one rate.
     pub gamma_shape: Option<f64>,
     /// Explicit lognormal branch rates, starting at 0.5 with this sigma.
@@ -161,6 +175,7 @@ impl Default for Settings {
         Self {
             dating: None,
             conditioning: Conditioning::Variable,
+            morphology_rate: None,
             gamma_shape: None,
             clock_sigma: None,
             clock_sigma_prior: crate::rates::SigmaPrior::default(),
@@ -193,6 +208,15 @@ impl Default for Settings {
 }
 
 impl Settings {
+    pub fn set_morphology_rate(&mut self, rate: RelativeRate) {
+        self.morphology_rate = Some(rate);
+        self.weights
+            .retain(|(m, _)| *m != Move::MorphologyRateScale);
+        if rate.log_sd.is_some() {
+            self.weights.push((Move::MorphologyRateScale, 3.0));
+        }
+    }
+
     /// Select an undated tree prior, replacing its parameter proposals.
     pub fn set_tree_prior(&mut self, prior: TreePrior) {
         self.tree_prior = prior;
@@ -318,7 +342,9 @@ impl Likelihood {
         backend: Backend,
         tree: &Tree,
         rates: &RateVariation,
+        multiplier: f64,
     ) -> Result<Self, Error> {
+        let conditioning = conditioning.for_data(patterns.data_type());
         let states = patterns.symbols().len();
         let model = Mk::uniform(states);
         let variable = match conditioning {
@@ -371,7 +397,8 @@ impl Likelihood {
             order: Vec::with_capacity(tree.nodes()),
         };
         for node in tree.postorder() {
-            let distance = tree.branch_length(node) * rates.branch_rate(node, tree.root());
+            let distance =
+                tree.branch_length(node) * rates.branch_rate(node, tree.root()) * multiplier;
             for (category, &rate) in rates.category_rates().iter().enumerate() {
                 likelihood.core.set_node_distance(
                     node,
@@ -391,7 +418,13 @@ impl Likelihood {
 
     /// Recomputes the branches that differ from `before`, and the partials of
     /// their ancestors.
-    fn update(&mut self, tree: &Tree, before: &Tree, rates: &RateVariation) -> f64 {
+    fn update(
+        &mut self,
+        tree: &Tree,
+        before: &Tree,
+        rates: &RateVariation,
+        multiplier: f64,
+    ) -> f64 {
         #[cfg(feature = "profile-sampler")]
         let _profile = crate::profiling::enter(crate::profiling::Phase::LikelihoodUpdate);
         let dirty = &mut self.dirty;
@@ -400,7 +433,8 @@ impl Likelihood {
             if node == tree.root() {
                 continue;
             }
-            let distance = tree.branch_length(node) * rates.branch_rate(node, tree.root());
+            let distance =
+                tree.branch_length(node) * rates.branch_rate(node, tree.root()) * multiplier;
             let unchanged =
                 rates.category_rates().iter().enumerate().all(|(c, r)| {
                     self.core.node_distance(node, c) == category_distance(distance, *r)
@@ -483,6 +517,8 @@ pub struct Sampler {
     likelihoods: Vec<Likelihood>,
     patterns: Vec<Patterns>,
     conditioning: Conditioning,
+    morphology_rate_model: Option<RelativeRate>,
+    morphology_rate: Option<f64>,
     backend: Backend,
     posterior: Posterior,
     operators: Vec<Operator>,
@@ -583,12 +619,24 @@ impl Sampler {
         }
         if patterns
             .iter()
-            .any(|p| p.data_type() == crate::data::DataType::Dna)
+            .all(|p| p.data_type() == crate::data::DataType::Dna)
             && settings.conditioning != Conditioning::None
         {
             return Err(Error::Model(
                 "DNA JC69 requires unconditioned aligned sites".into(),
             ));
+        }
+        let mixed = patterns
+            .iter()
+            .any(|p| p.data_type() == crate::data::DataType::Dna)
+            && patterns
+                .iter()
+                .any(|p| p.data_type() == crate::data::DataType::Standard);
+        if mixed != settings.morphology_rate.is_some() {
+            return Err(Error::Model("mixed morphology/DNA requires an explicit relative-rate model; homogeneous data does not use one".into()));
+        }
+        if let Some(rate) = settings.morphology_rate {
+            rate.validate()?;
         }
         if patterns.is_empty() || patterns.iter().any(|p| p.tip_partials().len() != tips) {
             return Err(Error::Partitions);
@@ -638,6 +686,12 @@ impl Sampler {
             return Err(Error::Rates(rates::Error::BranchRates));
         }
         for &(kind, weight) in &settings.weights {
+            if kind == Move::MorphologyRateScale
+                && weight > 0.0
+                && settings.morphology_rate.is_none_or(|r| r.log_sd.is_none())
+            {
+                return Err(Error::RateMove(kind));
+            }
             if weight > 0.0
                 && ((settings.tree_prior == TreePrior::Yule
                     && matches!(kind, Move::BirthDifferenceScale | Move::RelativeDeathScale))
@@ -705,6 +759,11 @@ impl Sampler {
             return Err(Error::Weights);
         }
         for &(kind, value) in &settings.tuning_values {
+            if kind == Move::MorphologyRateScale
+                && settings.morphology_rate.is_none_or(|r| r.log_sd.is_none())
+            {
+                return Err(Error::Tuning(kind));
+            }
             if (settings.tree_prior == TreePrior::Yule
                 && matches!(kind, Move::BirthDifferenceScale | Move::RelativeDeathScale))
                 || (kind == Move::BirthRateScale
@@ -753,7 +812,16 @@ impl Sampler {
         } else {
             patterns
                 .iter()
-                .map(|p| Likelihood::new(p, settings.conditioning, settings.backend, &tree, &rates))
+                .map(|p| {
+                    Likelihood::new(
+                        p,
+                        settings.conditioning,
+                        settings.backend,
+                        &tree,
+                        &rates,
+                        partition_multiplier(p, settings.morphology_rate.map(|r| r.value)),
+                    )
+                })
                 .collect::<Result<Vec<_>, _>>()?
         };
         let mut sampler = Self {
@@ -772,6 +840,8 @@ impl Sampler {
             likelihoods,
             patterns: patterns.to_vec(),
             conditioning: settings.conditioning,
+            morphology_rate_model: settings.morphology_rate,
+            morphology_rate: settings.morphology_rate.map(|r| r.value),
             backend: settings.backend,
             posterior: Posterior {
                 likelihood: 0.0,
@@ -803,6 +873,15 @@ impl Sampler {
 
     pub fn dating(&self) -> Option<&crate::dating::Dating> {
         self.dating.as_ref()
+    }
+
+    pub fn morphology_rate(&self) -> Option<f64> {
+        self.morphology_rate
+    }
+
+    pub fn morphology_rate_log_prior(&self) -> f64 {
+        self.morphology_rate_model
+            .map_or(0.0, |m| m.log_density(self.morphology_rate.unwrap()))
     }
 
     pub fn rates(&self) -> &RateVariation {
@@ -879,7 +958,9 @@ impl Sampler {
                     self.rates.mean.unwrap_or(1.0),
                     self.fbd.unwrap(),
                 )
-            }),
+            }) + self
+                .morphology_rate_model
+                .map_or(0.0, |m| m.log_density(self.morphology_rate.unwrap())),
             gamma_prior: self.rates.gamma.as_ref().map_or(0.0, GammaRates::log_prior),
             clock_rate_prior: self
                 .rates
@@ -914,6 +995,7 @@ impl Sampler {
                     self.backend,
                     &self.tree,
                     &self.rates,
+                    partition_multiplier(patterns, self.morphology_rate),
                 )?
                 .evaluate(self.tree.root(), &self.rates);
             }
@@ -930,6 +1012,7 @@ impl Sampler {
         let kind = self.operators[index].kind;
         let stored_speciation = self.speciation;
         let stored_fbd = self.fbd;
+        let stored_morphology_rate = self.morphology_rate;
         self.stored_tree.clone_from(&self.tree);
         self.stored_rates.clone_from(&self.rates);
         for likelihood in &mut self.likelihoods {
@@ -938,7 +1021,14 @@ impl Sampler {
                 correction.store();
             }
         }
-        let proposal = if kind.changes_fbd() {
+        let proposal = if kind == Move::MorphologyRateScale {
+            moves::scale(
+                self.morphology_rate.as_mut().unwrap(),
+                f64::MAX,
+                self.operators[index].tuning.unwrap(),
+                &mut self.random,
+            )
+        } else if kind.changes_fbd() {
             let dating = self.dating.as_ref().unwrap();
             dating.process_priors.and_then(|p| {
                 p.propose(
@@ -978,7 +1068,15 @@ impl Sampler {
             } else if proposed.prior().is_finite() {
                 self.likelihoods
                     .iter_mut()
-                    .map(|l| l.update(&self.tree, &self.stored_tree, &self.rates))
+                    .zip(&self.patterns)
+                    .map(|(l, p)| {
+                        l.update(
+                            &self.tree,
+                            &self.stored_tree,
+                            &self.rates,
+                            partition_multiplier(p, self.morphology_rate),
+                        )
+                    })
                     .sum()
             } else {
                 f64::NEG_INFINITY
@@ -1000,6 +1098,7 @@ impl Sampler {
             std::mem::swap(&mut self.tree, &mut self.stored_tree);
             self.speciation = stored_speciation;
             self.fbd = stored_fbd;
+            self.morphology_rate = stored_morphology_rate;
             std::mem::swap(&mut self.rates, &mut self.stored_rates);
             for likelihood in &mut self.likelihoods {
                 likelihood.core.restore();
@@ -1062,6 +1161,14 @@ impl Sampler {
         let count = (operator.tuned as f64 + 1.0).sqrt();
         let delta = (log_alpha.min(0.0).exp() - 0.234) / count;
         operator.tuning = Some(operator.kind.adapt(tuning, delta));
+    }
+}
+
+fn partition_multiplier(pattern: &Patterns, morphology_rate: Option<f64>) -> f64 {
+    if pattern.data_type() == crate::data::DataType::Standard {
+        morphology_rate.unwrap_or(1.0)
+    } else {
+        1.0
     }
 }
 

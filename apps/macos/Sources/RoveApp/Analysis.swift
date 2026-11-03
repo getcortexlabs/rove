@@ -25,6 +25,8 @@ struct MatrixReport: Decodable, Sendable {
   let stateLabels: [[String]]?
   var dataType: String? = nil
   var inputFormat: String? = nil
+  var mixed: MixedInputMetadata? = nil
+  var isMixed: Bool { dataType == "mixed" }
   var isDNA: Bool { dataType == "dna" }
   var allTaxa: [String] { taxonNames ?? taxa }
 
@@ -36,7 +38,9 @@ struct MatrixReport: Decodable, Sendable {
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     let value = try decoder.decode(Self.self, from: data)
-    guard value.schemaVersion == 1, ["standard", "dna"].contains(value.dataType ?? "standard"),
+    guard value.schemaVersion == 1,
+      ["standard", "dna", "mixed"].contains(value.dataType ?? "standard"),
+      value.dataType != "mixed" || value.mixed?.valid == true,
       value.taxonCount > 0, value.characterCount > 0,
       value.cells.count == value.taxa.count, !value.cells.isEmpty,
       value.cells.allSatisfy({ $0.count == value.characterLabels.count })
@@ -62,6 +66,7 @@ struct CharacterPartition: Decodable, Sendable {
   let observedPatterns: Int
   let sites: [Int]
   let stateSymbols: [String]
+  var dataType: String? = nil
 }
 
 enum ImportError: LocalizedError {
@@ -147,7 +152,7 @@ enum ProposalSchedule {
     "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale", "node_time_rates",
     "root_time_rates", "clock_sigma_rates", "tip_age", "clock_rate_scale", "fbd_birth_scale",
     "fbd_death_scale", "fbd_sampling_scale", "fbd_rho_logit", "fbd_origin_scale",
-    "narrow_exchange_rates", "birth_rate_scale",
+    "narrow_exchange_rates", "birth_rate_scale", "morphology_rate_scale",
   ]
   static let relaxedClockMoves: Set<String> = [
     "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale", "node_time_rates",
@@ -164,6 +169,7 @@ enum ProposalSchedule {
   /// scale factor strictly between zero and one.
   static let tunable: Set<String> = [
     "subtree_slide", "root_scale", "tree_scale", "birth_difference_scale", "birth_rate_scale",
+    "morphology_rate_scale",
     "relative_death_scale", "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale",
     "root_time_rates", "clock_sigma_rates", "clock_rate_scale", "fbd_birth_scale",
     "fbd_death_scale", "fbd_sampling_scale", "fbd_rho_logit", "fbd_origin_scale",
@@ -250,6 +256,9 @@ enum ProposalSchedule {
 
 struct AnalysisSettings: Codable, Equatable, Sendable {
   var dataType = "standard"
+  var morphologyRateMode = ""
+  var morphologyRate = "1"
+  var morphologyRateLogSD = "1"
   var dating = DatingSettings()
   var treePrior = "birth-death"
   var birthRateUpper = "1000"
@@ -290,6 +299,7 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   }
 
   private enum CodingKeys: String, CodingKey {
+    case morphologyRateMode, morphologyRate, morphologyRateLogSD
     case dataType, dating, treePrior, birthRateUpper, clock, clockSigmaShape, clockSigmaScale,
       conditioning,
       partitioning, steps,
@@ -301,6 +311,10 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     dataType = try values.decodeIfPresent(String.self, forKey: .dataType) ?? "standard"
+    morphologyRateMode = try values.decodeIfPresent(String.self, forKey: .morphologyRateMode) ?? ""
+    morphologyRate = try values.decodeIfPresent(String.self, forKey: .morphologyRate) ?? "1"
+    morphologyRateLogSD =
+      try values.decodeIfPresent(String.self, forKey: .morphologyRateLogSD) ?? "1"
     dating = try values.decodeIfPresent(DatingSettings.self, forKey: .dating) ?? DatingSettings()
     treePrior = try values.decodeIfPresent(String.self, forKey: .treePrior) ?? "birth-death"
     birthRateUpper = try values.decodeIfPresent(String.self, forKey: .birthRateUpper) ?? "1000"
@@ -376,19 +390,28 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
 
   var characterModelLabel: String {
     if dataType == "dna" { return "DNA · JC69" }
+    if dataType == "mixed" { return "Morphology + DNA · Mk + JC69" }
     return conditioning == "variable"
       ? "Mkv · variable characters"
       : conditioning == "informative" ? "Mkparsinf · informative characters" : "Mk · all characters"
   }
 
   var validationError: String? {
-    guard ["standard", "dna"].contains(dataType),
+    guard ["standard", "dna", "mixed"].contains(dataType),
       ["birth-death", "yule"].contains(treePrior),
       ["strict", "reference"].contains(clock),
       ["variable", "informative", "none"].contains(conditioning),
       ["observed", "declared", "labels"].contains(partitioning)
     else {
       return "This setup uses an unsupported model."
+    }
+    if let error = mixedRateError { return error }
+    if dataType != "mixed" || morphologyRateMode != "estimate" {
+      if weights.contains(where: { $0.move == "morphology_rate_scale" && $0.value > 0 })
+        || tuningValues.contains(where: { $0.move == "morphology_rate_scale" })
+      {
+        return "The morphology-rate move requires an estimated mixed-data rate ratio."
+      }
     }
     if dataType == "dna" && (conditioning != "none" || partitioning != "declared") {
       return
@@ -474,6 +497,17 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       }
       arguments += ["--tree-prior", "yule", "--birth-rate-upper", String(upper)]
     }
+    if dataType == "mixed" {
+      if let error = mixedRateError { throw ImportError.message(error) }
+      if morphologyRateMode == "estimate" {
+        arguments += [
+          "--morphology-rate", "estimate", "--morphology-rate-log-sd",
+          String(morphologyLogSDValue!),
+        ]
+      } else {
+        arguments += ["--morphology-rate", String(morphologyRateValue!)]
+      }
+    }
     if backend != "automatic" { arguments += ["--backend", backend] }
     if clock == "reference" {
       guard let prior = clockSigmaPrior else {
@@ -519,6 +553,7 @@ struct AnalysisDraft: Codable, Sendable {
   let outgroup: String?
   let taxa: [String]?
   let appliedMonophyly: [[String]]?
+  var mixedInput: MixedInputMetadata? = nil
   var constraints: [[String]] {
     GroupConstraints.applied(monophyly, taxa: taxa ?? [], outgroup: outgroup)
   }
@@ -528,23 +563,27 @@ struct AnalysisDraft: Codable, Sendable {
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
     formatVersion =
-      settings.dataType == "dna"
-      ? 11
-      : settings.treePrior == "yule"
-        ? 10
-        : settings.usesJointExchange
-          ? 9
-          : settings.partitioning == "labels"
-            ? 8
-            : settings.usesExecutionOptions
-              ? 7
-              : settings.usesCustomSigmaPrior
-                ? 6
-                : (settings.usesAdvancedOptions
-                  ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
+      settings.dataType == "mixed"
+      ? 12
+      : settings.dataType == "dna"
+        ? 11
+        : settings.treePrior == "yule"
+          ? 10
+          : settings.usesJointExchange
+            ? 9
+            : settings.partitioning == "labels"
+              ? 8
+              : settings.usesExecutionOptions
+                ? 7
+                : settings.usesCustomSigmaPrior
+                  ? 6
+                  : (settings.usesAdvancedOptions
+                    ? 5
+                    : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
+    mixedInput = report.mixed
     self.settings = settings
     self.monophyly = monophyly
     self.outgroup = outgroup
@@ -565,7 +604,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard (1...11).contains(formatVersion),
+    guard (1...12).contains(formatVersion),
+      settings.dataType != "mixed" || (formatVersion >= 12 && mixedInput?.valid == true),
       formatVersion >= 11 || settings.dataType != "dna",
       formatVersion >= 10 || settings.treePrior != "yule",
       formatVersion >= 9 || !settings.usesJointExchange,

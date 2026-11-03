@@ -14,7 +14,7 @@ use crate::model::{CharacterOrdering, Mk, Ordered};
 use crate::random::Random;
 use crate::rates::RateVariation;
 use crate::tree::Tree;
-use crate::{LikelihoodCore, Scaling, nexus};
+use crate::{LikelihoodCore, Scaling};
 
 #[derive(Debug)]
 pub struct Error(pub String);
@@ -31,6 +31,7 @@ pub struct Design {
     sets: Vec<CharacterSet>,
     gaps: GapTreatment,
     conditioning: Conditioning,
+    morphology_rate: f64,
 }
 
 impl Design {
@@ -81,9 +82,10 @@ impl Design {
             sets,
             gaps,
             conditioning,
+            morphology_rate: 1.0,
         };
         for p in design.compress(matrix)? {
-            match conditioning {
+            match conditioning.for_data(p.data_type()) {
                 Conditioning::None => {}
                 Conditioning::Variable => {
                     crate::ascertainment::VariableCharacters::new(&p)
@@ -98,6 +100,29 @@ impl Design {
         Ok(design)
     }
 
+    pub fn set_morphology_rate(&mut self, rate: f64) -> Result<()> {
+        if !rate.is_finite()
+            || rate <= 0.0
+            || (self.original.data_type() != crate::data::DataType::Mixed && rate != 1.0)
+        {
+            return Err(Error(
+                "relative morphology rate requires mixed input and a positive finite value".into(),
+            ));
+        }
+        self.morphology_rate = rate;
+        Ok(())
+    }
+
+    fn rates_for(&self, rates: &RateVariation, data_type: crate::data::DataType) -> RateVariation {
+        let mut result = rates.clone();
+        if self.original.data_type() == crate::data::DataType::Mixed
+            && data_type == crate::data::DataType::Standard
+        {
+            result.mean = Some(rates.mean.unwrap_or(1.0) * self.morphology_rate);
+        }
+        result
+    }
+
     pub fn original(&self) -> &Matrix {
         &self.original
     }
@@ -106,7 +131,8 @@ impl Design {
     }
 
     pub fn compress(&self, matrix: &Matrix) -> Result<Vec<Patterns>> {
-        if matrix.data_type() != self.original.data_type()
+        if matrix.blocks != self.original.blocks
+            || matrix.data_type() != self.original.data_type()
             || matrix.taxa() != self.original.taxa()
             || matrix.symbols() != self.original.symbols()
             || matrix.ordering() != self.original.ordering()
@@ -151,14 +177,14 @@ impl Design {
         let order = tree.postorder();
         for partition in self.compress(&self.original)? {
             let k = partition.symbols().len();
-            let matrices = transitions(tree, rates, k, partition.ordering())?;
-            let symbols: Vec<_> = partition
-                .symbols()
-                .iter()
-                .map(|s| self.original.symbols().iter().position(|c| c == s).unwrap())
-                .collect();
+            let rates = self.rates_for(rates, partition.data_type());
+            let matrices = transitions(tree, &rates, k, partition.ordering())?;
             let mut counts = vec![0; k];
-            for &site in partition.sites() {
+            for (&site, alphabet) in partition.sites().iter().zip(partition.state_symbols()) {
+                let symbols: Vec<_> = alphabet
+                    .iter()
+                    .map(|s| self.original.symbols().iter().position(|c| c == s).unwrap())
+                    .collect();
                 let mut accepted = false;
                 for attempt in 0..max_attempts {
                     if attempt % 128 == 0 && cancel() {
@@ -177,7 +203,7 @@ impl Design {
                     for &state in &states[..tree.tips()] {
                         counts[state] += 1;
                     }
-                    accepted = match self.conditioning {
+                    accepted = match self.conditioning.for_data(partition.data_type()) {
                         Conditioning::None => true,
                         Conditioning::Variable => counts.iter().filter(|&&n| n > 0).count() > 1,
                         Conditioning::Informative => {
@@ -203,7 +229,8 @@ impl Design {
         }
         // Exercise the same parser and frozen-alphabet compression used for
         // exported replicates; losing a state must never shrink the model.
-        let parsed = nexus::parse(&to_nexus(&result)).map_err(|e| Error(e.to_string()))?;
+        let parsed =
+            crate::alignment::parse(&to_input(&result)).map_err(|e| Error(e.to_string()))?;
         self.compress(&parsed)?;
         Ok(parsed)
     }
@@ -219,6 +246,7 @@ impl Design {
         let parts = self.compress(matrix)?;
         let mut characters = vec![CharacterStatistics::default(); matrix.character_count()];
         for p in parts {
+            let rates = self.rates_for(rates, p.data_type());
             if cancel() {
                 return Err(Error("posterior prediction cancelled".into()));
             }
@@ -350,10 +378,37 @@ fn draw(probabilities: &[f64], random: &mut Random) -> usize {
     probabilities.len() - 1
 }
 
-/// A complete NEXUS matrix, including the original declared alphabet, labels,
-/// character order and missing/gap mask. Explicit model alphabets live in the
-/// predictive report and must be reused when fitting exported replicates.
+/// Compatibility entry point for `to_input`: NEXUS for homogeneous data,
+/// a typed manifest for mixed data. Alphabets, labels, ordering and missing masks
+/// are retained. Frozen model alphabets live in the predictive report and must
+/// be reused when fitting exported replicates.
 pub fn to_nexus(matrix: &Matrix) -> String {
+    to_input(matrix)
+}
+
+/// NEXUS for homogeneous data, a self-contained typed manifest for mixed data.
+pub fn to_input(matrix: &Matrix) -> String {
+    if matrix.data_type() == crate::data::DataType::Mixed {
+        let meta = matrix.mixed_metadata().expect("validated mixed matrix");
+        let mut components = matrix.component_matrices();
+        for (part, source) in components.iter_mut().zip(&meta.sources) {
+            let kept: Vec<_> = part
+                .taxa
+                .iter()
+                .enumerate()
+                .filter(|(_, t)| !source.missing_taxa.contains(t))
+                .map(|(i, _)| i)
+                .collect();
+            part.rows = kept.iter().map(|i| part.rows[*i].clone()).collect();
+            part.taxa = kept.iter().map(|i| part.taxa[*i].clone()).collect();
+        }
+        return crate::mixed::manifest(
+            ("morphology.nex", &to_input(&components[0])),
+            ("dna.nex", &to_input(&components[1])),
+            &meta.missing_taxa_policy,
+        )
+        .expect("validated mixed matrix serialization");
+    }
     fn quote(s: &str) -> String {
         format!("'{}'", s.replace('\'', "''"))
     }

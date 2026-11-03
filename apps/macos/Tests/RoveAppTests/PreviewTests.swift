@@ -5,6 +5,55 @@ import Testing
 @testable import RoveApp
 
 struct PreviewTests {
+  @Test @MainActor func renderMixedSourcesAndRates() async throws {
+    guard ProcessInfo.processInfo.environment["CI"] == nil else { return }
+    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+      .deletingLastPathComponent()
+    let directory = root.appendingPathComponent(".local/ui/mixed")
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    _ = NSApplication.shared
+    NSApp.appearance = NSAppearance(named: .darkAqua)
+    Lab.registerFonts()
+    let suite = "rove-mixed-preview-\(UUID())"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let preferences = AppPreferences(defaults: defaults)
+    let engine = root.appendingPathComponent("target/release/rove")
+    let workspace = Workspace(executable: engine, preferences: preferences)
+    let matrix = root.appendingPathComponent("fixtures/validation/mixed/study.mixed.json")
+    let report = try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine)
+    workspace.file = matrix
+    workspace.report = report
+    workspace.settings.dataType = "mixed"
+    workspace.settings.morphologyRateMode = "estimate"
+    workspace.settings.morphologyRateLogSD = "0.7"
+    let metadata = try #require(report.mixed)
+    let view = NSHostingView(
+      rootView:
+        VStack(spacing: 20) {
+          MixedSourcesSection(metadata: metadata, strings: workspace.strings)
+          MixedRateSection(workspace: workspace)
+        }.padding(24).frame(width: 740, height: 660).background(Lab.background))
+    let window = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 740, height: 660), styleMask: [.borderless],
+      backing: .buffered, defer: false)
+    window.isReleasedWhenClosed = false
+    window.contentView = view
+    window.orderBack(nil)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      // Refresh the value-only source summary when the locale changes.
+      view.rootView = VStack(spacing: 20) {
+        MixedSourcesSection(metadata: metadata, strings: workspace.strings)
+        MixedRateSection(workspace: workspace)
+      }.padding(24).frame(width: 740, height: 660).background(Lab.background)
+      try await capture(
+        view, to: directory.appendingPathComponent("sources-rates-\(language.rawValue).png"))
+    }
+    window.close()
+  }
+
   @Test @MainActor func renderNucleotideImportAndReview() async throws {
     guard ProcessInfo.processInfo.environment["CI"] == nil else { return }
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()

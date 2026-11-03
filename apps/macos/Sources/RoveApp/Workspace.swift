@@ -12,6 +12,7 @@ enum WorkspacePage: String, CaseIterable {
 
 @MainActor @Observable
 final class Workspace {
+  var showingMixedImport = false
   var report: MatrixReport?
   var file: URL?
   var page = WorkspacePage.matrix
@@ -125,6 +126,10 @@ final class Workspace {
     }
   }
 
+  func combineInput(_ request: MixedInputRequest) async throws {
+    try await request.execute(executable: executable)
+  }
+
   func chooseFile() {
     guard !isRunning else { return }
     let panel = NSOpenPanel()
@@ -164,7 +169,7 @@ final class Workspace {
           throw ImportError.message("Choose a NEXUS or aligned FASTA file, rather than a folder.")
         }
         // A tree sample is not a matrix: it goes to the summary sheet instead.
-        if try await Task.detached { try Self.holdsTrees(url) }.value {
+        if try await Task.detached(operation: { try Self.holdsTrees(url) }).value {
           guard importID == id else { return }
           guard !preserveSettings else {
             throw ImportError.message("The matrix could not be read.")
@@ -232,8 +237,9 @@ final class Workspace {
   nonisolated static func holdsTrees(_ url: URL) throws -> Bool {
     let handle = try FileHandle(forReadingFrom: url)
     defer { try? handle.close() }
-    let head = String(decoding: try handle.read(upToCount: 256 * 1024) ?? Data(), as: UTF8.self)
-      .lowercased().replacing(/\[[^\]]*\]/, with: " ")
+    let raw = String(decoding: try handle.read(upToCount: 256 * 1024) ?? Data(), as: UTF8.self)
+    if raw.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("{") { return false }
+    let head = raw.lowercased().replacing(/\[[^\]]*\]/, with: " ")
     let trees = head.firstRange(of: /begin\s+trees\s*;/)?.lowerBound
     let characters = head.firstRange(of: /begin\s+(characters|data)\s*;/)?.lowerBound
     guard let trees else { return false }
@@ -426,6 +432,7 @@ final class Workspace {
         guard (imported.dataType ?? "standard") == draft.settings.dataType else {
           throw ImportError.message("The saved data type does not match the input.")
         }
+        guard imported.mixed == draft.mixedInput else { throw RunFailure.changedInput }
         try draft.validateTaxa(imported.allTaxa)
         guard importID == id else { return }
         run = nil

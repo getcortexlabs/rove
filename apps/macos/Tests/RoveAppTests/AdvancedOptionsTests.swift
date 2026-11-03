@@ -89,7 +89,7 @@ struct AdvancedOptionsTests {
     #expect(settings.validationError != nil)
     settings.checkpointEvery = 3_000
     #expect(settings.validationError == nil)
-    #expect(ProposalSchedule.moves.count == 24 && Set(ProposalSchedule.moves).count == 24)
+    #expect(ProposalSchedule.moves.count == 25 && Set(ProposalSchedule.moves).count == 25)
     #expect(ProposalSchedule.tunable.isSubset(of: ProposalSchedule.moves))
   }
 

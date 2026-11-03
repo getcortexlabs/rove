@@ -50,10 +50,11 @@ pub enum Move {
     NarrowExchangeRates,
     /// Scale the pure-birth rate of a Yule prior.
     BirthRateScale,
+    MorphologyRateScale,
 }
 
 impl Move {
-    pub const ALL: [Move; 24] = [
+    pub const ALL: [Move; 25] = [
         Move::FbdBirthScale,
         Move::FbdDeathScale,
         Move::FbdSamplingScale,
@@ -78,6 +79,7 @@ impl Move {
         Move::ClockSigmaRates,
         Move::NarrowExchangeRates,
         Move::BirthRateScale,
+        Move::MorphologyRateScale,
     ];
 
     pub fn name(self) -> &'static str {
@@ -106,6 +108,7 @@ impl Move {
             Self::ClockSigmaRates => "clock_sigma_rates",
             Self::NarrowExchangeRates => "narrow_exchange_rates",
             Self::BirthRateScale => "birth_rate_scale",
+            Self::MorphologyRateScale => "morphology_rate_scale",
         }
     }
 
@@ -123,6 +126,7 @@ impl Move {
             | Self::TreeScale
             | Self::BirthDifferenceScale
             | Self::BirthRateScale
+            | Self::MorphologyRateScale
             | Self::RelativeDeathScale
             | Self::RootTimeRates => Some(0.75),
             Self::GammaShapeScale
@@ -166,6 +170,7 @@ impl Move {
             || matches!(
                 self,
                 Self::ClockRateScale
+                    | Self::MorphologyRateScale
                     | Self::GammaShapeScale
                     | Self::BranchRateScale
                     | Self::ClockSigmaRates
@@ -207,6 +212,7 @@ impl Move {
             | Self::FbdSamplingScale
             | Self::FbdRhoLogit
             | Self::FbdOriginScale
+            | Self::MorphologyRateScale
             | Self::TipAge => None, // Dating proposals are handled by the sampler.
             Self::ClockRateScale => scale(rates.mean.as_mut()?, f64::MAX, tuning, random),
             Self::NodeHeight => node_height(tree, random),
@@ -348,7 +354,7 @@ fn tree_scale(tree: &mut Tree, factor: f64, random: &mut Random) -> Option<f64> 
     Some((internal - 2.0) * f.ln())
 }
 
-fn scale(value: &mut f64, upper: f64, factor: f64, random: &mut Random) -> Option<f64> {
+pub(super) fn scale(value: &mut f64, upper: f64, factor: f64, random: &mut Random) -> Option<f64> {
     if *value == 0.0 {
         return None;
     }

@@ -371,13 +371,12 @@ pub(super) fn run(arguments: &[String], export: bool) -> Result<()> {
             // Predictive checks retain an exact original in source/matrix.*.
             // Matrix consent applies to that copy too, including foreign checks.
             // Include only the explicitly supplied, verified matrix at package root.
-            if relative
-                .file_name()
-                .is_some_and(|n| n == "matrix.nex" || n == "matrix.fasta")
-                && relative
-                    .parent()
-                    .and_then(Path::file_name)
-                    .is_some_and(|n| n == "source")
+            if relative.file_name().is_some_and(|n| {
+                n == "matrix.nex" || n == "matrix.fasta" || n == "matrix.mixed.json"
+            }) && relative
+                .parent()
+                .and_then(Path::file_name)
+                .is_some_and(|n| n == "source")
             {
                 omitted_source_matrices.push(relative);
                 continue;
@@ -396,7 +395,9 @@ pub(super) fn run(arguments: &[String], export: bool) -> Result<()> {
                 return Err("included matrix does not match the run fingerprint".into());
             }
             let raw = fs::read(source)?;
-            let name = if rove::alignment::is_fasta(std::str::from_utf8(&raw)?) {
+            let name = if report["run_record"]["model"]["data_type"] == "mixed" {
+                "matrix.mixed.json"
+            } else if rove::alignment::is_fasta(std::str::from_utf8(&raw)?) {
                 "matrix.fasta"
             } else {
                 "matrix.nex"

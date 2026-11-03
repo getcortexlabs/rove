@@ -107,6 +107,7 @@ struct SavedEstimate: Identifiable, Sendable {
       && record.model.monophyly == draft.constraints && record.model.preset == settings.clock
       && record.model.conditioningKind == settings.conditioning
       && record.model.dataModelMatches(settings)
+      && record.input.mixed == draft.mixedInput
       && (record.model.partitioning ?? "declared") == settings.partitioning
       && record.model.dating == dating && record.model.treePriorMatches(settings)
       && (settings.clock != "reference"

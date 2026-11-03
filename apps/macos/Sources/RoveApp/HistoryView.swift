@@ -282,6 +282,11 @@ private struct HistoryDetail: View {
               field("Clock sigma prior", prior.description(strings: strings))
             }
             field("Tree prior", draft.settings.treePriorDescription(strings: strings))
+            if draft.settings.dataType == "mixed" {
+              field(
+                "Morphology/DNA rate ratio", draft.settings.mixedRateDescription(strings: strings))
+              field("Morphology conditioning", strings(draft.settings.morphologyConditioningLabel))
+            }
             field(
               "Character model",
               strings(

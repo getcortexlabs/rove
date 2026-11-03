@@ -69,7 +69,6 @@ enum CommandLineImport {
     else { throw RunFailure.invalidCompletion }
     var value = AnalysisSettings()
     value.dataType = record.model.resolvedDataType
-    guard record.model.dataModelMatches(value) else { throw RunFailure.invalidCompletion }
     value.treePrior = record.model.treePriorKind ?? "birth-death"
     if value.treePrior == "yule" {
       guard let prior = record.model.birthRatePriorParameters, prior.valid else {
@@ -83,6 +82,13 @@ enum CommandLineImport {
     value.clockSigmaShape = String(sigma.shape)
     value.clockSigmaScale = String(sigma.scale)
     value.conditioning = conditioning
+    if value.dataType == "mixed" {
+      guard let model = record.model.mixedModel else { throw RunFailure.invalidCompletion }
+      value.morphologyRateMode = model.morphologyRatePrior == nil ? "fixed" : "estimate"
+      value.morphologyRate = String(model.morphologyRate)
+      value.morphologyRateLogSD = String(model.morphologyRatePrior?.logSd ?? 1)
+    }
+    guard record.model.dataModelMatches(value) else { throw RunFailure.invalidCompletion }
     value.partitioning = record.model.partitioning ?? "declared"
     value.steps = steps
     value.sampleEvery = interval

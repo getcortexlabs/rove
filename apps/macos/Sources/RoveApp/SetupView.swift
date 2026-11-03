@@ -42,6 +42,7 @@ struct SetupView: View {
       TreePriorSection(workspace: workspace)
       DatingSection(workspace: workspace)
 
+      if workspace.settings.dataType == "mixed" { MixedRateSection(workspace: workspace) }
       if workspace.settings.dataType == "dna" {
         NucleotideModelSection(strings: strings)
       } else {
@@ -307,6 +308,8 @@ struct ReviewView: View {
           .foregroundStyle(Lab.secondary)
       }.padding(.top, 16)
 
+      if let metadata = report.mixed { MixedSourcesSection(metadata: metadata, strings: strings) }
+
       LabPanel {
         VStack(spacing: 0) {
           HStack(spacing: 13) {
@@ -332,6 +335,12 @@ struct ReviewView: View {
           row(
             "Character model",
             workspace.settings.characterModelLabel)
+          if workspace.settings.dataType == "mixed" {
+            row(
+              "Morphology/DNA rate ratio", workspace.settings.mixedRateDescription(strings: strings)
+            )
+            row("Morphology conditioning", workspace.settings.morphologyConditioningLabel)
+          }
           if let partitions = report.partitions {
             row(
               "Alphabet choice", AnalysisSettings.partitioningLabel(workspace.settings.partitioning)

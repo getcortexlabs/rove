@@ -151,7 +151,12 @@ final class RunComparisonModel {
       x.constraints == y.constraints, x.settings.clock == y.settings.clock,
       x.settings.clockSigmaPrior == y.settings.clockSigmaPrior,
       x.settings.treePrior == y.settings.treePrior,
-      x.settings.dataType == y.settings.dataType,
+      x.settings.dataType == y.settings.dataType, x.mixedInput == y.mixedInput,
+      x.settings.dataType != "mixed"
+        || (x.settings.morphologyRateMode == y.settings.morphologyRateMode
+          && (x.settings.morphologyRateMode == "estimate"
+            ? x.settings.morphologyLogSDValue == y.settings.morphologyLogSDValue
+            : x.settings.morphologyRateValue == y.settings.morphologyRateValue)),
       x.settings.treePrior != "yule"
         || x.settings.yuleBirthRateUpper == y.settings.yuleBirthRateUpper,
       x.settings.sampleFromPrior == y.settings.sampleFromPrior,

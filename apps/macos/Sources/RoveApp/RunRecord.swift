@@ -31,6 +31,7 @@ struct EngineRecord: Decodable, Sendable {
   struct Input: Decodable, Sendable {
     let sha256: String
     let gaps: String
+    var mixed: MixedInputMetadata? = nil
   }
   struct Settings: Decodable, Sendable {
     let steps: UInt64
@@ -50,12 +51,16 @@ struct EngineRecord: Decodable, Sendable {
     var conditioning: String? = nil
     var dataType: String? = nil
     var substitutionModel: String? = nil
+    var mixedModel: MixedModel? = nil
     var resolvedDataType: String { dataType ?? "standard" }
 
     func dataModelMatches(_ settings: AnalysisSettings) -> Bool {
-      resolvedDataType == settings.dataType
-        && (resolvedDataType == "dna"
-          ? substitutionModel == "jc69" && conditioning == "none (JC69)" : substitutionModel == nil)
+      guard resolvedDataType == settings.dataType else { return false }
+      if resolvedDataType == "mixed" {
+        return substitutionModel == "mk+jc69" && mixedModel?.matches(settings) == true
+      }
+      return resolvedDataType == "dna"
+        ? substitutionModel == "jc69" && conditioning == "none (JC69)" : substitutionModel == nil
     }
 
     var conditioningKind: String? {
@@ -147,6 +152,7 @@ struct EngineRecord: Decodable, Sendable {
     return draft.settings.validationError == nil && input.sha256 == draft.matrixSHA256
       && model.dating == expectedDating && model.treePriorMatches(draft.settings)
       && model.dataModelMatches(draft.settings)
+      && input.mixed == draft.mixedInput
       && input.gaps == (draft.settings.gapsAsMissing ? "missing" : "reject")
       && model.preset == draft.settings.clock
       && (model.preset != "reference"

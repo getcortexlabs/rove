@@ -1,6 +1,7 @@
 mod assessment;
 mod benchmark;
 mod checkpoint;
+mod combine;
 mod compare;
 mod dating;
 mod diagnose;
@@ -36,6 +37,7 @@ const USAGE: &str =
                    [--model strict|reference] [--conditioning variable|informative|none] [--sample-from-prior]
                    [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
                    [--tree-prior birth-death|yule] [--birth-rate-upper <x>]
+                   [--morphology-rate estimate|<x>] [--morphology-rate-log-sd <x>]
                    [--partitioning observed|declared|labels] [--dating <settings.json>]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
@@ -49,10 +51,12 @@ const USAGE: &str =
                      [--model strict|reference] [--conditioning variable|informative|none]
                      [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
                      [--tree-prior birth-death|yule] [--birth-rate-upper <x>]
-                     [--partitioning observed|declared|labels] [--dating <settings.json>]
+                     [--morphology-rate estimate|<x>] [--morphology-rate-log-sd <x>]
+                   [--partitioning observed|declared|labels] [--dating <settings.json>]
                      [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                      [--backend portable|neon] [--print-every <n>] [--cancel-on-stdin-close]
                      [--expect-input-sha256 <hash>]
+       rove combine --morphology <matrix.nex> --dna <alignment> --output <new.mixed.json> [--missing-taxa reject|missing]
        rove benchmark [--cancel-on-stdin-close]
        rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
        rove assess <run-directory> --output <new-directory> [--burnin-percent <0..99>]
@@ -104,6 +108,7 @@ struct Options {
     conditioning: Conditioning,
     conditioning_explicit: bool,
     partitioning_explicit: bool,
+    morphology_rate: Option<rove::mcmc::RelativeRate>,
     reference_model: bool,
     clock_sigma_prior: SigmaPrior,
     tree_prior: TreePrior,
@@ -142,6 +147,8 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut gaps = GapTreatment::Reject;
     let mut partitioning = Partitioning::Observed;
     let mut conditioning = Conditioning::Variable;
+    let mut morphology_rate = None;
+    let mut morphology_log_sd = None;
     let mut reference_model = false;
     let mut sigma_shape = 5.0;
     let mut sigma_scale = 0.2;
@@ -217,6 +224,14 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 } else {
                     sigma_scale = parsed;
                 }
+            }
+            "--morphology-rate" => morphology_rate = Some(value(argument)?),
+            "--morphology-rate-log-sd" => {
+                morphology_log_sd = Some(
+                    value(argument)?
+                        .parse::<f64>()
+                        .map_err(|_| "morphology log-SD needs a number")?,
+                )
             }
             "--events-json" => events_json = true,
             "--cancel-on-stdin-close" => cancel_on_stdin_close = true,
@@ -358,6 +373,26 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     if tree_prior == TreePrior::Yule && dating.is_some() {
         return Err("Yule does not support fossil dating or calibrations".into());
     }
+    let morphology_rate = match morphology_rate.as_deref() {
+        None if morphology_log_sd.is_some() => {
+            return Err("--morphology-rate-log-sd requires --morphology-rate estimate".into());
+        }
+        None => None,
+        Some("estimate") => Some(rove::mcmc::RelativeRate {
+            value: 1.0,
+            log_sd: Some(morphology_log_sd.unwrap_or(1.0)),
+        }),
+        Some(value) if morphology_log_sd.is_none() => Some(rove::mcmc::RelativeRate {
+            value: value
+                .parse()
+                .map_err(|_| "--morphology-rate needs estimate or a positive number")?,
+            log_sd: None,
+        }),
+        _ => return Err("--morphology-rate-log-sd requires --morphology-rate estimate".into()),
+    };
+    if let Some(rate) = morphology_rate {
+        rate.validate().map_err(|e| e.to_string())?;
+    }
     let options = Options {
         command,
         powers: match command {
@@ -391,6 +426,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         conditioning_explicit: seen.contains("--conditioning"),
         partitioning_explicit: seen.contains("--partitioning"),
         reference_model,
+        morphology_rate,
         clock_sigma_prior,
         tree_prior,
         birth_rate_upper,
@@ -648,6 +684,9 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
         options.conditioning = Conditioning::None;
         options.partitioning = partitions::Partitioning::Declared;
     }
+    if (data.data_type() == rove::data::DataType::Mixed) != options.morphology_rate.is_some() {
+        return Err("mixed morphology/DNA requires --morphology-rate estimate or an explicit positive fixed value; this option does not apply to homogeneous inputs".into());
+    }
     let patterns = options.partitioning.compress(&data, options.gaps)?;
     let taxa = data.taxa();
     if let Some(name) = taxa.iter().find(|name| !is_plain_label(name)) {
@@ -693,6 +732,9 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
         settings.birth_difference_upper = options.birth_rate_upper;
         settings.initial.birth_difference = 1.0f64.min(options.birth_rate_upper / 2.0);
     }
+    if let Some(rate) = options.morphology_rate {
+        settings.set_morphology_rate(rate);
+    }
     for &(kind, weight) in &options.weights {
         if let Some(entry) = settings.weights.iter_mut().find(|(k, _)| *k == kind) {
             entry.1 = weight;
@@ -714,7 +756,7 @@ fn input_json(
     data: &rove::data::Matrix,
     patterns: &[rove::data::Patterns],
 ) -> Json {
-    Json::Object(vec![
+    let mut fields = vec![
         ("path", Json::text(options.matrix.display().to_string())),
         ("sha256", Json::text(input)),
         ("taxa", Json::Integer(data.taxa().len() as u64)),
@@ -730,7 +772,11 @@ fn input_json(
                 GapTreatment::Missing => "missing",
             }),
         ),
-    ])
+    ];
+    if let Some(mixed) = data.mixed_metadata() {
+        fields.push(("mixed", Json::Value(mixed.json())));
+    }
+    Json::Object(fields)
 }
 
 fn model_json(
@@ -754,7 +800,9 @@ fn model_json(
         ("partitions", partitions::describe(patterns)),
         (
             "substitution",
-            Json::text(if dna {
+            Json::text(if settings.morphology_rate.is_some() {
+                "Morphology Mk/ordered per partition and DNA JC69, shared topology/clock/gamma shape, DNA relative rate one"
+            } else if dna {
                 if options.reference_model {
                     "JC69 DNA, fixed A/C/G/T frequencies 1/4, four shared midpoint gamma categories normalized to mean one"
                 } else {
@@ -916,7 +964,19 @@ fn model_json(
             Json::List(settings.monophyly.iter().map(|c| names(c)).collect()),
         ),
     ];
-    if dna {
+    if let Some(rate) = settings.morphology_rate {
+        fields.extend([
+            ("data_type", Json::text("mixed")),
+            ("substitution_model", Json::text("mk+jc69")),
+            ("mixed_model", Json::Value(serde_json::json!({
+                "topology":"shared", "branch_clock":"shared", "gamma_shape":"shared",
+                "dna_rate":1.0, "morphology_rate":rate.value,
+                "morphology_rate_prior":rate.log_sd.map(|s| serde_json::json!({"distribution":"lognormal","log_mean":0.0,"log_sd":s})),
+                "morphology_conditioning": match settings.conditioning {Conditioning::None=>"none",Conditioning::Variable=>"variable",Conditioning::Informative=>"informative"},
+                "dna_conditioning":"none"
+            }))),
+        ]);
+    } else if dna {
         fields.extend([
             ("data_type", Json::text("dna")),
             ("substitution_model", Json::text("jc69")),
@@ -1372,6 +1432,8 @@ fn main() {
         inspect_tree::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "summarize") {
         summarize::run(&arguments[1..]).map(|_| true)
+    } else if arguments.first().is_some_and(|a| a == "combine") {
+        combine::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "inspect") {
         inspect::run(&arguments[1..]).map(|_| true)
     } else {

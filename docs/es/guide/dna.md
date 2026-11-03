@@ -4,6 +4,8 @@ description: "ADN alineado en NEXUS y FASTA bajo JC69, con ambigüedades y trata
 
 # ADN alineado con JC69
 
+[Morfología y ADN combinados](./mixed-data.md).
+
 Abra una matriz NEXUS `DATATYPE=DNA` o un FASTA ya alineado. La app selecciona
 **DNA · JC69**, mantiene A/C/G/T posibles en cada sitio e incluye sitios
 constantes. Rove no alinea, recorta ni ensambla lecturas. `sample`, `inspect`
@@ -37,8 +39,7 @@ JC69 fija frecuencias 1/4 y tasas de intercambio iguales, normalizadas a una
 sustitución esperada por sitio: `Pii(t)=1/4+3/4 exp(−4t/3)` y
 `Pij(t)=1/4−1/4 exp(−4t/3)` entre bases diferentes. Los controles existentes
 ofrecen reloj estricto o relajado lognormal, categorías gamma, raíz y priors
-de árbol admitidos. No se aplica corrección morfológica de selección. HKY,
-GTR y análisis mixto quedan fuera de esta entrega.
+de árbol admitidos. No se aplica corrección morfológica de selección. HKY y GTR no están disponibles. El análisis combinado tiene un flujo propio.
 
 Configuraciones de formato 11, historial, registros y checkpoints conservan
 ADN/JC69 y la política de gaps; apps anteriores rechazan estas configuraciones.

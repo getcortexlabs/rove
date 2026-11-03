@@ -9,6 +9,7 @@ use std::ops::Range;
 pub enum DataType {
     Standard,
     Dna,
+    Mixed,
 }
 
 impl DataType {
@@ -16,6 +17,7 @@ impl DataType {
         match self {
             Self::Standard => "standard",
             Self::Dna => "dna",
+            Self::Mixed => "mixed",
         }
     }
 }
@@ -33,6 +35,8 @@ pub enum Cell {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Matrix {
     pub(crate) data_type: DataType,
+    pub(crate) blocks: Vec<crate::mixed::Block>,
+    pub(crate) mixed: Option<crate::mixed::Metadata>,
     pub(crate) taxa: Vec<String>,
     pub(crate) symbols: Vec<char>,
     pub(crate) rows: Vec<Vec<Cell>>,
@@ -58,6 +62,35 @@ pub enum CompressionError {
     Polymorphism { taxon: String, site: usize },
     OrderedAlphabet { site: usize },
     DnaModel,
+}
+
+impl CompressionError {
+    fn offset(self, offset: usize) -> Self {
+        match self {
+            Self::StateCount { site } => Self::StateCount {
+                site: site + offset,
+            },
+            Self::StateLabels { site } => Self::StateLabels {
+                site: site + offset,
+            },
+            Self::ExcludedState { site, symbol } => Self::ExcludedState {
+                site: site + offset,
+                symbol,
+            },
+            Self::Gap { site, taxon } => Self::Gap {
+                site: site + offset,
+                taxon,
+            },
+            Self::Polymorphism { site, taxon } => Self::Polymorphism {
+                site: site + offset,
+                taxon,
+            },
+            Self::OrderedAlphabet { site } => Self::OrderedAlphabet {
+                site: site + offset,
+            },
+            other => other,
+        }
+    }
 }
 
 impl fmt::Display for CompressionError {
@@ -129,6 +162,75 @@ impl Matrix {
         self.data_type
     }
 
+    pub fn mixed_metadata(&self) -> Option<&crate::mixed::Metadata> {
+        self.mixed.as_ref()
+    }
+
+    /// Source-local alphabets and cell indices, reconstructed from current cells.
+    pub fn component_matrices(&self) -> Vec<Matrix> {
+        self.blocks
+            .iter()
+            .map(|block| {
+                let map: Vec<_> = self
+                    .symbols
+                    .iter()
+                    .map(|s| block.symbols.iter().position(|x| x == s))
+                    .collect();
+                let recode = |c: &Cell| match c {
+                    Cell::State(s) => Cell::State(map[*s].expect("block alphabet")),
+                    Cell::Uncertain(v) => Cell::Uncertain(
+                        v.iter().map(|s| map[*s].expect("block alphabet")).collect(),
+                    ),
+                    Cell::Polymorphic(v) => Cell::Polymorphic(
+                        v.iter().map(|s| map[*s].expect("block alphabet")).collect(),
+                    ),
+                    other => other.clone(),
+                };
+                let range = block.start..block.start + block.characters;
+                Matrix {
+                    data_type: block.data_type,
+                    blocks: Vec::new(),
+                    mixed: None,
+                    taxa: self.taxa.clone(),
+                    symbols: block.symbols.clone(),
+                    rows: self
+                        .rows
+                        .iter()
+                        .map(|r| r[range.clone()].iter().map(recode).collect())
+                        .collect(),
+                    character_labels: self.character_labels[range.clone()].to_vec(),
+                    state_labels: self.state_labels[range.clone()].to_vec(),
+                    ordering: self.ordering[range].to_vec(),
+                }
+            })
+            .collect()
+    }
+
+    fn compress_components(
+        &self,
+        gaps: GapTreatment,
+        mode: u8,
+    ) -> Result<Vec<Patterns>, CompressionError> {
+        let mut output = Vec::new();
+        for (block, component) in self.blocks.iter().zip(self.component_matrices()) {
+            let parts = if component.data_type == DataType::Dna || mode == 0 {
+                component.compress(
+                    std::slice::from_ref(&(0..component.character_count())),
+                    gaps,
+                )
+            } else if mode == 1 {
+                component.partition_by_states(gaps)
+            } else {
+                component.partition_by_labels(gaps)
+            };
+            for mut part in parts.map_err(|e| e.offset(block.start))? {
+                part.sites.iter_mut().for_each(|s| *s += block.start);
+                output.push(part);
+            }
+        }
+        Ok(output)
+    }
+
     pub fn taxa(&self) -> &[String] {
         &self.taxa
     }
@@ -175,6 +277,12 @@ impl Matrix {
         partitions: &[Range<usize>],
         gaps: GapTreatment,
     ) -> Result<Vec<Patterns>, CompressionError> {
+        if self.data_type == DataType::Mixed {
+            if partitions.len() != 1 || partitions[0] != (0..self.character_count()) {
+                return Err(CompressionError::InvalidPartitions);
+            }
+            return self.compress_components(gaps, 0);
+        }
         let mut end = 0;
         for sites in partitions {
             if sites.start != end || sites.is_empty() || sites.end > self.character_count() {
@@ -207,6 +315,9 @@ impl Matrix {
         &self,
         gaps: GapTreatment,
     ) -> Result<Vec<Patterns>, CompressionError> {
+        if self.data_type == DataType::Mixed {
+            return self.compress_components(gaps, 1);
+        }
         if self.data_type == DataType::Dna {
             return self.compress(std::slice::from_ref(&(0..self.character_count())), gaps);
         }
@@ -258,6 +369,9 @@ impl Matrix {
         &self,
         gaps: GapTreatment,
     ) -> Result<Vec<Patterns>, CompressionError> {
+        if self.data_type == DataType::Mixed {
+            return self.compress_components(gaps, 2);
+        }
         if self.data_type == DataType::Dna {
             return Err(CompressionError::DnaModel);
         }
@@ -285,6 +399,47 @@ impl Matrix {
         partitions: &[CharacterSet],
         gaps: GapTreatment,
     ) -> Result<Vec<Patterns>, CompressionError> {
+        if self.data_type == DataType::Mixed {
+            if partitions
+                .iter()
+                .any(|p| p.sites.is_empty() || p.sites.windows(2).any(|s| s[0] >= s[1]))
+            {
+                return Err(CompressionError::InvalidPartitions);
+            }
+            if partitions
+                .iter()
+                .flat_map(|p| &p.sites)
+                .any(|s| *s >= self.character_count())
+            {
+                return Err(CompressionError::InvalidPartitions);
+            }
+            let mut output = Vec::new();
+            for (block, component) in self.blocks.iter().zip(self.component_matrices()) {
+                let sets: Vec<_> = partitions
+                    .iter()
+                    .filter_map(|p| {
+                        let sites: Vec<_> = p
+                            .sites
+                            .iter()
+                            .filter(|s| **s >= block.start && **s < block.start + block.characters)
+                            .map(|s| s - block.start)
+                            .collect();
+                        (!sites.is_empty()).then(|| CharacterSet {
+                            sites,
+                            symbols: p.symbols.clone(),
+                        })
+                    })
+                    .collect();
+                for mut p in component
+                    .compress_sets(&sets, gaps)
+                    .map_err(|e| e.offset(block.start))?
+                {
+                    p.sites.iter_mut().for_each(|s| *s += block.start);
+                    output.push(p);
+                }
+            }
+            return Ok(output);
+        }
         self.validate_observations(gaps)?;
         let mut covered = vec![false; self.character_count()];
         let mut mapped = Vec::new();

@@ -4,6 +4,8 @@ description: "Aligned NEXUS and FASTA DNA under JC69, with explicit ambiguity an
 
 # Aligned DNA with JC69
 
+[Mixed morphology and DNA](./mixed-data.md).
+
 Open a NEXUS `DATATYPE=DNA` matrix or an aligned FASTA file in the Mac app.
 Import selects **DNA · JC69**, keeps all four A/C/G/T states at every site,
 and includes constant sites. Rove does not align, trim or assemble reads.
@@ -39,8 +41,7 @@ JC69 fixes frequencies at 1/4 and exchangeabilities equal, normalized to one
 expected substitution per site: `Pii(t)=1/4+3/4 exp(−4t/3)` and
 `Pij(t)=1/4−1/4 exp(−4t/3)` for different bases. Strict and lognormal relaxed
 clocks, gamma categories, rooting and supported tree priors use the existing
-controls. DNA has no morphology ascertainment correction. HKY, GTR and
-mixed-data inference are outside this delivery.
+controls. DNA has no morphology ascertainment correction. HKY and GTR are not available. Combined morphology/DNA has its own explicit workflow.
 
 Format-11 app setups, History, run records and checkpoints preserve DNA/JC69
 identity and the chosen gap policy. Older apps reject these setups. CLI runs

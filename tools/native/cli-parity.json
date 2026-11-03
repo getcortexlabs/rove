@@ -10,7 +10,8 @@
     "predict": "apps/macos/Sources/RoveApp/PredictiveCheckView.swift",
     "compare": "apps/macos/Sources/RoveApp/RunComparisonView.swift",
     "assess": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",
-    "export-run": "apps/macos/Sources/RoveApp/RunAssessmentView.swift"
+    "export-run": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",
+    "combine": "apps/macos/Sources/RoveApp/MixedImportView.swift"
   },
   "flags": {
     "--alpha": {
@@ -172,6 +173,26 @@
     "--birth-rate-upper": {
       "native": "apps/macos/Sources/RoveApp/TreePriorView.swift",
       "control": "Tree prior and Yule birth-rate prior"
+    },
+    "--morphology": {
+      "native": "apps/macos/Sources/RoveApp/MixedImportView.swift",
+      "control": "Combined input sources and explicit missing-taxon policy"
+    },
+    "--dna": {
+      "native": "apps/macos/Sources/RoveApp/MixedImportView.swift",
+      "control": "Combined input sources and explicit missing-taxon policy"
+    },
+    "--missing-taxa": {
+      "native": "apps/macos/Sources/RoveApp/MixedImportView.swift",
+      "control": "Combined input sources and explicit missing-taxon policy"
+    },
+    "--morphology-rate": {
+      "native": "apps/macos/Sources/RoveApp/MixedModelView.swift",
+      "control": "Fixed or estimated morphology/DNA rate ratio and lognormal log-SD"
+    },
+    "--morphology-rate-log-sd": {
+      "native": "apps/macos/Sources/RoveApp/MixedModelView.swift",
+      "control": "Fixed or estimated morphology/DNA rate ratio and lognormal log-SD"
     }
   }
 }

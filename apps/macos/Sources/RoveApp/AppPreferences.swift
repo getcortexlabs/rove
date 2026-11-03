@@ -81,7 +81,8 @@ struct AppStrings: Sendable {
   }
 
   func partitionSummary(_ partition: CharacterPartition) -> String {
-    partitionSummary(states: partition.states, characters: partition.characters)
+    (partition.dataType == "dna" ? "DNA · " : "")
+      + partitionSummary(states: partition.states, characters: partition.characters)
       + " · " + self(partition.ordering == .ordered ? "Ordered" : "Unordered")
   }
 
