@@ -46,7 +46,20 @@ fn inventory(root: &Path, cancel: &dyn Fn() -> bool) -> Result<BTreeMap<PathBuf,
         if depth > 16 || out.len() >= 100_000 {
             return Err("run archive exceeds file/depth limit".into());
         }
-        let path = root.join(relative);
+        let mut path = root.join(relative);
+        // Native CLI imports intentionally link their top-level results folder.
+        // Materialize that declared source; reject links inside its artifacts.
+        if depth == 0
+            && relative == Path::new("results")
+            && root.join("setup.rove.json").is_file()
+            && root.join("session.json").is_file()
+            && fs::symlink_metadata(&path)?.file_type().is_symlink()
+        {
+            path = path.canonicalize()?;
+            if !path.is_dir() {
+                return Err("imported results must reference a directory".into());
+            }
+        }
         let meta = fs::symlink_metadata(&path)?;
         if meta.file_type().is_symlink() {
             return Err("run archive contains a symbolic link".into());
@@ -331,7 +344,13 @@ pub(super) fn run(arguments: &[String], export: bool) -> Result<()> {
     let output = parent
         .canonicalize()?
         .join(output.file_name().ok_or("invalid output directory")?);
-    if export && output.starts_with(&root) {
+    if export
+        && (output.starts_with(&root)
+            || root
+                .join("results")
+                .canonicalize()
+                .is_ok_and(|p| output.starts_with(p)))
+    {
         return Err("export destination must be outside the source run".into());
     }
     if output.exists() {
@@ -346,8 +365,21 @@ pub(super) fn run(arguments: &[String], export: bool) -> Result<()> {
     write(&output.join("assessment.json"), &report)?;
     if export {
         let mut entries = Vec::new();
+        let mut omitted_source_matrices = Vec::new();
         for (relative, hash) in &before {
             check(&cancel)?;
+            // Predictive checks retain an exact original in source/matrix.nex.
+            // Matrix consent applies to that copy too, including foreign checks.
+            // Include only the explicitly supplied, verified matrix at package root.
+            if relative.file_name().is_some_and(|n| n == "matrix.nex")
+                && relative
+                    .parent()
+                    .and_then(Path::file_name)
+                    .is_some_and(|n| n == "source")
+            {
+                omitted_source_matrices.push(relative);
+                continue;
+            }
             let target = output.join("run").join(relative);
             fs::create_dir_all(target.parent().unwrap())?;
             fs::copy(root.join(relative), &target)?;
@@ -377,6 +409,7 @@ pub(super) fn run(arguments: &[String], export: bool) -> Result<()> {
             "created_unix_seconds":report["created_unix_seconds"],"rove_version":env!("CARGO_PKG_VERSION"),
             "export_executable_sha256":sha256::file(&std::env::current_exe()?)?,"source":root,
             "matrix_included":matrix.is_some(),"files":entries,
+            "omitted_source_matrices":omitted_source_matrices,
             "exact_resume":"Requires a valid checkpoint, the original executable fingerprint and original model/input identity. This package does not include the executable. Paths in source records are preserved; review paths before reuse.",
             "scope":"Known Rove records, raw samples and derived-result folders; previous assessments, neighboring files and external comparison sources are not copied. Export does not certify convergence."}),
         )?;
