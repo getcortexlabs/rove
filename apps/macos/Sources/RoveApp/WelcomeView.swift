@@ -38,6 +38,11 @@ struct WelcomeView: View {
       }.padding(.top, 1).padding(.bottom, 5)
 
       importCard
+      Button {
+        workspace.showingMixedImport = true
+      } label: {
+        Label(strings("Combine morphology and DNA"), systemImage: "square.stack.3d.up")
+      }.buttonStyle(LabButtonStyle(compact: true))
       exampleCard
       treeCard
 
@@ -57,12 +62,12 @@ struct WelcomeView: View {
         VStack(alignment: .leading, spacing: 9) {
           Text(strings(targeted ? "That's the one. Drop it here." : "Start with your matrix"))
             .font(Lab.display(23, weight: .semibold)).tracking(-0.4).foregroundStyle(Lab.ink)
-          Text(strings("Drop a NEXUS file here, or browse your Mac."))
+          Text(strings("Drop a NEXUS or aligned FASTA file here, or browse your Mac."))
             .font(.system(size: 12)).foregroundStyle(Lab.secondary)
           HStack(spacing: 8) {
             Text(".nex").font(.system(size: 10, design: .monospaced))
-            Text(".nexus").font(.system(size: 10, design: .monospaced))
-            Text(strings("·  Morphological characters")).font(.system(size: 10))
+            Text(".nexus · .fasta").font(.system(size: 10, design: .monospaced))
+            Text(strings("·  Morphology or aligned DNA")).font(.system(size: 10))
           }.foregroundStyle(Lab.muted).padding(.top, 7)
         }
         Spacer(minLength: 4)
@@ -102,7 +107,7 @@ struct WelcomeView: View {
     } isTargeted: {
       targeted = $0
     }
-    .accessibilityLabel(strings("Open or drop a NEXUS matrix or tree file"))
+    .accessibilityLabel(strings("Open or drop a NEXUS matrix, tree file or aligned DNA in FASTA"))
   }
 
   private func headline(size: CGFloat) -> some View {

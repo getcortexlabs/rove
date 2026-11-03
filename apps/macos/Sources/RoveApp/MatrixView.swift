@@ -30,7 +30,9 @@ struct MatrixView: View {
       HStack(spacing: 0) {
         metric(
           "TERMINALS", value: strings.number(report.taxonCount), note: "The taxa in your study")
-        metric("CHARACTERS", value: strings.number(report.characterCount), note: "Observed traits")
+        metric(
+          report.isDNA ? "SITES" : "CHARACTERS", value: strings.number(report.characterCount),
+          note: report.isDNA ? "Aligned positions" : "Observed traits")
         metric(
           "PATTERNS", value: report.patternCount.map(strings.number) ?? "—",
           note: "Distinct patterns within partitions")
@@ -43,36 +45,43 @@ struct MatrixView: View {
         .background(Lab.surface, in: RoundedRectangle(cornerRadius: 15))
         .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(Lab.border.opacity(0.7)))
 
-      LabPanel {
-        VStack(alignment: .leading, spacing: 12) {
-          HStack {
-            Text(strings("State partitions")).font(.system(size: 13, weight: .semibold))
-            Spacer()
-            Picker(strings("State partitions"), selection: $workspace.settings.partitioning) {
-              Text(strings("By observed states")).tag("observed")
-              Text(strings("Declared alphabet")).tag("declared")
-              Text(strings("Complete state labels")).tag("labels")
-            }.labelsHidden().frame(width: 210)
-              .disabled(workspace.loading)
-              .onChange(of: workspace.settings.partitioning) { workspace.reloadGapPolicy() }
-          }
-          Text(
-            strings(
-              workspace.settings.partitioning == "observed"
-                ? "Characters are grouped by state count and ordering. Ordered characters keep intermediate states; binary alphabets keep both states."
-                : workspace.settings.partitioning == "labels"
-                  ? "Use each state-label list as the complete possible alphabet, in SYMBOLS order. Choose this only if every character lists all its possible states."
-                  : "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character."
+      if let metadata = report.mixed { MixedSourcesSection(metadata: metadata, strings: strings) }
+      if report.isDNA {
+        NucleotideModelSection(strings: strings)
+      } else {
+        LabPanel {
+          VStack(alignment: .leading, spacing: 12) {
+            HStack {
+              Text(strings("State partitions")).font(.system(size: 13, weight: .semibold))
+              Spacer()
+              Picker(strings("State partitions"), selection: $workspace.settings.partitioning) {
+                Text(strings("By observed states")).tag("observed")
+                Text(strings("Declared alphabet")).tag("declared")
+                Text(strings("Complete state labels")).tag("labels")
+              }.labelsHidden().frame(width: 260)
+                .disabled(workspace.loading)
+                .onChange(of: workspace.settings.partitioning) { workspace.reloadGapPolicy() }
+            }
+            Text(
+              strings(
+                workspace.settings.partitioning == "observed"
+                  ? "Characters are grouped by state count and ordering. Ordered characters keep intermediate states; binary alphabets keep both states."
+                  : workspace.settings.partitioning == "labels"
+                    ? "Use each state-label list as the complete possible alphabet, in SYMBOLS order. Choose this only if every character lists all its possible states."
+                    : "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character."
+              )
             )
-          )
-          .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
-          if let partitions = report.partitions {
-            ViewThatFits(in: .horizontal) {
-              HStack(spacing: 16) { partitionCounts(partitions) }
-              VStack(alignment: .leading, spacing: 8) { partitionCounts(partitions) }
+            .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
+            .fixedSize(horizontal: false, vertical: true)
+            if let partitions = report.partitions {
+              ViewThatFits(in: .horizontal) {
+                HStack(spacing: 16) { partitionCounts(partitions) }
+                VStack(alignment: .leading, spacing: 8) { partitionCounts(partitions) }
+              }
             }
           }
         }
+
       }
 
       if let constant = report.constantCharacters, !constant.isEmpty {
@@ -84,10 +93,15 @@ struct MatrixView: View {
               .font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
             Text(
               strings(
-                "These characters remain in the matrix. Variable-only (Mkv) coding cannot include them. Review how characters were selected before choosing All characters (Mk)."
+                report.isMixed
+                  ? "Constant DNA sites remain in the JC69 block. Variable-only coding excludes constant morphological characters; review the partition and collection method before changing that choice."
+                  : report.isDNA
+                    ? "Constant sites are retained and contribute to the JC69 likelihood."
+                    : "These characters remain in the matrix. Variable-only (Mkv) coding cannot include them. Review how characters were selected before choosing All characters (Mk)."
               )
             )
             .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+            .fixedSize(horizontal: false, vertical: true)
           }
         }
       }
@@ -149,16 +163,22 @@ struct MatrixView: View {
           .font(.system(size: 11, weight: .medium))
           Text(
             strings(
-              "Braces such as {01} mean state 0 OR 1. Parentheses such as (01) mean both states are present. Rove preserves this distinction; its current observation model cannot analyze true polymorphism."
+              report.isDNA
+                ? "IUPAC codes and braces specify possible bases: R means A or G, and N permits all four. These observations contribute to inference without being recoded as extra states."
+                : "Braces such as {01} mean state 0 OR 1. Parentheses such as (01) mean both states are present. Rove preserves this distinction; its current observation model cannot analyze true polymorphism."
             )
           )
           .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+          .fixedSize(horizontal: false, vertical: true)
           Text(
             strings(
-              "If your exporter uses braces for polymorphism, confirm the meaning before running. Reading the file does not resolve that scientific choice."
+              report.isDNA
+                ? "Predictive checks currently require single bases or missing cells. Ambiguous observations need an explicit observation model for simulation."
+                : "If your exporter uses braces for polymorphism, confirm the meaning before running. Reading the file does not resolve that scientific choice."
             )
           )
           .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+          .fixedSize(horizontal: false, vertical: true)
           if let examples = report.observationExamples, !examples.isEmpty {
             DisclosureGroup(strings("Inspect ambiguous observations")) {
               ForEach(Array(examples.enumerated()), id: \.offset) { _, example in
@@ -275,9 +295,18 @@ private struct MatrixGrid: View {
           let name =
             report.characterLabels[selected.column]
             ?? strings("Character %@", strings.number(selected.column + 1))
-          Text(
-            "\(report.taxa[selected.row])  ·  \(name)  ·  \(report.cells[selected.row][selected.column])"
-          )
+          VStack(alignment: .leading, spacing: 4) {
+            Text(
+              "\(report.taxa[selected.row])  ·  \(name)  ·  \(report.cells[selected.row][selected.column])"
+            )
+            if let labels = report.stateLabels, labels.indices.contains(selected.column) {
+              Text(
+                zip(report.symbols, labels[selected.column])
+                  .map { "\($0.0) = \($0.1)" }.joined(separator: " · ")
+              )
+              .fixedSize(horizontal: false, vertical: true)
+            }
+          }
         } else {
           Text(strings("Click a cell to inspect it. Scroll to explore."))
         }

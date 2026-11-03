@@ -126,6 +126,11 @@ struct RunView: View {
                 Text(strings("Clock sigma prior") + ": " + prior.description(strings: strings))
                   .foregroundStyle(Lab.secondary)
               }
+              Text(
+                strings("Tree prior") + ": "
+                  + run.request.draft.settings.treePriorDescription(strings: strings)
+              )
+              .foregroundStyle(Lab.secondary)
               DatingSummary(dating: run.request.draft.settings.dating, strings: strings)
               ConstraintSummary(
                 outgroup: run.request.draft.outgroup, taxa: run.request.draft.taxa,

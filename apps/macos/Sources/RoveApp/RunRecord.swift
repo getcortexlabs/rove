@@ -31,6 +31,7 @@ struct EngineRecord: Decodable, Sendable {
   struct Input: Decodable, Sendable {
     let sha256: String
     let gaps: String
+    var mixed: MixedInputMetadata? = nil
   }
   struct Settings: Decodable, Sendable {
     let steps: UInt64
@@ -48,6 +49,46 @@ struct EngineRecord: Decodable, Sendable {
     var clockSigmaPriorParameters: ClockSigmaPrior? = nil
     var sampleFromPrior: Bool? = nil
     var conditioning: String? = nil
+    var dataType: String? = nil
+    var substitutionModel: String? = nil
+    var mixedModel: MixedModel? = nil
+    var resolvedDataType: String { dataType ?? "standard" }
+
+    func dataModelMatches(_ settings: AnalysisSettings) -> Bool {
+      guard resolvedDataType == settings.dataType else { return false }
+      if resolvedDataType == "mixed" {
+        return substitutionModel == "mk+jc69" && mixedModel?.matches(settings) == true
+      }
+      return resolvedDataType == "dna"
+        ? substitutionModel == "jc69" && conditioning == "none (JC69)" : substitutionModel == nil
+    }
+
+    var conditioningKind: String? {
+      if conditioning == "none (JC69)", resolvedDataType == "dna" { return "none" }
+      return Self.conditioningDescriptions.first { $0.value == conditioning }?.key
+    }
+
+    var treePriorKind: String? = nil
+    var birthRatePriorParameters: BirthRatePrior? = nil
+
+    struct BirthRatePrior: Decodable, Sendable {
+      let distribution: String
+      let lower: Double
+      let upper: Double
+      let logDensity: Double
+
+      var valid: Bool {
+        distribution == "uniform" && lower == 0 && upper.isFinite && upper > 0
+          && upper / 2 > 0 && abs(logDensity + log(upper)) < 1e-12
+      }
+    }
+
+    func treePriorMatches(_ settings: AnalysisSettings) -> Bool {
+      guard (treePriorKind ?? "birth-death") == settings.treePrior else { return false }
+      if settings.treePrior != "yule" { return birthRatePriorParameters == nil }
+      guard dating == nil, let prior = birthRatePriorParameters, prior.valid else { return false }
+      return prior.upper == settings.yuleBirthRateUpper
+    }
 
     /// The engine's description of each conditioning option.
     static let conditioningDescriptions = [
@@ -57,7 +98,8 @@ struct EngineRecord: Decodable, Sendable {
 
     /// The model name in the engine's description of its conditioning.
     var conditioningLabel: String {
-      switch conditioning {
+      if resolvedDataType == "dna" { return "JC69" }
+      return switch conditioning {
       case "none (Mk)": "Mk"
       case "variable characters (Mkv)": "Mkv"
       case "parsimony-informative characters (Mkparsinf)": "Mkparsinf"
@@ -103,12 +145,14 @@ struct EngineRecord: Decodable, Sendable {
     if let index = command.firstIndex(of: "--conditioning"), command.indices.contains(index + 1) {
       conditioning = command[index + 1]
     } else {
-      conditioning = Model.conditioningDescriptions.first { $0.value == model.conditioning }?.key
+      conditioning = model.conditioningKind
     }
     let expectedDating: EngineDatingModel?
     do { expectedDating = try draft.settings.dating.model() } catch { return false }
     return draft.settings.validationError == nil && input.sha256 == draft.matrixSHA256
-      && model.dating == expectedDating
+      && model.dating == expectedDating && model.treePriorMatches(draft.settings)
+      && model.dataModelMatches(draft.settings)
+      && input.mixed == draft.mixedInput
       && input.gaps == (draft.settings.gapsAsMissing ? "missing" : "reject")
       && model.preset == draft.settings.clock
       && (model.preset != "reference"

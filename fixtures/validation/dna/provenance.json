@@ -1,0 +1,8 @@
+{
+  "reference": "BEAST.base 2.7.8",
+  "java": "Temurin 17.0.15",
+  "jar_sha256": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+  "launcher_sha256": "7d51654fd80dd4c32f64e02b02ca90aa6387c2c9837761befe665ff730a5dc01",
+  "generator": "tools/beast/DnaStates.java",
+  "scope": "6 fixed synthetic JC69 states, with ambiguities and missing gaps; strict clock and 1/4 gamma categories; no MCMC or timing"
+}

@@ -278,10 +278,11 @@ struct TraceDiagnosticsView: View {
     case "posterior":
       "Log posterior density combines likelihood and priors. It is not a node’s posterior support."
     case "likelihood": "Log likelihood measures how the model and tree explain the observed matrix."
-    case "prior", "birth_death", "gamma_prior", "clock_rate_prior", "clock_sigma_prior":
+    case "prior", "birth_death", "yule", "gamma_prior", "clock_rate_prior", "clock_sigma_prior":
       "A log density contribution from the model’s prior distributions."
     case "tree_height", "tree_length":
       "Heights and lengths use the source time units; they are not automatically calendar dates."
+    case "birth_rate": "Speciation rate under Yule, per source tree-height unit."
     case "birth_difference_rate": "Net diversification rate, per source time unit."
     case "relative_death_rate": "Extinction relative to speciation; a dimensionless ratio."
     case "gamma_shape": "Dimensionless shape controlling variation in rates between characters."

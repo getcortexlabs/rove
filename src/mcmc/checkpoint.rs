@@ -7,7 +7,7 @@ use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation, RelaxedClock};
 use crate::tree::Tree;
 
-const MAGIC: &[u8; 8] = b"ROVECP06";
+const MAGIC: &[u8; 8] = b"ROVECP09";
 
 impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.
@@ -59,9 +59,14 @@ impl Sampler {
                 write_f64(&mut out, v)?;
             }
         }
+        if let Some(rate) = self.morphology_rate {
+            write_f64(&mut out, rate)?;
+        }
+        write_f64(&mut out, self.speciation.rate())?;
+        if let Some(p) = self.speciation.birth_death() {
+            write_f64(&mut out, p.relative_death)?;
+        }
         for value in [
-            self.birth_death.birth_difference,
-            self.birth_death.relative_death,
             self.posterior.likelihood,
             self.posterior.tree_prior,
             self.posterior.parameter_prior,
@@ -185,8 +190,20 @@ impl Sampler {
             None
         };
         let mut initial = settings.clone();
+        if let Some(rate) = &mut initial.morphology_rate {
+            let value = read_f64(&mut input)?;
+            if rate.log_sd.is_none() && value != rate.value {
+                return Err(invalid());
+            }
+            rate.value = value;
+        }
         initial.initial.birth_difference = read_f64(&mut input)?;
-        initial.initial.relative_death = read_f64(&mut input)?;
+        initial.initial.relative_death =
+            if settings.tree_prior == crate::speciation::TreePrior::BirthDeath {
+                read_f64(&mut input)?
+            } else {
+                0.0
+            };
         let mut sampler = Self::from_tree(
             patterns,
             &initial,
@@ -240,6 +257,7 @@ impl Sampler {
         if input.position() != bytes.len() as u64 {
             return Err(invalid());
         }
+        sampler.morphology_rate_model = settings.morphology_rate;
         sampler.steps = steps;
         sampler.tunable_proposals = tunable_proposals;
         Ok(sampler)
@@ -249,6 +267,10 @@ impl Sampler {
 fn write_partitions(out: &mut impl Write, patterns: &[Patterns]) -> io::Result<()> {
     write_u64(out, patterns.len() as u64)?;
     for partition in patterns {
+        write_u64(
+            out,
+            u64::from(partition.data_type() == crate::data::DataType::Dna),
+        )?;
         write_u64(
             out,
             u64::from(partition.ordering() == crate::model::CharacterOrdering::Ordered),
@@ -303,6 +325,7 @@ mod tests {
                         (Move::NodeTimeRates, 10.0),
                         (Move::RootTimeRates, 10.0),
                         (Move::ClockSigmaRates, 10.0),
+                        (Move::NarrowExchangeRates, 10.0),
                     ]);
                 }
                 let mut chain = Sampler::new(&patterns, &settings, 42).unwrap();

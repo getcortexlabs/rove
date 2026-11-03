@@ -43,6 +43,20 @@ fn settings(dating: Dating, prior: bool) -> Settings {
 }
 
 #[test]
+fn experimental_joint_exchange_is_not_enabled_for_dated_runs() {
+    let mut s = Settings::reference();
+    s.set_dating(model(&[(0.0, 0.0), (0.2, 0.4), (0.0, 0.0)]));
+    s.weights.push((Move::NarrowExchangeRates, 10.0));
+    assert!(
+        Sampler::new(patterns(3), &s, 97)
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("restricted to undated")
+    );
+}
+
+#[test]
 fn fixed_densities_match_beast_sa() {
     for row in include_str!("../fixtures/validation/dating/beast-sa-2.1.1.tsv")
         .lines()

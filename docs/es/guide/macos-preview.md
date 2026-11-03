@@ -474,3 +474,36 @@ El plan ofrece 1, 10, 20, 30, 50 y 100 millones de pasos, con intervalos de 100,
 Durante la ejecución, **Estimated time to step limit** y **Time per million steps** usan diferencias recientes de pasos y tiempo activo del motor. Primero se recogen al menos tres intervalos que cubran diez segundos, y luego se usan hasta ocho intervalos recientes. Cada cadena se mide por separado; la estimación del grupo es el mayor tiempo restante. Reanudar inicia una medición nueva que excluye el tiempo en pausa. Las estimaciones desaparecen al detener o terminar. La carga del procesador puede cambiar el ritmo. La predicción corresponde al límite de pasos, no a la convergencia; la parada automática puede terminar antes.
 
 **What are these files?** en Resultados y History abre una explicación sin conexión. La [guía de la carpeta](./run-files) muestra los archivos y el recorrido desde la traza hasta el árbol anotado.
+
+### Orientación visual del modelo
+
+El panel de enraizamiento dibuja la división impuesta: el terminal elegido a un lado y un grupo colapsado con todos los demás al otro. No estima longitudes de ramas, relaciones internas ni estados ancestrales. El recorrido inicial emplea la misma terminología.
+
+Abre **Clock sigma prior** para ver cómo cambia la densidad gamma con Alpha y Beta, en la parametrización forma/escala. La línea discontinua marca la esperanza del prior; también se muestra su desviación estándar. El rango dibujado no es un intervalo de credibilidad. Con forma menor que uno, la densidad diverge en cero y la curva comienza por encima de cero. Las escalas numéricas extremas pueden no tener vista gráfica; esto no altera el prior del motor.
+
+La duración estimada corresponde al límite solicitado de pasos y usa el tiempo activo reciente del motor. No predice cuándo se establecerá la convergencia. Los controles de selección de caracteres y datación explican sus supuestos junto a la validación; estas explicaciones no demuestran adecuación para un estudio concreto.
+
+## Revisión de evidencias y paquetes de reproducción
+
+En **History → Evidence review**, elija el porcentaje de burn-in y actualice la revisión. `assessments/review-…/assessment.json` guarda una instantánea fechada con huellas SHA-256, registros originales, diagnósticos por cadena, una comparación nueva y rutas de informes de árboles y predictivos correspondientes. Actualice después de generar otros informes. El burn-in y la opción de incluir la matriz se guardan localmente junto a la ejecución.
+
+Finalización, muestreo de parámetros, concordancia entre cadenas, árboles y evidencia predictiva tienen estados separados. Los criterios escalares exigen al menos 1.000 muestras retenidas y ESS 200 por cadena, sin truncamiento de retardos. Entre cadenas también se requieren semillas distintas, entrada/modelo coincidentes y R-hat dividido y normalizado por rangos ≤ 1,01. Solo se excluyen parámetros verificados como fijos por el modelo. Una sola cadena no permite evaluar concordancia entre cadenas. Estos criterios diagnósticos no prueban convergencia ni sustituyen los umbrales configurables de parada. El soporte de árboles y las fracciones predictivas requieren interpretación; la evidencia ausente o inconsistente permanece visible. Las ejecuciones solo del prior describen su exploración, no la adecuación posterior.
+
+**Export reproducibility package…** crea una carpeta local nueva fuera de la ejecución. `manifest.json` enumera tamaños y SHA-256; `assessment.json` contiene una revisión nueva; `run/` contiene registros conocidos de Rove, muestras, checkpoints y resultados derivados. La matriz original solo se incluye al seleccionar **Include the original matrix in the export**, si coincide su huella registrada. La revisión indica originales modificados o no disponibles. No se copian archivos vecinos desconocidos, revisiones anteriores ni fuentes externas citadas por comparaciones. Se preservan rutas y nombres de taxones, se rechazan enlaces simbólicos dentro de los artefactos y destinos existentes, se detectan cambios durante la copia y se conservan los originales. El ejecutable no se incluye: la reanudación exacta requiere un checkpoint válido y la identidad original del ejecutable, entrada y modelo; revise las rutas antes de reutilizar la configuración.
+
+Las mismas operaciones están disponibles en el motor:
+
+```sh
+rove assess run-folder --output new-review-folder --burnin-percent 10
+rove export-run run-folder --output new-package-folder --burnin-percent 10
+# Incluir explícitamente una matriz original coincidente:
+rove export-run run-folder --output another-package --include-matrix matrix.nex
+```
+
+La fuente puede ser una carpeta del app o de la CLI. Las ejecuciones incompletas pueden revisarse y archivarse conservando su estado. Se rechazan registros inválidos o estructuras de archivos inseguras. Los paquetes son carpetas locales, sin cargas a internet.
+
+Las comprobaciones predictivas guardadas muestran un histograma de estadísticas pareadas **simulado − observado**. Cada par usa el mismo árbol posterior; la estadística de parsimonia observada puede variar entre pares. Cero indica igualdad. El gráfico verifica conteos, empates y colas contra `predictive.json`, informa pares indefinidos y no se muestra si los registros discrepan. No evalúa convergencia ni decide automáticamente la adecuación.
+
+Las copias de la matriz original guardadas por las comprobaciones predictivas en `source/matrix.nex` se omiten del paquete, aunque se incluya la comprobación. La inclusión explícita escribe una sola `matrix.nex` verificada en la raíz; `omitted_source_matrices` enumera las copias omitidas. Las matrices réplicas simuladas siguen incluidas.
+
+Los registros nativos de ejecuciones importadas de la CLI pueden enlazar su carpeta principal `results`; esta fuente declarada se copia como archivos normales en el paquete.

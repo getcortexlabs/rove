@@ -64,17 +64,31 @@ enum CommandLineImport {
     }
     guard let steps = Int(exactly: record.settings.steps),
       let interval = Int(exactly: record.settings.sampleEvery),
-      let conditioning = EngineRecord.Model.conditioningDescriptions.first(where: {
-        $0.value == record.model.conditioning
-      })?.key
+      let conditioning = record.model.conditioningKind
         ?? option("--conditioning")
     else { throw RunFailure.invalidCompletion }
     var value = AnalysisSettings()
+    value.dataType = record.model.resolvedDataType
+    value.treePrior = record.model.treePriorKind ?? "birth-death"
+    if value.treePrior == "yule" {
+      guard let prior = record.model.birthRatePriorParameters, prior.valid else {
+        throw RunFailure.invalidCompletion
+      }
+      value.birthRateUpper = String(prior.upper)
+    }
+    guard record.model.treePriorMatches(value) else { throw RunFailure.invalidCompletion }
     value.clock = record.model.preset
     let sigma = record.model.clockSigmaPriorParameters ?? .reference
     value.clockSigmaShape = String(sigma.shape)
     value.clockSigmaScale = String(sigma.scale)
     value.conditioning = conditioning
+    if value.dataType == "mixed" {
+      guard let model = record.model.mixedModel else { throw RunFailure.invalidCompletion }
+      value.morphologyRateMode = model.morphologyRatePrior == nil ? "fixed" : "estimate"
+      value.morphologyRate = String(model.morphologyRate)
+      value.morphologyRateLogSD = String(model.morphologyRatePrior?.logSd ?? 1)
+    }
+    guard record.model.dataModelMatches(value) else { throw RunFailure.invalidCompletion }
     value.partitioning = record.model.partitioning ?? "declared"
     value.steps = steps
     value.sampleEvery = interval

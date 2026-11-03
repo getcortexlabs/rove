@@ -4,6 +4,33 @@ import Testing
 @testable import RoveApp
 
 struct ClockSigmaPriorTests {
+  @Test func densityPreviewMatchesIndependentGammaSpecialCases() throws {
+    let exponential = ClockSigmaPrior(shape: 1, scale: 2)
+    for x in [0.0, 0.1, 1.0, 5.0, 20.0] {
+      let actual = try #require(exponential.logDensity(at: x))
+      #expect(abs(exp(actual) - 0.5 * exp(-x / 2)) < 1e-14)
+    }
+    let prior = ClockSigmaPrior.reference
+    #expect(prior.mean == 1)
+    #expect(abs(prior.standardDeviation - sqrt(0.2)) < 1e-14)
+    for x in [0.1, 0.8, 1.0, 2.0] {
+      let direct = pow(x, 4) * exp(-x / 0.2) / (24 * pow(0.2, 5))
+      #expect(abs(exp(try #require(prior.logDensity(at: x))) - direct) < 1e-12)
+    }
+    let curve = try #require(prior.curve)
+    let integral = zip(curve.points, curve.points.dropFirst()).reduce(0.0) { sum, pair in
+      sum + (pair.1.sigma - pair.0.sigma) * (pair.0.density + pair.1.density) / 2
+    }
+    let u = curve.upperBound / prior.scale
+    let exact = 1 - exp(-u) * (1 + u + u * u / 2 + u * u * u / 6 + pow(u, 4) / 24)
+    #expect(abs(integral - exact) < 1e-5)
+    let singular = ClockSigmaPrior(shape: 0.5, scale: 1)
+    #expect(singular.logDensity(at: 0) == .infinity)
+    #expect(singular.curve?.points.allSatisfy { $0.sigma > 0 && $0.density.isFinite } == true)
+    #expect(ClockSigmaPrior(shape: 5, scale: 1e-100).curve == nil)
+    #expect(ClockSigmaPrior(shape: -1, scale: 1).curve == nil)
+  }
+
   @Test func priorSettingsRoundTripAndLegacyDefaults() throws {
     var settings = AnalysisSettings()
     #expect(settings.clockSigmaPrior == .reference)

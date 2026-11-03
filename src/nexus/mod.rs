@@ -1,4 +1,4 @@
-//! A strict subset of morphological NEXUS. See the NEXUS guide for supported syntax.
+//! NEXUS STANDARD morphology and aligned DNA. See the NEXUS guide for supported syntax.
 
 mod assumptions;
 mod lexer;
@@ -7,7 +7,7 @@ mod matrix;
 use std::collections::HashSet;
 use std::fmt;
 
-use crate::data::Matrix;
+use crate::data::{DataType, Matrix};
 use lexer::{Kind, Token};
 
 /// A source location uses one-based lines and columns.
@@ -30,7 +30,7 @@ impl fmt::Display for Error {
 
 impl std::error::Error for Error {}
 
-/// Read one STANDARD matrix without invoking BEAST or inferring a model alphabet
+/// Read one STANDARD or DNA matrix without invoking BEAST or inferring a model alphabet
 /// from observed states. Unsupported analysis directives produce an error.
 pub fn parse(input: &str) -> Result<Matrix, Error> {
     let tokens = lexer::lex(input)?;
@@ -90,7 +90,15 @@ pub fn parse(input: &str) -> Result<Matrix, Error> {
             )));
         }
     }
-    matrix.ok_or_else(|| header.error("no DATA or CHARACTERS matrix found"))
+    let matrix = matrix.ok_or_else(|| header.error("no DATA or CHARACTERS matrix found"))?;
+    if matrix.data_type() == DataType::Dna
+        && matrix
+            .ordering()
+            .contains(&crate::model::CharacterOrdering::Ordered)
+    {
+        return Err(header.error("ordered characters are not supported for DNA JC69"));
+    }
+    Ok(matrix)
 }
 
 struct Commands<'a> {
@@ -241,6 +249,7 @@ fn parse_taxa(commands: &mut Commands<'_>, block: &Token) -> Result<Vec<String>,
 }
 
 struct Format {
+    data_type: DataType,
     symbols: Vec<char>,
     missing: char,
     gap: Option<char>,
@@ -251,6 +260,7 @@ struct Format {
 impl Default for Format {
     fn default() -> Self {
         Self {
+            data_type: DataType::Standard,
             symbols: vec!['0', '1'],
             missing: '?',
             gap: None,
@@ -285,9 +295,14 @@ fn format(tokens: &[&Token]) -> Result<Format, Error> {
             return Err(key.error("duplicate FORMAT option"));
         }
         if key.is("DATATYPE") {
-            if !assignment(tokens, &mut i, key)?.is("STANDARD") {
-                return Err(key.error("only DATATYPE=STANDARD is supported"));
-            }
+            let value = assignment(tokens, &mut i, key)?;
+            result.data_type = if value.is("STANDARD") {
+                DataType::Standard
+            } else if value.is("DNA") {
+                DataType::Dna
+            } else {
+                return Err(key.error("only DATATYPE=STANDARD or DNA is supported"));
+            };
         } else if key.is("RESPECTCASE") {
             result.respect_case = true;
         } else if key.is("LABELS") || key.is("NOTOKENS") {
@@ -324,6 +339,29 @@ fn format(tokens: &[&Token]) -> Result<Format, Error> {
             }
         } else {
             return Err(key.error(format!("unsupported FORMAT option {}", key.text)));
+        }
+    }
+    if result.data_type == DataType::Dna {
+        if result.respect_case
+            || (seen.contains("SYMBOLS") && result.symbols != ['A', 'C', 'G', 'T'])
+        {
+            return Err(tokens[0].error(
+                "DNA uses case-insensitive A/C/G/T states; omit RESPECTCASE and custom SYMBOLS",
+            ));
+        }
+        result.symbols = vec!['A', 'C', 'G', 'T'];
+        if !seen.contains("GAP") {
+            result.gap = Some('-');
+        }
+        if (crate::alignment::dna_cell(result.missing).is_some()
+            && !result.missing.eq_ignore_ascii_case(&'N'))
+            || result
+                .gap
+                .is_some_and(|gap| crate::alignment::dna_cell(gap).is_some())
+        {
+            return Err(tokens[0].error(
+                "DNA gap symbols cannot replace IUPAC codes; only N may also be declared missing",
+            ));
         }
     }
     if result.symbols.len() < 2 || result.symbols.iter().any(|&s| !valid_symbol(s)) {
@@ -416,6 +454,9 @@ fn parse_data(
                 (names, rows)
             };
             let mut data = Matrix {
+                data_type: fmt.data_type,
+                blocks: Vec::new(),
+                mixed: None,
                 taxa: names,
                 rows,
                 symbols: fmt.symbols.clone(),

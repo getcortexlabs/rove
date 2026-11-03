@@ -52,7 +52,8 @@ struct TreeFileTests {
     try "{}".write(to: record, atomically: true, encoding: .utf8)
     #expect(throws: (any Error).self) { try TreeSource.read(record) }
     #expect(try TreeSource.prepare(file, under: runs).path == container.path)
-    #expect(try TreeSource.read(record).path == file.path)
+    let recovered = try TreeSource.read(record)
+    #expect(recovered.path == file.path && recovered.sha256 == source.sha256)
 
     let model = TreeSummaryModel(directory: container, executable: engine, source: .file(file))
     model.burnin = "25"
@@ -67,7 +68,8 @@ struct TreeFileTests {
 
     let entry = HistoryEntry.read(container)
     #expect(entry.status == .treeFile && entry.name == "four.trees" && entry.draft == nil)
-    #expect(entry.source == source && entry.startedAt == source.createdAt)
+    // Repair creates a new record, whose timestamp can differ from the original.
+    #expect(entry.source == recovered && entry.startedAt == recovered.createdAt)
     let scan = HistoryScan.read(roots: [runs], known: [], defaultRoot: runs)
     #expect(scan.entries.map(\.id) == [entry.id])
 

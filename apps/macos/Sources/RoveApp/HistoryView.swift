@@ -281,13 +281,16 @@ private struct HistoryDetail: View {
             if let prior = draft.settings.clockSigmaPrior {
               field("Clock sigma prior", prior.description(strings: strings))
             }
+            field("Tree prior", draft.settings.treePriorDescription(strings: strings))
+            if draft.settings.dataType == "mixed" {
+              field(
+                "Morphology/DNA rate ratio", draft.settings.mixedRateDescription(strings: strings))
+              field("Morphology conditioning", strings(draft.settings.morphologyConditioningLabel))
+            }
             field(
               "Character model",
               strings(
-                draft.settings.conditioning == "variable"
-                  ? "Mkv · variable characters"
-                  : draft.settings.conditioning == "informative"
-                    ? "Mkparsinf · informative characters" : "Mk · all characters"))
+                draft.settings.characterModelLabel))
             field(
               "State partitions",
               strings(
@@ -355,6 +358,9 @@ private struct HistoryDetail: View {
           workspace.openDiagnostics(in: entry.directory)
           openWindow(id: "trace-diagnostics")
         }.buttonStyle(LabButtonStyle(compact: true))
+      }
+      if entry.draft != nil && entry.status != .modelSetup {
+        RunAssessmentView(workspace: workspace, entry: entry)
       }
       if let draft = entry.draft, draft.settings.chains > 1, entry.status != .modelSetup {
         ChainResultsView(

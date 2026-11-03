@@ -6,7 +6,7 @@
 use super::coupled;
 use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation};
-use crate::speciation::BirthDeath;
+use crate::speciation::SpeciationState;
 use crate::tree::Tree;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -46,10 +46,15 @@ pub enum Move {
     RootTimeRates,
     /// Scale clock sigma while preserving standardized log branch rates.
     ClockSigmaRates,
+    /// Narrow exchange with compensation of the two reattached branch rates.
+    NarrowExchangeRates,
+    /// Scale the pure-birth rate of a Yule prior.
+    BirthRateScale,
+    MorphologyRateScale,
 }
 
 impl Move {
-    pub const ALL: [Move; 22] = [
+    pub const ALL: [Move; 25] = [
         Move::FbdBirthScale,
         Move::FbdDeathScale,
         Move::FbdSamplingScale,
@@ -72,6 +77,9 @@ impl Move {
         Move::NodeTimeRates,
         Move::RootTimeRates,
         Move::ClockSigmaRates,
+        Move::NarrowExchangeRates,
+        Move::BirthRateScale,
+        Move::MorphologyRateScale,
     ];
 
     pub fn name(self) -> &'static str {
@@ -98,6 +106,9 @@ impl Move {
             Self::NodeTimeRates => "node_time_rates",
             Self::RootTimeRates => "root_time_rates",
             Self::ClockSigmaRates => "clock_sigma_rates",
+            Self::NarrowExchangeRates => "narrow_exchange_rates",
+            Self::BirthRateScale => "birth_rate_scale",
+            Self::MorphologyRateScale => "morphology_rate_scale",
         }
     }
 
@@ -114,6 +125,8 @@ impl Move {
             | Self::RootScale
             | Self::TreeScale
             | Self::BirthDifferenceScale
+            | Self::BirthRateScale
+            | Self::MorphologyRateScale
             | Self::RelativeDeathScale
             | Self::RootTimeRates => Some(0.75),
             Self::GammaShapeScale
@@ -148,6 +161,7 @@ impl Move {
                 | Self::TreeScale
                 | Self::NodeTimeRates
                 | Self::RootTimeRates
+                | Self::NarrowExchangeRates
         )
     }
 
@@ -156,6 +170,7 @@ impl Move {
             || matches!(
                 self,
                 Self::ClockRateScale
+                    | Self::MorphologyRateScale
                     | Self::GammaShapeScale
                     | Self::BranchRateScale
                     | Self::ClockSigmaRates
@@ -165,7 +180,11 @@ impl Move {
     pub fn changes_topology(self) -> bool {
         matches!(
             self,
-            Self::SubtreeSlide | Self::NarrowExchange | Self::WideExchange | Self::WilsonBalding
+            Self::SubtreeSlide
+                | Self::NarrowExchange
+                | Self::WideExchange
+                | Self::WilsonBalding
+                | Self::NarrowExchangeRates
         )
     }
 
@@ -180,7 +199,7 @@ impl Move {
     pub(crate) fn propose(
         self,
         tree: &mut Tree,
-        birth_death: &mut BirthDeath,
+        speciation: &mut SpeciationState,
         rates: &mut RateVariation,
         upper: f64,
         tuning: Option<f64>,
@@ -193,19 +212,37 @@ impl Move {
             | Self::FbdSamplingScale
             | Self::FbdRhoLogit
             | Self::FbdOriginScale
+            | Self::MorphologyRateScale
             | Self::TipAge => None, // Dating proposals are handled by the sampler.
             Self::ClockRateScale => scale(rates.mean.as_mut()?, f64::MAX, tuning, random),
             Self::NodeHeight => node_height(tree, random),
             Self::SubtreeSlide => subtree_slide(tree, tuning, random),
             Self::NarrowExchange => narrow_exchange(tree, random),
+            Self::NarrowExchangeRates => {
+                narrow_exchange_with_rates(tree, Some(rates.clock.as_mut()?), random)
+            }
             Self::WideExchange => wide_exchange(tree, random),
             Self::WilsonBalding => wilson_balding(tree, random),
             Self::RootScale => root_scale(tree, tuning, random),
             Self::TreeScale => tree_scale(tree, tuning, random),
             Self::BirthDifferenceScale => {
-                scale(&mut birth_death.birth_difference, upper, tuning, random)
+                let SpeciationState::BirthDeath(parameters) = speciation else {
+                    return None;
+                };
+                scale(&mut parameters.birth_difference, upper, tuning, random)
             }
-            Self::RelativeDeathScale => scale(&mut birth_death.relative_death, 1.0, tuning, random),
+            Self::BirthRateScale => {
+                let SpeciationState::Yule { birth_rate } = speciation else {
+                    return None;
+                };
+                scale(birth_rate, upper, tuning, random)
+            }
+            Self::RelativeDeathScale => {
+                let SpeciationState::BirthDeath(parameters) = speciation else {
+                    return None;
+                };
+                scale(&mut parameters.relative_death, 1.0, tuning, random)
+            }
             Self::GammaShapeScale => {
                 let shape = rates.gamma.as_ref()?.shape();
                 let factor = scaler(tuning, random);
@@ -317,7 +354,7 @@ fn tree_scale(tree: &mut Tree, factor: f64, random: &mut Random) -> Option<f64> 
     Some((internal - 2.0) * f.ln())
 }
 
-fn scale(value: &mut f64, upper: f64, factor: f64, random: &mut Random) -> Option<f64> {
+pub(super) fn scale(value: &mut f64, upper: f64, factor: f64, random: &mut Random) -> Option<f64> {
     if *value == 0.0 {
         return None;
     }
@@ -418,6 +455,14 @@ fn subtree_slide(tree: &mut Tree, size: f64, random: &mut Random) -> Option<f64>
 }
 
 fn narrow_exchange(tree: &mut Tree, random: &mut Random) -> Option<f64> {
+    narrow_exchange_with_rates(tree, None, random)
+}
+
+fn narrow_exchange_with_rates(
+    tree: &mut Tree,
+    clock: Option<&mut crate::rates::RelaxedClock>,
+    random: &mut Random,
+) -> Option<f64> {
     let internal = tree.nodes() - tree.tips();
     if internal <= 1 {
         return None;
@@ -446,9 +491,14 @@ fn narrow_exchange(tree: &mut Tree, random: &mut Random) -> Option<f64> {
     let (a, b) = tree.children(parent)?;
     let before = count(tree);
     let child = if random.coin() { a } else { b };
-    tree.replace_child(parent, child, uncle);
-    tree.replace_child(grandparent, uncle, child);
-    Some((before as f64 / count(tree) as f64).ln())
+    let jacobian = if let Some(clock) = clock {
+        coupled::exchange_rates(tree, clock, parent, child, uncle)?
+    } else {
+        tree.replace_child(parent, child, uncle);
+        tree.replace_child(grandparent, uncle, child);
+        0.0
+    };
+    Some((before as f64 / count(tree) as f64).ln() + jacobian)
 }
 
 fn wide_exchange(tree: &mut Tree, random: &mut Random) -> Option<f64> {
@@ -600,7 +650,8 @@ mod tests {
         let mut birth_death = BirthDeath {
             birth_difference: 1.0,
             relative_death: 0.5,
-        };
+        }
+        .into();
         let mut current = log_target(&tree);
         let mut counts: HashMap<Vec<u32>, usize> = HashMap::new();
         for step in 0..steps {
@@ -637,6 +688,51 @@ mod tests {
             .sum();
         let unobserved = 1.0 - counts.keys().map(|c| rankings(c) / 180.0).sum::<f64>();
         (observed + unobserved) / 2.0
+    }
+
+    #[test]
+    fn joint_exchange_selection_ratio_matches_enumerated_reverse_choices() {
+        let mut tree = Tree::new(
+            vec![
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some((0, 1)),
+                Some((5, 2)),
+                Some((6, 3)),
+                Some((7, 4)),
+            ],
+            vec![0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.4, 0.6, 0.8],
+        )
+        .unwrap();
+        let choices = |tree: &Tree| {
+            (tree.tips()..tree.nodes())
+                .filter(|&parent| {
+                    tree.parent(parent).is_some()
+                        && tree.height(parent) > tree.height(tree.sibling(parent))
+                })
+                .count()
+                * 2
+        };
+        let mut random = Random::new(97002);
+        let mut changed_selection = false;
+        for _ in 0..2000 {
+            let before = tree.clone();
+            let mut clock = crate::rates::RelaxedClock::new(0.7, vec![1.0; 8]).unwrap();
+            let h = super::narrow_exchange_with_rates(&mut tree, Some(&mut clock), &mut random)
+                .unwrap();
+            let ratio = (choices(&before) as f64 / choices(&tree) as f64).ln();
+            changed_selection |= ratio != 0.0;
+            let jacobian = (0..tree.nodes())
+                .filter(|&i| i != tree.root())
+                .map(|i| before.branch_length(i).ln() - tree.branch_length(i).ln())
+                .sum::<f64>();
+            assert!((h - ratio - jacobian).abs() < 1e-13);
+            tree.validate().unwrap();
+        }
+        assert!(changed_selection);
     }
 
     /// The subtree slide mixes slowest; dropping either of its counts raises

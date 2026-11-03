@@ -128,6 +128,7 @@ struct MarginalLikelihoodView: View {
   private func comparison(_ own: SavedEstimate, against others: [SavedEstimate]) -> some View {
     VStack(alignment: .leading, spacing: 12) {
       Eyebrow(text: strings("Log Bayes factors"))
+      Text(describe(own, against: own)).font(.system(size: 11)).foregroundStyle(Lab.secondary)
       Text(
         strings(
           "Estimates saved with other completed runs of the same matrix, constraints and gap policy, against this run's newest estimate. A difference is this model's estimate minus the other's: positive favours this model. Its standard error combines both estimates in quadrature."
@@ -183,6 +184,11 @@ struct MarginalLikelihoodView: View {
     let model = saved.record.model
     var text = strings(model.preset == "reference" ? "Relaxed clock" : "Strict clock")
     text += " · " + model.conditioningLabel
+    if model.treePriorKind == "yule", let prior = model.birthRatePriorParameters {
+      text += "\n" + strings("Yule · birth rate Uniform(0, %@)", String(prior.upper))
+    } else {
+      text += " · " + strings(model.dating == nil ? "Birth-death" : "Fossilized birth-death")
+    }
     if model.preset == "reference" {
       text +=
         "\n" + strings("Clock sigma prior") + ": "

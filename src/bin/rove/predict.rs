@@ -235,7 +235,13 @@ pub(super) fn run(args: &[String]) -> Result<()> {
     if record["input"]["sha256"] != sha256::hex(&input) {
         return Err("matrix fingerprint differs from the fitted input".into());
     }
-    let data = rove::nexus::parse(std::str::from_utf8(&input)?)?;
+    let data = rove::alignment::parse(std::str::from_utf8(&input)?)?;
+    let recorded_type = record["model"]["data_type"].as_str().unwrap_or("standard");
+    if recorded_type != data.data_type().name()
+        || (recorded_type == "dna" && record["model"]["substitution_model"] != "jc69")
+    {
+        return Err("recorded data type or substitution model differs from the input".into());
+    }
     let gaps = match record["input"]["gaps"].as_str() {
         Some("reject") => GapTreatment::Reject,
         Some("missing") => GapTreatment::Missing,
@@ -253,7 +259,7 @@ pub(super) fn run(args: &[String]) -> Result<()> {
         return Err("fitted partitions disagree with the input".into());
     }
     let conditioning = match record["model"]["conditioning"].as_str() {
-        Some("none (Mk)") => Conditioning::None,
+        Some("none (Mk)" | "none (JC69)") => Conditioning::None,
         Some("variable characters (Mkv)") => Conditioning::Variable,
         Some("parsimony-informative characters (Mkparsinf)") => Conditioning::Informative,
         _ => return Err("unknown ascertainment conditioning".into()),
@@ -292,10 +298,82 @@ pub(super) fn run(args: &[String]) -> Result<()> {
     } else {
         record["model"]["clock_multiplier"] == 1.0
     };
+    let yule_upper = match record["model"]["tree_prior_kind"].as_str() {
+        None => None,
+        Some("yule") => {
+            let prior = &record["model"]["birth_rate_prior_parameters"];
+            let upper = prior["upper"]
+                .as_f64()
+                .filter(|u| u.is_finite() && *u > 0.0 && *u / 2.0 > 0.0)
+                .ok_or("invalid Yule birth-rate prior")?;
+            if dating.is_some()
+                || prior["distribution"] != "uniform"
+                || prior["lower"] != 0.0
+                || prior["log_density"]
+                    .as_f64()
+                    .is_none_or(|v| (v + upper.ln()).abs() > 1e-12)
+            {
+                return Err("unsupported Yule prior or dated tips".into());
+            }
+            Some(upper)
+        }
+        _ => return Err("unsupported tree prior".into()),
+    };
     if !multiplier_matches || record["model"]["mutation_rate"] != 1.0 {
         return Err("unsupported rate multiplier".into());
     }
-    let design = Design::new(&data, &partitions, gaps, conditioning)?;
+    let mixed_rate = if recorded_type == "mixed" {
+        if record["model"]["substitution_model"] != "mk+jc69"
+            || record["input"]["mixed"]
+                != data
+                    .mixed_metadata()
+                    .ok_or("missing mixed provenance")?
+                    .json()
+        {
+            return Err("mixed model or source provenance mismatch".into());
+        }
+        let m = &record["model"]["mixed_model"];
+        if m["topology"] != "shared"
+            || m["branch_clock"] != "shared"
+            || m["gamma_shape"] != "shared"
+            || m["dna_rate"] != 1.0
+            || m["dna_conditioning"] != "none"
+        {
+            return Err("unsupported mixed linkage or DNA conditioning".into());
+        }
+        let expected = match conditioning {
+            Conditioning::None => "none",
+            Conditioning::Variable => "variable",
+            Conditioning::Informative => "informative",
+        };
+        if m["morphology_conditioning"] != expected {
+            return Err("mixed conditioning mismatch".into());
+        }
+        let prior = &m["morphology_rate_prior"];
+        let log_sd = if prior.is_null() {
+            None
+        } else {
+            if prior["distribution"] != "lognormal" || prior["log_mean"] != 0.0 {
+                return Err("unsupported morphology rate prior".into());
+            }
+            Some(
+                prior["log_sd"]
+                    .as_f64()
+                    .ok_or("missing morphology rate log-SD")?,
+            )
+        };
+        let rate = rove::mcmc::RelativeRate {
+            value: m["morphology_rate"]
+                .as_f64()
+                .ok_or("missing morphology rate")?,
+            log_sd,
+        };
+        rate.validate()?;
+        Some(rate)
+    } else {
+        None
+    };
+    let mut design = Design::new(&data, &partitions, gaps, conditioning)?;
     if data.character_count().saturating_mul(replicates) > 2_000_000
         || data
             .character_count()
@@ -313,7 +391,14 @@ pub(super) fn run(args: &[String]) -> Result<()> {
     fs::create_dir(output.join("source"))?;
     fs::create_dir(output.join("matrices"))?;
     fs::write(output.join("source/run.json"), &record_bytes)?;
-    fs::write(output.join("source/matrix.nex"), &input)?;
+    let matrix_copy = if recorded_type == "mixed" {
+        "matrix.mixed.json"
+    } else if rove::alignment::is_fasta(std::str::from_utf8(&input)?) {
+        "matrix.fasta"
+    } else {
+        "matrix.nex"
+    };
+    fs::write(output.join("source").join(matrix_copy), &input)?;
     let trace_hash = copy(
         &source.join("trace.log"),
         &output.join("source/trace.log"),
@@ -387,6 +472,20 @@ pub(super) fn run(args: &[String]) -> Result<()> {
                     Settings::default()
                 }
             };
+            if let Some(mut rate) = mixed_rate {
+                let value = column(&trace, "morphology_rate", row)?;
+                if rate.log_sd.is_none() && value != rate.value {
+                    return Err("fixed morphology rate disagrees with trace".into());
+                }
+                rate.value = value;
+                settings.set_morphology_rate(rate);
+                design.set_morphology_rate(value)?;
+            }
+            if let Some(upper) = yule_upper {
+                settings.set_tree_prior(rove::speciation::TreePrior::Yule);
+                settings.birth_difference_upper = upper;
+                settings.initial.birth_difference = column(&trace, "birth_rate", row)?;
+            }
             if let Some(dating) = &dating {
                 let mut live = dating.clone();
                 if let Some(priors) = dating.process_priors {
@@ -472,14 +571,19 @@ pub(super) fn run(args: &[String]) -> Result<()> {
                         b.surprise
                     )?;
                 }
-                let filename = format!("matrices/replicate-{replica:05}.nex");
+                let extension = if recorded_type == "mixed" {
+                    "mixed.json"
+                } else {
+                    "nex"
+                };
+                let filename = format!("matrices/replicate-{replica:05}.{extension}");
                 let text = to_nexus(&simulated);
                 fs::write(output.join(&filename), &text)?;
                 writeln!(
                     details,
                     "{}",
                     json!({"replicate":replica,"source_sample_index":row,"state":trace.states[row],"seed":simulation_seed,
-                    "matrix":filename,"matrix_sha256":sha256::hex(text.as_bytes()),"gamma_shape":rates.gamma.as_ref().map(|g|g.shape()),
+                    "morphology_rate":check.morphology_rate(),"matrix":filename,"matrix_sha256":sha256::hex(text.as_bytes()),"gamma_shape":rates.gamma.as_ref().map(|g|g.shape()),
                     "observed":stats(&observed),"simulated":stats(&comparison),"reconstructed_likelihood_difference":delta})
                 )?;
                 done += 1;

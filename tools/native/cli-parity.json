@@ -8,7 +8,10 @@
     "diagnose": "apps/macos/Sources/RoveApp/TraceDiagnosticsView.swift",
     "summarize": "apps/macos/Sources/RoveApp/TreeSummaryView.swift",
     "predict": "apps/macos/Sources/RoveApp/PredictiveCheckView.swift",
-    "compare": "apps/macos/Sources/RoveApp/RunComparisonView.swift"
+    "compare": "apps/macos/Sources/RoveApp/RunComparisonView.swift",
+    "assess": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",
+    "export-run": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",
+    "combine": "apps/macos/Sources/RoveApp/MixedImportView.swift"
   },
   "flags": {
     "--alpha": {
@@ -53,7 +56,7 @@
     },
     "--conditioning": {
       "native": "apps/macos/Sources/RoveApp/SetupView.swift",
-      "control": "Clock and character selection"
+      "control": "Morphology character selection; aligned DNA uses all sites under JC69"
     },
     "--dating": {
       "native": "apps/macos/Sources/RoveApp/DatingView.swift",
@@ -113,7 +116,7 @@
     },
     "--partitioning": {
       "native": "apps/macos/Sources/RoveApp/MatrixView.swift",
-      "control": "Matrix import: observed states, declared alphabet or explicit complete state labels"
+      "control": "Morphological alphabets; DNA import fixes the complete A/C/G/T alphabet"
     },
     "--powers": {
       "native": "apps/macos/Sources/RoveApp/MarginalLikelihoodView.swift",
@@ -157,7 +160,39 @@
     },
     "--weight": {
       "native": "apps/macos/Sources/RoveApp/AdvancedOptionsView.swift",
-      "control": "Advanced sampling"
+      "control": "Advanced sampling, including opt-in undated joint topology/rate exchange"
+    },
+    "--include-matrix": {
+      "native": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",
+      "control": "Explicit original-matrix inclusion in local reproducibility export"
+    },
+    "--tree-prior": {
+      "native": "apps/macos/Sources/RoveApp/TreePriorView.swift",
+      "control": "Tree prior and Yule birth-rate prior"
+    },
+    "--birth-rate-upper": {
+      "native": "apps/macos/Sources/RoveApp/TreePriorView.swift",
+      "control": "Tree prior and Yule birth-rate prior"
+    },
+    "--morphology": {
+      "native": "apps/macos/Sources/RoveApp/MixedImportView.swift",
+      "control": "Combined input sources and explicit missing-taxon policy"
+    },
+    "--dna": {
+      "native": "apps/macos/Sources/RoveApp/MixedImportView.swift",
+      "control": "Combined input sources and explicit missing-taxon policy"
+    },
+    "--missing-taxa": {
+      "native": "apps/macos/Sources/RoveApp/MixedImportView.swift",
+      "control": "Combined input sources and explicit missing-taxon policy"
+    },
+    "--morphology-rate": {
+      "native": "apps/macos/Sources/RoveApp/MixedModelView.swift",
+      "control": "Fixed or estimated morphology/DNA rate ratio and lognormal log-SD"
+    },
+    "--morphology-rate-log-sd": {
+      "native": "apps/macos/Sources/RoveApp/MixedModelView.swift",
+      "control": "Fixed or estimated morphology/DNA rate ratio and lognormal log-SD"
     }
   }
 }

@@ -150,6 +150,15 @@ final class RunComparisonModel {
       let x = a.draft, let y = b.draft, x.matrixSHA256 == y.matrixSHA256,
       x.constraints == y.constraints, x.settings.clock == y.settings.clock,
       x.settings.clockSigmaPrior == y.settings.clockSigmaPrior,
+      x.settings.treePrior == y.settings.treePrior,
+      x.settings.dataType == y.settings.dataType, x.mixedInput == y.mixedInput,
+      x.settings.dataType != "mixed"
+        || (x.settings.morphologyRateMode == y.settings.morphologyRateMode
+          && (x.settings.morphologyRateMode == "estimate"
+            ? x.settings.morphologyLogSDValue == y.settings.morphologyLogSDValue
+            : x.settings.morphologyRateValue == y.settings.morphologyRateValue)),
+      x.settings.treePrior != "yule"
+        || x.settings.yuleBirthRateUpper == y.settings.yuleBirthRateUpper,
       x.settings.sampleFromPrior == y.settings.sampleFromPrior,
       x.settings.conditioning == y.settings.conditioning,
       x.settings.partitioning == y.settings.partitioning,

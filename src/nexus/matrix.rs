@@ -182,6 +182,12 @@ fn symbols(token: &Token, format: &Format) -> Result<Vec<Cell>, Error> {
                 Ok(Cell::Missing)
             } else if format.gap.is_some_and(|g| format.equal(g, symbol)) {
                 Ok(Cell::Gap)
+            } else if format.data_type == crate::data::DataType::Dna {
+                crate::alignment::dna_cell(symbol).ok_or_else(|| {
+                    token.error(format!(
+                        "unsupported DNA symbol {symbol:?}; use A/C/G/T or IUPAC ambiguity codes"
+                    ))
+                })
             } else if let Some(state) = format.state(symbol) {
                 Ok(Cell::State(state))
             } else {

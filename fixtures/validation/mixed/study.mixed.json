@@ -1,0 +1,19 @@
+{
+  "format": "rove-mixed",
+  "missing_taxa": "reject",
+  "sources": [
+    {
+      "content": "#NEXUS\nBEGIN DATA;\nDIMENSIONS NTAX=5 NCHAR=6;\nFORMAT DATATYPE=STANDARD SYMBOLS=\"01\" MISSING=?;\nMATRIX\nAlpha_one 010101\nBeta_two 101010\nGamma_three 011001\nDelta_four 100110\nEpsilon_five 110011\n;\nEND;\n",
+      "data_type": "standard",
+      "name": "morphology.nex",
+      "sha256": "4fa36f553bc61733cddb668d92fca0bcca3b43d2d2dbab440d5c0666d232d08c"
+    },
+    {
+      "content": ">Alpha_one synthetic alignment\nAACGTACGTAAC\n>Beta_two synthetic alignment\nAATGTCATACGT\n>Gamma_three synthetic alignment\nACCGTGGTAAGT\n>Delta_four synthetic alignment\nAGCGTTACTCGT\n>Epsilon_five synthetic alignment\nATCGTCGTACGT\n",
+      "data_type": "dna",
+      "name": "complete.fasta",
+      "sha256": "52f795b2fa66cb4fe54df6114e1a9fb217f72f2dcad1e6ef7cd3c169fafbbad3"
+    }
+  ],
+  "version": 1
+}

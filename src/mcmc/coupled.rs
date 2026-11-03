@@ -4,6 +4,58 @@
 use crate::rates::RelaxedClock;
 use crate::tree::Tree;
 
+/// Exchange a child of `parent` with its uncle, preserving each reattached
+/// subtree's incoming rate × duration. Heights and the root stay fixed.
+/// The involution scales two rates by old/new durations; its Jacobian is
+/// their product. The caller adds the forward/reverse node-selection ratio.
+pub(super) fn exchange_rates(
+    tree: &mut Tree,
+    clock: &mut RelaxedClock,
+    parent: usize,
+    child: usize,
+    uncle: usize,
+) -> Option<f64> {
+    let grandparent = tree.parent(parent)?;
+    if tree.parent(child) != Some(parent)
+        || tree.parent(uncle) != Some(grandparent)
+        || uncle == parent
+        || tree.height(uncle) >= tree.height(parent)
+        || tree.height(child) >= tree.height(parent)
+    {
+        return None;
+    }
+    let branches = [child, uncle];
+    let durations = [
+        tree.height(grandparent) - tree.height(child),
+        tree.height(parent) - tree.height(uncle),
+    ];
+    let mut proposed = [0.0; 2];
+    let mut jacobian = 0.0;
+    for i in 0..2 {
+        let old = tree.branch_length(branches[i]);
+        if old <= 0.0 || durations[i] <= 0.0 {
+            return None;
+        }
+        let log_ratio = old.ln() - durations[i].ln();
+        proposed[i] = (clock.branch_rate(branches[i], tree.root()).ln() + log_ratio).exp();
+        if !proposed[i].is_finite() || proposed[i] <= 0.0 {
+            return None;
+        }
+        jacobian += log_ratio;
+    }
+    tree.replace_child(parent, child, uncle);
+    tree.replace_child(grandparent, uncle, child);
+    for i in 0..2 {
+        let index = if branches[i] == tree.nodes() - 1 {
+            tree.root()
+        } else {
+            branches[i]
+        };
+        clock.set_rate(index, proposed[i]);
+    }
+    Some(jacobian)
+}
+
 /// Change one internal height, preserving rate × duration on incident branches.
 /// For a symmetric height draw, the Hastings factor is the product of old/new
 /// branch durations. The root has two incident branches; other nodes have three.
@@ -207,6 +259,175 @@ mod tests {
             }
         }
         determinant(matrix)
+    }
+
+    #[test]
+    fn exchange_is_an_involution_with_correct_rate_slots_and_jacobian() {
+        for root_last in [false, true] {
+            let (original, parent, child, uncle) = if root_last {
+                (
+                    Tree::new(
+                        vec![
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            Some((3, 4)),
+                            Some((0, 1)),
+                            Some((6, 2)),
+                            Some((7, 5)),
+                        ],
+                        vec![0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.6, 1.0, 1.5],
+                    )
+                    .unwrap(),
+                    7,
+                    6,
+                    5,
+                )
+            } else {
+                (
+                    Tree::new(
+                        vec![
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            Some((6, 8)),
+                            Some((7, 2)),
+                            Some((0, 1)),
+                            Some((3, 4)),
+                        ],
+                        vec![0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 1.0, 0.6, 0.2],
+                    )
+                    .unwrap(),
+                    6,
+                    7,
+                    8,
+                )
+            };
+            let original_clock =
+                RelaxedClock::new(0.7, vec![0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9]).unwrap();
+            let mut tree = original.clone();
+            let mut clock = original_clock.clone();
+            let h = exchange_rates(&mut tree, &mut clock, parent, child, uncle).unwrap();
+            tree.validate().unwrap();
+            assert_eq!(tree.root(), original.root());
+            for node in 0..tree.nodes() {
+                near(
+                    tree.branch_length(node) * clock.branch_rate(node, tree.root()),
+                    original.branch_length(node)
+                        * original_clock.branch_rate(node, original.root()),
+                    1e-13,
+                );
+            }
+            // Continuous coordinates include all internal heights and all
+            // rates. Height derivatives enter off-diagonal blocks only.
+            let mut x = (tree.tips()..tree.nodes())
+                .map(|i| original.height(i))
+                .collect::<Vec<_>>();
+            x.extend(original_clock.rates());
+            let numerical = numerical_jacobian(&x, |values| {
+                let mut t = original.clone();
+                for i in t.tips()..t.nodes() {
+                    t.set_height(i, values[i - t.tips()]);
+                }
+                let mut c = RelaxedClock::new(0.7, values[4..].to_vec()).unwrap();
+                exchange_rates(&mut t, &mut c, parent, child, uncle).unwrap();
+                let mut y = values[..4].to_vec();
+                y.extend(c.rates());
+                y
+            });
+            near(h.exp(), numerical, 1e-7);
+            near(
+                h + exchange_rates(&mut tree, &mut clock, parent, uncle, child).unwrap(),
+                0.0,
+                1e-13,
+            );
+            assert_eq!(tree, original);
+            for (a, b) in clock.rates().iter().zip(original_clock.rates()) {
+                near(*a, *b, 1e-13);
+            }
+            // Invalid ancestry and singular support leave every coordinate intact.
+            let saved = clock.clone();
+            assert!(exchange_rates(&mut tree, &mut clock, parent, uncle, child).is_none());
+            assert_eq!(tree, original);
+            assert_eq!(clock, saved);
+        }
+    }
+
+    #[test]
+    fn joint_exchange_preserves_uniform_topologies_and_independent_lognormal_rates() {
+        let mut random = Random::new(97001);
+        let mut t = tree(true);
+        let mut clock = RelaxedClock::new(0.7, vec![1.0; 4]).unwrap();
+        let mut counts = [0usize; 3];
+        let mut log_sums = [0.0; 3];
+        let mut squares = 0.0;
+        let mut n = 0usize;
+        let mut birth = crate::speciation::BirthDeath {
+            birth_difference: 1.0,
+            relative_death: 0.5,
+        }
+        .into();
+        for step in 0..250_000 {
+            if random.uniform() < 0.15 {
+                // Exact independent conditional draws for a known target.
+                t.set_height(3, 0.05 + 0.9 * random.uniform());
+                for i in 0..4 {
+                    clock.set_rate(i, (0.7 * random.normal() - 0.245).exp());
+                }
+            } else {
+                let mut proposal = t.clone();
+                let mut rates = crate::rates::RateVariation {
+                    clock: Some(clock.clone()),
+                    ..Default::default()
+                };
+                let h = super::super::Move::NarrowExchangeRates
+                    .propose(
+                        &mut proposal,
+                        &mut birth,
+                        &mut rates,
+                        1000.0,
+                        None,
+                        &mut random,
+                    )
+                    .unwrap();
+                let c = rates.clock.unwrap();
+                let alpha = c.log_rate_prior() - clock.log_rate_prior() + h;
+                if alpha >= 0.0 || random.uniform() < alpha.exp() {
+                    t = proposal;
+                    clock = c;
+                }
+            }
+            if step >= 10_000 {
+                let (a, b) = t.children(t.root()).unwrap();
+                let outside = if a < 3 { a } else { b };
+                counts[outside] += 1;
+                for rate in clock.rates() {
+                    log_sums[outside] += rate.ln() / 4.0;
+                    squares += (rate.ln() + 0.245).powi(2) / 4.0;
+                }
+                n += 1;
+            }
+        }
+        for i in 0..3 {
+            near(counts[i] as f64 / n as f64, 1.0 / 3.0, 0.015);
+            near(log_sums[i] / counts[i] as f64, -0.245, 0.025);
+        }
+        near(squares / n as f64, 0.49, 0.025);
+    }
+
+    #[test]
+    fn exchange_overflow_is_rejected_before_mutating_rates_or_topology() {
+        let mut t = tree(true);
+        let mut c = RelaxedClock::new(0.7, vec![0.8, 1.3, 1e308, 0.4]).unwrap();
+        let old_t = t.clone();
+        let old_c = c.clone();
+        assert!(exchange_rates(&mut t, &mut c, 3, 0, 2).is_none());
+        assert_eq!(t, old_t);
+        assert_eq!(c, old_c);
     }
 
     #[test]

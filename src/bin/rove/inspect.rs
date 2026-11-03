@@ -5,7 +5,6 @@ use std::io::Write;
 use rove::ascertainment::{VariableCharacters, validate_informative};
 use rove::data::{Cell, GapTreatment, Matrix};
 use rove::mcmc::{Conditioning, Sampler, Settings};
-use rove::nexus;
 
 use super::partitions::{self, Partitioning};
 use super::{Json, is_plain_label, sha256};
@@ -50,18 +49,26 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
         .map_or(Json::Null, |p| partitions::describe(p));
     let (patterns, mut sampler_error, variable_error, informative_error) = match compressed {
         Ok(partitions) => {
-            let settings = Settings {
+            let mut settings = Settings {
                 conditioning: Conditioning::None,
                 ..Settings::default()
             };
+            if data.data_type() == rove::data::DataType::Mixed {
+                settings.set_morphology_rate(rove::mcmc::RelativeRate {
+                    value: 1.0,
+                    log_sd: None,
+                });
+            }
             let sampler_error = Sampler::new(&partitions, &settings, 1)
                 .err()
                 .map(|e| e.to_string());
             let variable_error = partitions
                 .iter()
+                .filter(|p| p.data_type() != rove::data::DataType::Dna)
                 .find_map(|p| VariableCharacters::new(p).err().map(|e| e.to_string()));
             let informative_error = partitions
                 .iter()
+                .filter(|p| p.data_type() != rove::data::DataType::Dna)
                 .find_map(|p| validate_informative(p).err().map(|e| e.to_string()));
             (
                 Json::Integer(partitions.iter().map(|p| p.weights().len() as u64).sum()),
@@ -119,6 +126,11 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
         }
     }
     Json::Object(vec![
+        (
+            "mixed",
+            data.mixed_metadata()
+                .map_or(Json::Null, |m| Json::Value(m.json())),
+        ),
         ("schema_version", Json::Integer(1)),
         ("input_sha256", Json::text(sha256::hex(bytes))),
         ("taxon_count", Json::Integer(data.taxa().len() as u64)),
@@ -127,7 +139,25 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
             Json::Integer(data.character_count() as u64),
         ),
         ("pattern_count", patterns),
-        ("partitioning", Json::text(partitioning.name())),
+        ("data_type", Json::text(data.data_type().name())),
+        (
+            "input_format",
+            Json::text(if data.data_type() == rove::data::DataType::Mixed {
+                "mixed"
+            } else if rove::alignment::is_fasta(&String::from_utf8_lossy(bytes)) {
+                "fasta"
+            } else {
+                "nexus"
+            }),
+        ),
+        (
+            "partitioning",
+            Json::text(if data.data_type() == rove::data::DataType::Dna {
+                "declared"
+            } else {
+                partitioning.name()
+            }),
+        ),
         ("partitions", description),
         ("missing_count", Json::Integer(missing)),
         ("gap_count", Json::Integer(gap_count)),
@@ -221,7 +251,7 @@ pub(super) fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
         }
     }
     let bytes = fs::read(&arguments[0])?;
-    let data = nexus::parse(std::str::from_utf8(&bytes)?)?;
+    let data = rove::alignment::parse(std::str::from_utf8(&bytes)?)?;
     let mut text = String::new();
     report(&data, &bytes, gaps, partitioning).write(&mut text, 0);
     writeln!(std::io::stdout().lock(), "{text}")?;

@@ -4,6 +4,8 @@ description: "El modelo independiente del XML suministrado: categorías gamma, t
 
 # El modelo de referencia
 
+También se admite ADN alineado en NEXUS y FASTA con [JC69](./dna)
+
 `rove sample --model reference` ejecuta el modelo probabilístico del XML
 20 × 50 suministrado, sin BEAST. Usa el mismo Mk binario, la corrección Mkv
 por defecto, el prior de nacimiento–muerte y las convenciones de parámetros.
@@ -181,3 +183,62 @@ de modelos conservan el prior; comparar cadenas exige priors iguales.
 Registros antiguos usan 5 y 0,2. Las configuraciones personalizadas del app usan
 formato 6 para que versiones antiguas no ignoren la elección. Véase
 [Priors de árbol](./tree-priors) para la decisión sobre modelos de árbol.
+
+## Intercambio conjunto opcional de topología y tasas
+
+`--weight narrow_exchange_rates=10` activa una propuesta experimental junto con las existentes. Su peso predeterminado es cero y no tiene parámetro de ajuste. En el app, use **Advanced sampling → Try joint topology/rate exchange**; el peso inicial 10 es editable. La selección se conserva en el formato 9 de configuración, revisión, historial, registros y checkpoints. Por ahora requiere reloj relajado sin datación; se rechazan reloj estricto y datación antes del muestreo. Es una propuesta independiente, no todo BEAST ORC. No se ha demostrado una mejora de velocidad o mezcla para morfología; las mediciones comparativas de [#97](https://github.com/getcortexlabs/rove/issues/97) siguen aplazadas.
+
+Sea `G` un nodo interno con hijo interno. Elija `G` uniformemente entre los `C(T)` nodos elegibles, tome su hijo más antiguo `P` y el más reciente `U`, y elija un hijo `X` de `P` con probabilidad 1/2. Intercambie `X` y `U` sin cambiar alturas ni raíz, preservando las distancias de entrada:
+
+```text
+rX' = rX (hP − hX) / (hG − hX)
+rU' = rU (hG − hU) / (hP − hU)
+J   = [(hP − hX) / (hG − hX)] [(hG − hU) / (hP − hU)]
+log Hastings = log C(T) − log C(T') + log J
+```
+
+Se exigen duraciones y tasas positivas y finitas, y `hP > hU`. Los límites inválidos y desbordamientos se rechazan antes de modificar el estado. La inversa elige los mismos `G` y `P` y devuelve `U` intercambiándolo con `X`; su probabilidad es `1 / (2 C(T'))` frente a `1 / (2 C(T))`. Como las alturas no cambian, el jacobiano continuo es el producto de ambos factores de escala. Las tasas siguen indexadas por los nodos de entrada, incluso cuando la raíz no es el último nodo. Restricciones y rechazos usan la restauración exacta habitual. Preservar estas distancias no preserva la verosimilitud: cambia la topología.
+
+Las pruebas cubren inversión, jacobiano numérico completo, selección directa/inversa enumerada, distribuciones conocidas de topologías uniformes y tasas lognormales independientes, restricciones, verosimilitud recalculada frente a caché, índices de raíz, checkpoints exactos, cancelación/reanudación nativa y muestras idénticas en portable/ARM. No sustituyen estudios de posterior y rendimiento. Véase [Douglas, Zhang y Bouckaert (2021)](https://doi.org/10.1371/journal.pcbi.1008322).
+
+## Prior opcional de Yule
+
+Elija **Tree prior → Yule · pure birth** o utilice
+`--tree-prior yule --birth-rate-upper 1000` en `sample` o `marginal`.
+Nacimiento–muerte sigue siendo el valor predeterminado; la datación fósil usa
+FBD. Yule supone muestreo completo de especies contemporáneas con terminales
+a edad cero, sin extinción. Rechaza datación fósil y no ofrece calibraciones
+de nodos ni coalescencia poblacional. Especies actuales, fósiles y muestras
+dentro de una población necesitan supuestos biológicos diferentes.
+
+Solo se estima λ, con prior propio Uniforme(0,U), log densidad −log U y valor
+inicial min(1,U/2); U debe ser positivo y finito. Las alturas representan
+cambios esperados en la escala fija del reloj unitario; λ es por unidad de
+altura, no automáticamente por millón de años. U=1000 es un punto de partida,
+no una recomendación universal. Examine ejecuciones solo del prior y pruebe
+límites justificables. No hay coordenada, propuesta ni estadística de
+extinción. `birth_rate_scale` admite controles de peso y ajuste.
+
+La convención no escalada de BEAST 2.7.8 es
+`(n−1) log λ − λ (suma de alturas internas + altura de la raíz)`.
+Se condiciona al número de terminales, no a la altura de raíz u origen; la
+raíz contribuye dos veces. Esperas independientes Exp(kλ) y selección uniforme
+entre k(k−1)/2 pares dan el multiplicador normalizador `2^(n−1)/(n−1)!` para
+árboles etiquetados y ordenados por eventos. Es independiente de parámetros
+y coincide con la convención actual de nacimiento–muerte para el mismo n.
+Las estimaciones por posteriores de potencia usan Z(1)/Z(0), cancelando ese
+factor y calculando evidencia bajo el prior normalizado en el dominio
+admitido. La monofilia restringe ese dominio. Mantenga matriz, taxones y
+restricciones consistentes y compare el modelo completo, incluido U.
+
+El modelo y su límite aparecen en revisión, historial y comparación; persisten
+en configuraciones de formato 10, registros, checkpoints, predicciones y
+estimaciones marginales. Las apps anteriores rechazan estas configuraciones.
+Las comparaciones de convergencia no mezclan Yule con nacimiento–muerte ni
+límites diferentes. La reanudación exacta exige el ejecutable original.
+
+La validación incluye 24 estados sintéticos fijos de BEAST.base 2.7.8
+(`fixtures/validation/yule`), el límite sin extinción, simulación independiente
+de esperas, alturas y frecuencias de topologías con y sin monofilia, y una
+comprobación por cuadratura de la evidencia. Son pruebas de corrección, sin
+afirmaciones comparativas sobre velocidad o mezcla.

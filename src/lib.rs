@@ -1,12 +1,15 @@
+pub mod alignment;
 pub mod ascertainment;
 mod checkpoint;
 pub mod data;
 pub mod dating;
 pub mod diagnostics;
+pub mod fingerprint;
 mod kernel;
 mod layout;
 pub mod marginal;
 pub mod mcmc;
+pub mod mixed;
 pub mod model;
 pub mod nexus;
 pub mod predictive;

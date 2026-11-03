@@ -4,6 +4,8 @@ description: "The standalone model of the supplied BEAST XML: gamma categories, 
 
 # The reference model
 
+Aligned DNA in NEXUS and FASTA is also supported under [JC69](./dna)
+
 `rove sample --model reference` runs the probability model of the supplied
 20 × 50 XML without BEAST. It uses the same binary Mk model, Mkv conditioning
 by default, birth–death prior and parameter conventions. The default
@@ -172,3 +174,63 @@ preserve the chosen prior; chain comparisons require matching priors.
 `scale`, alongside the readable description. Legacy records use 5 and 0.2.
 Custom app setups use format 6 so older apps cannot silently ignore the choice.
 See [Tree priors](./tree-priors) for the separate decision about tree models.
+
+## Optional joint topology/rate exchange
+
+`--weight narrow_exchange_rates=10` enables an experimental proposal alongside the existing moves. It has zero weight by default and no tuning parameter. In the native app, use **Advanced sampling → Try joint topology/rate exchange**; its initial weight is 10 and remains editable. The choice is preserved in setup format 9, review, history, run records and checkpoints. Only an undated relaxed clock is currently supported; dated and strict-clock use is rejected before sampling. This is one independently implemented proposal, not the full BEAST ORC suite. No morphology speed or mixing benefit has been established; comparative measurements in [#97](https://github.com/getcortexlabs/rove/issues/97) remain deferred.
+
+Let `G` be an internal node with an internal child. Choose `G` uniformly from the `C(T)` such nodes, take its older child `P` and younger child `U`, and choose either child `X` of `P` with probability 1/2. Exchange `X` and `U`, keeping heights and the root unchanged. Preserve the incoming distance of each reattached subtree with:
+
+```text
+rX' = rX (hP − hX) / (hG − hX)
+rU' = rU (hG − hU) / (hP − hU)
+J   = [(hP − hX) / (hG − hX)] [(hG − hU) / (hP − hU)]
+log Hastings = log C(T) − log C(T') + log J
+```
+
+Positive finite durations/rates and `hP > hU` are required. Boundary/overflow proposals fail before mutation. The reverse chooses the same `G` and `P` and exchanges `U` back with `X`; its probability is `1 / (2 C(T'))`, compared with `1 / (2 C(T))` forward. The continuous map leaves heights unchanged, so the Jacobian is the product of the two rate scale factors. Rates remain attached to node-indexed incoming branches, including the special slot when the root is not the last node. Constraints and likelihood/prior rejection use the normal exact restoration path. Preserving the reattached distances does not preserve the likelihood: the topology changes.
+
+Tests cover the inverse, full numerical Jacobian, enumerated forward/reverse choices, known uniform-topology/independent-lognormal targets, constraint rejection, fresh versus cached likelihood, different root indices, exact checkpoint replay, native cancellation/resumption and identical portable/ARM samples. These correctness checks do not replace posterior and performance studies. Related joint-proposal methods are described by [Douglas, Zhang and Bouckaert (2021)](https://doi.org/10.1371/journal.pcbi.1008322).
+
+## Optional Yule tree prior
+
+Choose **Tree prior → Yule · pure birth** in Setup, or pass
+`--tree-prior yule --birth-rate-upper 1000` to `sample` or `marginal`.
+Birth–death remains the default; fossil dating keeps FBD. Yule is a
+complete-sampling species-tree prior for contemporaneous terminals at zero,
+without extinction. It rejects fossil dating and does not supply node
+calibrations or a population coalescent. Extant species, fossil terminals and
+within-species population samples require different biological assumptions.
+
+Only the birth rate λ is estimated, with a proper Uniform(0,U) prior whose
+log density is −log U; U must be positive and finite. The initial λ is
+min(1,U/2). Tree heights use expected changes on the fixed unit-clock scale,
+so λ is per unit of those heights, not automatically per million years.
+U=1000 is a reference starting value, not a recommendation for every matrix.
+Inspect prior-only runs and repeat with scientifically defensible bounds.
+There is no extinction coordinate, proposal or trace statistic under Yule.
+The `birth_rate_scale` proposal supports the usual weight and tuning controls.
+
+The BEAST 2.7.8 unscaled convention is
+`(n−1) log λ − λ (sum of internal heights + root height)`.
+It conditions on tip count, not root height or an origin. The root contributes
+twice. For a labeled ranked tree, independent backwards waits Exp(kλ) and
+uniform choices among k(k−1)/2 pairs give a normalized density multiplier
+`2^(n−1)/(n−1)!`. This parameter-independent coefficient is the same for the
+current birth–death convention at the same n. Power-posterior estimates use
+Z(1)/Z(0), so a constant prior multiplier cancels; the resulting evidence is
+relative to the normalized prior on the supported domain. Monophyly restricts
+that domain. Keep the matrix, taxa and constraints consistent when comparing
+evidence, and compare the full model including U and all other priors.
+
+The selected model and bound appear in Review, History and model comparisons,
+and persist in format-10 setups, run records, checkpoints, predictions and
+marginal estimates. Earlier apps reject these setups. Convergence diagnostics
+never combine Yule with birth–death or different birth-rate bounds. Exact
+checkpoint resume still requires the original executable.
+
+Validation includes 24 synthetic fixed states from pinned BEAST.base 2.7.8
+(`fixtures/validation/yule`), the zero-extinction birth–death limit, independent
+prior simulation of waiting times, heights and topology frequencies with and
+without monophyly, and a power-posterior quadrature check. These are correctness
+checks, not comparative timing or mixing claims.

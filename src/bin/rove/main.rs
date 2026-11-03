@@ -1,5 +1,7 @@
+mod assessment;
 mod benchmark;
 mod checkpoint;
+mod combine;
 mod compare;
 mod dating;
 mod diagnose;
@@ -26,13 +28,16 @@ use rove::data::GapTreatment;
 use rove::mcmc::output::{TraceWriter, TreeWriter, is_plain_label};
 use rove::mcmc::{Conditioning, Move, Sampler, Settings};
 use rove::rates::SigmaPrior;
-use rove::{Backend, nexus};
+use rove::speciation::TreePrior;
+use rove::{Backend, alignment};
 
 const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|informative|none] [--sample-from-prior]
                    [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
+                   [--tree-prior birth-death|yule] [--birth-rate-upper <x>]
+                   [--morphology-rate estimate|<x>] [--morphology-rate-log-sd <x>]
                    [--partitioning observed|declared|labels] [--dating <settings.json>]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
@@ -45,12 +50,18 @@ const USAGE: &str =
                      [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                      [--model strict|reference] [--conditioning variable|informative|none]
                      [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
-                     [--partitioning observed|declared|labels] [--dating <settings.json>]
+                     [--tree-prior birth-death|yule] [--birth-rate-upper <x>]
+                     [--morphology-rate estimate|<x>] [--morphology-rate-log-sd <x>]
+                   [--partitioning observed|declared|labels] [--dating <settings.json>]
                      [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                      [--backend portable|neon] [--print-every <n>] [--cancel-on-stdin-close]
                      [--expect-input-sha256 <hash>]
+       rove combine --morphology <matrix.nex> --dna <alignment> --output <new.mixed.json> [--missing-taxa reject|missing]
        rove benchmark [--cancel-on-stdin-close]
        rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
+       rove assess <run-directory> --output <new-directory> [--burnin-percent <0..99>]
+       rove export-run <run-directory> --output <new-directory> [--burnin-percent <0..99>]
+                       [--include-matrix <matrix.nex>] [--cancel-on-stdin-close]
        rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared|labels]
        rove inspect-tree <summary-directory>
        rove diagnose <trace.log> --burnin-percent <0..99> [--output <new-directory>]
@@ -95,8 +106,13 @@ struct Options {
     gaps: GapTreatment,
     partitioning: Partitioning,
     conditioning: Conditioning,
+    conditioning_explicit: bool,
+    partitioning_explicit: bool,
+    morphology_rate: Option<rove::mcmc::RelativeRate>,
     reference_model: bool,
     clock_sigma_prior: SigmaPrior,
+    tree_prior: TreePrior,
+    birth_rate_upper: f64,
     sample_from_prior: bool,
     tuning: bool,
     tuning_values: Vec<(Move, f64)>,
@@ -131,9 +147,13 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut gaps = GapTreatment::Reject;
     let mut partitioning = Partitioning::Observed;
     let mut conditioning = Conditioning::Variable;
+    let mut morphology_rate = None;
+    let mut morphology_log_sd = None;
     let mut reference_model = false;
     let mut sigma_shape = 5.0;
     let mut sigma_scale = 0.2;
+    let mut tree_prior = TreePrior::BirthDeath;
+    let mut birth_rate_upper = 1000.0f64;
     let mut sample_from_prior = false;
     let mut tuning = true;
     let mut tuning_values = Vec::new();
@@ -204,6 +224,14 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 } else {
                     sigma_scale = parsed;
                 }
+            }
+            "--morphology-rate" => morphology_rate = Some(value(argument)?),
+            "--morphology-rate-log-sd" => {
+                morphology_log_sd = Some(
+                    value(argument)?
+                        .parse::<f64>()
+                        .map_err(|_| "morphology log-SD needs a number")?,
+                )
             }
             "--events-json" => events_json = true,
             "--cancel-on-stdin-close" => cancel_on_stdin_close = true,
@@ -282,6 +310,18 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                     }
                 };
             }
+            "--tree-prior" => {
+                tree_prior = match value("--tree-prior")?.as_str() {
+                    "birth-death" => TreePrior::BirthDeath,
+                    "yule" => TreePrior::Yule,
+                    _ => return Err("--tree-prior must be birth-death or yule".into()),
+                };
+            }
+            "--birth-rate-upper" => {
+                birth_rate_upper = value("--birth-rate-upper")?
+                    .parse()
+                    .map_err(|_| "--birth-rate-upper needs a number")?
+            }
             "--backend" => {
                 let name = value("--backend")?;
                 backend = Backend::ALL
@@ -322,6 +362,37 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         return Err("clock sigma prior options require --model reference".into());
     }
     let clock_sigma_prior = SigmaPrior::new(sigma_shape, sigma_scale).map_err(|e| e.to_string())?;
+    if !birth_rate_upper.is_finite() || birth_rate_upper <= 0.0 || birth_rate_upper / 2.0 == 0.0 {
+        return Err(
+            "--birth-rate-upper must be finite and positive with a representable interior".into(),
+        );
+    }
+    if tree_prior != TreePrior::Yule && seen.contains("--birth-rate-upper") {
+        return Err("--birth-rate-upper requires --tree-prior yule".into());
+    }
+    if tree_prior == TreePrior::Yule && dating.is_some() {
+        return Err("Yule does not support fossil dating or calibrations".into());
+    }
+    let morphology_rate = match morphology_rate.as_deref() {
+        None if morphology_log_sd.is_some() => {
+            return Err("--morphology-rate-log-sd requires --morphology-rate estimate".into());
+        }
+        None => None,
+        Some("estimate") => Some(rove::mcmc::RelativeRate {
+            value: 1.0,
+            log_sd: Some(morphology_log_sd.unwrap_or(1.0)),
+        }),
+        Some(value) if morphology_log_sd.is_none() => Some(rove::mcmc::RelativeRate {
+            value: value
+                .parse()
+                .map_err(|_| "--morphology-rate needs estimate or a positive number")?,
+            log_sd: None,
+        }),
+        _ => return Err("--morphology-rate-log-sd requires --morphology-rate estimate".into()),
+    };
+    if let Some(rate) = morphology_rate {
+        rate.validate().map_err(|e| e.to_string())?;
+    }
     let options = Options {
         command,
         powers: match command {
@@ -352,8 +423,13 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         gaps,
         partitioning,
         conditioning,
+        conditioning_explicit: seen.contains("--conditioning"),
+        partitioning_explicit: seen.contains("--partitioning"),
         reference_model,
+        morphology_rate,
         clock_sigma_prior,
+        tree_prior,
+        birth_rate_upper,
         sample_from_prior,
         tuning,
         tuning_values,
@@ -590,7 +666,27 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
         return Err("the matrix fingerprint changed; inspect and review the input again".into());
     }
     options.expected_input = Some(input.clone());
-    let data = nexus::parse(std::str::from_utf8(&bytes)?)?;
+    let data = alignment::parse(std::str::from_utf8(&bytes)?)?;
+    if data.data_type() == rove::data::DataType::Dna {
+        if options.conditioning_explicit && options.conditioning != Conditioning::None {
+            return Err(
+                "DNA JC69 uses all aligned sites; Mkv/Mkparsinf conditioning is not supported"
+                    .into(),
+            );
+        }
+        if options.partitioning_explicit
+            && !matches!(options.partitioning, partitions::Partitioning::Declared)
+        {
+            return Err(
+                "DNA JC69 fixes all four A/C/G/T states; use --partitioning declared".into(),
+            );
+        }
+        options.conditioning = Conditioning::None;
+        options.partitioning = partitions::Partitioning::Declared;
+    }
+    if (data.data_type() == rove::data::DataType::Mixed) != options.morphology_rate.is_some() {
+        return Err("mixed morphology/DNA requires --morphology-rate estimate or an explicit positive fixed value; this option does not apply to homogeneous inputs".into());
+    }
     let patterns = options.partitioning.compress(&data, options.gaps)?;
     let taxa = data.taxa();
     if let Some(name) = taxa.iter().find(|name| !is_plain_label(name)) {
@@ -607,7 +703,8 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
             let wanted = name.replace('_', " ");
             let tip = taxa
                 .iter()
-                .position(|taxon| *taxon == wanted)
+                .position(|taxon| taxon == name)
+                .or_else(|| taxa.iter().position(|taxon| *taxon == wanted))
                 .ok_or_else(|| format!("--monophyly names unknown taxon {name:?}"))?;
             tips.push(tip);
         }
@@ -630,6 +727,14 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
     if let Some(config) = &options.dating {
         settings.set_dating(dating::parse(config, taxa)?);
     }
+    if options.tree_prior == TreePrior::Yule {
+        settings.set_tree_prior(TreePrior::Yule);
+        settings.birth_difference_upper = options.birth_rate_upper;
+        settings.initial.birth_difference = 1.0f64.min(options.birth_rate_upper / 2.0);
+    }
+    if let Some(rate) = options.morphology_rate {
+        settings.set_morphology_rate(rate);
+    }
     for &(kind, weight) in &options.weights {
         if let Some(entry) = settings.weights.iter_mut().find(|(k, _)| *k == kind) {
             entry.1 = weight;
@@ -651,7 +756,7 @@ fn input_json(
     data: &rove::data::Matrix,
     patterns: &[rove::data::Patterns],
 ) -> Json {
-    Json::Object(vec![
+    let mut fields = vec![
         ("path", Json::text(options.matrix.display().to_string())),
         ("sha256", Json::text(input)),
         ("taxa", Json::Integer(data.taxa().len() as u64)),
@@ -667,7 +772,11 @@ fn input_json(
                 GapTreatment::Missing => "missing",
             }),
         ),
-    ])
+    ];
+    if let Some(mixed) = data.mixed_metadata() {
+        fields.push(("mixed", Json::Value(mixed.json())));
+    }
+    Json::Object(fields)
 }
 
 fn model_json(
@@ -676,33 +785,43 @@ fn model_json(
     patterns: &[rove::data::Patterns],
     taxa: &[String],
 ) -> Json {
+    let dna = patterns
+        .iter()
+        .all(|p| p.data_type() == rove::data::DataType::Dna);
     let conditioning = match settings.conditioning {
         Conditioning::Variable => "variable characters (Mkv)",
         Conditioning::Informative => "parsimony-informative characters (Mkparsinf)",
+        Conditioning::None if dna => "none (JC69)",
         Conditioning::None => "none (Mk)",
     };
     let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
-    Json::Object(vec![
+    let mut fields = vec![
         ("partitioning", Json::text(options.partitioning.name())),
         ("partitions", partitions::describe(patterns)),
         (
             "substitution",
-            Json::text(
-                if patterns
-                    .iter()
-                    .any(|p| p.ordering() == rove::model::CharacterOrdering::Ordered)
-                {
-                    if options.reference_model {
-                        "Ordered/unordered models per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
-                    } else {
-                        "Ordered/unordered models per partition, equal frequencies, one rate category"
-                    }
-                } else if options.reference_model {
-                    "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+            Json::text(if settings.morphology_rate.is_some() {
+                "Morphology Mk/ordered per partition and DNA JC69, shared topology/clock/gamma shape, DNA relative rate one"
+            } else if dna {
+                if options.reference_model {
+                    "JC69 DNA, fixed A/C/G/T frequencies 1/4, four shared midpoint gamma categories normalized to mean one"
                 } else {
-                    "Mk per partition, equal frequencies, one rate category"
-                },
-            ),
+                    "JC69 DNA, fixed A/C/G/T frequencies 1/4, one rate category"
+                }
+            } else if patterns
+                .iter()
+                .any(|p| p.ordering() == rove::model::CharacterOrdering::Ordered)
+            {
+                if options.reference_model {
+                    "Ordered/unordered models per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+                } else {
+                    "Ordered/unordered models per partition, equal frequencies, one rate category"
+                }
+            } else if options.reference_model {
+                "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+            } else {
+                "Mk per partition, equal frequencies, one rate category"
+            }),
         ),
         (
             "preset",
@@ -816,6 +935,8 @@ fn model_json(
                     "FBD joint sampling density, origin-conditioned, removal probability zero, no survival conditioning; observed specimen count, age evidence and imposed terminal/clade constraints inform process parameters; not a parameter-wise normalized restricted tree prior or marginal likelihood"
                 } else if settings.dating.is_some() {
                     "FBD, fixed origin and process parameters, removal probability zero, restricted to terminal fossils and supplied age bounds; unnormalized restricted density, not model evidence"
+                } else if settings.tree_prior == TreePrior::Yule {
+                    "Yule pure birth, unscaled, complete sampling, conditioned on tip count; no root/origin conditioning or calibrations"
                 } else {
                     "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips"
                 },
@@ -823,7 +944,7 @@ fn model_json(
         ),
         (
             "birth_difference_rate_prior",
-            if settings.dating.is_some() {
+            if settings.dating.is_some() || settings.tree_prior == TreePrior::Yule {
                 Json::Null
             } else {
                 Json::text(format!("Uniform(0, {})", settings.birth_difference_upper))
@@ -831,7 +952,7 @@ fn model_json(
         ),
         (
             "relative_death_rate_prior",
-            if settings.dating.is_some() {
+            if settings.dating.is_some() || settings.tree_prior == TreePrior::Yule {
                 Json::Null
             } else {
                 Json::text("Uniform(0, 1)")
@@ -842,7 +963,44 @@ fn model_json(
             "monophyly",
             Json::List(settings.monophyly.iter().map(|c| names(c)).collect()),
         ),
-    ])
+    ];
+    if let Some(rate) = settings.morphology_rate {
+        fields.extend([
+            ("data_type", Json::text("mixed")),
+            ("substitution_model", Json::text("mk+jc69")),
+            ("mixed_model", Json::Value(serde_json::json!({
+                "topology":"shared", "branch_clock":"shared", "gamma_shape":"shared",
+                "dna_rate":1.0, "morphology_rate":rate.value,
+                "morphology_rate_prior":rate.log_sd.map(|s| serde_json::json!({"distribution":"lognormal","log_mean":0.0,"log_sd":s})),
+                "morphology_conditioning": match settings.conditioning {Conditioning::None=>"none",Conditioning::Variable=>"variable",Conditioning::Informative=>"informative"},
+                "dna_conditioning":"none"
+            }))),
+        ]);
+    } else if dna {
+        fields.extend([
+            ("data_type", Json::text("dna")),
+            ("substitution_model", Json::text("jc69")),
+        ]);
+    }
+    if settings.tree_prior == TreePrior::Yule {
+        fields.extend([
+            ("tree_prior_kind", Json::text("yule")),
+            (
+                "birth_rate_prior_parameters",
+                Json::Object(vec![
+                    ("distribution", Json::text("uniform")),
+                    ("lower", Json::Number(0.0)),
+                    ("upper", Json::Number(settings.birth_difference_upper)),
+                    ("log_density", Json::Number(-settings.birth_difference_upper.ln())),
+                ]),
+            ),
+            (
+                "tree_density_normalization",
+                Json::text("unscaled BEAST convention; the labeled-tree multiplier 2^(n-1)/(n-1)! is parameter-independent and cancels in power-posterior ratios; monophyly restricts the prior domain"),
+            ),
+        ]);
+    }
+    Json::Object(fields)
 }
 
 fn optional(value: Option<f64>) -> Json {
@@ -1137,11 +1295,27 @@ fn run_chain(
                 ("sample_every", Json::Integer(options.sample_every)),
                 (
                     "initial_birth_difference_rate",
-                    Json::Number(settings.initial.birth_difference),
+                    if settings.tree_prior == TreePrior::Yule {
+                        Json::Null
+                    } else {
+                        Json::Number(settings.initial.birth_difference)
+                    },
+                ),
+                (
+                    "initial_birth_rate",
+                    if settings.tree_prior == TreePrior::Yule {
+                        Json::Number(settings.initial.birth_difference)
+                    } else {
+                        Json::Null
+                    },
                 ),
                 (
                     "initial_relative_death_rate",
-                    Json::Number(settings.initial.relative_death),
+                    if settings.tree_prior == TreePrior::Yule {
+                        Json::Null
+                    } else {
+                        Json::Number(settings.initial.relative_death)
+                    },
                 ),
                 (
                     "initial_tree",
@@ -1241,7 +1415,12 @@ fn run_chain(
 
 fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    let result = if arguments.first().is_some_and(|a| a == "benchmark") {
+    let result = if arguments
+        .first()
+        .is_some_and(|a| a == "assess" || a == "export-run")
+    {
+        assessment::run(&arguments[1..], arguments[0] == "export-run").map(|_| true)
+    } else if arguments.first().is_some_and(|a| a == "benchmark") {
         benchmark::run(&arguments[1..])
     } else if arguments.first().is_some_and(|a| a == "predict") {
         predict::run(&arguments[1..]).map(|_| true)
@@ -1253,6 +1432,8 @@ fn main() {
         inspect_tree::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "summarize") {
         summarize::run(&arguments[1..]).map(|_| true)
+    } else if arguments.first().is_some_and(|a| a == "combine") {
+        combine::run(&arguments[1..]).map(|_| true)
     } else if arguments.first().is_some_and(|a| a == "inspect") {
         inspect::run(&arguments[1..]).map(|_| true)
     } else {
