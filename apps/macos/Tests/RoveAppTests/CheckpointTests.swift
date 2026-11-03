@@ -41,6 +41,13 @@ struct CheckpointTests {
       let continued = await RunProcess().execute(resumed) { _ in }
       #expect(continued.status == .completed, "\(String(describing: continued))")
       #expect(HistoryEntry.read(directory).status == .completed)
+      let review = try await AssessmentRequest(
+        entry: HistoryEntry.read(directory), executable: engine,
+        output: parent.appendingPathComponent("review-\(chains)"), options: AssessmentOptions(),
+        export: false
+      )
+      .execute(with: EngineTool())
+      #expect(review.sections.first(where: { $0.id == "completion" })?.status == "passed")
       let fullDirectory = parent.appendingPathComponent("full-\(chains)")
       let full = RunRequest(id: UUID(), executable: engine, directory: fullDirectory, draft: draft)
       let complete = await RunProcess().execute(full) { _ in }

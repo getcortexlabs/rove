@@ -1,3 +1,4 @@
+mod assessment;
 mod benchmark;
 mod checkpoint;
 mod compare;
@@ -51,6 +52,9 @@ const USAGE: &str =
                      [--expect-input-sha256 <hash>]
        rove benchmark [--cancel-on-stdin-close]
        rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
+       rove assess <run-directory> --output <new-directory> [--burnin-percent <0..99>]
+       rove export-run <run-directory> --output <new-directory> [--burnin-percent <0..99>]
+                       [--include-matrix <matrix.nex>] [--cancel-on-stdin-close]
        rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared|labels]
        rove inspect-tree <summary-directory>
        rove diagnose <trace.log> --burnin-percent <0..99> [--output <new-directory>]
@@ -1241,7 +1245,12 @@ fn run_chain(
 
 fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    let result = if arguments.first().is_some_and(|a| a == "benchmark") {
+    let result = if arguments
+        .first()
+        .is_some_and(|a| a == "assess" || a == "export-run")
+    {
+        assessment::run(&arguments[1..], arguments[0] == "export-run").map(|_| true)
+    } else if arguments.first().is_some_and(|a| a == "benchmark") {
         benchmark::run(&arguments[1..])
     } else if arguments.first().is_some_and(|a| a == "predict") {
         predict::run(&arguments[1..]).map(|_| true)

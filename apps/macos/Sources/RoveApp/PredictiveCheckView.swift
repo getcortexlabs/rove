@@ -201,6 +201,7 @@ struct PredictiveReportView: View {
         }
         Button(strings("Open folder")) { NSWorkspace.shared.open(prediction.directory) }
       }.buttonStyle(LabButtonStyle(compact: true))
+      PredictiveDistributionView(prediction: prediction, strings: strings)
     }
   }
 

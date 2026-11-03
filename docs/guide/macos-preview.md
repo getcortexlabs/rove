@@ -470,3 +470,24 @@ The rooting panel draws the actual constrained split: the selected terminal on o
 Expand **Clock sigma prior** to see the Gamma shape/scale density update as Alpha and Beta change. A dashed line marks the prior expectation; the panel also shows its standard deviation. The plotted range is a display window, not a credible interval. For shape below one, the density diverges at zero and the plotted curve starts above zero. Extreme numerical scales may have no graphical preview; this does not change the engine's prior.
 
 The run-time estimate predicts the requested step limit from recent active engine time. It does not predict when convergence will be established. Character-selection and fossil-dating controls explain their assumptions alongside their validation messages; these explanations do not establish that a model fits a particular study.
+
+## Evidence review and reproducibility packages
+
+In **History → Evidence review**, choose the burn-in percentage and refresh the review. The saved `assessments/review-…/assessment.json` is a dated snapshot with source SHA-256 fingerprints, the original run records, within-chain diagnostics, a fresh chain comparison and matching tree/predictive report paths. Refresh after generating new reports. The burn-in choice and matrix-inclusion option are saved locally beside the run.
+
+Completion, scalar sampling, independent-chain agreement, trees and predictive evidence have separate statuses. Scalar criteria are at least 1,000 retained draws and ESS 200 per chain without lag truncation. Between-chain criteria additionally require distinct seeds, matching input/model and rank-normalized split R-hat ≤ 1.01. Only independently verified model-fixed parameters are excluded. A single chain has no between-chain assessment. These are diagnostic reference criteria, not proof of convergence or the run's configurable stopping thresholds. Tree support and predictive tail fractions require interpretation; missing or inconsistent evidence stays visible. Prior-only runs describe prior exploration, not posterior adequacy.
+
+**Export reproducibility package…** creates a new local directory outside the run. `manifest.json` records the size and SHA-256 of each included file. `assessment.json` holds a fresh review; `run/` contains known Rove records, samples, checkpoints and derived-result folders. The original matrix is excluded unless **Include the original matrix in the export** is selected; inclusion requires its recorded fingerprint. Changed or unavailable originals appear in the review. Unknown neighboring files, previous assessments and external sources referenced by comparisons are not copied. Export preserves recorded paths and taxon names, refuses symbolic links and existing destinations, checks for changing source files and leaves originals untouched. It does not include the executable: exact resumption requires a valid checkpoint and the original executable/input/model identity; review paths before reusing the setup.
+
+The same operations are available in the engine:
+
+```sh
+rove assess run-folder --output new-review-folder --burnin-percent 10
+rove export-run run-folder --output new-package-folder --burnin-percent 10
+# Explicitly include a matching original matrix:
+rove export-run run-folder --output another-package --include-matrix matrix.nex
+```
+
+The source may be an app run folder or a CLI output folder. Incomplete runs can be reviewed and archived; their status is preserved. Malformed source records or unsafe file layouts are refused. Packages are directories, not uploaded archives.
+
+Saved posterior predictive checks also show a histogram of **simulated − observed** paired statistics. Each pair uses the same posterior tree; the observed parsimony statistic can therefore differ between pairs. Zero marks equality. The plot verifies replicate counts, ties and tails against `predictive.json`, reports undefined pairs and becomes unavailable if records disagree. It does not assess convergence or turn a tail fraction into an automatic adequacy decision.

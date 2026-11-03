@@ -486,3 +486,24 @@ O painel de enraizamento desenha a divisão imposta: o terminal escolhido de um 
 Abra **Prior do sigma do relógio** para ver a densidade gamma mudar com Alpha e Beta, na parametrização forma/escala. Uma linha tracejada marca a esperança do prior; o painel também mostra o desvio padrão. O trecho desenhado não é um intervalo de credibilidade. Com forma menor que um, a densidade diverge em zero e a curva começa acima de zero. Escalas numéricas extremas podem não ter prévia gráfica; isso não muda o prior do motor.
 
 A previsão de duração estima o limite de passos solicitado usando o tempo ativo recente do motor. Ela não prevê quando a convergência será estabelecida. As opções de seleção de caracteres e datação explicam suas hipóteses junto das mensagens de validação; essas explicações não demonstram adequação a um estudo específico.
+
+## Revisão das evidências e pacotes de reprodução
+
+Em **Histórico → Revisão das evidências**, escolha o burn-in e atualize a revisão. O arquivo `assessments/review-…/assessment.json` registra uma fotografia datada com identificadores SHA-256 das fontes, registros originais, diagnósticos por cadeia, uma comparação nova entre cadeias e caminhos dos relatórios de árvores e preditivos correspondentes. Atualize após gerar novos relatórios. O burn-in e a opção de incluir a matriz ficam salvos localmente junto à execução.
+
+Conclusão, amostragem dos parâmetros, concordância entre cadeias, árvores e evidências preditivas têm estados separados. Os critérios para parâmetros são pelo menos 1.000 amostras retidas e ESS de 200 por cadeia, sem truncamento de defasagens. A comparação entre cadeias exige também sementes distintas, entrada/modelo correspondentes e R-hat dividido e normalizado por postos ≤ 1,01. Somente parâmetros comprovadamente fixos pelo modelo são excluídos. Uma cadeia única não permite avaliar concordância entre cadeias. Esses critérios de diagnóstico não comprovam convergência nem substituem os limites configuráveis de parada da execução. Suporte de árvores e frações de cauda preditivas exigem interpretação; evidências ausentes ou inconsistentes ficam visíveis. Execuções apenas do prior descrevem a exploração do prior, não a adequação posterior.
+
+**Exportar pacote de reprodução…** cria uma pasta local nova fora da execução. `manifest.json` registra tamanho e SHA-256 de cada arquivo. `assessment.json` contém uma revisão nova; `run/` contém registros conhecidos do Rove, amostras, checkpoints e pastas de resultados derivados. A matriz original só é incluída com a opção **Incluir a matriz original na exportação**, mediante confirmação do identificador registrado. A revisão indica originais alterados ou indisponíveis. Arquivos vizinhos desconhecidos, revisões anteriores e fontes externas citadas em comparações não são copiados. A exportação preserva caminhos registrados e nomes de táxons, recusa links simbólicos e destinos existentes, verifica alterações das fontes e mantém os originais intactos. O executável não é incluído: a retomada exata exige checkpoint válido e a identidade original do executável, entrada e modelo; revise os caminhos antes de reutilizar a configuração.
+
+As mesmas operações estão disponíveis no motor:
+
+```sh
+rove assess run-folder --output new-review-folder --burnin-percent 10
+rove export-run run-folder --output new-package-folder --burnin-percent 10
+# Incluir explicitamente uma matriz original correspondente:
+rove export-run run-folder --output another-package --include-matrix matrix.nex
+```
+
+A origem pode ser uma pasta de execução do app ou da CLI. Execuções incompletas podem ser revisadas e arquivadas, preservando seu estado. Registros de origem inválidos ou estruturas de arquivos inseguras são recusados. Os pacotes são pastas locais, sem envio para a internet.
+
+As verificações preditivas salvas também mostram um histograma de estatísticas pareadas **simulado − observado**. Cada par usa a mesma árvore posterior; a estatística de parcimônia observada pode variar entre pares. Zero indica igualdade. O gráfico confere contagens, empates e caudas com `predictive.json`, informa pares indefinidos e fica indisponível quando os registros divergem. Não avalia convergência nem transforma uma fração de cauda em decisão automática de adequação.

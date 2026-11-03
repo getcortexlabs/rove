@@ -356,6 +356,9 @@ private struct HistoryDetail: View {
           openWindow(id: "trace-diagnostics")
         }.buttonStyle(LabButtonStyle(compact: true))
       }
+      if entry.draft != nil && entry.status != .modelSetup {
+        RunAssessmentView(workspace: workspace, entry: entry)
+      }
       if let draft = entry.draft, draft.settings.chains > 1, entry.status != .modelSetup {
         ChainResultsView(
           workspace: workspace, directory: entry.directory,
