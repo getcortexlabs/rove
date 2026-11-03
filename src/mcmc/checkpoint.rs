@@ -303,6 +303,7 @@ mod tests {
                         (Move::NodeTimeRates, 10.0),
                         (Move::RootTimeRates, 10.0),
                         (Move::ClockSigmaRates, 10.0),
+                        (Move::NarrowExchangeRates, 10.0),
                     ]);
                 }
                 let mut chain = Sampler::new(&patterns, &settings, 42).unwrap();

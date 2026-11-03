@@ -18,7 +18,10 @@ struct AdvancedOptionsTests {
     let matrix = URL(fileURLWithPath: "/tmp/m.nex")
     let output = URL(fileURLWithPath: "/tmp/out")
     let plain = try settings.arguments(matrix: matrix, output: output)
-    for flag in ["--sample-from-prior", "--no-tuning", "--weight", "--tuning", "--min-ess", "--checkpoint-every"] {
+    for flag in [
+      "--sample-from-prior", "--no-tuning", "--weight", "--tuning", "--min-ess",
+      "--checkpoint-every",
+    ] {
       #expect(!plain.contains(flag))
     }
     #expect(!settings.usesAdvancedOptions)
@@ -39,7 +42,9 @@ struct AdvancedOptionsTests {
       "--chains", "2", "--stop-when-converged", "--min-ess", "300.0", "--max-rhat", "1.02",
       "--check-every", "5000", "--checkpoint-every", "20000", "--sample-from-prior",
     ]
-    let schedule = ["--no-tuning", "--weight", "gamma_shape_scale=3.0", "--tuning", "subtree_slide=0.00076"]
+    let schedule = [
+      "--no-tuning", "--weight", "gamma_shape_scale=3.0", "--tuning", "subtree_slide=0.00076",
+    ]
     #expect(arguments.indices.contains { arguments[$0...].starts(with: sampling) })
     #expect(arguments.suffix(schedule.count).elementsEqual(schedule))
     #expect(try settings.modelArguments().suffix(schedule.count).elementsEqual(schedule))
@@ -63,7 +68,9 @@ struct AdvancedOptionsTests {
     #expect(settings.validationError != nil)
     settings.weights = [MoveOverride(move: "node_height", value: -1)]
     #expect(settings.validationError != nil)
-    settings.weights = [MoveOverride(move: "node_height", value: 2), MoveOverride(move: "node_height", value: 3)]
+    settings.weights = [
+      MoveOverride(move: "node_height", value: 2), MoveOverride(move: "node_height", value: 3),
+    ]
     #expect(settings.validationError != nil)
     settings.weights = ProposalSchedule.presets[1].weights
     #expect(settings.validationError == nil)
@@ -82,7 +89,7 @@ struct AdvancedOptionsTests {
     #expect(settings.validationError != nil)
     settings.checkpointEvery = 3_000
     #expect(settings.validationError == nil)
-    #expect(ProposalSchedule.moves.count == 22 && Set(ProposalSchedule.moves).count == 22)
+    #expect(ProposalSchedule.moves.count == 23 && Set(ProposalSchedule.moves).count == 23)
     #expect(ProposalSchedule.tunable.isSubset(of: ProposalSchedule.moves))
   }
 
@@ -96,6 +103,7 @@ struct AdvancedOptionsTests {
         dating: dating)
     }
     #expect(issue("birth_difference_scale") != nil && issue("relative_death_scale") != nil)
+    #expect(issue("narrow_exchange_rates") != nil)
     #expect(issue("clock_rate_scale") != nil)
     #expect(issue("tip_age") == nil)
     dating.clock = .estimated
@@ -107,6 +115,48 @@ struct AdvancedOptionsTests {
     #expect(issue("fbd_rho_logit") == nil)
     dating.enabled = false
     #expect(issue("birth_difference_scale") == nil && issue("fbd_birth_scale") != nil)
+  }
+
+  @Test @MainActor func jointExchangePersistsRunsAndResumesFromHistory() async throws {
+    let parent = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "rove-joint-exchange-\(UUID())")
+    try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: parent) }
+    let matrix = root.appendingPathComponent("fixtures/reference/20x50/matrix.nex")
+    let report = try await MatrixInspector.inspect(matrix, gapsAsMissing: false, executable: engine)
+    var settings = AnalysisSettings()
+    settings.steps = 2_000
+    settings.sampleEvery = 10
+    settings.weights = [MoveOverride(move: "narrow_exchange_rates", value: 10)]
+    #expect(settings.validationError == nil)
+    #expect(try settings.modelArguments().contains("narrow_exchange_rates=10.0"))
+    settings.clock = "strict"
+    #expect(settings.validationError != nil)
+    settings.clock = "reference"
+    let draft = AnalysisDraft(matrix: matrix, report: report, settings: settings, outgroup: "T20")
+    #expect(draft.formatVersion == 9)
+    let file = parent.appendingPathComponent("setup.rove.json")
+    try draft.write(to: file)
+    #expect(try AnalysisDraft.read(file).settings == settings)
+    let directory = parent.appendingPathComponent("run")
+    let request = RunRequest(id: UUID(), executable: engine, directory: directory, draft: draft)
+    let worker = RunProcess()
+    let paused = await worker.execute(request) { event in
+      if event.event == "started" { worker.pause() }
+    }
+    #expect(paused.status == .paused)
+    #expect(HistoryEntry.read(directory).checkpoint != nil)
+    let resumed = RunRequest(
+      id: UUID(), executable: engine, directory: directory, draft: draft, resume: true)
+    #expect(await RunProcess().execute(resumed) { _ in }.status == .completed)
+    let record = try EngineRecord.verify(directory: directory, draft: draft)
+    #expect(record.moves?.first(where: { $0.name == "narrow_exchange_rates" })?.weight == 10)
+    #expect(HistoryEntry.read(directory).draft?.settings.weights == settings.weights)
+    var json = try #require(
+      JSONSerialization.jsonObject(with: Data(contentsOf: file)) as? [String: Any])
+    json["formatVersion"] = 8
+    try JSONSerialization.data(withJSONObject: json).write(to: file)
+    #expect(throws: (any Error).self) { try AnalysisDraft.read(file) }
   }
 
   @Test @MainActor func groupRunsVerifyWithScheduleOverrides() async throws {
@@ -135,7 +185,10 @@ struct AdvancedOptionsTests {
     #expect(chain.moves?.first { $0.name == "gamma_shape_scale" }?.weight == 3)
     var changed = settings
     changed.tuningValues = [MoveOverride(move: "tree_scale", value: 0.5)]
-    #expect(!chain.matches(AnalysisDraft(matrix: matrix, report: report, settings: changed), seed: chain.settings.seed))
+    #expect(
+      !chain.matches(
+        AnalysisDraft(matrix: matrix, report: report, settings: changed), seed: chain.settings.seed)
+    )
     #expect(HistoryEntry.read(directory).status == .completed)
   }
 
@@ -198,10 +251,16 @@ struct AdvancedOptionsTests {
     #expect(record.moves?.first { $0.name == "tree_scale" }?.initialTuning == 0.24)
     var changed = settings
     changed.weights = [MoveOverride(move: "gamma_shape_scale", value: 0.1)]
-    #expect(!record.matches(AnalysisDraft(matrix: matrix, report: report, settings: changed, monophyly: request.draft.monophyly)))
+    #expect(
+      !record.matches(
+        AnalysisDraft(
+          matrix: matrix, report: report, settings: changed, monophyly: request.draft.monophyly)))
     changed = settings
     changed.sampleFromPrior = false
-    #expect(!record.matches(AnalysisDraft(matrix: matrix, report: report, settings: changed, monophyly: request.draft.monophyly)))
+    #expect(
+      !record.matches(
+        AnalysisDraft(
+          matrix: matrix, report: report, settings: changed, monophyly: request.draft.monophyly)))
     #expect(entry.draft?.settings.advancedRows(strings: AppStrings(language: .english)).count == 5)
 
     let summary = TreeSummaryModel(directory: directory, executable: engine)

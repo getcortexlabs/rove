@@ -596,6 +596,9 @@ impl Sampler {
             return Err(Error::Rates(rates::Error::BranchRates));
         }
         for &(kind, weight) in &settings.weights {
+            if weight > 0.0 && kind == Move::NarrowExchangeRates && settings.dating.is_some() {
+                return Err(Error::Dating("narrow_exchange_rates is experimental and currently restricted to undated trees".into()));
+            }
             if weight > 0.0
                 && kind.changes_fbd()
                 && settings
@@ -633,6 +636,7 @@ impl Sampler {
                             | Move::NodeTimeRates
                             | Move::RootTimeRates
                             | Move::ClockSigmaRates
+                            | Move::NarrowExchangeRates
                     ) && rates.clock.is_none()))
             {
                 return Err(Error::RateMove(kind));

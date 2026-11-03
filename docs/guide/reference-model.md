@@ -172,3 +172,20 @@ preserve the chosen prior; chain comparisons require matching priors.
 `scale`, alongside the readable description. Legacy records use 5 and 0.2.
 Custom app setups use format 6 so older apps cannot silently ignore the choice.
 See [Tree priors](./tree-priors) for the separate decision about tree models.
+
+## Optional joint topology/rate exchange
+
+`--weight narrow_exchange_rates=10` enables an experimental proposal alongside the existing moves. It has zero weight by default and no tuning parameter. In the native app, use **Advanced sampling → Try joint topology/rate exchange**; its initial weight is 10 and remains editable. The choice is preserved in setup format 9, review, history, run records and checkpoints. Only an undated relaxed clock is currently supported; dated and strict-clock use is rejected before sampling. This is one independently implemented proposal, not the full BEAST ORC suite. No morphology speed or mixing benefit has been established; comparative measurements in [#97](https://github.com/getcortexlabs/rove/issues/97) remain deferred.
+
+Let `G` be an internal node with an internal child. Choose `G` uniformly from the `C(T)` such nodes, take its older child `P` and younger child `U`, and choose either child `X` of `P` with probability 1/2. Exchange `X` and `U`, keeping heights and the root unchanged. Preserve the incoming distance of each reattached subtree with:
+
+```text
+rX' = rX (hP − hX) / (hG − hX)
+rU' = rU (hG − hU) / (hP − hU)
+J   = [(hP − hX) / (hG − hX)] [(hG − hU) / (hP − hU)]
+log Hastings = log C(T) − log C(T') + log J
+```
+
+Positive finite durations/rates and `hP > hU` are required. Boundary/overflow proposals fail before mutation. The reverse chooses the same `G` and `P` and exchanges `U` back with `X`; its probability is `1 / (2 C(T'))`, compared with `1 / (2 C(T))` forward. The continuous map leaves heights unchanged, so the Jacobian is the product of the two rate scale factors. Rates remain attached to node-indexed incoming branches, including the special slot when the root is not the last node. Constraints and likelihood/prior rejection use the normal exact restoration path. Preserving the reattached distances does not preserve the likelihood: the topology changes.
+
+Tests cover the inverse, full numerical Jacobian, enumerated forward/reverse choices, known uniform-topology/independent-lognormal targets, constraint rejection, fresh versus cached likelihood, different root indices, exact checkpoint replay, native cancellation/resumption and identical portable/ARM samples. These correctness checks do not replace posterior and performance studies. Related joint-proposal methods are described by [Douglas, Zhang and Bouckaert (2021)](https://doi.org/10.1371/journal.pcbi.1008322).
