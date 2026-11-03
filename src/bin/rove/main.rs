@@ -28,7 +28,7 @@ use rove::mcmc::output::{TraceWriter, TreeWriter, is_plain_label};
 use rove::mcmc::{Conditioning, Move, Sampler, Settings};
 use rove::rates::SigmaPrior;
 use rove::speciation::TreePrior;
-use rove::{Backend, nexus};
+use rove::{Backend, alignment};
 
 const USAGE: &str =
     "usage: rove sample <matrix.nex> --output <directory> --seed <n> --steps <n> --sample-every <n>
@@ -102,6 +102,8 @@ struct Options {
     gaps: GapTreatment,
     partitioning: Partitioning,
     conditioning: Conditioning,
+    conditioning_explicit: bool,
+    partitioning_explicit: bool,
     reference_model: bool,
     clock_sigma_prior: SigmaPrior,
     tree_prior: TreePrior,
@@ -386,6 +388,8 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         gaps,
         partitioning,
         conditioning,
+        conditioning_explicit: seen.contains("--conditioning"),
+        partitioning_explicit: seen.contains("--partitioning"),
         reference_model,
         clock_sigma_prior,
         tree_prior,
@@ -626,7 +630,24 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
         return Err("the matrix fingerprint changed; inspect and review the input again".into());
     }
     options.expected_input = Some(input.clone());
-    let data = nexus::parse(std::str::from_utf8(&bytes)?)?;
+    let data = alignment::parse(std::str::from_utf8(&bytes)?)?;
+    if data.data_type() == rove::data::DataType::Dna {
+        if options.conditioning_explicit && options.conditioning != Conditioning::None {
+            return Err(
+                "DNA JC69 uses all aligned sites; Mkv/Mkparsinf conditioning is not supported"
+                    .into(),
+            );
+        }
+        if options.partitioning_explicit
+            && !matches!(options.partitioning, partitions::Partitioning::Declared)
+        {
+            return Err(
+                "DNA JC69 fixes all four A/C/G/T states; use --partitioning declared".into(),
+            );
+        }
+        options.conditioning = Conditioning::None;
+        options.partitioning = partitions::Partitioning::Declared;
+    }
     let patterns = options.partitioning.compress(&data, options.gaps)?;
     let taxa = data.taxa();
     if let Some(name) = taxa.iter().find(|name| !is_plain_label(name)) {
@@ -643,7 +664,8 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
             let wanted = name.replace('_', " ");
             let tip = taxa
                 .iter()
-                .position(|taxon| *taxon == wanted)
+                .position(|taxon| taxon == name)
+                .or_else(|| taxa.iter().position(|taxon| *taxon == wanted))
                 .ok_or_else(|| format!("--monophyly names unknown taxon {name:?}"))?;
             tips.push(tip);
         }
@@ -717,9 +739,13 @@ fn model_json(
     patterns: &[rove::data::Patterns],
     taxa: &[String],
 ) -> Json {
+    let dna = patterns
+        .iter()
+        .all(|p| p.data_type() == rove::data::DataType::Dna);
     let conditioning = match settings.conditioning {
         Conditioning::Variable => "variable characters (Mkv)",
         Conditioning::Informative => "parsimony-informative characters (Mkparsinf)",
+        Conditioning::None if dna => "none (JC69)",
         Conditioning::None => "none (Mk)",
     };
     let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
@@ -728,22 +754,26 @@ fn model_json(
         ("partitions", partitions::describe(patterns)),
         (
             "substitution",
-            Json::text(
-                if patterns
-                    .iter()
-                    .any(|p| p.ordering() == rove::model::CharacterOrdering::Ordered)
-                {
-                    if options.reference_model {
-                        "Ordered/unordered models per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
-                    } else {
-                        "Ordered/unordered models per partition, equal frequencies, one rate category"
-                    }
-                } else if options.reference_model {
-                    "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+            Json::text(if dna {
+                if options.reference_model {
+                    "JC69 DNA, fixed A/C/G/T frequencies 1/4, four shared midpoint gamma categories normalized to mean one"
                 } else {
-                    "Mk per partition, equal frequencies, one rate category"
-                },
-            ),
+                    "JC69 DNA, fixed A/C/G/T frequencies 1/4, one rate category"
+                }
+            } else if patterns
+                .iter()
+                .any(|p| p.ordering() == rove::model::CharacterOrdering::Ordered)
+            {
+                if options.reference_model {
+                    "Ordered/unordered models per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+                } else {
+                    "Ordered/unordered models per partition, equal frequencies, one rate category"
+                }
+            } else if options.reference_model {
+                "Mk per partition, equal frequencies, four shared midpoint gamma categories normalized to mean one"
+            } else {
+                "Mk per partition, equal frequencies, one rate category"
+            }),
         ),
         (
             "preset",
@@ -886,6 +916,12 @@ fn model_json(
             Json::List(settings.monophyly.iter().map(|c| names(c)).collect()),
         ),
     ];
+    if dna {
+        fields.extend([
+            ("data_type", Json::text("dna")),
+            ("substitution_model", Json::text("jc69")),
+        ]);
+    }
     if settings.tree_prior == TreePrior::Yule {
         fields.extend([
             ("tree_prior_kind", Json::text("yule")),

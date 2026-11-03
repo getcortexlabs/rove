@@ -47,7 +47,7 @@ pub(super) fn describe(partitions: &[Patterns]) -> Json {
         partitions
             .iter()
             .map(|p| {
-                Json::Object(vec![
+                let mut fields = vec![
                     ("ordering", Json::text(p.ordering().name())),
                     ("states", Json::Integer(p.symbols().len() as u64)),
                     ("characters", Json::Integer(p.sites().len() as u64)),
@@ -70,7 +70,11 @@ pub(super) fn describe(partitions: &[Patterns]) -> Json {
                                 .collect(),
                         ),
                     ),
-                ])
+                ];
+                if p.data_type() == rove::data::DataType::Dna {
+                    fields.push(("data_type", Json::text("dna")));
+                }
+                Json::Object(fields)
             })
             .collect(),
     )

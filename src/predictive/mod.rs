@@ -40,6 +40,11 @@ impl Design {
         gaps: GapTreatment,
         conditioning: Conditioning,
     ) -> Result<Self> {
+        if matrix.data_type() == crate::data::DataType::Dna && conditioning != Conditioning::None {
+            return Err(Error(
+                "DNA JC69 requires unconditioned aligned sites".into(),
+            ));
+        }
         if matrix.taxa().len() < 2
             || matrix.taxa().len().saturating_mul(matrix.character_count()) > 8_000_000
         {
@@ -101,7 +106,8 @@ impl Design {
     }
 
     pub fn compress(&self, matrix: &Matrix) -> Result<Vec<Patterns>> {
-        if matrix.taxa() != self.original.taxa()
+        if matrix.data_type() != self.original.data_type()
+            || matrix.taxa() != self.original.taxa()
             || matrix.symbols() != self.original.symbols()
             || matrix.ordering() != self.original.ordering()
             || matrix.character_count() != self.original.character_count()
@@ -352,9 +358,14 @@ pub fn to_nexus(matrix: &Matrix) -> String {
         format!("'{}'", s.replace('\'', "''"))
     }
     let mut out = format!(
-        "#NEXUS\nBEGIN DATA;\nDIMENSIONS NTAX={} NCHAR={};\nFORMAT DATATYPE=STANDARD SYMBOLS=\"{}\" MISSING=? GAP=-;\n",
+        "#NEXUS\nBEGIN DATA;\nDIMENSIONS NTAX={} NCHAR={};\nFORMAT DATATYPE={} SYMBOLS=\"{}\" MISSING=? GAP=-;\n",
         matrix.taxa().len(),
         matrix.character_count(),
+        if matrix.data_type() == crate::data::DataType::Dna {
+            "DNA"
+        } else {
+            "STANDARD"
+        },
         matrix.symbols().iter().collect::<String>()
     );
     let mut labels = Vec::new();

@@ -368,10 +368,12 @@ pub(super) fn run(arguments: &[String], export: bool) -> Result<()> {
         let mut omitted_source_matrices = Vec::new();
         for (relative, hash) in &before {
             check(&cancel)?;
-            // Predictive checks retain an exact original in source/matrix.nex.
+            // Predictive checks retain an exact original in source/matrix.*.
             // Matrix consent applies to that copy too, including foreign checks.
             // Include only the explicitly supplied, verified matrix at package root.
-            if relative.file_name().is_some_and(|n| n == "matrix.nex")
+            if relative
+                .file_name()
+                .is_some_and(|n| n == "matrix.nex" || n == "matrix.fasta")
                 && relative
                     .parent()
                     .and_then(Path::file_name)
@@ -393,14 +395,19 @@ pub(super) fn run(arguments: &[String], export: bool) -> Result<()> {
             if report["input"]["sha256"] != hash {
                 return Err("included matrix does not match the run fingerprint".into());
             }
-            let target = output.join("matrix.nex");
+            let raw = fs::read(source)?;
+            let name = if rove::alignment::is_fasta(std::str::from_utf8(&raw)?) {
+                "matrix.fasta"
+            } else {
+                "matrix.nex"
+            };
+            drop(raw);
+            let target = output.join(name);
             fs::copy(source, &target)?;
             if sha256::file(&target)? != hash {
                 return Err("matrix changed while exporting".into());
             }
-            entries.push(
-                json!({"path":"matrix.nex","sha256":hash,"bytes":fs::metadata(target)?.len()}),
-            );
+            entries.push(json!({"path":name,"sha256":hash,"bytes":fs::metadata(target)?.len()}));
         }
         entries.push(json!({"path":"assessment.json","sha256":sha256::file(&output.join("assessment.json"))?,"bytes":fs::metadata(output.join("assessment.json"))?.len()}));
         write(

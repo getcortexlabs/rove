@@ -235,7 +235,13 @@ pub(super) fn run(args: &[String]) -> Result<()> {
     if record["input"]["sha256"] != sha256::hex(&input) {
         return Err("matrix fingerprint differs from the fitted input".into());
     }
-    let data = rove::nexus::parse(std::str::from_utf8(&input)?)?;
+    let data = rove::alignment::parse(std::str::from_utf8(&input)?)?;
+    let recorded_type = record["model"]["data_type"].as_str().unwrap_or("standard");
+    if recorded_type != data.data_type().name()
+        || (recorded_type == "dna" && record["model"]["substitution_model"] != "jc69")
+    {
+        return Err("recorded data type or substitution model differs from the input".into());
+    }
     let gaps = match record["input"]["gaps"].as_str() {
         Some("reject") => GapTreatment::Reject,
         Some("missing") => GapTreatment::Missing,
@@ -253,7 +259,7 @@ pub(super) fn run(args: &[String]) -> Result<()> {
         return Err("fitted partitions disagree with the input".into());
     }
     let conditioning = match record["model"]["conditioning"].as_str() {
-        Some("none (Mk)") => Conditioning::None,
+        Some("none (Mk)" | "none (JC69)") => Conditioning::None,
         Some("variable characters (Mkv)") => Conditioning::Variable,
         Some("parsimony-informative characters (Mkparsinf)") => Conditioning::Informative,
         _ => return Err("unknown ascertainment conditioning".into()),
@@ -334,7 +340,12 @@ pub(super) fn run(args: &[String]) -> Result<()> {
     fs::create_dir(output.join("source"))?;
     fs::create_dir(output.join("matrices"))?;
     fs::write(output.join("source/run.json"), &record_bytes)?;
-    fs::write(output.join("source/matrix.nex"), &input)?;
+    let matrix_copy = if rove::alignment::is_fasta(std::str::from_utf8(&input)?) {
+        "matrix.fasta"
+    } else {
+        "matrix.nex"
+    };
+    fs::write(output.join("source").join(matrix_copy), &input)?;
     let trace_hash = copy(
         &source.join("trace.log"),
         &output.join("source/trace.log"),

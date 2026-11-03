@@ -5,7 +5,6 @@ use std::io::Write;
 use rove::ascertainment::{VariableCharacters, validate_informative};
 use rove::data::{Cell, GapTreatment, Matrix};
 use rove::mcmc::{Conditioning, Sampler, Settings};
-use rove::nexus;
 
 use super::partitions::{self, Partitioning};
 use super::{Json, is_plain_label, sha256};
@@ -127,7 +126,25 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
             Json::Integer(data.character_count() as u64),
         ),
         ("pattern_count", patterns),
-        ("partitioning", Json::text(partitioning.name())),
+        ("data_type", Json::text(data.data_type().name())),
+        (
+            "input_format",
+            Json::text(
+                if rove::alignment::is_fasta(&String::from_utf8_lossy(bytes)) {
+                    "fasta"
+                } else {
+                    "nexus"
+                },
+            ),
+        ),
+        (
+            "partitioning",
+            Json::text(if data.data_type() == rove::data::DataType::Dna {
+                "declared"
+            } else {
+                partitioning.name()
+            }),
+        ),
         ("partitions", description),
         ("missing_count", Json::Integer(missing)),
         ("gap_count", Json::Integer(gap_count)),
@@ -221,7 +238,7 @@ pub(super) fn run(arguments: &[String]) -> Result<(), Box<dyn Error>> {
         }
     }
     let bytes = fs::read(&arguments[0])?;
-    let data = nexus::parse(std::str::from_utf8(&bytes)?)?;
+    let data = rove::alignment::parse(std::str::from_utf8(&bytes)?)?;
     let mut text = String::new();
     report(&data, &bytes, gaps, partitioning).write(&mut text, 0);
     writeln!(std::io::stdout().lock(), "{text}")?;

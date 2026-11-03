@@ -55,7 +55,7 @@
     },
     "--conditioning": {
       "native": "apps/macos/Sources/RoveApp/SetupView.swift",
-      "control": "Clock and character selection"
+      "control": "Morphology character selection; aligned DNA uses all sites under JC69"
     },
     "--dating": {
       "native": "apps/macos/Sources/RoveApp/DatingView.swift",
@@ -115,7 +115,7 @@
     },
     "--partitioning": {
       "native": "apps/macos/Sources/RoveApp/MatrixView.swift",
-      "control": "Matrix import: observed states, declared alphabet or explicit complete state labels"
+      "control": "Morphological alphabets; DNA import fixes the complete A/C/G/T alphabet"
     },
     "--powers": {
       "native": "apps/macos/Sources/RoveApp/MarginalLikelihoodView.swift",

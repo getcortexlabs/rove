@@ -1,3 +1,4 @@
+pub mod alignment;
 pub mod ascertainment;
 mod checkpoint;
 pub mod data;

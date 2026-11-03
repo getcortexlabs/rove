@@ -128,8 +128,9 @@ final class Workspace {
   func chooseFile() {
     guard !isRunning else { return }
     let panel = NSOpenPanel()
-    panel.title = strings("Choose a morphological matrix")
-    panel.message = strings("Open a NEXUS file. Your data stays on this Mac.")
+    panel.title = strings("Choose a matrix or DNA alignment")
+    panel.message = strings(
+      "Open a NEXUS matrix or aligned DNA in FASTA. Your data stays on this Mac.")
     panel.prompt = strings("Open matrix")
     panel.canChooseDirectories = false
     panel.allowsMultipleSelection = false
@@ -156,11 +157,11 @@ final class Workspace {
       defer { if scoped { url.stopAccessingSecurityScopedResource() } }
       do {
         guard url.isFileURL else {
-          throw ImportError.message("Choose a local NEXUS file from your Mac.")
+          throw ImportError.message("Choose a local NEXUS or aligned FASTA file from your Mac.")
         }
         let values = try url.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey])
         guard values.isRegularFile == true else {
-          throw ImportError.message("Choose a NEXUS file, rather than a folder.")
+          throw ImportError.message("Choose a NEXUS or aligned FASTA file, rather than a folder.")
         }
         // A tree sample is not a matrix: it goes to the summary sheet instead.
         if try await Task.detached { try Self.holdsTrees(url) }.value {
@@ -181,8 +182,16 @@ final class Workspace {
         let imported = try await MatrixInspector.inspect(
           url, gapsAsMissing: gaps, partitioning: partitioning, executable: executable)
         guard importID == id else { return }
+        if preserveSettings && settings.dataType != (imported.dataType ?? "standard") {
+          throw ImportError.message("The saved data type does not match the input.")
+        }
         if !preserveSettings {
           settings = AnalysisSettings()
+          settings.dataType = imported.dataType ?? "standard"
+          if imported.isDNA {
+            settings.conditioning = "none"
+            settings.partitioning = "declared"
+          }
           monophyly = []
           outgroup = nil
         }
@@ -414,6 +423,9 @@ final class Workspace {
           matrix, gapsAsMissing: draft.settings.gapsAsMissing,
           partitioning: draft.settings.partitioning, executable: executable)
         guard imported.inputSha256 == draft.matrixSHA256 else { throw RunFailure.changedInput }
+        guard (imported.dataType ?? "standard") == draft.settings.dataType else {
+          throw ImportError.message("The saved data type does not match the input.")
+        }
         try draft.validateTaxa(imported.allTaxa)
         guard importID == id else { return }
         run = nil

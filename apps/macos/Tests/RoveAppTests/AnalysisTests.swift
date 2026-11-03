@@ -209,7 +209,7 @@ struct AnalysisTests {
     #expect(workspace.report?.inputSha256 == original.inputSha256)
     workspace.load(URL(string: "https://example.invalid/matrix.nex")!)
     try await finishImport(workspace)
-    #expect(workspace.error == "Choose a local NEXUS file from your Mac.")
+    #expect(workspace.error == "Choose a local NEXUS or aligned FASTA file from your Mac.")
     #expect(workspace.report?.inputSha256 == original.inputSha256)
     workspace.load(root.appendingPathComponent("fixtures/validation/missing/matrix.nex"))
     try await finishImport(workspace)

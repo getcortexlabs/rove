@@ -34,6 +34,7 @@ pub enum Error {
     /// A tree needs at least two taxa.
     TooFewTaxa(usize),
     Dating(String),
+    Model(String),
     /// Mk needs at least two states.
     States(usize),
     /// Partitions must be nonempty and contain the same taxa in the same order.
@@ -61,7 +62,7 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Dating(error) => f.write_str(error),
+            Self::Dating(error) | Self::Model(error) => f.write_str(error),
             Self::Rates(error) => error.fmt(f),
             Self::RateMove(kind) => write!(f, "{} needs its rate model to be enabled", kind.name()),
             Self::Power(power) => {
@@ -578,6 +579,15 @@ impl Sampler {
         if settings.tree_prior == TreePrior::Yule && settings.dating.is_some() {
             return Err(Error::Dating(
                 "Yule requires contemporaneous tips without fossil dating or calibrations".into(),
+            ));
+        }
+        if patterns
+            .iter()
+            .any(|p| p.data_type() == crate::data::DataType::Dna)
+            && settings.conditioning != Conditioning::None
+        {
+            return Err(Error::Model(
+                "DNA JC69 requires unconditioned aligned sites".into(),
             ));
         }
         if patterns.is_empty() || patterns.iter().any(|p| p.tip_partials().len() != tips) {

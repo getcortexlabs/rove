@@ -4,6 +4,8 @@ description: "独立运行所提供 XML 的概率模型：gamma 类别、显式�
 
 # 参考模型
 
+也支持通过 [JC69](./dna) 分析 NEXUS 和 FASTA 中已比对的 DNA
+
 `rove sample --model reference` 无需 BEAST 即可运行所提供 20 × 50 XML 的概率模型。
 它使用相同的二态 Mk、默认的 Mkv 校正、生灭先验和参数约定。默认选项
 `--model strict` 保留先前的单速率类别、严格时钟配置。两个配置都可用
