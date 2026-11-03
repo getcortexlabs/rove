@@ -29,6 +29,8 @@ struct FeedbackPreviewTests {
     workspace.settings.apply(SamplingPreset(millions: 30))
     workspace.settings.checkpointEvery = 50_000
     workspace.settings.chains = 2
+    workspace.settings.clockSigmaShape = "2.5"
+    workspace.settings.clockSigmaScale = "0.4"
     let run = AnalysisRun(
       request: RunRequest(
         id: UUID(), executable: engine, directory: output,
@@ -57,12 +59,31 @@ struct FeedbackPreviewTests {
           .foregroundStyle(Lab.ink), name: "run", width: 820, height: 1300)
       try await render(
         SetupView(workspace: workspace).padding(28).background(Lab.background).foregroundStyle(
-          Lab.ink), name: "setup", width: 820, height: 2350)
+          Lab.ink), name: "setup", width: 820, height: 2850)
+      try await render(
+        ClockSigmaPriorChart(prior: .reference, strings: strings).padding(24)
+          .background(Lab.background).foregroundStyle(Lab.ink),
+        name: "sigma-prior", width: 620, height: 280)
+      try await render(
+        RootingSection(workspace: workspace).padding(24).background(Lab.background)
+          .foregroundStyle(Lab.ink), name: "rooting-compact", width: 620, height: 540)
+      let exporter = root.appendingPathComponent("fixtures/synthetic/exporter_labels.nex")
+      let exporterReport = try await MatrixInspector.inspect(
+        exporter, gapsAsMissing: false, partitioning: "labels", executable: engine)
+      let imported = Workspace(executable: engine, preferences: preferences)
+      imported.report = exporterReport
+      imported.file = exporter
+      imported.settings.partitioning = "labels"
+      try await render(
+        MatrixView(workspace: imported, report: exporterReport).padding(24)
+          .background(Lab.background).foregroundStyle(Lab.ink),
+        name: "observation-review", width: 820, height: 1250)
 
       @MainActor func render<V: View>(_ content: V, name: String, width: CGFloat, height: CGFloat)
         async throws
       {
-        let view = NSHostingView(rootView: content)
+        let view = NSHostingView(
+          rootView: content.frame(width: width, height: height, alignment: .topLeading))
         let window = NSWindow(
           contentRect: NSRect(x: 0, y: 0, width: width, height: height),
           styleMask: [.borderless], backing: .buffered, defer: false)

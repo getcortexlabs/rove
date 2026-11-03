@@ -462,3 +462,11 @@ The exploration plan offers 1, 10, 20, 30, 50 and 100 million steps, paired with
 During a run, **Estimated time to step limit** and **Time per million steps** use recent step and engine active-time differences. Rove first collects at least three intervals spanning ten seconds, then uses up to eight recent intervals. Each chain is measured separately; the group estimate is the longest remaining time. Pausing and resuming starts a fresh measurement without counting paused time. Estimates disappear when stopping or finished. CPU load can change the pace. This predicts the requested step limit, not convergence; automatic stopping may finish earlier.
 
 **What are these files?** in Results and History opens an offline explanation. See the [run-folder guide](./run-files) for the file map and a worked path from trace to annotated tree.
+
+### Visual model guidance
+
+The rooting panel draws the actual constrained split: the selected terminal on one side and a collapsed group containing every other terminal on the other. It does not estimate branch lengths, internal relationships or ancestral states. Onboarding uses the same rooting terminology.
+
+Expand **Clock sigma prior** to see the Gamma shape/scale density update as Alpha and Beta change. A dashed line marks the prior expectation; the panel also shows its standard deviation. The plotted range is a display window, not a credible interval. For shape below one, the density diverges at zero and the plotted curve starts above zero. Extreme numerical scales may have no graphical preview; this does not change the engine's prior.
+
+The run-time estimate predicts the requested step limit from recent active engine time. It does not predict when convergence will be established. Character-selection and fossil-dating controls explain their assumptions alongside their validation messages; these explanations do not establish that a model fits a particular study.

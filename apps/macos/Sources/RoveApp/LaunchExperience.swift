@@ -99,7 +99,7 @@ struct RoveRelease: Identifiable {
           id: "morphology", symbol: "square.grid.3x3", title: "Bring all the little differences.",
           summary: "Morphological matrices, with two, three or more states.",
           detail:
-            "Import a NEXUS matrix, review its state partitions and choose the outgroup explicitly. The bundled 20 × 50 example is a good place to start.",
+            "Import a NEXUS matrix, review its state partitions and choose the taxon used for rooting explicitly. The bundled 20 × 50 example is a good place to start.",
           action: "Try the example", destination: .example),
         ReleaseHighlight(
           id: "history", symbol: "clock.arrow.circlepath",

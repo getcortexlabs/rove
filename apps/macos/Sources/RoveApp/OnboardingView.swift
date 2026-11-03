@@ -17,7 +17,7 @@ struct OnboardingView: View {
   private let descriptions = [
     "Rove explores evolutionary relationships from morphological data. A native workspace, a Rust engine, and a curious little companion.",
     "Rows are taxa. Columns are characters. Bring a NEXUS matrix and Rove will help you inspect the states and missing observations before you run anything.",
-    "Review the model and choose your outgroup explicitly. It gives your analysis a rooting constraint; Rove never guesses one for you.",
+    "Review the model and choose a taxon for rooting explicitly. It constrains the root split; Rove never guesses that choice for you.",
     "Follow the run, inspect its traces and explore the trees. History keeps your work together, with checkpoints for picking up a paused analysis.",
   ]
 
@@ -179,7 +179,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 10) {
           Label(strings("For the bundled example"), systemImage: "lightbulb")
             .font(.system(size: 12, weight: .medium)).foregroundStyle(Lab.ice)
-          Text(strings("Choose T20 as the outgroup. Check the remaining settings before starting."))
+          Text(strings("Choose T20 as the taxon used for rooting. Check the remaining settings before starting."))
             .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
         }
       }.padding(22).background(Lab.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 15))

@@ -298,7 +298,7 @@
 "%@ on one side of the root; the other %@ terminals together on the other." = "%@ on one side of the root; the other %@ terminals together on the other.";
 "The outgroup is a terminal, not the ancestor at the root. This choice constrains the ingroup; its support is imposed by the setup." = "The outgroup is a terminal, not the ancestor at the root. This choice constrains the ingroup; its support is imposed by the setup.";
 "No outgroup selected. Any applied groups below still constrain the tree." = "No outgroup selected. Any applied groups below still constrain the tree.";
-"Choose one outgroup from a matrix with at least three terminals." = "Choose one outgroup from a matrix with at least three terminals.";
+"Choose one rooting taxon from a matrix with at least three terminals." = "Choose one rooting taxon from a matrix with at least three terminals.";
 "No groups applied. Root placement is unconstrained by groups." = "No groups applied. Root placement is unconstrained by groups.";
 "Applied groups" = "Applied groups";
 "Support for an imposed group is not independent evidence from the characters." = "Support for an imposed group is not independent evidence from the characters.";
@@ -618,7 +618,7 @@
 "Your research.\nRoom to explore." = "Your research.\nRoom to explore.";
 "Rove explores evolutionary relationships from morphological data. A native workspace, a Rust engine, and a curious little companion." = "Rove explores evolutionary relationships from morphological data. A native workspace, a Rust engine, and a curious little companion.";
 "Rows are taxa. Columns are characters. Bring a NEXUS matrix and Rove will help you inspect the states and missing observations before you run anything." = "Rows are taxa. Columns are characters. Bring a NEXUS matrix and Rove will help you inspect the states and missing observations before you run anything.";
-"Review the model and choose your outgroup explicitly. It gives your analysis a rooting constraint; Rove never guesses one for you." = "Review the model and choose your outgroup explicitly. It gives your analysis a rooting constraint; Rove never guesses one for you.";
+"Review the model and choose a taxon for rooting explicitly. It constrains the root split; Rove never guesses that choice for you." = "Review the model and choose a taxon for rooting explicitly. It constrains the root split; Rove never guesses that choice for you.";
 "Follow the run, inspect its traces and explore the trees. History keeps your work together, with checkpoints for picking up a paused analysis." = "Follow the run, inspect its traces and explore the trees. History keeps your work together, with checkpoints for picking up a paused analysis.";
 "YOUR FIRST FIELD TRIP" = "YOUR FIRST FIELD TRIP";
 "A SMALL INTRODUCTION" = "A SMALL INTRODUCTION";
@@ -637,7 +637,7 @@
 "Illustration of a morphological matrix" = "Illustration of a morphological matrix";
 "? means an unknown observation." = "? means an unknown observation.";
 "For the bundled example" = "For the bundled example";
-"Choose T20 as the outgroup. Check the remaining settings before starting." = "Choose T20 as the outgroup. Check the remaining settings before starting.";
+"Choose T20 as the taxon used for rooting. Check the remaining settings before starting." = "Choose T20 as the taxon used for rooting. Check the remaining settings before starting.";
 "Check the sampling" = "Check the sampling";
 "Useful samples matter more than step counts." = "Useful samples matter more than step counts.";
 "Explore the trees" = "Explore the trees";
@@ -655,7 +655,7 @@
 "A small beginning, with room for big questions. Meet the tools already inside this beta." = "A small beginning, with room for big questions. Meet the tools already inside this beta.";
 "Bring all the little differences." = "Bring all the little differences.";
 "Morphological matrices, with two, three or more states." = "Morphological matrices, with two, three or more states.";
-"Import a NEXUS matrix, review its state partitions and choose the outgroup explicitly. The bundled 20 × 50 example is a good place to start." = "Import a NEXUS matrix, review its state partitions and choose the outgroup explicitly. The bundled 20 × 50 example is a good place to start.";
+"Import a NEXUS matrix, review its state partitions and choose the taxon used for rooting explicitly. The bundled 20 × 50 example is a good place to start." = "Import a NEXUS matrix, review its state partitions and choose the taxon used for rooting explicitly. The bundled 20 × 50 example is a good place to start.";
 "Good work deserves a save point." = "Good work deserves a save point.";
 "Find past runs. Pause a long analysis. Pick up where you left off." = "Find past runs. Pause a long analysis. Pick up where you left off.";
 "History keeps the run configuration and output paths together. Checkpoints preserve the sampler state; resuming requires the same engine and original input." = "History keeps the run configuration and output paths together. Checkpoints preserve the sampler state; resuming requires the same engine and original input.";
@@ -950,7 +950,7 @@
 "The tree file could not be opened." = "The tree file could not be opened.";
 "The tree file is no longer at its recorded path." = "The tree file is no longer at its recorded path.";
 "Trees from another program" = "Trees from another program";
-"Rove did not run this sample here, so no outgroup is known. A summary and high node support do not establish convergence." = "Rove did not run this sample here, so no outgroup is known. A summary and high node support do not establish convergence.";
+"Rove did not run this sample here, so its rooting choice is unknown. A summary and high node support do not establish convergence." = "Rove did not run this sample here, so its rooting choice is unknown. A summary and high node support do not establish convergence.";
 "The tree file is no longer at its recorded path. Saved summaries stay available." = "The tree file is no longer at its recorded path. Saved summaries stay available.";
 "Summaries" = "Summaries";
 "No summary yet. Summarize the file to build an annotated MCC tree." = "No summary yet. Summarize the file to build an annotated MCC tree.";
@@ -1105,3 +1105,14 @@
 "Inspect ambiguous observations" = "Inspect ambiguous observations";
 "Up to 100 observations are listed; the counts include the full matrix." = "Up to 100 observations are listed; the counts include the full matrix.";
 "Alphabet choice" = "Alphabet choice";
+
+// Visual model guidance.
+"Prior density" = "Prior density";
+"Expected sigma" = "Expected sigma";
+"Gamma prior for clock sigma; the dashed line marks its expectation." = "Gamma prior for clock sigma; the dashed line marks its expectation.";
+"The density preview is unavailable at this numerical scale." = "The density preview is unavailable at this numerical scale.";
+"Expected sigma: %@ · standard deviation: %@" = "Expected sigma: %@ · standard deviation: %@";
+"The density grows without bound near zero; the curve starts above zero." = "The density grows without bound near zero; the curve starts above zero.";
+"This is a prior preview, before seeing the data. The displayed range is not a credible interval." = "This is a prior preview, before seeing the data. The displayed range is not a credible interval.";
+"Other %@ terminals" = "Other %@ terminals";
+"Constraint diagram. Branch lengths and relationships within the collapsed group are not estimated here." = "Constraint diagram. Branch lengths and relationships within the collapsed group are not estimated here.";

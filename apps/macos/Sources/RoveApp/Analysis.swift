@@ -551,7 +551,7 @@ enum GroupConstraints {
   static func validate(_ groups: [[String]], taxa: [String], outgroup: String? = nil) -> String? {
     let known = Set(taxa)
     if let outgroup, !known.contains(outgroup) || known.count < 3 {
-      return "Choose one outgroup from a matrix with at least three terminals."
+      return "Choose one rooting taxon from a matrix with at least three terminals."
     }
     var previous: [Set<String>] = []
     for group in groups {
