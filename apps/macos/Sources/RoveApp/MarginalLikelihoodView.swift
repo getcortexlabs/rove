@@ -189,8 +189,7 @@ struct MarginalLikelihoodView: View {
         + (model.clockSigmaPriorParameters ?? .reference).description(strings: strings)
     }
     if model.partitioning != own.record.model.partitioning {
-      let observed = model.partitioning == "observed"
-      text += " · " + strings(observed ? "By observed states" : "Declared alphabet")
+      text += " · " + strings(AnalysisSettings.partitioningLabel(model.partitioning ?? "declared"))
     }
     return text
   }

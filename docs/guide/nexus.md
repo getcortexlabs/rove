@@ -32,7 +32,7 @@ Invalid or unsupported input returns `nexus::Error` with a one-based line, colum
 | Sequential rows | Named rows, with optional whitespace between cells and line wrapping. |
 | Interleaved rows | Every page repeats every taxon label in the same order. Each row occupies one line, with equal character counts within a page. Page widths may differ. Blank lines are optional. Unlabeled continuation pages are unsupported. |
 | Names | Single-quoted names, doubled apostrophes and unquoted names. Underscores become spaces. Matching and duplicate detection ignore ASCII case; returned names keep their spelling. |
-| Labels | `CHARLABELS` with exactly `NCHAR` names; indexed `STATELABELS` and `CHARSTATELABELS`. Descriptive state labels do not reduce the declared alphabet. |
+| Labels | `CHARLABELS` with exactly `NCHAR` names; indexed `STATELABELS` and `CHARSTATELABELS`. State labels are descriptive unless `--partitioning labels` is explicitly selected. |
 | Comments | Nested square-bracket comments, including comments inside words. LF, CRLF and CR line endings are accepted. |
 
 With `TAXLABELS`, returned rows follow the declared order even if matrix rows appear in another order. Otherwise, the first matrix page defines the order.
@@ -88,10 +88,20 @@ Tests read both [20 × 50 fixtures](./fixtures), reconstruct their columns from 
 
 Ordered characters instead preserve intermediate states and group separately by ordering; see [ordered characters](./ordered-characters).
 
-A declared two-state alphabet keeps both states, including for constant or missing-only characters. For unordered characters with a larger alphabet, a column with fewer than two observed/possible states cannot determine its model: automatic partitioning rejects it. Use an explicit `CharacterSet { sites, symbols }` with `Matrix::compress_sets`, or `--partitioning declared` if the full matrix alphabet is possible for every character. `CHARSTATELABELS` remains descriptive and does not set these model alphabets. NEXUS `SETS` blocks are still rejected.
+A declared two-state alphabet keeps both states, including for constant or missing-only characters. For unordered characters with a larger alphabet, a column with fewer than two observed/possible states cannot determine its model: automatic partitioning rejects it. Use an explicit `CharacterSet { sites, symbols }` with `Matrix::compress_sets`, or `--partitioning declared` if the full matrix alphabet is possible for every character. `CHARSTATELABELS` remains descriptive by default; explicit labeled-alphabet partitioning is described below. NEXUS `SETS` blocks are still rejected.
 
 `compress_sets` accepts sorted, non-contiguous, zero-based character indices. Sets must cover every character exactly once and include every observed/possible state. `Patterns::sites()` lists original matrix positions; `state_symbols()` records each character’s original labels in model-state order. Compression happens after recoding, within partitions, and preserves total character weight.
 
 `rove inspect` and `rove sample` default to `--partitioning observed`; both accept `--partitioning declared`. The Mac app exposes this choice under **State partitions** and shows each partition’s character count. Gaps still require explicit treatment. Mkv still rejects any character that could be constant, even if its state count is known.
 
 Each partition has its own constant patterns and Mkv correction on the shared tree, clock and gamma categories. `run.json` records the mode, ordering, state counts, one-based character indices, state mappings and observed pattern counts. Checkpoints preserve all partition caches. Twelve fixed-state cases, including three branch-length scales, match BEAST 2.7.8 / MM 1.2.1 with a maximum absolute log-likelihood difference of `1.34e-9`; see the [validation fixture](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate).
+
+## Reviewing exporter labels and observations
+
+A final comma in `CHARSTATELABELS` or `STATELABELS` is accepted. Empty entries inside a list remain errors. Import preserves all observations and the original file.
+
+`--partitioning labels` (Mac: **Complete state labels**) explicitly treats each character's label list as its complete possible alphabet, in `SYMBOLS` order. Every character must list at least two states, and all observations must fit its alphabet. Unobserved possible states are retained. Choose this only when the lists are complete, not when they merely describe observed states. The default `observed` mode is unchanged. Saved setups using the new choice require format 8.
+
+Inspection reports one-based `constant_characters` (one state among observed/possible values), `unobserved_characters` (only missing or gaps), descriptive `state_labels`, and up to 100 `observation_examples`; counts cover the whole matrix. A single observed state with missing cells does not establish that unobserved cells have that state. These characters are never silently removed. Mkv still rejects any character compatible with a constant completion. Review the original character-selection process before choosing unconditioned Mk.
+
+The app explains `{01}` as uncertainty (0 or 1) and `(01)` as polymorphism (both present). If an exporter uses braces for actual polymorphism, resolve that meaning before inference. True polymorphism remains unsupported by the current observation model; importing it does not convert it to uncertainty.

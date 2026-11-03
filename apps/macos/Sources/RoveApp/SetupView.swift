@@ -328,6 +328,9 @@ struct ReviewView: View {
                 ? "Mkparsinf · informative characters" : "Mk · all characters")
           if let partitions = report.partitions {
             row(
+              "Alphabet choice", AnalysisSettings.partitioningLabel(workspace.settings.partitioning)
+            )
+            row(
               "State partitions",
               partitions.map {
                 strings.partitionSummary($0)

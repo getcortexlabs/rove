@@ -113,7 +113,7 @@
     },
     "--partitioning": {
       "native": "apps/macos/Sources/RoveApp/MatrixView.swift",
-      "control": "Matrix import options"
+      "control": "Matrix import: observed states, declared alphabet or explicit complete state labels"
     },
     "--powers": {
       "native": "apps/macos/Sources/RoveApp/MarginalLikelihoodView.swift",

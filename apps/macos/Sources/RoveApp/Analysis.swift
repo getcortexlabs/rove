@@ -19,6 +19,10 @@ struct MatrixReport: Decodable, Sendable {
   let characterLabels: [String?]
   let cells: [[String]]
   let partitions: [CharacterPartition]?
+  let constantCharacters: [Int]?
+  let unobservedCharacters: [Int]?
+  let observationExamples: [ObservationExample]?
+  let stateLabels: [[String]]?
   var allTaxa: [String] { taxonNames ?? taxa }
 
   var missingPercent: Double {
@@ -37,6 +41,13 @@ struct MatrixReport: Decodable, Sendable {
     }
     return value
   }
+}
+
+struct ObservationExample: Decodable, Sendable {
+  let taxon: String
+  let character: Int
+  let kind: String
+  let value: String
 }
 
 struct CharacterPartition: Decodable, Sendable {
@@ -248,6 +259,14 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
 
   init() {}
 
+  static func partitioningLabel(_ value: String) -> String {
+    switch value {
+    case "observed": "By observed states"
+    case "labels": "Complete state labels"
+    default: "Declared alphabet"
+    }
+  }
+
   private enum CodingKeys: String, CodingKey {
     case dating, clock, clockSigmaShape, clockSigmaScale, conditioning, partitioning, steps,
       sampleEvery, seed, gapsAsMissing, chains, comparisonBurnin, backend, printEvery,
@@ -320,7 +339,7 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   var validationError: String? {
     guard ["strict", "reference"].contains(clock),
       ["variable", "informative", "none"].contains(conditioning),
-      ["observed", "declared"].contains(partitioning)
+      ["observed", "declared", "labels"].contains(partitioning)
     else {
       return "This setup uses an unsupported model."
     }
@@ -443,12 +462,14 @@ struct AnalysisDraft: Codable, Sendable {
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
     formatVersion =
-      settings.usesExecutionOptions
-      ? 7
-      : settings.usesCustomSigmaPrior
-        ? 6
-        : (settings.usesAdvancedOptions
-          ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
+      settings.partitioning == "labels"
+      ? 8
+      : settings.usesExecutionOptions
+        ? 7
+        : settings.usesCustomSigmaPrior
+          ? 6
+          : (settings.usesAdvancedOptions
+            ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -472,7 +493,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard (1...7).contains(formatVersion),
+    guard (1...8).contains(formatVersion),
+      formatVersion >= 8 || settings.partitioning != "labels",
       formatVersion >= 7 || !settings.usesExecutionOptions,
       formatVersion >= 6 || !settings.usesCustomSigmaPrior,
       formatVersion >= 5 || !settings.usesAdvancedOptions,

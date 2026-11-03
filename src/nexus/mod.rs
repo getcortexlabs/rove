@@ -449,7 +449,14 @@ fn apply_labels(data: &mut Matrix, commands: &[Vec<&Token>]) -> Result<(), Error
             }
             continue;
         }
-        for entry in command[1..].split(|t| t.punct(',')) {
+        // Several matrix exporters leave a separator after the last label.
+        // Accept that one separator, but not missing entries within the list.
+        let entries = if command.last().is_some_and(|t| t.punct(',')) {
+            &command[1..command.len() - 1]
+        } else {
+            &command[1..]
+        };
+        for entry in entries.split(|t| t.punct(',')) {
             let first = entry
                 .first()
                 .ok_or_else(|| head.error("empty state-label entry"))?;

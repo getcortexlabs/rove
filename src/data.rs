@@ -36,6 +36,7 @@ pub enum GapTreatment {
 pub enum CompressionError {
     InvalidPartitions,
     StateCount { site: usize },
+    StateLabels { site: usize },
     ExcludedState { site: usize, symbol: char },
     Gap { taxon: String, site: usize },
     Polymorphism { taxon: String, site: usize },
@@ -45,6 +46,11 @@ pub enum CompressionError {
 impl fmt::Display for CompressionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::StateLabels { site } => write!(
+                f,
+                "character {} needs at least two state labels for labeled-alphabet partitioning; declare every possible state in SYMBOLS order or choose another explicit alphabet",
+                site + 1
+            ),
             Self::OrderedAlphabet { site } => write!(
                 f,
                 "ordered character {} requires a contiguous alphabet in declared SYMBOLS order; intermediate states cannot be removed",
@@ -217,6 +223,30 @@ impl Matrix {
             .values()
             .map(|sites| self.compress_mapped(sites))
             .collect())
+    }
+
+    /// Explicitly interpret state-label lists as complete per-character
+    /// alphabets in declared SYMBOLS order. This is an opt-in model choice;
+    /// ordinary import and observed partitioning keep labels descriptive.
+    pub fn partition_by_labels(
+        &self,
+        gaps: GapTreatment,
+    ) -> Result<Vec<Patterns>, CompressionError> {
+        let mut groups = BTreeMap::<usize, Vec<usize>>::new();
+        for (site, labels) in self.state_labels.iter().enumerate() {
+            if labels.len() < 2 || labels.len() > self.symbols.len() {
+                return Err(CompressionError::StateLabels { site });
+            }
+            groups.entry(labels.len()).or_default().push(site);
+        }
+        let sets = groups
+            .into_iter()
+            .map(|(count, sites)| CharacterSet {
+                sites,
+                symbols: self.symbols[..count].to_vec(),
+            })
+            .collect::<Vec<_>>();
+        self.compress_sets(&sets, gaps)
     }
 
     /// Compress explicit, possibly non-contiguous character sets. Their alphabets

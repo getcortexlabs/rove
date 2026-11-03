@@ -33,7 +33,7 @@ const USAGE: &str =
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|informative|none] [--sample-from-prior]
                    [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
-                   [--partitioning observed|declared] [--dating <settings.json>]
+                   [--partitioning observed|declared|labels] [--dating <settings.json>]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
                    [--stop-when-converged] [--min-ess <n>] [--max-rhat <n>] [--check-every <n>]
@@ -45,13 +45,13 @@ const USAGE: &str =
                      [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                      [--model strict|reference] [--conditioning variable|informative|none]
                      [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
-                     [--partitioning observed|declared] [--dating <settings.json>]
+                     [--partitioning observed|declared|labels] [--dating <settings.json>]
                      [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                      [--backend portable|neon] [--print-every <n>] [--cancel-on-stdin-close]
                      [--expect-input-sha256 <hash>]
        rove benchmark [--cancel-on-stdin-close]
        rove compare <run-directory> <run-directory>... [--burnin-percent <0..99>]
-       rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared]
+       rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared|labels]
        rove inspect-tree <summary-directory>
        rove diagnose <trace.log> --burnin-percent <0..99> [--output <new-directory>]
        rove summarize <trees.nexus> --output <directory> --burnin-percent <0..99> --heights keep|ca
