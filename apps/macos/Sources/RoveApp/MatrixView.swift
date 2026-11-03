@@ -51,6 +51,7 @@ struct MatrixView: View {
             Picker(strings("State partitions"), selection: $workspace.settings.partitioning) {
               Text(strings("By observed states")).tag("observed")
               Text(strings("Declared alphabet")).tag("declared")
+              Text(strings("Complete state labels")).tag("labels")
             }.labelsHidden().frame(width: 210)
               .disabled(workspace.loading)
               .onChange(of: workspace.settings.partitioning) { workspace.reloadGapPolicy() }
@@ -59,7 +60,9 @@ struct MatrixView: View {
             strings(
               workspace.settings.partitioning == "observed"
                 ? "Characters are grouped by state count and ordering. Ordered characters keep intermediate states; binary alphabets keep both states."
-                : "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character."
+                : workspace.settings.partitioning == "labels"
+                  ? "Use each state-label list as the complete possible alphabet, in SYMBOLS order. Choose this only if every character lists all its possible states."
+                  : "Every character uses all states declared in SYMBOLS. Choose this only if they are possible for every character."
             )
           )
           .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
@@ -70,6 +73,31 @@ struct MatrixView: View {
             }
           }
         }
+      }
+
+      if let constant = report.constantCharacters, !constant.isEmpty {
+        LabPanel {
+          VStack(alignment: .leading, spacing: 8) {
+            Text(strings("Characters with one observed state")).font(
+              .system(size: 13, weight: .semibold))
+            Text(constant.map(String.init).joined(separator: ", "))
+              .font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
+            Text(
+              strings(
+                "These characters remain in the matrix. Variable-only (Mkv) coding cannot include them. Review how characters were selected before choosing All characters (Mk)."
+              )
+            )
+            .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+          }
+        }
+      }
+      if let unobserved = report.unobservedCharacters, !unobserved.isEmpty {
+        Text(
+          strings(
+            "Characters without observed states: %@",
+            unobserved.map(String.init).joined(separator: ", "))
+        )
+        .font(.system(size: 11)).foregroundStyle(Lab.coral)
       }
 
       VStack(alignment: .leading, spacing: 0) {
@@ -112,12 +140,40 @@ struct MatrixView: View {
         }.font(.system(size: 11)).padding(.horizontal, 3)
       }
       if report.uncertainCount + report.polymorphicCount > 0 {
-        Text(
-          strings(
-            "Uncertain cells: %@ · polymorphic cells: %@", strings.number(report.uncertainCount),
-            strings.number(report.polymorphicCount))
-        )
-        .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+        VStack(alignment: .leading, spacing: 8) {
+          Text(
+            strings(
+              "Uncertain cells: %@ · polymorphic cells: %@", strings.number(report.uncertainCount),
+              strings.number(report.polymorphicCount))
+          )
+          .font(.system(size: 11, weight: .medium))
+          Text(
+            strings(
+              "Braces such as {01} mean state 0 OR 1. Parentheses such as (01) mean both states are present. Rove preserves this distinction; its current observation model cannot analyze true polymorphism."
+            )
+          )
+          .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+          Text(
+            strings(
+              "If your exporter uses braces for polymorphism, confirm the meaning before running. Reading the file does not resolve that scientific choice."
+            )
+          )
+          .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+          if let examples = report.observationExamples, !examples.isEmpty {
+            DisclosureGroup(strings("Inspect ambiguous observations")) {
+              ForEach(Array(examples.enumerated()), id: \.offset) { _, example in
+                Text(
+                  "\(example.taxon) · \(strings("Character %@", strings.number(example.character))) · \(example.value)"
+                )
+                .font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
+              }
+              Text(
+                strings("Up to 100 observations are listed; the counts include the full matrix.")
+              )
+              .font(.system(size: 10)).foregroundStyle(Lab.muted)
+            }
+          }
+        }
       }
     }
   }

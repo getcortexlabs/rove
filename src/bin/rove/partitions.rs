@@ -6,6 +6,7 @@ use super::Json;
 pub(super) enum Partitioning {
     Observed,
     Declared,
+    Labels,
 }
 
 impl Partitioning {
@@ -13,7 +14,8 @@ impl Partitioning {
         match value {
             "observed" => Ok(Self::Observed),
             "declared" => Ok(Self::Declared),
-            _ => Err("--partitioning must be observed or declared".into()),
+            "labels" => Ok(Self::Labels),
+            _ => Err("--partitioning must be observed, declared or labels".into()),
         }
     }
 
@@ -21,6 +23,7 @@ impl Partitioning {
         match self {
             Self::Observed => "observed",
             Self::Declared => "declared",
+            Self::Labels => "labels",
         }
     }
 
@@ -31,6 +34,7 @@ impl Partitioning {
     ) -> Result<Vec<Patterns>, CompressionError> {
         match self {
             Self::Observed => data.partition_by_states(gaps),
+            Self::Labels => data.partition_by_labels(gaps),
             Self::Declared => {
                 data.compress(std::slice::from_ref(&(0..data.character_count())), gaps)
             }

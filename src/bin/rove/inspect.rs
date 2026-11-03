@@ -10,8 +10,7 @@ use rove::nexus;
 use super::partitions::{self, Partitioning};
 use super::{Json, is_plain_label, sha256};
 
-const USAGE: &str =
-    "usage: rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared]";
+const USAGE: &str = "usage: rove inspect <matrix.nex> [--gaps reject|missing] [--partitioning observed|declared|labels]";
 const PREVIEW_TAXA: usize = 200;
 const PREVIEW_CHARACTERS: usize = 120;
 
@@ -79,6 +78,46 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
         ));
     }
     let optional = |value: Option<String>| value.map_or(Json::Null, Json::text);
+    let mut constant = Vec::new();
+    let mut unobserved = Vec::new();
+    for site in 0..data.character_count() {
+        let mut states = std::collections::BTreeSet::new();
+        for row in data.rows() {
+            match &row[site] {
+                Cell::State(state) => {
+                    states.insert(*state);
+                }
+                Cell::Uncertain(values) | Cell::Polymorphic(values) => {
+                    states.extend(values);
+                }
+                Cell::Missing | Cell::Gap => {}
+            }
+        }
+        if states.is_empty() {
+            unobserved.push(Json::Integer((site + 1) as u64));
+        }
+        if states.len() == 1 {
+            constant.push(Json::Integer((site + 1) as u64));
+        }
+    }
+    let mut observation_examples = Vec::new();
+    for (taxon, row) in data.rows().iter().enumerate() {
+        for (site, cell) in row.iter().enumerate() {
+            let kind = match cell {
+                Cell::Uncertain(_) => "uncertain",
+                Cell::Polymorphic(_) => "polymorphic",
+                _ => continue,
+            };
+            if observation_examples.len() < 100 {
+                observation_examples.push(Json::Object(vec![
+                    ("taxon", Json::text(&data.taxa()[taxon])),
+                    ("character", Json::Integer((site + 1) as u64)),
+                    ("kind", Json::text(kind)),
+                    ("value", Json::text(cell_text(cell, data.symbols()))),
+                ]));
+            }
+        }
+    }
     Json::Object(vec![
         ("schema_version", Json::Integer(1)),
         ("input_sha256", Json::text(sha256::hex(bytes))),
@@ -94,6 +133,19 @@ fn report(data: &Matrix, bytes: &[u8], gaps: GapTreatment, partitioning: Partiti
         ("gap_count", Json::Integer(gap_count)),
         ("uncertain_count", Json::Integer(uncertain)),
         ("polymorphic_count", Json::Integer(polymorphic)),
+        ("constant_characters", Json::List(constant)),
+        ("unobserved_characters", Json::List(unobserved)),
+        ("observation_examples", Json::List(observation_examples)),
+        (
+            "state_labels",
+            Json::List(
+                data.state_labels()
+                    .iter()
+                    .take(PREVIEW_CHARACTERS)
+                    .map(|labels| Json::List(labels.iter().map(Json::text).collect()))
+                    .collect(),
+            ),
+        ),
         ("sampler_error", optional(sampler_error)),
         ("variable_error", optional(variable_error)),
         ("informative_error", optional(informative_error)),

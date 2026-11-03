@@ -1093,3 +1093,15 @@
 "The next update comes to you." = "A próxima atualização vem até você.";
 "Check for signed updates from the Rove menu or Settings." = "Busque atualizações assinadas pelo menu do Rove ou pelas Configurações.";
 "This first upgrade from 0.1.1 needs a manual DMG installation. After that, Rove can find and install updates itself. Active calculations delay installation; when your work finishes, you choose when to relaunch." = "Esta primeira atualização da versão 0.1.1 precisa ser instalada pelo DMG. Depois disso, o Rove pode buscar e instalar as próximas. A instalação espera os cálculos terminarem; você escolhe quando reiniciar o app.";
+
+// Matrix observation review.
+"Complete state labels" = "Rótulos de estados completos";
+"Use each state-label list as the complete possible alphabet, in SYMBOLS order. Choose this only if every character lists all its possible states." = "Use a lista de rótulos como o alfabeto completo de cada caráter, na ordem de SYMBOLS. Escolha esta opção somente se todos os estados possíveis estiverem listados.";
+"Characters with one observed state" = "Caracteres com um estado observado";
+"These characters remain in the matrix. Variable-only (Mkv) coding cannot include them. Review how characters were selected before choosing All characters (Mk)." = "Esses caracteres continuam na matriz. A correção para caracteres variáveis (Mkv) não permite incluí-los. Confira como os caracteres foram selecionados antes de escolher Todos os caracteres (Mk).";
+"Characters without observed states: %@" = "Caracteres sem estados observados: %@";
+"Braces such as {01} mean state 0 OR 1. Parentheses such as (01) mean both states are present. Rove preserves this distinction; its current observation model cannot analyze true polymorphism." = "Chaves como {01} significam estado 0 OU 1. Parênteses como (01) significam que ambos estão presentes. O Rove preserva essa diferença; o modelo atual não analisa polimorfismo verdadeiro.";
+"If your exporter uses braces for polymorphism, confirm the meaning before running. Reading the file does not resolve that scientific choice." = "Se o programa que exportou a matriz usa chaves para polimorfismo, confirme o significado antes de executar. Ler o arquivo não resolve essa escolha científica.";
+"Inspect ambiguous observations" = "Inspecionar observações ambíguas";
+"Up to 100 observations are listed; the counts include the full matrix." = "A lista mostra até 100 observações; as contagens incluem a matriz inteira.";
+"Alphabet choice" = "Escolha do alfabeto";

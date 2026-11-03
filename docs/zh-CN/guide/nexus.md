@@ -32,7 +32,7 @@ cargo run --release --example read_nexus -- fixtures/reference/20x50/matrix.nex
 | 顺序行 | 带名字的行，单元格之间可以有空白，可以换行。 |
 | 交错行 | 每一页都以相同顺序重复每个分类单元的标签。每行占一行，同一页内各行的性状数相等。各页的宽度可以不同。空行可有可无。不支持没有标签的续页。 |
 | 名字 | 单引号括起的名字、双写的撇号和不带引号的名字。下划线变成空格。匹配和重复检测忽略 ASCII 大小写；返回的名字保留原有写法。 |
-| 标签 | 恰好有 `NCHAR` 个名字的 `CHARLABELS`；带索引的 `STATELABELS` 和 `CHARSTATELABELS`。描述性的状态标签不会缩小声明的字母表。 |
+| 标签 | 恰好有 `NCHAR` 个名字的 `CHARLABELS`；带索引的 `STATELABELS` 和 `CHARSTATELABELS`。状态标签默认仅用于描述；只有显式选择 `--partitioning labels` 才将其作为模型字母表。 |
 | 注释 | 嵌套的方括号注释，包括词内的注释。接受 LF、CRLF 和 CR 换行。 |
 
 有 `TAXLABELS` 时，返回的行遵循声明的顺序，即使矩阵中的行以另一种顺序出现。否则，由矩阵的第一页决定顺序。
@@ -88,10 +88,20 @@ assert_eq!(patterns.weights().iter().sum::<usize>(), 50);
 
 有序性状会保留中间状态并按排序类型单独分区；参见[有序性状](./ordered-characters)。
 
-声明为二态的字母表保留两个状态，包括恒定或全缺失性状。对于字母表更大的无序性状，观测/可能状态不足两个的列无法确定其模型，自动分区会拒绝该列。可通过 `Matrix::compress_sets` 使用显式 `CharacterSet { sites, symbols }`，或在全部声明状态对每个性状都可能时使用 `--partitioning declared`。`CHARSTATELABELS` 仍只用于描述，不设置这些模型字母表。NEXUS `SETS` 块仍被拒绝。
+声明为二态的字母表保留两个状态，包括恒定或全缺失性状。对于字母表更大的无序性状，观测/可能状态不足两个的列无法确定其模型，自动分区会拒绝该列。可通过 `Matrix::compress_sets` 使用显式 `CharacterSet { sites, symbols }`，或在全部声明状态对每个性状都可能时使用 `--partitioning declared`。`CHARSTATELABELS` 默认仅用于描述；显式使用标签字母表的方式见下文。NEXUS `SETS` 块仍被拒绝。
 
 `compress_sets` 接受从零开始、已排序但不必连续的性状索引。集合必须恰好覆盖每个性状一次，并包含全部观测/可能状态。`Patterns::sites()` 列出原矩阵位置；`state_symbols()` 按模型状态顺序记录每个性状的原始标签。重编码后在各分区内部压缩，保留性状总权重。
 
 `rove inspect` 和 `rove sample` 默认使用 `--partitioning observed`，也接受 `--partitioning declared`。Mac 应用在 **State partitions** 中提供此选项并显示各分区的性状数量。gap 仍需明确处理。即使状态数已知，Mkv 也拒绝可能为恒定的性状。
 
 各分区在共享的树、时钟和 gamma 类别上有各自的恒定模式及 Mkv 校正。`run.json` 记录模式、排序类型、状态数、从一开始的性状索引、状态映射和观测模式数。检查点保留全部分区缓存。十二个固定状态案例涵盖三种枝长尺度，与 BEAST 2.7.8 / MM 1.2.1 的对数似然最大绝对差为 `1.34e-9`；参见[验证数据](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate)。
+
+## 检查导出文件的标签和观测
+
+允许 `CHARSTATELABELS` 和 `STATELABELS` 列表末尾有一个逗号。列表中间的空条目仍会报错。导入保留原始文件和全部观测。
+
+`--partitioning labels`（Mac：**Complete state labels**）显式将每个性状的状态标签列表解释为完整的可能状态字母表，顺序与 `SYMBOLS` 一致。每个性状至少需要两个状态标签，所有观测必须包含在对应字母表内。未观测到的可能状态会被保留。只有确认标签列表完整时才选择此模式；默认的 `observed` 模式不变。使用新选项的保存设置要求格式 8。
+
+检查结果提供从 1 开始的 `constant_characters`（观测/可能值只有一种状态）、`unobserved_characters`（只有缺失或 gap）、`state_labels` 和最多 100 个 `observation_examples`；总计覆盖整个矩阵。存在缺失单元时，单一已观测状态不能证明缺失单元的状态。程序不会自动删除性状。Mkv 仍拒绝可能为恒定的性状；选择不带校正的 Mk 前，应核实原始性状的选择过程。
+
+应用区分 `{01}` 表示的不确定性（0 或 1）与 `(01)` 表示的多态性（两种状态同时存在）。如果导出程序用花括号表示真正的多态性，应在推断前确认含义。当前观测模型不支持真正的多态性，导入不会将它转换为不确定性。

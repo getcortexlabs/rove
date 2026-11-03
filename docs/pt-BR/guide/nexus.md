@@ -32,7 +32,7 @@ Entrada inválida ou não suportada devolve `nexus::Error` com linha e coluna co
 | Linhas sequenciais | Linhas nomeadas, com espaços em branco e quebras de linha opcionais entre as células. |
 | Linhas intercaladas | Cada página repete todos os rótulos de táxons na mesma ordem. Cada linha da matriz ocupa uma única linha de texto, com o mesmo número de caracteres dentro de uma página. As larguras das páginas podem diferir. Linhas em branco são opcionais. Páginas de continuação sem rótulos não são suportadas. |
 | Nomes | Nomes entre aspas simples, apóstrofos duplicados e nomes sem aspas. Sublinhados viram espaços. A correspondência e a detecção de duplicatas ignoram maiúsculas e minúsculas ASCII; os nomes devolvidos mantêm a grafia original. |
-| Rótulos | `CHARLABELS` com exatamente `NCHAR` nomes; `STATELABELS` e `CHARSTATELABELS` indexados. Rótulos descritivos de estados não reduzem o alfabeto declarado. |
+| Rótulos | `CHARLABELS` com exatamente `NCHAR` nomes; `STATELABELS` e `CHARSTATELABELS` indexados. Os rótulos são descritivos, exceto quando `--partitioning labels` é escolhido explicitamente. |
 | Comentários | Comentários aninhados entre colchetes, incluindo comentários dentro de palavras. Finais de linha LF, CRLF e CR são aceitos. |
 
 Com `TAXLABELS`, as linhas devolvidas seguem a ordem declarada mesmo que as linhas da matriz apareçam em outra ordem. Caso contrário, a primeira página da matriz define a ordem.
@@ -88,10 +88,20 @@ Os testes leem as duas [fixtures 20 × 50](./fixtures), reconstroem suas colunas
 
 Caracteres ordenados preservam estados intermediários e formam partições separadas por ordenação; veja [caracteres ordenados](./ordered-characters).
 
-Um alfabeto declarado de dois estados mantém ambos, inclusive em caracteres constantes ou só com dados ausentes. Para caracteres não ordenados com um alfabeto maior, uma coluna com menos de dois estados observados/possíveis não determina seu modelo: a partição automática a rejeita. Use `CharacterSet { sites, symbols }` com `Matrix::compress_sets`, ou `--partitioning declared` se todos os estados da matriz forem possíveis para cada caráter. `CHARSTATELABELS` continua descritivo e não define esses alfabetos. Blocos NEXUS `SETS` continuam rejeitados.
+Um alfabeto declarado de dois estados mantém ambos, inclusive em caracteres constantes ou só com dados ausentes. Para caracteres não ordenados com um alfabeto maior, uma coluna com menos de dois estados observados/possíveis não determina seu modelo: a partição automática a rejeita. Use `CharacterSet { sites, symbols }` com `Matrix::compress_sets`, ou `--partitioning declared` se todos os estados da matriz forem possíveis para cada caráter. `CHARSTATELABELS` continua descritivo por padrão; o uso explícito dos rótulos como alfabeto está descrito abaixo. Blocos NEXUS `SETS` continuam rejeitados.
 
 `compress_sets` aceita índices de caracteres ordenados, não necessariamente contíguos, começando em zero. Os conjuntos devem cobrir cada caráter uma única vez e incluir todos os estados observados/possíveis. `Patterns::sites()` lista as posições originais; `state_symbols()` registra os símbolos originais de cada caráter na ordem do modelo. A compressão ocorre após a recodificação, dentro de cada partição, mantendo o peso total dos caracteres.
 
 `rove inspect` e `rove sample` usam `--partitioning observed` por padrão; ambos aceitam `--partitioning declared`. O app mostra essa escolha em **Partições por estados**, junto da quantidade de caracteres de cada partição. Lacunas continuam exigindo uma escolha explícita. Mkv ainda rejeita qualquer caráter que possa ser constante, mesmo que seu número de estados seja conhecido.
 
 Cada partição tem seus próprios padrões constantes e correção Mkv, compartilhando árvore, relógio e categorias gama. `run.json` registra modo, ordenação, número de estados, índices de caracteres começando em um, mapeamentos e quantidade de padrões observados. Os checkpoints preservam os caches de todas as partições. Doze casos com estado fixo, incluindo três escalas de comprimento de ramo, concordam com BEAST 2.7.8 / MM 1.2.1 com diferença absoluta máxima de log-verossimilhança de `1,34e-9`; veja o [caso de validação](https://github.com/getcortexlabs/rove/tree/main/fixtures/validation/multistate).
+
+## Conferir rótulos e observações dos exportadores
+
+Uma vírgula final em `CHARSTATELABELS` ou `STATELABELS` é aceita. Entradas vazias no meio da lista continuam sendo erros. A importação preserva as observações e o arquivo original.
+
+`--partitioning labels` (Mac: **Rótulos de estados completos**) usa explicitamente a lista de cada caráter como seu alfabeto possível completo, na ordem de `SYMBOLS`. Todos os caracteres precisam listar pelo menos dois estados, e suas observações devem caber nesse alfabeto. Estados possíveis não observados são mantidos. Escolha essa opção somente quando as listas forem completas, não quando apenas descreverem estados observados. O padrão `observed` permanece igual. Configurações com a nova opção exigem formato 8.
+
+A inspeção informa `constant_characters` (um estado entre os valores observados/possíveis), `unobserved_characters` (somente ausências ou lacunas), `state_labels` descritivos e até 100 `observation_examples`. Os índices começam em 1; as contagens cobrem toda a matriz. Um único estado observado com células ausentes não prova o estado dessas células. Nenhum caráter é removido automaticamente. Mkv continua rejeitando caracteres que possam ser constantes. Confira como os caracteres foram selecionados antes de escolher Mk sem condicionamento.
+
+O aplicativo explica `{01}` como incerteza (0 ou 1) e `(01)` como polimorfismo (ambos presentes). Se o exportador usa chaves para polimorfismo verdadeiro, esclareça esse significado antes da análise. O modelo atual não representa polimorfismo verdadeiro; a importação não o converte em incerteza.

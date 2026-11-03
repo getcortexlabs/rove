@@ -291,8 +291,7 @@ private struct HistoryDetail: View {
             field(
               "State partitions",
               strings(
-                draft.settings.partitioning == "observed"
-                  ? "By observed states" : "Declared alphabet"))
+                AnalysisSettings.partitioningLabel(draft.settings.partitioning)))
             if entry.status != .modelSetup {
               field("Independent chains", String(draft.settings.chains))
               field(

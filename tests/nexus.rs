@@ -5,6 +5,60 @@ use rove::{LikelihoodCore, Scaling, model::Mk, nexus};
 const REFERENCE: &str = include_str!("../fixtures/reference/20x50/matrix.nex");
 const CONTROL: &str = include_str!("../fixtures/synthetic/control_20x50.nex");
 
+#[test]
+fn exporter_labels_preserve_observations_and_require_explicit_alphabets() {
+    let source = include_str!("../fixtures/synthetic/exporter_labels.nex");
+    let data = nexus::parse(source).unwrap();
+    assert_eq!(data.taxa().len(), 5);
+    assert_eq!(data.character_count(), 5);
+    assert_eq!(data.symbols().len(), 10);
+    assert_eq!(
+        data.character_labels()[0].as_deref(),
+        Some("constant character")
+    );
+    assert_eq!(data.rows()[0][2], Cell::Uncertain(vec![0, 1]));
+    assert_eq!(
+        data.partition_by_states(GapTreatment::Reject),
+        Err(CompressionError::StateCount { site: 0 })
+    );
+    let partitions = data.partition_by_labels(GapTreatment::Reject).unwrap();
+    assert_eq!(partitions.len(), 2);
+    assert_eq!(partitions[0].sites(), &[0, 2, 3, 4]);
+    assert_eq!(partitions[0].symbols().len(), 2);
+    assert_eq!(partitions[1].sites(), &[1]);
+    assert_eq!(partitions[1].symbols().len(), 3);
+    assert_eq!(
+        partitions.iter().flat_map(|p| p.weights()).sum::<usize>(),
+        5
+    );
+    // A declared but unobserved state remains possible under this explicit choice.
+    assert_eq!(partitions[0].state_symbols()[0], ['0', '1']);
+    for ending in [",,\n  ;", ",, ,\n  ;"] {
+        assert!(nexus::parse(&source.replace(",\n  ;", ending)).is_err());
+    }
+    let outside = nexus::parse(&source.replace("A 10{01}?0", "A 12{02}?0")).unwrap();
+    assert!(matches!(
+        outside.partition_by_labels(GapTreatment::Reject),
+        Err(CompressionError::ExcludedState {
+            site: 2,
+            symbol: '2'
+        })
+    ));
+    let incomplete = nexus::parse(&source.replace("absent present", "present")).unwrap();
+    assert_eq!(
+        incomplete.partition_by_labels(GapTreatment::Reject),
+        Err(CompressionError::StateLabels { site: 0 })
+    );
+}
+
+#[test]
+fn final_separator_in_statelabels_does_not_accept_missing_interior_entries() {
+    let source = "#NEXUS BEGIN DATA; DIMENSIONS NTAX=2 NCHAR=2; STATELABELS 1 a b, 2 c d,; MATRIX A 01 B 10; END;";
+    assert_eq!(nexus::parse(source).unwrap().state_labels()[1], ["c", "d"]);
+    assert!(nexus::parse(&source.replace("b, 2", "b,, 2")).is_err());
+    assert!(nexus::parse(&source.replace("1 a b, 2 c d,", ",")).is_err());
+}
+
 fn document(ntax: usize, nchar: usize, format: &str, matrix: &str) -> String {
     format!(
         "#NEXUS\nBEGIN DATA;\nDIMENSIONS NTAX={ntax} NCHAR={nchar};\nFORMAT {format};\nMATRIX\n{matrix}\n; END;"
@@ -349,7 +403,7 @@ fn inconsistent_declarations_are_rejected() {
         "CHARSTATELABELS 1 size / small medium large;",
         "CHARSTATELABELS 1 size, 1 shape;",
         "STATELABELS 1 small large, 1 short long;",
-        "STATELABELS 1 small large,;",
+        "STATELABELS 1 small large,,;",
         "DIMENSIONS NTAX=2 NCHAR=2;",
     ] {
         let text = format!("{prefix} {command} MATRIX A 01 B 10; END;");

@@ -1093,3 +1093,15 @@
 "The next update comes to you." = "The next update comes to you.";
 "Check for signed updates from the Rove menu or Settings." = "Check for signed updates from the Rove menu or Settings.";
 "This first upgrade from 0.1.1 needs a manual DMG installation. After that, Rove can find and install updates itself. Active calculations delay installation; when your work finishes, you choose when to relaunch." = "This first upgrade from 0.1.1 needs a manual DMG installation. After that, Rove can find and install updates itself. Active calculations delay installation; when your work finishes, you choose when to relaunch.";
+
+// Matrix observation review.
+"Complete state labels" = "Complete state labels";
+"Use each state-label list as the complete possible alphabet, in SYMBOLS order. Choose this only if every character lists all its possible states." = "Use each state-label list as the complete possible alphabet, in SYMBOLS order. Choose this only if every character lists all its possible states.";
+"Characters with one observed state" = "Characters with one observed state";
+"These characters remain in the matrix. Variable-only (Mkv) coding cannot include them. Review how characters were selected before choosing All characters (Mk)." = "These characters remain in the matrix. Variable-only (Mkv) coding cannot include them. Review how characters were selected before choosing All characters (Mk).";
+"Characters without observed states: %@" = "Characters without observed states: %@";
+"Braces such as {01} mean state 0 OR 1. Parentheses such as (01) mean both states are present. Rove preserves this distinction; its current observation model cannot analyze true polymorphism." = "Braces such as {01} mean state 0 OR 1. Parentheses such as (01) mean both states are present. Rove preserves this distinction; its current observation model cannot analyze true polymorphism.";
+"If your exporter uses braces for polymorphism, confirm the meaning before running. Reading the file does not resolve that scientific choice." = "If your exporter uses braces for polymorphism, confirm the meaning before running. Reading the file does not resolve that scientific choice.";
+"Inspect ambiguous observations" = "Inspect ambiguous observations";
+"Up to 100 observations are listed; the counts include the full matrix." = "Up to 100 observations are listed; the counts include the full matrix.";
+"Alphabet choice" = "Alphabet choice";

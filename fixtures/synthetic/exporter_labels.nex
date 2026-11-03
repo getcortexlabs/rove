@@ -1,0 +1,24 @@
+#NEXUS
+[Synthetic exporter compatibility fixture; no private research observations.]
+BEGIN TAXA;
+  DIMENSIONS NTAX=5;
+  TAXLABELS A B C D E;
+END;
+BEGIN CHARACTERS;
+  DIMENSIONS NCHAR=5;
+  FORMAT DATATYPE=STANDARD SYMBOLS="0 1 2 3 4 5 6 7 8 9" MISSING=?;
+  CHARSTATELABELS
+    1 'constant character' / absent present,
+    2 'three states' / small medium large,
+    3 'uncertain observation' / absent present,
+    4 'unobserved character' / absent present,
+    5 'variable character' / absent present,
+  ;
+  MATRIX
+    A 10{01}?0
+    B 110?1
+    C 121?0
+    D 10??1
+    E 111?0
+  ;
+END;
