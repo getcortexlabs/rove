@@ -143,7 +143,7 @@ enum ProposalSchedule {
     "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale", "node_time_rates",
     "root_time_rates", "clock_sigma_rates", "tip_age", "clock_rate_scale", "fbd_birth_scale",
     "fbd_death_scale", "fbd_sampling_scale", "fbd_rho_logit", "fbd_origin_scale",
-    "narrow_exchange_rates",
+    "narrow_exchange_rates", "birth_rate_scale",
   ]
   static let relaxedClockMoves: Set<String> = [
     "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale", "node_time_rates",
@@ -153,11 +153,13 @@ enum ProposalSchedule {
     "tip_age", "clock_rate_scale", "fbd_birth_scale", "fbd_death_scale", "fbd_sampling_scale",
     "fbd_rho_logit", "fbd_origin_scale",
   ]
-  static let undatedMoves: Set<String> = ["birth_difference_scale", "relative_death_scale"]
+  static let undatedMoves: Set<String> = [
+    "birth_difference_scale", "relative_death_scale", "birth_rate_scale",
+  ]
   /// Moves with a tunable step: a slide size for `subtree_slide`, otherwise a
   /// scale factor strictly between zero and one.
   static let tunable: Set<String> = [
-    "subtree_slide", "root_scale", "tree_scale", "birth_difference_scale",
+    "subtree_slide", "root_scale", "tree_scale", "birth_difference_scale", "birth_rate_scale",
     "relative_death_scale", "gamma_shape_scale", "clock_sigma_scale", "branch_rate_scale",
     "root_time_rates", "clock_sigma_rates", "clock_rate_scale", "fbd_birth_scale",
     "fbd_death_scale", "fbd_sampling_scale", "fbd_rho_logit", "fbd_origin_scale",
@@ -179,7 +181,8 @@ enum ProposalSchedule {
   ]
 
   static func validate(
-    weights: [MoveOverride], tuningValues: [MoveOverride], clock: String, dating: DatingSettings
+    weights: [MoveOverride], tuningValues: [MoveOverride], clock: String, dating: DatingSettings,
+    treePrior: String = "birth-death"
   ) -> String? {
     for list in [weights, tuningValues] {
       guard Set(list.map(\.move)).count == list.count else {
@@ -199,6 +202,14 @@ enum ProposalSchedule {
       })
     else { return "Step sizes must be positive; scale factors must be below 1." }
     let active = Set(weights.filter { $0.value > 0 }.map(\.move)).union(tuningValues.map(\.move))
+    if treePrior == "yule",
+      !active.isDisjoint(with: ["birth_difference_scale", "relative_death_scale"])
+    {
+      return "Birth-difference and relative-death moves require the birth-death prior."
+    }
+    if active.contains("birth_rate_scale"), treePrior != "yule" || dating.enabled {
+      return "The birth-rate move requires Yule without fossil dating."
+    }
     if dating.enabled, active.contains("narrow_exchange_rates") {
       return "Joint topology/rate exchange is currently available only without fossil dating."
     }
@@ -235,6 +246,8 @@ enum ProposalSchedule {
 
 struct AnalysisSettings: Codable, Equatable, Sendable {
   var dating = DatingSettings()
+  var treePrior = "birth-death"
+  var birthRateUpper = "1000"
   var clock = "reference"
   var clockSigmaShape = "5"
   var clockSigmaScale = "0.2"
@@ -272,7 +285,8 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   }
 
   private enum CodingKeys: String, CodingKey {
-    case dating, clock, clockSigmaShape, clockSigmaScale, conditioning, partitioning, steps,
+    case dating, treePrior, birthRateUpper, clock, clockSigmaShape, clockSigmaScale, conditioning,
+      partitioning, steps,
       sampleEvery, seed, gapsAsMissing, chains, comparisonBurnin, backend, printEvery,
       stopWhenConverged, sampleFromPrior, minESS, maxRhat, checkEvery, checkpointEvery, tuning,
       weights, tuningValues
@@ -281,6 +295,8 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
   init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     dating = try values.decodeIfPresent(DatingSettings.self, forKey: .dating) ?? DatingSettings()
+    treePrior = try values.decodeIfPresent(String.self, forKey: .treePrior) ?? "birth-death"
+    birthRateUpper = try values.decodeIfPresent(String.self, forKey: .birthRateUpper) ?? "1000"
     clock = try values.decode(String.self, forKey: .clock)
     clockSigmaShape = try values.decodeIfPresent(String.self, forKey: .clockSigmaShape) ?? "5"
     clockSigmaScale = try values.decodeIfPresent(String.self, forKey: .clockSigmaScale) ?? "0.2"
@@ -344,12 +360,28 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
     clock == "reference" && clockSigmaPrior != .reference
   }
 
+  var yuleBirthRateUpper: Double? {
+    guard let value = Double(birthRateUpper.replacingOccurrences(of: ",", with: ".")),
+      value.isFinite, value > 0, value / 2 > 0
+    else { return nil }
+    return value
+  }
+
   var validationError: String? {
-    guard ["strict", "reference"].contains(clock),
+    guard ["birth-death", "yule"].contains(treePrior),
+      ["strict", "reference"].contains(clock),
       ["variable", "informative", "none"].contains(conditioning),
       ["observed", "declared", "labels"].contains(partitioning)
     else {
       return "This setup uses an unsupported model."
+    }
+    if treePrior == "yule" {
+      if dating.enabled {
+        return "Yule requires contemporaneous tips without fossil dating or calibrations."
+      }
+      if yuleBirthRateUpper == nil {
+        return "Use a positive, finite upper bound for the Yule birth-rate prior."
+      }
     }
     if clock == "reference" && clockSigmaPrior == nil {
       return "Use positive, finite shape and scale values for the clock sigma prior."
@@ -380,7 +412,8 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       return "Check and checkpoint intervals must be positive multiples of the sampling interval."
     }
     if let issue = ProposalSchedule.validate(
-      weights: weights, tuningValues: tuningValues, clock: clock, dating: dating)
+      weights: weights, tuningValues: tuningValues, clock: clock, dating: dating,
+      treePrior: treePrior)
     {
       return issue
     }
@@ -416,6 +449,12 @@ struct AnalysisSettings: Codable, Equatable, Sendable {
       "--model", clock, "--conditioning", conditioning,
       "--gaps", gapsAsMissing ? "missing" : "reject", "--partitioning", partitioning,
     ]
+    if treePrior == "yule" {
+      guard !dating.enabled, let upper = yuleBirthRateUpper else {
+        throw ImportError.message(validationError ?? "This setup uses an unsupported model.")
+      }
+      arguments += ["--tree-prior", "yule", "--birth-rate-upper", String(upper)]
+    }
     if backend != "automatic" { arguments += ["--backend", backend] }
     if clock == "reference" {
       guard let prior = clockSigmaPrior else {
@@ -470,16 +509,18 @@ struct AnalysisDraft: Codable, Sendable {
     monophyly: [[String]] = [], outgroup: String? = nil
   ) {
     formatVersion =
-      settings.usesJointExchange
-      ? 9
-      : settings.partitioning == "labels"
-        ? 8
-        : settings.usesExecutionOptions
-          ? 7
-          : settings.usesCustomSigmaPrior
-            ? 6
-            : (settings.usesAdvancedOptions
-              ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
+      settings.treePrior == "yule"
+      ? 10
+      : settings.usesJointExchange
+        ? 9
+        : settings.partitioning == "labels"
+          ? 8
+          : settings.usesExecutionOptions
+            ? 7
+            : settings.usesCustomSigmaPrior
+              ? 6
+              : (settings.usesAdvancedOptions
+                ? 5 : (settings.dating.estimatesProcess ? 4 : (settings.dating.enabled ? 3 : 2)))
     createdAt = Date()
     matrixPath = matrix.path
     matrixSHA256 = report.inputSha256
@@ -503,7 +544,8 @@ struct AnalysisDraft: Codable, Sendable {
   }
 
   func validate() throws {
-    guard (1...9).contains(formatVersion),
+    guard (1...10).contains(formatVersion),
+      formatVersion >= 10 || settings.treePrior != "yule",
       formatVersion >= 9 || !settings.usesJointExchange,
       formatVersion >= 8 || settings.partitioning != "labels",
       formatVersion >= 7 || !settings.usesExecutionOptions,

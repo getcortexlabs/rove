@@ -1159,3 +1159,18 @@
 "Try joint topology/rate exchange" = "Experimentar troca conjunta de topologia e taxas";
 "Joint topology/rate exchange is currently available only without fossil dating." = "A troca conjunta de topologia e taxas está disponível, por enquanto, apenas sem datação de fósseis.";
 "Experimental, off by default. Exchanges neighboring subtrees and compensates their branch rates. Requires an undated relaxed clock. The weight starts at 10 and can be edited above; no performance benefit has been established." = "Experimental, desativada por padrão. Troca subárvores vizinhas e compensa suas taxas de ramo. Exige relógio relaxado sem datação. O peso inicial é 10 e pode ser editado acima; ainda não foi demonstrado ganho de desempenho.";
+
+// Yule tree prior
+"Fossilized birth-death" = "Nascimento-morte fossilizado";
+"Yule · pure birth" = "Yule · nascimento puro";
+"Birth-death" = "Nascimento-morte";
+"Yule · birth rate Uniform(0, %@)" = "Yule · taxa de nascimento Uniforme(0, %@)";
+"Yule models speciation without extinction for contemporaneous species tips, with complete sampling. It does not support fossil ages, calibrations or population coalescence." = "Yule modela especiação sem extinção para espécies contemporâneas, com amostragem completa. Não aceita idades fósseis, calibrações ou coalescência populacional.";
+"Birth-death allows extinction as well as speciation. Fossil dating uses the fossilized birth-death model below." = "Nascimento-morte permite extinção e especiação. A datação fóssil usa o modelo de nascimento-morte fossilizado abaixo.";
+"Birth-rate upper bound" = "Limite superior da taxa de nascimento";
+"The birth rate has a Uniform(0, upper bound) prior. Its units are inverse tree-height units on the fixed clock scale. Choose a defensible bound and inspect prior-only runs; 1000 is a starting value, not a general recommendation." = "A taxa de nascimento tem prior Uniforme(0, limite superior), em unidades inversas à altura da árvore na escala fixa do relógio. Escolha um limite justificável e examine análises apenas dos priors; 1000 é um valor inicial, não uma recomendação geral.";
+"Yule requires contemporaneous tips without fossil dating or calibrations." = "Yule exige terminais contemporâneos, sem datação fóssil ou calibrações.";
+"Use a positive, finite upper bound for the Yule birth-rate prior." = "Use um limite superior positivo e finito para o prior da taxa de nascimento de Yule.";
+"Birth-difference and relative-death moves require the birth-death prior." = "Movimentos de diversificação líquida e morte relativa exigem o prior de nascimento-morte.";
+"The birth-rate move requires Yule without fossil dating." = "O movimento da taxa de nascimento exige Yule sem datação fóssil.";
+"Speciation rate under Yule, per source tree-height unit." = "Taxa de especiação sob Yule, por unidade de altura da árvore de origem.";

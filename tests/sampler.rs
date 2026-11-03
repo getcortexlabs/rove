@@ -137,7 +137,7 @@ fn sample_prior(settings: &Settings, steps: u64, thin: u64, seed: u64) -> PriorS
         sampler.step();
         if step % thin == 0 {
             let tree = sampler.tree();
-            let birth_death = sampler.birth_death();
+            let birth_death = sampler.birth_death().unwrap();
             *sample.topologies.entry(clades(tree)).or_default() += 1;
             sample
                 .root
@@ -269,7 +269,7 @@ fn the_rate_parameters_keep_their_uniform_priors() {
     for step in 1..=2_000_000u64 {
         sampler.step();
         if step % 10 == 0 {
-            let birth_death = sampler.birth_death();
+            let birth_death = sampler.birth_death().unwrap();
             let tree = sampler.tree();
             r += birth_death.birth_difference / settings.birth_difference_upper;
             a += birth_death.relative_death;

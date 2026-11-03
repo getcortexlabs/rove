@@ -39,6 +39,7 @@ struct SetupView: View {
 
       if workspace.settings.clock == "reference" { ClockSigmaPriorSection(workspace: workspace) }
 
+      TreePriorSection(workspace: workspace)
       DatingSection(workspace: workspace)
 
       LabPanel {
@@ -320,6 +321,7 @@ struct ReviewView: View {
             Text("NEXUS").font(.system(size: 10, design: .monospaced)).foregroundStyle(Lab.muted)
           }.padding(.bottom, 22)
           rule
+          row("Tree prior", workspace.settings.treePriorDescription(strings: strings))
           row(
             "Character model",
             workspace.settings.conditioning == "variable"

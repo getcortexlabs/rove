@@ -187,3 +187,19 @@ fn power_posteriors_recover_the_quadrature_evidence_of_a_three_taxon_tree() {
     );
     assert!(analysis.powers.iter().all(|p| p.ess.unwrap() > 1000.0));
 }
+
+#[test]
+fn yule_power_posteriors_recover_normalized_evidence() {
+    let patterns = three_taxa();
+    let mut settings = one_height_settings();
+    settings.set_tree_prior(rove::speciation::TreePrior::Yule);
+    // Fix lambda and the root: only the inner height is integrated here.
+    settings.weights = vec![(Move::NodeHeight, 1.0)];
+    let expected = quadrature_log_evidence(&patterns, &settings, 8000);
+    let analysis = power_chain_analysis(&patterns, &settings, 53);
+    let estimate = analysis.stepping_stone;
+    assert!(
+        (estimate.log_marginal_likelihood - expected).abs()
+            < 4.0 * estimate.standard_error.unwrap() + 0.005
+    );
+}

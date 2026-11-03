@@ -197,3 +197,47 @@ log Hastings = log C(T) − log C(T') + log J
 Durações e taxas devem ser positivas e finitas, com `hP > hU`. Limites inválidos ou overflow são rejeitados antes da alteração. O reverso escolhe os mesmos `G` e `P` e troca `U` de volta com `X`; sua probabilidade é `1 / (2 C(T'))`, contra `1 / (2 C(T))` na ida. A transformação contínua preserva alturas, portanto o jacobiano é o produto dos dois fatores de escala das taxas. As taxas continuam associadas aos ramos de entrada indexados por nó, incluindo o índice especial quando a raiz não é o último nó. Restrições e rejeições pela verossimilhança/prior usam a restauração exata normal. Preservar as distâncias dos ramos realocados não preserva a verossimilhança, pois a topologia muda.
 
 Os testes cobrem inversão, jacobiano numérico completo, escolhas de ida/volta enumeradas, alvos conhecidos de topologias uniformes e taxas lognormais independentes, rejeição por restrições, verossimilhança recalculada versus cache, diferentes índices de raiz, checkpoints exatos, cancelamento/retomada no app e amostras idênticas nos backends portátil/ARM. Esses testes de correção não substituem estudos de posterior e desempenho. Métodos relacionados são descritos por [Douglas, Zhang e Bouckaert (2021)](https://doi.org/10.1371/journal.pcbi.1008322).
+
+## Prior opcional de Yule
+
+Em Configuração, escolha **Prior da árvore → Yule · nascimento puro**,
+ou use `--tree-prior yule --birth-rate-upper 1000` em `sample` ou `marginal`.
+Nascimento-morte continua como padrão; a datação fóssil usa FBD. Yule é um
+prior de árvore de espécies com amostragem completa, terminais contemporâneos
+na idade zero e sem extinção. Rejeita datação fóssil e não oferece calibrações
+de nós nem coalescência populacional. Espécies atuais, terminais fósseis e
+amostras populacionais dentro de uma espécie exigem pressupostos distintos.
+
+Apenas a taxa de nascimento λ é estimada, com prior próprio Uniforme(0,U)
+e log densidade −log U; U deve ser positivo e finito. O valor inicial de λ é
+min(1,U/2). As alturas usam mudanças esperadas na escala fixa do relógio
+unitário: λ está por unidade dessas alturas, não automaticamente por milhão
+de anos. U=1000 é uma referência inicial, não uma recomendação para toda
+matriz. Examine análises apenas dos priors e repita com limites justificáveis.
+Yule não possui coordenada, proposta ou estatística de extinção. A proposta
+`birth_rate_scale` aceita os controles usuais de peso e ajuste.
+
+A convenção não escalada do BEAST 2.7.8 é
+`(n−1) log λ − λ (soma das alturas internas + altura da raiz)`.
+É condicionada ao número de terminais, não à altura da raiz ou à origem; a
+raiz contribui duas vezes. Esperas independentes Exp(kλ), com escolha uniforme
+entre k(k−1)/2 pares, dão à árvore rotulada e ordenada por eventos o fator
+normalizador `2^(n−1)/(n−1)!`. Esse coeficiente independente dos parâmetros é
+o mesmo da convenção atual de nascimento-morte para o mesmo n. As estimativas
+por posteriores de potência usam Z(1)/Z(0), cancelando multiplicadores
+constantes do prior; a evidência corresponde ao prior normalizado no domínio
+aceito. A monofilia restringe esse domínio. Mantenha matriz, terminais e
+restrições consistentes nas comparações e compare o modelo completo,
+incluindo U e os demais priors.
+
+A escolha e o limite aparecem em Revisão, Histórico e comparações de modelos,
+e persistem em configurações de formato 10, registros, checkpoints, predições
+e estimativas marginais. Apps antigos rejeitam essas configurações. As
+comparações de convergência não misturam Yule com nascimento-morte nem limites
+diferentes. Retomar exatamente ainda exige o executável original.
+
+A validação inclui 24 estados sintéticos fixos do BEAST.base 2.7.8
+(`fixtures/validation/yule`), o limite de extinção zero, simulação independente
+dos tempos, alturas e frequências de topologias com e sem monofilia, e teste
+de posteriores de potência contra quadratura. São testes de correção, sem
+alegações comparativas de velocidade ou mistura.

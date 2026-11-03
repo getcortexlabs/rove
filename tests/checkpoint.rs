@@ -77,6 +77,7 @@ fn pause_crash_and_resume_preserve_all_samples_and_moves() {
     for (kind, matrix, conditioning) in [
         ("binary", MATRIX, "variable"),
         ("sigma-prior", MATRIX, "variable"),
+        ("yule", MATRIX, "variable"),
         ("dated", MATRIX, "variable"),
         (
             "multistate",
@@ -99,6 +100,9 @@ fn pause_crash_and_resume_preserve_all_samples_and_moves() {
             fs::write(root.join("matrix.nex"), matrix).unwrap();
             let configured = |name: &str| {
                 let mut cmd = command(&root, name, chains);
+                if kind == "yule" {
+                    cmd.args(["--tree-prior", "yule", "--birth-rate-upper", "4"]);
+                }
                 if kind == "sigma-prior" {
                     cmd.args(["--clock-sigma-shape", "2.5", "--clock-sigma-scale", "0.4"]);
                 }

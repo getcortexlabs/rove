@@ -1,9 +1,72 @@
 //! The birth–death tree prior of Gernhard (2008), as BEAST 2.7 evaluates
 //! `BirthDeathGernhard08Model` with `type="unscaled"`: every extant lineage is
 //! sampled, and the density is conditioned on the number of tips but not on
-//! the root height or an origin.
+//! the root height or an origin. Optional Yule uses the same convention with
+//! a birth rate and no extinction coordinate.
 
 use crate::tree::Tree;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TreePrior {
+    BirthDeath,
+    Yule,
+}
+
+/// The live undated speciation parameters. Yule has no extinction coordinate.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum SpeciationState {
+    BirthDeath(BirthDeath),
+    Yule { birth_rate: f64 },
+}
+
+impl SpeciationState {
+    pub fn rate(&self) -> f64 {
+        match *self {
+            Self::BirthDeath(p) => p.birth_difference,
+            Self::Yule { birth_rate } => birth_rate,
+        }
+    }
+    pub fn birth_death(&self) -> Option<BirthDeath> {
+        match *self {
+            Self::BirthDeath(p) => Some(p),
+            Self::Yule { .. } => None,
+        }
+    }
+    pub fn log_density(&self, tree: &Tree) -> f64 {
+        match *self {
+            Self::BirthDeath(p) => p.log_density(tree),
+            Self::Yule { birth_rate } => yule_log_density(tree, birth_rate),
+        }
+    }
+    pub fn kind(&self) -> TreePrior {
+        match self {
+            Self::BirthDeath(_) => TreePrior::BirthDeath,
+            Self::Yule { .. } => TreePrior::Yule,
+        }
+    }
+}
+
+impl From<BirthDeath> for SpeciationState {
+    fn from(value: BirthDeath) -> Self {
+        Self::BirthDeath(value)
+    }
+}
+
+/// BEAST 2.7.8's unscaled, tip-count-conditioned Yule convention. The root
+/// contributes twice; no root/origin conditioning or tip calibrations.
+pub fn yule_log_density(tree: &Tree, birth_rate: f64) -> f64 {
+    if !birth_rate.is_finite()
+        || birth_rate <= 0.0
+        || (0..tree.tips()).any(|t| tree.height(t) != 0.0)
+    {
+        return f64::NEG_INFINITY;
+    }
+    let total = (tree.tips()..tree.nodes())
+        .map(|n| tree.height(n))
+        .sum::<f64>()
+        + tree.height(tree.root());
+    (tree.tips() - 1) as f64 * birth_rate.ln() - birth_rate * total
+}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct BirthDeath {

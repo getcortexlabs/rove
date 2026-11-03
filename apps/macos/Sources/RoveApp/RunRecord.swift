@@ -48,6 +48,27 @@ struct EngineRecord: Decodable, Sendable {
     var clockSigmaPriorParameters: ClockSigmaPrior? = nil
     var sampleFromPrior: Bool? = nil
     var conditioning: String? = nil
+    var treePriorKind: String? = nil
+    var birthRatePriorParameters: BirthRatePrior? = nil
+
+    struct BirthRatePrior: Decodable, Sendable {
+      let distribution: String
+      let lower: Double
+      let upper: Double
+      let logDensity: Double
+
+      var valid: Bool {
+        distribution == "uniform" && lower == 0 && upper.isFinite && upper > 0
+          && upper / 2 > 0 && abs(logDensity + log(upper)) < 1e-12
+      }
+    }
+
+    func treePriorMatches(_ settings: AnalysisSettings) -> Bool {
+      guard (treePriorKind ?? "birth-death") == settings.treePrior else { return false }
+      if settings.treePrior != "yule" { return birthRatePriorParameters == nil }
+      guard dating == nil, let prior = birthRatePriorParameters, prior.valid else { return false }
+      return prior.upper == settings.yuleBirthRateUpper
+    }
 
     /// The engine's description of each conditioning option.
     static let conditioningDescriptions = [
@@ -108,7 +129,7 @@ struct EngineRecord: Decodable, Sendable {
     let expectedDating: EngineDatingModel?
     do { expectedDating = try draft.settings.dating.model() } catch { return false }
     return draft.settings.validationError == nil && input.sha256 == draft.matrixSHA256
-      && model.dating == expectedDating
+      && model.dating == expectedDating && model.treePriorMatches(draft.settings)
       && input.gaps == (draft.settings.gapsAsMissing ? "missing" : "reject")
       && model.preset == draft.settings.clock
       && (model.preset != "reference"

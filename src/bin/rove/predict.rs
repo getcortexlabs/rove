@@ -292,6 +292,27 @@ pub(super) fn run(args: &[String]) -> Result<()> {
     } else {
         record["model"]["clock_multiplier"] == 1.0
     };
+    let yule_upper = match record["model"]["tree_prior_kind"].as_str() {
+        None => None,
+        Some("yule") => {
+            let prior = &record["model"]["birth_rate_prior_parameters"];
+            let upper = prior["upper"]
+                .as_f64()
+                .filter(|u| u.is_finite() && *u > 0.0 && *u / 2.0 > 0.0)
+                .ok_or("invalid Yule birth-rate prior")?;
+            if dating.is_some()
+                || prior["distribution"] != "uniform"
+                || prior["lower"] != 0.0
+                || prior["log_density"]
+                    .as_f64()
+                    .is_none_or(|v| (v + upper.ln()).abs() > 1e-12)
+            {
+                return Err("unsupported Yule prior or dated tips".into());
+            }
+            Some(upper)
+        }
+        _ => return Err("unsupported tree prior".into()),
+    };
     if !multiplier_matches || record["model"]["mutation_rate"] != 1.0 {
         return Err("unsupported rate multiplier".into());
     }
@@ -387,6 +408,11 @@ pub(super) fn run(args: &[String]) -> Result<()> {
                     Settings::default()
                 }
             };
+            if let Some(upper) = yule_upper {
+                settings.set_tree_prior(rove::speciation::TreePrior::Yule);
+                settings.birth_difference_upper = upper;
+                settings.initial.birth_difference = column(&trace, "birth_rate", row)?;
+            }
             if let Some(dating) = &dating {
                 let mut live = dating.clone();
                 if let Some(priors) = dating.process_priors {

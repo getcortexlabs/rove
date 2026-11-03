@@ -1,0 +1,7 @@
+{
+  "reference": "BEAST.base 2.7.8",
+  "java": "Temurin 17.0.15",
+  "jar_sha256": "7e2133989c1cc0a8d78e23917db90e86236e0b4f17213c5d439bfd908c93a359",
+  "generator": "tools/beast/YuleStates.java",
+  "scope": "24 fixed synthetic states; unscaled Yule, zero-extinction birth-death and labeled density constants; no MCMC or timing measurement"
+}

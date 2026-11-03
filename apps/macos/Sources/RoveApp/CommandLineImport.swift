@@ -70,6 +70,14 @@ enum CommandLineImport {
         ?? option("--conditioning")
     else { throw RunFailure.invalidCompletion }
     var value = AnalysisSettings()
+    value.treePrior = record.model.treePriorKind ?? "birth-death"
+    if value.treePrior == "yule" {
+      guard let prior = record.model.birthRatePriorParameters, prior.valid else {
+        throw RunFailure.invalidCompletion
+      }
+      value.birthRateUpper = String(prior.upper)
+    }
+    guard record.model.treePriorMatches(value) else { throw RunFailure.invalidCompletion }
     value.clock = record.model.preset
     let sigma = record.model.clockSigmaPriorParameters ?? .reference
     value.clockSigmaShape = String(sigma.shape)
