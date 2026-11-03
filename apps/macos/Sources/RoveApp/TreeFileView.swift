@@ -26,7 +26,7 @@ struct TreeFileDetail: View {
         VStack(alignment: .leading, spacing: 14) {
           Text(
             strings(
-              "Rove did not run this sample here, so no outgroup is known. A summary and high node support do not establish convergence."
+              "Rove did not run this sample here, so its rooting choice is unknown. A summary and high node support do not establish convergence."
             )
           )
           .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)

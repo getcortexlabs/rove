@@ -298,7 +298,7 @@
 "%@ on one side of the root; the other %@ terminals together on the other." = "%@ de um lado da raiz; os outros %@ terminais juntos do outro.";
 "The outgroup is a terminal, not the ancestor at the root. This choice constrains the ingroup; its support is imposed by the setup." = "O grupo externo é um terminal, não o ancestral na raiz. Esta escolha obriga os demais a formar um grupo; o suporte dele é imposto pela configuração.";
 "No outgroup selected. Any applied groups below still constrain the tree." = "Nenhum grupo externo selecionado. Os grupos aplicados abaixo continuam restringindo a árvore.";
-"Choose one outgroup from a matrix with at least three terminals." = "Escolha um grupo externo de uma matriz com pelo menos três terminais.";
+"Choose one rooting taxon from a matrix with at least three terminals." = "Escolha um táxon de enraizamento de uma matriz com pelo menos três terminais.";
 "No groups applied. Root placement is unconstrained by groups." = "Nenhum grupo aplicado. Não há restrição de grupos sobre a posição da raiz.";
 "Applied groups" = "Grupos aplicados";
 "Support for an imposed group is not independent evidence from the characters." = "O suporte de um grupo imposto não é uma evidência independente dos caracteres.";
@@ -618,7 +618,7 @@
 "Your research.\nRoom to explore." = "Sua pesquisa.\nEspaço para explorar.";
 "Rove explores evolutionary relationships from morphological data. A native workspace, a Rust engine, and a curious little companion." = "O Rove explora relações evolutivas a partir de dados morfológicos. Um aplicativo nativo, um motor em Rust e um companheiro curioso.";
 "Rows are taxa. Columns are characters. Bring a NEXUS matrix and Rove will help you inspect the states and missing observations before you run anything." = "As linhas são táxons. As colunas são caracteres. Abra uma matriz NEXUS para conferir os estados e as observações ausentes antes de iniciar uma análise.";
-"Review the model and choose your outgroup explicitly. It gives your analysis a rooting constraint; Rove never guesses one for you." = "Revise o modelo e escolha seu grupo externo. Ele define uma restrição para a raiz da análise; o Rove não faz essa escolha por você.";
+"Review the model and choose a taxon for rooting explicitly. It constrains the root split; Rove never guesses that choice for you." = "Revise o modelo e escolha explicitamente um táxon para enraizamento. Ele restringe a divisão na raiz; o Rove não faz essa escolha por você.";
 "Follow the run, inspect its traces and explore the trees. History keeps your work together, with checkpoints for picking up a paused analysis." = "Acompanhe a execução, examine os traços e explore as árvores. O Histórico reúne seu trabalho e os pontos salvos para retomar análises pausadas.";
 "YOUR FIRST FIELD TRIP" = "SUA PRIMEIRA EXPLORAÇÃO";
 "A SMALL INTRODUCTION" = "UMA BREVE APRESENTAÇÃO";
@@ -637,7 +637,7 @@
 "Illustration of a morphological matrix" = "Ilustração de uma matriz morfológica";
 "? means an unknown observation." = "? indica uma observação desconhecida.";
 "For the bundled example" = "No exemplo do aplicativo";
-"Choose T20 as the outgroup. Check the remaining settings before starting." = "Escolha T20 como grupo externo. Confira as outras opções antes de começar.";
+"Choose T20 as the taxon used for rooting. Check the remaining settings before starting." = "Escolha T20 como táxon de enraizamento. Confira as outras opções antes de começar.";
 "Check the sampling" = "Confira a amostragem";
 "Useful samples matter more than step counts." = "Amostras úteis valem mais do que contar passos.";
 "Explore the trees" = "Explore as árvores";
@@ -655,7 +655,7 @@
 "A small beginning, with room for big questions. Meet the tools already inside this beta." = "Um pequeno começo, com espaço para grandes perguntas. Conheça as ferramentas que já estão neste beta.";
 "Bring all the little differences." = "Traga cada pequena diferença.";
 "Morphological matrices, with two, three or more states." = "Matrizes morfológicas com dois, três ou mais estados.";
-"Import a NEXUS matrix, review its state partitions and choose the outgroup explicitly. The bundled 20 × 50 example is a good place to start." = "Importe uma matriz NEXUS, confira as partições por estados e escolha o grupo externo. O exemplo 20 × 50 do aplicativo é um bom ponto de partida.";
+"Import a NEXUS matrix, review its state partitions and choose the taxon used for rooting explicitly. The bundled 20 × 50 example is a good place to start." = "Importe uma matriz NEXUS, confira as partições por estados e escolha explicitamente o táxon de enraizamento. O exemplo 20 × 50 do aplicativo é um bom ponto de partida.";
 "Good work deserves a save point." = "Bom trabalho merece um ponto salvo.";
 "Find past runs. Pause a long analysis. Pick up where you left off." = "Encontre análises anteriores, pause uma execução longa e retome de onde parou.";
 "History keeps the run configuration and output paths together. Checkpoints preserve the sampler state; resuming requires the same engine and original input." = "O Histórico reúne as configurações e os caminhos dos resultados. Os pontos salvos preservam o estado do amostrador; para retomar, use o mesmo motor e os dados originais.";
@@ -950,7 +950,7 @@
 "The tree file could not be opened." = "Não foi possível abrir o arquivo de árvores.";
 "The tree file is no longer at its recorded path." = "O arquivo de árvores não está mais no caminho registrado.";
 "Trees from another program" = "Árvores de outro programa";
-"Rove did not run this sample here, so no outgroup is known. A summary and high node support do not establish convergence." = "O Rove não rodou esta amostra aqui, então nenhum grupo externo é conhecido. Um resumo e suporte alto nos nós não comprovam convergência.";
+"Rove did not run this sample here, so its rooting choice is unknown. A summary and high node support do not establish convergence." = "O Rove não rodou esta amostra aqui, então a escolha de enraizamento é desconhecida. Um resumo e suporte alto nos nós não comprovam convergência.";
 "The tree file is no longer at its recorded path. Saved summaries stay available." = "O arquivo de árvores não está mais no caminho registrado. Os resumos salvos continuam disponíveis.";
 "Summaries" = "Resumos";
 "No summary yet. Summarize the file to build an annotated MCC tree." = "Nenhum resumo ainda. Resuma o arquivo para construir uma árvore MCC anotada.";
@@ -1105,3 +1105,14 @@
 "Inspect ambiguous observations" = "Inspecionar observações ambíguas";
 "Up to 100 observations are listed; the counts include the full matrix." = "A lista mostra até 100 observações; as contagens incluem a matriz inteira.";
 "Alphabet choice" = "Escolha do alfabeto";
+
+// Visual model guidance.
+"Prior density" = "Densidade do prior";
+"Expected sigma" = "Sigma esperado";
+"Gamma prior for clock sigma; the dashed line marks its expectation." = "Prior gamma do sigma do relógio; a linha tracejada marca sua esperança.";
+"The density preview is unavailable at this numerical scale." = "A prévia da densidade não está disponível nessa escala numérica.";
+"Expected sigma: %@ · standard deviation: %@" = "Sigma esperado: %@ · desvio padrão: %@";
+"The density grows without bound near zero; the curve starts above zero." = "A densidade cresce sem limite perto de zero; a curva começa acima de zero.";
+"This is a prior preview, before seeing the data. The displayed range is not a credible interval." = "Esta é uma prévia do prior, antes de observar os dados. O intervalo exibido não é um intervalo de credibilidade.";
+"Other %@ terminals" = "Outros %@ terminais";
+"Constraint diagram. Branch lengths and relationships within the collapsed group are not estimated here." = "Diagrama da restrição. Os comprimentos dos ramos e as relações dentro do grupo recolhido não são estimados aqui.";

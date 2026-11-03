@@ -30,6 +30,7 @@ struct RootingSection: View {
         )
         .font(.system(size: 12)).foregroundStyle(Lab.secondary).lineSpacing(4)
         if let outgroup = workspace.outgroup {
+          RootingConstraintDiagram(taxon: outgroup, remaining: taxa.count - 1, strings: strings)
           HStack(alignment: .top, spacing: 12) {
             Image(systemName: "point.3.connected.trianglepath.dotted")
               .font(.system(size: 22)).foregroundStyle(Lab.ice).accessibilityHidden(true)
@@ -46,6 +47,7 @@ struct RootingSection: View {
                 )
               )
               .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
+              .fixedSize(horizontal: false, vertical: true)
             }
           }.padding(16).background(Lab.ice.opacity(0.045), in: RoundedRectangle(cornerRadius: 12))
         } else {
@@ -63,6 +65,61 @@ struct RootingSection: View {
         }
       }
     }
+  }
+}
+
+struct RootingConstraintDiagram: View {
+  let taxon: String
+  let remaining: Int
+  let strings: AppStrings
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 14) {
+        Canvas { context, size in
+          var branches = Path()
+          branches.move(to: CGPoint(x: 10, y: 48))
+          branches.addLine(to: CGPoint(x: 40, y: 48))
+          branches.move(to: CGPoint(x: 40, y: 18))
+          branches.addLine(to: CGPoint(x: 40, y: 76))
+          branches.move(to: CGPoint(x: 40, y: 18))
+          branches.addLine(to: CGPoint(x: size.width - 6, y: 18))
+          branches.move(to: CGPoint(x: 40, y: 76))
+          branches.addLine(to: CGPoint(x: 70, y: 76))
+          context.stroke(branches, with: .color(Lab.ice), lineWidth: 2)
+          context.fill(
+            Path(ellipseIn: CGRect(x: 6, y: 44, width: 8, height: 8)),
+            with: .color(Lab.accent))
+          var group = Path()
+          group.move(to: CGPoint(x: 70, y: 76))
+          group.addLine(to: CGPoint(x: size.width - 6, y: 53))
+          group.addLine(to: CGPoint(x: size.width - 6, y: 96))
+          group.closeSubpath()
+          context.fill(group, with: .color(Lab.lilac.opacity(0.2)))
+          context.stroke(group, with: .color(Lab.lilac), lineWidth: 1.5)
+        }.frame(width: 140, height: 100).accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 0) {
+          Text(taxon).font(.system(size: 12, weight: .medium)).foregroundStyle(Lab.ice)
+            .frame(height: 36, alignment: .center)
+          Spacer(minLength: 0)
+          Text(strings("Other %@ terminals", strings.number(remaining)))
+            .font(.system(size: 12)).foregroundStyle(Lab.lilac)
+            .frame(height: 46, alignment: .center)
+        }.frame(height: 100)
+      }
+      Text(
+        strings(
+          "Constraint diagram. Branch lengths and relationships within the collapsed group are not estimated here."
+        )
+      )
+      .font(.system(size: 10)).foregroundStyle(Lab.muted)
+      .fixedSize(horizontal: false, vertical: true)
+    }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      strings(
+        "%@ on one side of the root; the other %@ terminals together on the other.", taxon,
+        strings.number(remaining)))
   }
 }
 

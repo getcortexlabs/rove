@@ -478,3 +478,11 @@ O plano oferece 1, 10, 20, 30, 50 e 100 milhões de passos, com intervalos de 10
 Durante a execução, **Tempo estimado até o limite de passos** e **Tempo por milhão de passos** usam diferenças recentes de passos e de tempo ativo do motor. O Rove primeiro coleta pelo menos três intervalos cobrindo dez segundos e depois usa até oito intervalos recentes. Cada cadeia é medida separadamente; a estimativa do grupo é o maior tempo restante. Retomar depois de uma pausa inicia uma nova medição, sem contar o tempo parado. As estimativas desaparecem ao interromper ou concluir. A carga do processador pode mudar o ritmo. A previsão é até o limite de passos, não até a convergência; a parada automática pode encerrar antes.
 
 **O que são estes arquivos?**, nos resultados e no Histórico, abre uma explicação offline. O [guia da pasta da execução](./run-files) mostra os arquivos e o caminho do traço até a árvore anotada.
+
+### Orientação visual sobre o modelo
+
+O painel de enraizamento desenha a divisão imposta: o terminal escolhido de um lado e um grupo recolhido com todos os demais do outro. Ele não estima comprimentos de ramos, relações internas ou estados ancestrais. O tour usa a mesma terminologia de enraizamento.
+
+Abra **Prior do sigma do relógio** para ver a densidade gamma mudar com Alpha e Beta, na parametrização forma/escala. Uma linha tracejada marca a esperança do prior; o painel também mostra o desvio padrão. O trecho desenhado não é um intervalo de credibilidade. Com forma menor que um, a densidade diverge em zero e a curva começa acima de zero. Escalas numéricas extremas podem não ter prévia gráfica; isso não muda o prior do motor.
+
+A previsão de duração estima o limite de passos solicitado usando o tempo ativo recente do motor. Ela não prevê quando a convergência será estabelecida. As opções de seleção de caracteres e datação explicam suas hipóteses junto das mensagens de validação; essas explicações não demonstram adequação a um estudo específico.

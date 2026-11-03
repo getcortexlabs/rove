@@ -474,3 +474,11 @@ El plan ofrece 1, 10, 20, 30, 50 y 100 millones de pasos, con intervalos de 100,
 Durante la ejecución, **Estimated time to step limit** y **Time per million steps** usan diferencias recientes de pasos y tiempo activo del motor. Primero se recogen al menos tres intervalos que cubran diez segundos, y luego se usan hasta ocho intervalos recientes. Cada cadena se mide por separado; la estimación del grupo es el mayor tiempo restante. Reanudar inicia una medición nueva que excluye el tiempo en pausa. Las estimaciones desaparecen al detener o terminar. La carga del procesador puede cambiar el ritmo. La predicción corresponde al límite de pasos, no a la convergencia; la parada automática puede terminar antes.
 
 **What are these files?** en Resultados y History abre una explicación sin conexión. La [guía de la carpeta](./run-files) muestra los archivos y el recorrido desde la traza hasta el árbol anotado.
+
+### Orientación visual del modelo
+
+El panel de enraizamiento dibuja la división impuesta: el terminal elegido a un lado y un grupo colapsado con todos los demás al otro. No estima longitudes de ramas, relaciones internas ni estados ancestrales. El recorrido inicial emplea la misma terminología.
+
+Abre **Clock sigma prior** para ver cómo cambia la densidad gamma con Alpha y Beta, en la parametrización forma/escala. La línea discontinua marca la esperanza del prior; también se muestra su desviación estándar. El rango dibujado no es un intervalo de credibilidad. Con forma menor que uno, la densidad diverge en cero y la curva comienza por encima de cero. Las escalas numéricas extremas pueden no tener vista gráfica; esto no altera el prior del motor.
+
+La duración estimada corresponde al límite solicitado de pasos y usa el tiempo activo reciente del motor. No predice cuándo se establecerá la convergencia. Los controles de selección de caracteres y datación explican sus supuestos junto a la validación; estas explicaciones no demuestran adecuación para un estudio concreto.

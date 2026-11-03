@@ -52,7 +52,7 @@ struct MatrixView: View {
               Text(strings("By observed states")).tag("observed")
               Text(strings("Declared alphabet")).tag("declared")
               Text(strings("Complete state labels")).tag("labels")
-            }.labelsHidden().frame(width: 210)
+            }.labelsHidden().frame(width: 260)
               .disabled(workspace.loading)
               .onChange(of: workspace.settings.partitioning) { workspace.reloadGapPolicy() }
           }
@@ -66,6 +66,7 @@ struct MatrixView: View {
             )
           )
           .font(.system(size: 11)).foregroundStyle(Lab.secondary).lineSpacing(3)
+          .fixedSize(horizontal: false, vertical: true)
           if let partitions = report.partitions {
             ViewThatFits(in: .horizontal) {
               HStack(spacing: 16) { partitionCounts(partitions) }
@@ -88,6 +89,7 @@ struct MatrixView: View {
               )
             )
             .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+            .fixedSize(horizontal: false, vertical: true)
           }
         }
       }
@@ -153,12 +155,14 @@ struct MatrixView: View {
             )
           )
           .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+          .fixedSize(horizontal: false, vertical: true)
           Text(
             strings(
               "If your exporter uses braces for polymorphism, confirm the meaning before running. Reading the file does not resolve that scientific choice."
             )
           )
           .font(.system(size: 11)).foregroundStyle(Lab.secondary)
+          .fixedSize(horizontal: false, vertical: true)
           if let examples = report.observationExamples, !examples.isEmpty {
             DisclosureGroup(strings("Inspect ambiguous observations")) {
               ForEach(Array(examples.enumerated()), id: \.offset) { _, example in
@@ -275,9 +279,18 @@ private struct MatrixGrid: View {
           let name =
             report.characterLabels[selected.column]
             ?? strings("Character %@", strings.number(selected.column + 1))
-          Text(
-            "\(report.taxa[selected.row])  ·  \(name)  ·  \(report.cells[selected.row][selected.column])"
-          )
+          VStack(alignment: .leading, spacing: 4) {
+            Text(
+              "\(report.taxa[selected.row])  ·  \(name)  ·  \(report.cells[selected.row][selected.column])"
+            )
+            if let labels = report.stateLabels, labels.indices.contains(selected.column) {
+              Text(
+                zip(report.symbols, labels[selected.column])
+                  .map { "\($0.0) = \($0.1)" }.joined(separator: " · ")
+              )
+              .fixedSize(horizontal: false, vertical: true)
+            }
+          }
         } else {
           Text(strings("Click a cell to inspect it. Scroll to explore."))
         }
