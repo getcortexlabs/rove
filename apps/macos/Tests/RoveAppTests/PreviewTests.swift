@@ -5,6 +5,40 @@ import Testing
 @testable import RoveApp
 
 struct PreviewTests {
+  @Test @MainActor func renderYulePrior() async throws {
+    guard ProcessInfo.processInfo.environment["CI"] == nil else { return }
+    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+      .deletingLastPathComponent()
+    let directory = root.appendingPathComponent(".local/ui/yule")
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    _ = NSApplication.shared
+    NSApp.appearance = NSAppearance(named: .darkAqua)
+    Lab.registerFonts()
+    let suite = "rove-yule-preview-\(UUID())"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let preferences = AppPreferences(defaults: defaults)
+    let workspace = Workspace(
+      executable: root.appendingPathComponent("target/release/rove"), preferences: preferences)
+    workspace.settings.treePrior = "yule"
+    let view = NSHostingView(
+      rootView: TreePriorSection(workspace: workspace).padding(24).frame(width: 620, height: 410)
+        .background(Lab.background))
+    let window = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 620, height: 410),
+      styleMask: [.borderless], backing: .buffered, defer: false)
+    window.isReleasedWhenClosed = false
+    window.contentView = view
+    window.orderBack(nil)
+    for language in [AppLanguage.english, .portuguese] {
+      preferences.language = language
+      try await capture(
+        view, to: directory.appendingPathComponent("prior-\(language.rawValue).png"))
+    }
+    window.close()
+  }
+
   @Test @MainActor func renderOrderedPartitions() async throws {
     guard ProcessInfo.processInfo.environment["CI"] == nil else { return }
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()

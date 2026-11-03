@@ -369,7 +369,8 @@ mod tests {
         let mut birth = crate::speciation::BirthDeath {
             birth_difference: 1.0,
             relative_death: 0.5,
-        };
+        }
+        .into();
         for step in 0..250_000 {
             if random.uniform() < 0.15 {
                 // Exact independent conditional draws for a known target.

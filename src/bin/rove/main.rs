@@ -27,6 +27,7 @@ use rove::data::GapTreatment;
 use rove::mcmc::output::{TraceWriter, TreeWriter, is_plain_label};
 use rove::mcmc::{Conditioning, Move, Sampler, Settings};
 use rove::rates::SigmaPrior;
+use rove::speciation::TreePrior;
 use rove::{Backend, nexus};
 
 const USAGE: &str =
@@ -34,6 +35,7 @@ const USAGE: &str =
                    [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                    [--model strict|reference] [--conditioning variable|informative|none] [--sample-from-prior]
                    [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
+                   [--tree-prior birth-death|yule] [--birth-rate-upper <x>]
                    [--partitioning observed|declared|labels] [--dating <settings.json>]
                    [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                    [--backend portable|neon] [--chains <1..16>] [--burnin-percent <0..99>]
@@ -46,6 +48,7 @@ const USAGE: &str =
                      [--monophyly <taxon,taxon,...>]... [--gaps reject|missing]
                      [--model strict|reference] [--conditioning variable|informative|none]
                      [--clock-sigma-shape <x>] [--clock-sigma-scale <x>]
+                     [--tree-prior birth-death|yule] [--birth-rate-upper <x>]
                      [--partitioning observed|declared|labels] [--dating <settings.json>]
                      [--no-tuning] [--tuning <move>=<value>]... [--weight <move>=<value>]...
                      [--backend portable|neon] [--print-every <n>] [--cancel-on-stdin-close]
@@ -101,6 +104,8 @@ struct Options {
     conditioning: Conditioning,
     reference_model: bool,
     clock_sigma_prior: SigmaPrior,
+    tree_prior: TreePrior,
+    birth_rate_upper: f64,
     sample_from_prior: bool,
     tuning: bool,
     tuning_values: Vec<(Move, f64)>,
@@ -138,6 +143,8 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut reference_model = false;
     let mut sigma_shape = 5.0;
     let mut sigma_scale = 0.2;
+    let mut tree_prior = TreePrior::BirthDeath;
+    let mut birth_rate_upper = 1000.0f64;
     let mut sample_from_prior = false;
     let mut tuning = true;
     let mut tuning_values = Vec::new();
@@ -286,6 +293,18 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                     }
                 };
             }
+            "--tree-prior" => {
+                tree_prior = match value("--tree-prior")?.as_str() {
+                    "birth-death" => TreePrior::BirthDeath,
+                    "yule" => TreePrior::Yule,
+                    _ => return Err("--tree-prior must be birth-death or yule".into()),
+                };
+            }
+            "--birth-rate-upper" => {
+                birth_rate_upper = value("--birth-rate-upper")?
+                    .parse()
+                    .map_err(|_| "--birth-rate-upper needs a number")?
+            }
             "--backend" => {
                 let name = value("--backend")?;
                 backend = Backend::ALL
@@ -326,6 +345,17 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         return Err("clock sigma prior options require --model reference".into());
     }
     let clock_sigma_prior = SigmaPrior::new(sigma_shape, sigma_scale).map_err(|e| e.to_string())?;
+    if !birth_rate_upper.is_finite() || birth_rate_upper <= 0.0 || birth_rate_upper / 2.0 == 0.0 {
+        return Err(
+            "--birth-rate-upper must be finite and positive with a representable interior".into(),
+        );
+    }
+    if tree_prior != TreePrior::Yule && seen.contains("--birth-rate-upper") {
+        return Err("--birth-rate-upper requires --tree-prior yule".into());
+    }
+    if tree_prior == TreePrior::Yule && dating.is_some() {
+        return Err("Yule does not support fossil dating or calibrations".into());
+    }
     let options = Options {
         command,
         powers: match command {
@@ -358,6 +388,8 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         conditioning,
         reference_model,
         clock_sigma_prior,
+        tree_prior,
+        birth_rate_upper,
         sample_from_prior,
         tuning,
         tuning_values,
@@ -634,6 +666,11 @@ fn configure(options: &mut Options) -> Result<Configured, Box<dyn Error>> {
     if let Some(config) = &options.dating {
         settings.set_dating(dating::parse(config, taxa)?);
     }
+    if options.tree_prior == TreePrior::Yule {
+        settings.set_tree_prior(TreePrior::Yule);
+        settings.birth_difference_upper = options.birth_rate_upper;
+        settings.initial.birth_difference = 1.0f64.min(options.birth_rate_upper / 2.0);
+    }
     for &(kind, weight) in &options.weights {
         if let Some(entry) = settings.weights.iter_mut().find(|(k, _)| *k == kind) {
             entry.1 = weight;
@@ -686,7 +723,7 @@ fn model_json(
         Conditioning::None => "none (Mk)",
     };
     let names = |tips: &[usize]| Json::List(tips.iter().map(|&t| Json::text(&taxa[t])).collect());
-    Json::Object(vec![
+    let mut fields = vec![
         ("partitioning", Json::text(options.partitioning.name())),
         ("partitions", partitions::describe(patterns)),
         (
@@ -820,6 +857,8 @@ fn model_json(
                     "FBD joint sampling density, origin-conditioned, removal probability zero, no survival conditioning; observed specimen count, age evidence and imposed terminal/clade constraints inform process parameters; not a parameter-wise normalized restricted tree prior or marginal likelihood"
                 } else if settings.dating.is_some() {
                     "FBD, fixed origin and process parameters, removal probability zero, restricted to terminal fossils and supplied age bounds; unnormalized restricted density, not model evidence"
+                } else if settings.tree_prior == TreePrior::Yule {
+                    "Yule pure birth, unscaled, complete sampling, conditioned on tip count; no root/origin conditioning or calibrations"
                 } else {
                     "birth-death (Gernhard 2008), unscaled, every lineage sampled, conditioned on the number of tips"
                 },
@@ -827,7 +866,7 @@ fn model_json(
         ),
         (
             "birth_difference_rate_prior",
-            if settings.dating.is_some() {
+            if settings.dating.is_some() || settings.tree_prior == TreePrior::Yule {
                 Json::Null
             } else {
                 Json::text(format!("Uniform(0, {})", settings.birth_difference_upper))
@@ -835,7 +874,7 @@ fn model_json(
         ),
         (
             "relative_death_rate_prior",
-            if settings.dating.is_some() {
+            if settings.dating.is_some() || settings.tree_prior == TreePrior::Yule {
                 Json::Null
             } else {
                 Json::text("Uniform(0, 1)")
@@ -846,7 +885,26 @@ fn model_json(
             "monophyly",
             Json::List(settings.monophyly.iter().map(|c| names(c)).collect()),
         ),
-    ])
+    ];
+    if settings.tree_prior == TreePrior::Yule {
+        fields.extend([
+            ("tree_prior_kind", Json::text("yule")),
+            (
+                "birth_rate_prior_parameters",
+                Json::Object(vec![
+                    ("distribution", Json::text("uniform")),
+                    ("lower", Json::Number(0.0)),
+                    ("upper", Json::Number(settings.birth_difference_upper)),
+                    ("log_density", Json::Number(-settings.birth_difference_upper.ln())),
+                ]),
+            ),
+            (
+                "tree_density_normalization",
+                Json::text("unscaled BEAST convention; the labeled-tree multiplier 2^(n-1)/(n-1)! is parameter-independent and cancels in power-posterior ratios; monophyly restricts the prior domain"),
+            ),
+        ]);
+    }
+    Json::Object(fields)
 }
 
 fn optional(value: Option<f64>) -> Json {
@@ -1141,11 +1199,27 @@ fn run_chain(
                 ("sample_every", Json::Integer(options.sample_every)),
                 (
                     "initial_birth_difference_rate",
-                    Json::Number(settings.initial.birth_difference),
+                    if settings.tree_prior == TreePrior::Yule {
+                        Json::Null
+                    } else {
+                        Json::Number(settings.initial.birth_difference)
+                    },
+                ),
+                (
+                    "initial_birth_rate",
+                    if settings.tree_prior == TreePrior::Yule {
+                        Json::Number(settings.initial.birth_difference)
+                    } else {
+                        Json::Null
+                    },
                 ),
                 (
                     "initial_relative_death_rate",
-                    Json::Number(settings.initial.relative_death),
+                    if settings.tree_prior == TreePrior::Yule {
+                        Json::Null
+                    } else {
+                        Json::Number(settings.initial.relative_death)
+                    },
                 ),
                 (
                     "initial_tree",

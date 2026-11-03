@@ -220,3 +220,65 @@ fn exports_reject_symlinked_artifacts() {
     );
     assert!(!root.join("package").exists());
 }
+
+#[test]
+fn predictive_source_copies_respect_matrix_consent() {
+    let root = fixture("assessment-predictive-matrix-consent", "1");
+    fs::create_dir(root.join("run/predictions")).unwrap();
+    good(call(&[
+        "predict",
+        root.join("run").to_str().unwrap(),
+        "--matrix",
+        root.join("matrix.nex").to_str().unwrap(),
+        "--output",
+        root.join("run/predictions/check").to_str().unwrap(),
+        "--seed",
+        "7",
+        "--replicates",
+        "2",
+        "--burnin-percent",
+        "10",
+    ]));
+    let original = root.join("run/predictions/check/source/matrix.nex");
+    assert!(original.exists());
+    for include in [false, true] {
+        let name = if include { "included" } else { "excluded" };
+        let package = root.join(name);
+        let source = root.join("run");
+        let matrix = root.join("matrix.nex");
+        let mut args = vec![
+            "export-run",
+            source.to_str().unwrap(),
+            "--output",
+            package.to_str().unwrap(),
+        ];
+        if include {
+            args.extend(["--include-matrix", matrix.to_str().unwrap()]);
+        }
+        good(call(&args));
+        assert_eq!(package.join("matrix.nex").exists(), include);
+        assert!(
+            !package
+                .join("run/predictions/check/source/matrix.nex")
+                .exists()
+        );
+        assert!(
+            package
+                .join("run/predictions/check/matrices/replicate-00001.nex")
+                .exists()
+        );
+        let manifest = read(package.join("manifest.json"));
+        assert_eq!(
+            manifest["omitted_source_matrices"][0],
+            "predictions/check/source/matrix.nex"
+        );
+        assert_eq!(
+            status(&read(package.join("assessment.json")), "prediction"),
+            "review_required"
+        );
+    }
+    assert_eq!(
+        fs::read(original).unwrap(),
+        fs::read(root.join("matrix.nex")).unwrap()
+    );
+}

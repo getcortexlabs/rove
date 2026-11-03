@@ -281,6 +281,7 @@ private struct HistoryDetail: View {
             if let prior = draft.settings.clockSigmaPrior {
               field("Clock sigma prior", prior.description(strings: strings))
             }
+            field("Tree prior", draft.settings.treePriorDescription(strings: strings))
             field(
               "Character model",
               strings(

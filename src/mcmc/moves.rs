@@ -6,7 +6,7 @@
 use super::coupled;
 use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation};
-use crate::speciation::BirthDeath;
+use crate::speciation::SpeciationState;
 use crate::tree::Tree;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -48,10 +48,12 @@ pub enum Move {
     ClockSigmaRates,
     /// Narrow exchange with compensation of the two reattached branch rates.
     NarrowExchangeRates,
+    /// Scale the pure-birth rate of a Yule prior.
+    BirthRateScale,
 }
 
 impl Move {
-    pub const ALL: [Move; 23] = [
+    pub const ALL: [Move; 24] = [
         Move::FbdBirthScale,
         Move::FbdDeathScale,
         Move::FbdSamplingScale,
@@ -75,6 +77,7 @@ impl Move {
         Move::RootTimeRates,
         Move::ClockSigmaRates,
         Move::NarrowExchangeRates,
+        Move::BirthRateScale,
     ];
 
     pub fn name(self) -> &'static str {
@@ -102,6 +105,7 @@ impl Move {
             Self::RootTimeRates => "root_time_rates",
             Self::ClockSigmaRates => "clock_sigma_rates",
             Self::NarrowExchangeRates => "narrow_exchange_rates",
+            Self::BirthRateScale => "birth_rate_scale",
         }
     }
 
@@ -118,6 +122,7 @@ impl Move {
             | Self::RootScale
             | Self::TreeScale
             | Self::BirthDifferenceScale
+            | Self::BirthRateScale
             | Self::RelativeDeathScale
             | Self::RootTimeRates => Some(0.75),
             Self::GammaShapeScale
@@ -189,7 +194,7 @@ impl Move {
     pub(crate) fn propose(
         self,
         tree: &mut Tree,
-        birth_death: &mut BirthDeath,
+        speciation: &mut SpeciationState,
         rates: &mut RateVariation,
         upper: f64,
         tuning: Option<f64>,
@@ -215,9 +220,23 @@ impl Move {
             Self::RootScale => root_scale(tree, tuning, random),
             Self::TreeScale => tree_scale(tree, tuning, random),
             Self::BirthDifferenceScale => {
-                scale(&mut birth_death.birth_difference, upper, tuning, random)
+                let SpeciationState::BirthDeath(parameters) = speciation else {
+                    return None;
+                };
+                scale(&mut parameters.birth_difference, upper, tuning, random)
             }
-            Self::RelativeDeathScale => scale(&mut birth_death.relative_death, 1.0, tuning, random),
+            Self::BirthRateScale => {
+                let SpeciationState::Yule { birth_rate } = speciation else {
+                    return None;
+                };
+                scale(birth_rate, upper, tuning, random)
+            }
+            Self::RelativeDeathScale => {
+                let SpeciationState::BirthDeath(parameters) = speciation else {
+                    return None;
+                };
+                scale(&mut parameters.relative_death, 1.0, tuning, random)
+            }
             Self::GammaShapeScale => {
                 let shape = rates.gamma.as_ref()?.shape();
                 let factor = scaler(tuning, random);
@@ -625,7 +644,8 @@ mod tests {
         let mut birth_death = BirthDeath {
             birth_difference: 1.0,
             relative_death: 0.5,
-        };
+        }
+        .into();
         let mut current = log_target(&tree);
         let mut counts: HashMap<Vec<u32>, usize> = HashMap::new();
         for step in 0..steps {

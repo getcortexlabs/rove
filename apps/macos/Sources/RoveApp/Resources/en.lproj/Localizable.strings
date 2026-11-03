@@ -1159,3 +1159,18 @@
 "Try joint topology/rate exchange" = "Try joint topology/rate exchange";
 "Joint topology/rate exchange is currently available only without fossil dating." = "Joint topology/rate exchange is currently available only without fossil dating.";
 "Experimental, off by default. Exchanges neighboring subtrees and compensates their branch rates. Requires an undated relaxed clock. The weight starts at 10 and can be edited above; no performance benefit has been established." = "Experimental, off by default. Exchanges neighboring subtrees and compensates their branch rates. Requires an undated relaxed clock. The weight starts at 10 and can be edited above; no performance benefit has been established.";
+
+// Yule tree prior
+"Fossilized birth-death" = "Fossilized birth-death";
+"Yule · pure birth" = "Yule · pure birth";
+"Birth-death" = "Birth-death";
+"Yule · birth rate Uniform(0, %@)" = "Yule · birth rate Uniform(0, %@)";
+"Yule models speciation without extinction for contemporaneous species tips, with complete sampling. It does not support fossil ages, calibrations or population coalescence." = "Yule models speciation without extinction for contemporaneous species tips, with complete sampling. It does not support fossil ages, calibrations or population coalescence.";
+"Birth-death allows extinction as well as speciation. Fossil dating uses the fossilized birth-death model below." = "Birth-death allows extinction as well as speciation. Fossil dating uses the fossilized birth-death model below.";
+"Birth-rate upper bound" = "Birth-rate upper bound";
+"The birth rate has a Uniform(0, upper bound) prior. Its units are inverse tree-height units on the fixed clock scale. Choose a defensible bound and inspect prior-only runs; 1000 is a starting value, not a general recommendation." = "The birth rate has a Uniform(0, upper bound) prior. Its units are inverse tree-height units on the fixed clock scale. Choose a defensible bound and inspect prior-only runs; 1000 is a starting value, not a general recommendation.";
+"Yule requires contemporaneous tips without fossil dating or calibrations." = "Yule requires contemporaneous tips without fossil dating or calibrations.";
+"Use a positive, finite upper bound for the Yule birth-rate prior." = "Use a positive, finite upper bound for the Yule birth-rate prior.";
+"Birth-difference and relative-death moves require the birth-death prior." = "Birth-difference and relative-death moves require the birth-death prior.";
+"The birth-rate move requires Yule without fossil dating." = "The birth-rate move requires Yule without fossil dating.";
+"Speciation rate under Yule, per source tree-height unit." = "Speciation rate under Yule, per source tree-height unit.";

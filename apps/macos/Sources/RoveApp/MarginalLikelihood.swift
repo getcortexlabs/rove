@@ -108,7 +108,7 @@ struct SavedEstimate: Identifiable, Sendable {
       && record.model.conditioning
         == EngineRecord.Model.conditioningDescriptions[settings.conditioning]
       && (record.model.partitioning ?? "declared") == settings.partitioning
-      && record.model.dating == dating
+      && record.model.dating == dating && record.model.treePriorMatches(settings)
       && (settings.clock != "reference"
         || (record.model.clockSigmaPriorParameters ?? .reference) == settings.clockSigmaPrior)
       && (record.settings.tuning ?? true) == settings.tuning

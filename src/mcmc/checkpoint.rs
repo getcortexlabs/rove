@@ -7,7 +7,7 @@ use crate::random::Random;
 use crate::rates::{GammaRates, RateVariation, RelaxedClock};
 use crate::tree::Tree;
 
-const MAGIC: &[u8; 8] = b"ROVECP06";
+const MAGIC: &[u8; 8] = b"ROVECP07";
 
 impl Sampler {
     /// Saves a between-proposals state, including the live likelihood buffers.
@@ -59,9 +59,11 @@ impl Sampler {
                 write_f64(&mut out, v)?;
             }
         }
+        write_f64(&mut out, self.speciation.rate())?;
+        if let Some(p) = self.speciation.birth_death() {
+            write_f64(&mut out, p.relative_death)?;
+        }
         for value in [
-            self.birth_death.birth_difference,
-            self.birth_death.relative_death,
             self.posterior.likelihood,
             self.posterior.tree_prior,
             self.posterior.parameter_prior,
@@ -186,7 +188,12 @@ impl Sampler {
         };
         let mut initial = settings.clone();
         initial.initial.birth_difference = read_f64(&mut input)?;
-        initial.initial.relative_death = read_f64(&mut input)?;
+        initial.initial.relative_death =
+            if settings.tree_prior == crate::speciation::TreePrior::BirthDeath {
+                read_f64(&mut input)?
+            } else {
+                0.0
+            };
         let mut sampler = Self::from_tree(
             patterns,
             &initial,

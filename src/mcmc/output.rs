@@ -26,6 +26,7 @@ pub struct TraceWriter<W: Write> {
     dated: bool,
     ages: usize,
     process: bool,
+    yule: bool,
 }
 
 impl<W: Write> TraceWriter<W> {
@@ -38,6 +39,7 @@ impl<W: Write> TraceWriter<W> {
             dated: rates.mean.is_some(),
             ages: 0,
             process: false,
+            yule: false,
         }
     }
 
@@ -45,6 +47,7 @@ impl<W: Write> TraceWriter<W> {
         let mut writer = Self::resume(out, sampler.rates());
         writer.ages = sampler.dating().map_or(0, |d| d.ages.len());
         writer.process = sampler.dating().is_some_and(|d| d.process_priors.is_some());
+        writer.yule = sampler.tree_prior() == crate::speciation::TreePrior::Yule;
         writer
     }
 
@@ -55,6 +58,7 @@ impl<W: Write> TraceWriter<W> {
             sampler.rates(),
             sampler.dating().map_or(0, |d| d.ages.len()),
             sampler.dating().is_some_and(|d| d.process_priors.is_some()),
+            sampler.tree_prior() == crate::speciation::TreePrior::Yule,
         )
     }
 
@@ -63,7 +67,7 @@ impl<W: Write> TraceWriter<W> {
     }
 
     pub fn with_rates(out: W, comments: &[String], rates: &RateVariation) -> io::Result<Self> {
-        Self::header(out, comments, rates, 0, false)
+        Self::header(out, comments, rates, 0, false, false)
     }
 
     fn header(
@@ -72,6 +76,7 @@ impl<W: Write> TraceWriter<W> {
         rates: &RateVariation,
         ages: usize,
         process: bool,
+        yule: bool,
     ) -> io::Result<Self> {
         for comment in comments {
             writeln!(out, "# {comment}")?;
@@ -80,6 +85,11 @@ impl<W: Write> TraceWriter<W> {
             write!(
                 out,
                 "Sample\tposterior\tlikelihood\tprior\tfossilized_birth_death\tclock_rate\tdating_parameter_prior\ttree_height\ttree_length"
+            )?;
+        } else if yule {
+            write!(
+                out,
+                "Sample\tposterior\tlikelihood\tprior\tyule\tbirth_rate\ttree_height\ttree_length"
             )?;
         } else {
             write!(out, "{}", TRACE_COLUMNS.join("\t"))?;
@@ -110,6 +120,7 @@ impl<W: Write> TraceWriter<W> {
             dated: rates.mean.is_some(),
             ages,
             process,
+            yule,
         })
     }
 
@@ -122,6 +133,7 @@ impl<W: Write> TraceWriter<W> {
         if self.gamma != sampler.rates().gamma.is_some()
             || self.clock != sampler.rates().clock.is_some()
             || self.dated != sampler.rates().mean.is_some()
+            || self.yule != (sampler.tree_prior() == crate::speciation::TreePrior::Yule)
         {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
@@ -130,17 +142,27 @@ impl<W: Write> TraceWriter<W> {
         }
         write!(
             self.out,
-            "{sample}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+            "{sample}\t{}\t{}\t{}\t{}\t{}",
             posterior.total(),
             posterior.likelihood,
             posterior.prior(),
             posterior.tree_prior,
-            sampler.rates().mean.unwrap_or(birth_death.birth_difference),
-            if self.dated {
-                posterior.parameter_prior
-            } else {
-                birth_death.relative_death
-            },
+            sampler.rates().mean.unwrap_or(sampler.speciation_rate()),
+        )?;
+        if !self.yule {
+            write!(
+                self.out,
+                "\t{}",
+                if self.dated {
+                    posterior.parameter_prior
+                } else {
+                    birth_death.unwrap().relative_death
+                }
+            )?;
+        }
+        write!(
+            self.out,
+            "\t{}\t{}",
             tree.height(tree.root()),
             tree.tree_length()
         )?;

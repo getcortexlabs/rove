@@ -164,6 +164,14 @@
     "--include-matrix": {
       "native": "apps/macos/Sources/RoveApp/RunAssessmentView.swift",
       "control": "Explicit original-matrix inclusion in local reproducibility export"
+    },
+    "--tree-prior": {
+      "native": "apps/macos/Sources/RoveApp/TreePriorView.swift",
+      "control": "Tree prior and Yule birth-rate prior"
+    },
+    "--birth-rate-upper": {
+      "native": "apps/macos/Sources/RoveApp/TreePriorView.swift",
+      "control": "Tree prior and Yule birth-rate prior"
     }
   }
 }
