@@ -63,6 +63,10 @@ antes da apresentação. Ao clicar em **Continuar**, ela fica marcada como lida
 neste Mac e não reaparece ao sair da conta ou atualizar o app. A carta acompanha
 o idioma do aplicativo. Quem já usa o Rove também a vê uma vez, sem repetir a
 apresentação que já concluiu.
+Depois da apresentação, reabra quando quiser em **Ajuda → Agradecimento ao Thiago**.
+A carta abre em uma janela própria, inclusive durante uma análise. **Fechar**, Esc
+ou o controle de fechar a janela devolve você ao trabalho sem alterar a matriz,
+os registros da primeira visita ou as novidades ainda não lidas.
 
 Em seguida, uma apresentação em quatro partes mostra o aplicativo, as
 matrizes, os grupos externos e os resultados. Você pode pular, testar o exemplo ou

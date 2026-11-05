@@ -106,6 +106,8 @@ struct RoveApp: App {
           .disabled(
             !access.canUse || !experience.ready || workspace.isRunning || workspace.loading
               || workspace.treeSummary != nil || experience.availableReleases.isEmpty)
+        Button(strings("A thank-you to Thiago")) { openWindow(id: "dedication") }
+          .disabled(!access.canUse || !experience.ready)
         Divider()
         Button(strings("Rove Field Guide")) {
           NSWorkspace.shared.open(strings.guideURL)
@@ -124,6 +126,14 @@ struct RoveApp: App {
     .windowStyle(.hiddenTitleBar)
     .windowResizability(.contentSize)
     .defaultPosition(.center)
+    .commandsRemoved()
+
+    Window(strings("A thank-you to Thiago"), id: "dedication") {
+      DedicationWindow(preferences: workspace.preferences)
+    }
+    .windowStyle(.hiddenTitleBar)
+    .defaultSize(width: 1240, height: 850)
+    .windowResizability(.contentMinSize)
     .commandsRemoved()
 
     Window(strings("Benchmark this Mac"), id: "benchmark") {

@@ -19,6 +19,8 @@ struct LaunchPreviewTests {
     let defaults = try #require(UserDefaults(suiteName: suite))
     defer { defaults.removePersistentDomain(forName: suite) }
     let preferences = AppPreferences(defaults: defaults)
+    preferences.reduceMotion = true
+    preferences.reduceTransparency = true
     for language in [AppLanguage.english, .portuguese] {
       preferences.language = language
       let access = BetaAccess(
@@ -30,6 +32,10 @@ struct LaunchPreviewTests {
           DedicationView(preferences: preferences, onContinue: {}), size: size,
           to: directory.appendingPathComponent(
             "\(language.rawValue)-dedication-\(Int(size.height)).png"))
+        try await capture(
+          DedicationWindow(preferences: preferences), size: size,
+          to: directory.appendingPathComponent(
+            "\(language.rawValue)-dedication-reopened-\(Int(size.height)).png"))
       }
       for name in ["invitation", "waitlist", "code", "confirmed"] {
         if name == "waitlist" { access.begin(.waitlist) }

@@ -60,6 +60,10 @@ After access is confirmed, a letter from Rafael thanks Thiago J. Silva before
 the introduction. Choosing **Continue** marks it as read on this Mac; signing out
 or updating will not show it again. It follows the app language. Existing users
 see the letter once without repeating their completed tour.
+Reopen it anytime after the introduction with **Help → A thank-you to Thiago**.
+The separate window can stay open during an analysis. **Close**, Escape or the
+window close control returns to your work without changing the matrix, first-run
+acknowledgements or unread release notes.
 
 A four-part introduction then covers the workspace, matrices,
 outgroups and results. Skip it, explore the example, or choose your own matrix;

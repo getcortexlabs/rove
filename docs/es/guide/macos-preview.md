@@ -60,6 +60,10 @@ Después de confirmar el acceso, una carta de Rafael agradece a Thiago J. Silva
 antes de la introducción. **Continue** la marca como leída en este Mac; cerrar
 sesión o actualizar no vuelve a mostrarla. La carta sigue el idioma de la app.
 Quienes ya usan Rove también la ven una vez, sin repetir el recorrido completado.
+Después de la introducción, puedes abrirla de nuevo en **Help → A thank-you to Thiago**.
+La carta tiene su propia ventana, incluso durante un análisis. **Close**, Escape
+o el control de cierre devuelve al trabajo sin cambiar la matriz, los registros
+de la primera visita ni las novedades pendientes de leer.
 
 Después, una introducción de cuatro pasos presenta el espacio
 de trabajo, las matrices, los grupos externos y los resultados. Puedes omitirla,
