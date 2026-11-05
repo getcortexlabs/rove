@@ -2,6 +2,32 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
   <channel>
     <item>
+      <title>Rove 0.1.3</title>
+      <pubDate>Thu, 05 Nov 2026 17:49:14 +0000</pubDate>
+      <link>https://rove.getcortexlabs.com/</link>
+      <sparkle:version>5</sparkle:version>
+      <sparkle:shortVersionString>0.1.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+      <description sparkle:format="plain-text">More data, clearer choices.
+
+Open more NEXUS state-label exports and inspect labels, constant characters and uncertainty before running. Complete state labels can define the character alphabet when you explicitly choose them. True polymorphism remains unsupported for inference.
+
+Analyze aligned DNA from FASTA or NEXUS with JC69, or combine one morphological matrix with one DNA alignment. Review taxon matching and choose a fixed or estimated morphology-to-DNA rate ratio. The combined model shares its tree, clock and gamma shape; HKY and GTR are not available yet.
+
+Inspect the rooting split and the clock-sigma prior curves. Yule is now an optional pure-birth prior for contemporaneous species, with a configurable birth-rate bound. Birth–death remains the default, and fossil dating keeps FBD.
+
+Review sampling, agreement, trees and predictive evidence together in History. Paired posterior predictive plots help you inspect discrepancies. Export supporting files with a manifest and choose whether to include the original matrix.
+
+An optional joint topology/rate proposal is available for undated relaxed-clock analyses, with weight zero by default. This is partial ORC coverage; the full BEAST operator suite and comparative performance validation remain pending.
+
+Reopen the original thank-you letter from Help → A thank-you to Thiago, just as you can revisit the tour and What’s New.
+
+Keep the previous app to resume checkpoints created by its engine. Completed results remain in History. Existing 0.1.2 installations can receive the signed update; 0.1.1 needs one manual DMG installation.
+</description>
+      <enclosure url="https://github.com/getcortexlabs/rove/releases/download/v0.1.3/Rove-0.1.3.dmg" length="10343263" type="application/octet-stream" sparkle:edSignature="H3tzhenlLzHSCxbXMKQD1bxqP1I4gZ+4qAXlOOivCkoImaDcW5CRWxgKwNLPVjtpM8Q9qq4UupGBq8P+EKg0AA==" />
+    </item>
+    <item>
       <title>Rove 0.1.2</title>
       <pubDate>Mon, 02 Nov 2026 09:22:43 +0000</pubDate>
       <link>https://rove.getcortexlabs.com/</link>
