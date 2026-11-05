@@ -1,5 +1,20 @@
 /* Rove interface strings. Keep keys and format arguments aligned across languages. */
 
+"More data, clearer choices." = "Mais dados, escolhas mais claras.";
+"Read your matrices more closely, combine morphology with DNA, and carry the evidence with your results." = "Examine suas matrizes com mais cuidado, combine morfologia e DNA e mantenha as evidências junto dos resultados.";
+"Make every character count." = "Olhe cada caráter de perto.";
+"Review labels, possible states and observations that need attention." = "Confira rótulos, estados possíveis e observações que precisam de atenção.";
+"More NEXUS state-label exports now open correctly. Inspect constant characters and uncertainty, and choose complete state labels as the alphabet when appropriate. True polymorphism still needs a supported observation model before inference." = "Mais arquivos NEXUS com rótulos de estados agora abrem corretamente. Confira caracteres constantes e incertezas e, quando adequado, use os rótulos completos como alfabeto. O polimorfismo verdadeiro ainda exige um modelo de observação compatível antes da inferência.";
+"Bring DNA into the picture." = "Traga o DNA para a análise.";
+"Analyze aligned DNA with JC69 or combine it with morphology." = "Analise DNA alinhado com JC69 ou combine com morfologia.";
+"Open aligned FASTA or DNA NEXUS files, or combine one morphological matrix with one DNA alignment. Match taxa explicitly and choose a fixed or estimated morphology-to-DNA rate ratio. The combined model shares its tree, clock and gamma shape." = "Abra alinhamentos FASTA ou NEXUS de DNA, ou combine uma matriz morfológica com um alinhamento de DNA. Confira a correspondência dos táxons e escolha uma razão de taxas fixa ou estimada entre morfologia e DNA. O modelo combinado compartilha a árvore, o relógio e a forma gamma.";
+"See the assumptions behind the tree." = "Entenda as hipóteses por trás da árvore.";
+"Explore rooting diagrams, sigma-prior curves and the optional Yule prior." = "Explore diagramas de enraizamento, curvas do prior de sigma e a opção Yule.";
+"See the split imposed by rooting and how Alpha and Beta shape the clock-sigma prior. Yule adds a no-extinction option for contemporaneous species. Birth-death remains the default, and fossil dating keeps its FBD model." = "Veja a divisão imposta pelo enraizamento e como Alpha e Beta definem o prior do sigma do relógio. Yule oferece uma opção sem extinção para espécies contemporâneas. Birth-death continua como padrão, e a datação de fósseis mantém o modelo FBD.";
+"Keep the evidence together." = "Mantenha as evidências juntas.";
+"Review sampling and predictive checks, then export a reproducible package." = "Confira a amostragem e as checagens preditivas e exporte um pacote reproduzível.";
+"History brings completion, diagnostics, agreement, trees and predictive evidence into one assessment. Paired predictive plots help you inspect discrepancies. Export the supporting files with a manifest, and choose explicitly whether to attach the original matrix." = "O Histórico reúne conclusão, diagnósticos, concordância, árvores e evidências preditivas em uma avaliação. Os gráficos preditivos pareados ajudam a investigar diferenças. Exporte os arquivos com um manifesto e escolha explicitamente se deseja incluir a matriz original.";
+
 "A thank-you to Thiago" = "Agradecimento ao Thiago";
 "A NOTE OF THANKS" = "UMA NOTA DE AGRADECIMENTO";
 

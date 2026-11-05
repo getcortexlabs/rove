@@ -114,4 +114,25 @@ import Testing
       #expect(experience.presentation == nil)
     }
   }
+
+  @Test func version013UpgradeShowsItsHighlightsOnceAndKeepsTheTourComplete() throws {
+    let storage = try defaults()
+    storage.set(true, forKey: "onboardingCompleted")
+    storage.set(true, forKey: "dedicationAcknowledged")
+    storage.set("0.1.2", forKey: "releaseNotesAcknowledged")
+    let upgraded = LaunchExperience(defaults: storage, version: "0.1.3")
+    #expect(upgraded.entryStage(allowed: true) == .workspace)
+    #expect(upgraded.currentRelease?.version == "0.1.3")
+    #expect(upgraded.availableReleases.map(\.version) == ["0.1.3", "0.1.2", "0.1.1", "0.1.0"])
+    upgraded.presentNewsIfNeeded(allowed: true, idle: false)
+    #expect(upgraded.presentation == nil)
+    upgraded.presentNewsIfNeeded(allowed: true, idle: true)
+    #expect(upgraded.presentation == .news)
+    upgraded.dismissNews()
+    let reopened = LaunchExperience(defaults: storage, version: "0.1.3")
+    reopened.presentNewsIfNeeded(allowed: true, idle: true)
+    #expect(reopened.presentation == nil)
+    #expect(reopened.acknowledgedVersion == "0.1.3")
+    #expect(reopened.ready)
+  }
 }
