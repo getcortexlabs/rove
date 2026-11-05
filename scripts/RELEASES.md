@@ -14,10 +14,11 @@ automatic downloads/install-on-quit off until the user chooses them in Settings.
 Updates never cancel an analysis. An installation requested during active work
 waits for another click in Settings or the Rove menu after the work finishes.
 
-The [0.1.2 distribution record](release-checks/0.1.2.md) tracks the first signed
-upgrade exercise and the remaining publication checks.
+The [0.1.3 distribution record](release-checks/0.1.3.md) tracks the current
+package, upgrade exercise and rollout checks. The [0.1.2 record](release-checks/0.1.2.md)
+documents the first signed upgrade exercise.
 
-Before the first distribution using Sparkle:
+For each distribution (key provisioning is only needed once):
 
 1. The Rove-specific key is provisioned in the release machine's Keychain under
    the `rove` account. Resolve the Swift package and use its
@@ -57,7 +58,7 @@ Before the first distribution using Sparkle:
    asset, or replace a DMG after signing it. Publishing also triggers the beta
    email job below; checking for updates does not send email.
 
-The empty initial feed deliberately advertises no release. Existing 0.1.1
+The initial empty feed advertised no release until the first signed rollout. Existing 0.1.1
 installations have no updater: testers need one manual DMG installation before
 they can receive subsequent versions in the app. Neither a code merge nor the
 empty feed activates updates for the old DMG. Release key provisioning and the
