@@ -1,5 +1,20 @@
 /* Rove interface strings. Keep keys and format arguments aligned across languages. */
 
+"More data, clearer choices." = "More data, clearer choices.";
+"Read your matrices more closely, combine morphology with DNA, and carry the evidence with your results." = "Read your matrices more closely, combine morphology with DNA, and carry the evidence with your results.";
+"Make every character count." = "Make every character count.";
+"Review labels, possible states and observations that need attention." = "Review labels, possible states and observations that need attention.";
+"More NEXUS state-label exports now open correctly. Inspect constant characters and uncertainty, and choose complete state labels as the alphabet when appropriate. True polymorphism still needs a supported observation model before inference." = "More NEXUS state-label exports now open correctly. Inspect constant characters and uncertainty, and choose complete state labels as the alphabet when appropriate. True polymorphism still needs a supported observation model before inference.";
+"Bring DNA into the picture." = "Bring DNA into the picture.";
+"Analyze aligned DNA with JC69 or combine it with morphology." = "Analyze aligned DNA with JC69 or combine it with morphology.";
+"Open aligned FASTA or DNA NEXUS files, or combine one morphological matrix with one DNA alignment. Match taxa explicitly and choose a fixed or estimated morphology-to-DNA rate ratio. The combined model shares its tree, clock and gamma shape." = "Open aligned FASTA or DNA NEXUS files, or combine one morphological matrix with one DNA alignment. Match taxa explicitly and choose a fixed or estimated morphology-to-DNA rate ratio. The combined model shares its tree, clock and gamma shape.";
+"See the assumptions behind the tree." = "See the assumptions behind the tree.";
+"Explore rooting diagrams, sigma-prior curves and the optional Yule prior." = "Explore rooting diagrams, sigma-prior curves and the optional Yule prior.";
+"See the split imposed by rooting and how Alpha and Beta shape the clock-sigma prior. Yule adds a no-extinction option for contemporaneous species. Birth-death remains the default, and fossil dating keeps its FBD model." = "See the split imposed by rooting and how Alpha and Beta shape the clock-sigma prior. Yule adds a no-extinction option for contemporaneous species. Birth-death remains the default, and fossil dating keeps its FBD model.";
+"Keep the evidence together." = "Keep the evidence together.";
+"Review sampling and predictive checks, then export a reproducible package." = "Review sampling and predictive checks, then export a reproducible package.";
+"History brings completion, diagnostics, agreement, trees and predictive evidence into one assessment. Paired predictive plots help you inspect discrepancies. Export the supporting files with a manifest, and choose explicitly whether to attach the original matrix." = "History brings completion, diagnostics, agreement, trees and predictive evidence into one assessment. Paired predictive plots help you inspect discrepancies. Export the supporting files with a manifest, and choose explicitly whether to attach the original matrix.";
+
 "A thank-you to Thiago" = "A thank-you to Thiago";
 "A NOTE OF THANKS" = "A NOTE OF THANKS";
 

@@ -5,6 +5,8 @@ on this branch. This is a source/configuration audit, not a new timing study.
 Thiago supplied the XML; the conclusions below are our engineering review,
 not a claim that he has reviewed this document.
 
+Implementation update, 5 November 2026: the optional joint narrow-exchange/rate proposal is now implemented in #117 and integrated through #122. It is available only for undated relaxed-clock analyses, with weight zero by default. The table below preserves the original 2 November audit; it is not the current feature checklist. [#128](https://github.com/getcortexlabs/rove/issues/128) records current partial ORC coverage. Adaptive selection weights and the remaining ORC kernels are still absent; posterior/performance studies in #97/#48/#72 remain pending. No new speedup is claimed.
+
 ## Input and probability model
 
 The supplied `matriz_teste.xml` has SHA-256

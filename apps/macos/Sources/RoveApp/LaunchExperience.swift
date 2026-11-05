@@ -38,6 +38,42 @@ struct RoveRelease: Identifiable {
 
   static let all = [
     RoveRelease(
+      version: "0.1.3",
+      headline: "More data, clearer choices.",
+      introduction:
+        "Read your matrices more closely, combine morphology with DNA, and carry the evidence with your results.",
+      highlights: [
+        ReleaseHighlight(
+          id: "observation-review", symbol: "square.grid.3x3",
+          title: "Make every character count.",
+          summary: "Review labels, possible states and observations that need attention.",
+          detail:
+            "More NEXUS state-label exports now open correctly. Inspect constant characters and uncertainty, and choose complete state labels as the alphabet when appropriate. True polymorphism still needs a supported observation model before inference.",
+          action: "Try the example", destination: .example),
+        ReleaseHighlight(
+          id: "dna-mixed", symbol: "point.3.connected.trianglepath.dotted",
+          title: "Bring DNA into the picture.",
+          summary: "Analyze aligned DNA with JC69 or combine it with morphology.",
+          detail:
+            "Open aligned FASTA or DNA NEXUS files, or combine one morphological matrix with one DNA alignment. Match taxa explicitly and choose a fixed or estimated morphology-to-DNA rate ratio. The combined model shares its tree, clock and gamma shape.",
+          action: "Explore the field guide", destination: .guide),
+        ReleaseHighlight(
+          id: "scientific-choices", symbol: "slider.horizontal.3",
+          title: "See the assumptions behind the tree.",
+          summary: "Explore rooting diagrams, sigma-prior curves and the optional Yule prior.",
+          detail:
+            "See the split imposed by rooting and how Alpha and Beta shape the clock-sigma prior. Yule adds a no-extinction option for contemporaneous species. Birth-death remains the default, and fossil dating keeps its FBD model.",
+          action: "Try the example", destination: .example),
+        ReleaseHighlight(
+          id: "evidence-export", symbol: "square.and.arrow.up",
+          title: "Keep the evidence together.",
+          summary: "Review sampling and predictive checks, then export a reproducible package.",
+          detail:
+            "History brings completion, diagnostics, agreement, trees and predictive evidence into one assessment. Paired predictive plots help you inspect discrepancies. Export the supporting files with a manifest, and choose explicitly whether to attach the original matrix.",
+          action: "Open History", destination: .history),
+      ]
+    ),
+    RoveRelease(
       version: "0.1.2",
       headline: "A little more room to explore.",
       introduction:
