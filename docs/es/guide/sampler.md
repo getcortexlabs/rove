@@ -131,3 +131,42 @@ El checkpoint guarda el árbol, tasas, estado del generador aleatorio, ajustes y
 Antes de continuar se verifican todos los miembros. Se descartan los datos posteriores a las posiciones guardadas y se repiten esos pasos. Los bits de los números y el orden del muestreo se conservan; las muestras coinciden con una ejecución continua del mismo ejecutable y configuración. Esto comprueba la reproducibilidad de la reanudación, no la convergencia. `run.json` sigue siendo un informe; reiniciar requiere `checkpoint.json` y sus archivos binarios.
 
 Con `--cancel-on-stdin-close`, enviar `pause\n` por la entrada estándar guarda el siguiente paso muestreado común y termina con estado `paused` (código 130). Cerrar la entrada cancela. Tras una terminación abrupta solo se recupera el último checkpoint confirmado.
+
+## Cadenas acopladas experimentales
+
+`rove coupled` ejecuta una cadena fría junto con cadenas calentadas, que pueden
+explorar árboles alternativos. Los intercambios aceptados llevan esos estados
+a la cadena fría. La opción es experimental y solo está en la CLI; la concordancia
+y el rendimiento se evalúan mediante este
+[protocolo](https://github.com/getcortexlabs/rove/blob/main/benchmarks/coupled/PROTOCOL.md).
+
+```sh
+rove coupled matrix.nex --output coupled-run --model reference \
+  --seed 710000 --steps 1000000 --sample-every 1000 \
+  --likelihood-powers 1,0.9,0.8,0.7 --swap-every 1000
+```
+
+La primera potencia debe ser 1; las siguientes, positivas y estrictamente
+decrecientes. Cada cadena apunta a `prior × verosimilitud^potencia`; el prior no
+se calienta. En cada intervalo se elige al azar una pareja de temperaturas
+vecinas para intentar intercambiar estados. El ejemplo no recomienda una
+escala de temperaturas para cualquier matriz.
+
+`trace.log` y `trees.nexus` contienen únicamente muestras frías, con posterior,
+verosimilitud y prior originales. `run.json` registra potencias, intentos y
+aceptaciones por pareja, propuestas por temperatura y viajes completos desde
+la cadena fría hasta la más caliente y de vuelta. Muchas aceptaciones sin
+viajes pueden ocultar mala comunicación; muchos viajes tampoco prueban convergencia.
+
+Ejecute grupos independientes y compare sus salidas frías con `rove compare`.
+Las semillas internas son la semilla base más el índice: para cuatro cadenas,
+separe las semillas base por al menos cuatro. Un grupo de cuatro usa cuatro
+trabajadores y produce **una** secuencia fría. No sustituye las comprobaciones
+entre ejecuciones. `--chains` y la parada automática no están disponibles aquí;
+el funcionamiento habitual de `rove sample` permanece igual.
+
+Reanude con `rove coupled --resume /ruta/coupled-run`. Conserve `coupling.json`,
+su `ensemble-<paso>.bin`, la matriz, el ejecutable y las salidas. El checkpoint
+incluye todas las cadenas, el generador de intercambios y los viajes. Se aplican
+las reglas anteriores de pausa, cancelación y verificación. Una ejecución
+completada no se puede prolongar mediante la reanudación.

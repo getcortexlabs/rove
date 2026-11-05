@@ -1,4 +1,4 @@
-//! Diagnose a declared prefix of four independent chains without exporting taxa.
+//! Diagnose a declared prefix of three or four independent cold chains.
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::fs::{self, File};
@@ -9,7 +9,6 @@ use rove::diagnostics::{Trace, rhat, statistics};
 use rove::summary::nexus::{Clade, Reader, Tree};
 use serde_json::{Value, json};
 
-const CHAINS: usize = 4;
 const BATCHES: usize = 20;
 
 fn diagnostic(values: &[&[f64]]) -> Result<Value, Box<dyn Error>> {
@@ -19,6 +18,7 @@ fn diagnostic(values: &[&[f64]]) -> Result<Value, Box<dyn Error>> {
         .collect::<Result<Vec<_>, _>>()?;
     let r = rhat(values)?;
     let passed = r.is_some_and(|x| x.is_finite() && x <= 1.01)
+        && stats.iter().filter_map(|s| s.ess).sum::<f64>() >= 400.0
         && stats
             .iter()
             .all(|s| s.ess.is_some_and(|x| x >= 100.0) && !s.lag_limit_reached);
@@ -47,17 +47,33 @@ fn batch_mcse(counts: &[usize; BATCHES], batch_size: usize) -> f64 {
         .sqrt()
 }
 
-#[derive(Default)]
-struct Counts {
+struct Counts<const CHAINS: usize> {
     total: [usize; CHAINS],
     batches: [[usize; BATCHES]; CHAINS],
 }
 
+impl<const CHAINS: usize> Default for Counts<CHAINS> {
+    fn default() -> Self {
+        Self {
+            total: [0; CHAINS],
+            batches: [[0; BATCHES]; CHAINS],
+        }
+    }
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<_> = std::env::args().skip(1).collect();
-    if args.len() != 2 {
-        return Err("usage: convergence_budget <four-chain-directory> <through-step>".into());
+    if !(2..=3).contains(&args.len()) {
+        return Err("usage: convergence_budget <directory> <through-step> [3|4]".into());
     }
+    match args.get(2).map(String::as_str).unwrap_or("4") {
+        "3" => run::<3>(&args),
+        "4" => run::<4>(&args),
+        _ => Err("use three or four independent cold chains".into()),
+    }
+}
+
+fn run<const CHAINS: usize>(args: &[String]) -> Result<(), Box<dyn Error>> {
     let directory = PathBuf::from(&args[0]);
     let through: u64 = args[1].parse()?;
     let mut traces = Vec::new();
@@ -131,7 +147,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut taxa = Vec::new();
     let mut reference = HashSet::new();
     let mut ids: HashMap<Clade, usize> = HashMap::new();
-    let mut counts: Vec<Counts> = Vec::new();
+    let mut counts: Vec<Counts<CHAINS>> = Vec::new();
     let mut rf = Vec::new();
     let mut unique = Vec::new();
     let batch_size = retained / BATCHES;
@@ -216,6 +232,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "{}",
         serde_json::to_string_pretty(&json!({
             "through_step": through, "burnin_percent": 10, "retained_per_chain": retained,
+            "independent_cold_chains": CHAINS,
             "input_sha256": records[0]["input"]["sha256"],
             "seeds": records.iter().map(|r| &r["settings"]["seed"]).collect::<Vec<_>>(),
             "scalar_pass": scalar_pass, "clade_pass": clade_pass,
@@ -224,7 +241,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             "rf_reference": "initial tree, state zero of chain 1; fixed before posterior sampling, not a true tree",
             "clades": {"distinct": counts.len(), "pooled_frequency_at_least_0_01": relevant,
                 "max_frequency_spread": maximum_spread, "spread_failures": spread_failures,
-                "max_batch_mcse_per_chain": maximum_mcse, "mcse_failures": uncertainty_failures,
+                "max_batch_mcse_per_chain": maximum_mcse.as_slice(), "mcse_failures": uncertainty_failures,
                 "constant_in_every_chain": constant, "batches": BATCHES, "batch_size": batch_size,
                 "omitted_tail_draws_for_batches": retained - batch_size * BATCHES},
             "notes": ["ESS/time is descriptive when diagnostics fail.",

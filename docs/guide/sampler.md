@@ -131,3 +131,41 @@ The checkpoint includes the tree, branch and category rates, RNG state, move tun
 Resume verifies every member before appending. Output after the saved offsets is discarded and those steps are repeated. Float bits and sampling order are preserved, so samples match an uninterrupted run with the same executable and settings. This is restart reproducibility, not a convergence test. `run.json` remains a report; `checkpoint.json` and its referenced binary files are needed to restart.
 
 For owners using `--cancel-on-stdin-close`, sending `pause\n` on standard input saves at the next common sampling boundary and exits with status `paused` (exit code 130). Closing standard input cancels; abrupt termination can recover only the most recent committed checkpoint.
+
+## Experimental coupled chains
+
+`rove coupled` runs one cold chain alongside heated chains. Their flatter
+likelihoods can help explore alternative trees; accepted exchanges let that
+exploration reach the cold chain. This is experimental and currently CLI-only.
+Posterior agreement and performance are being evaluated under the
+[recorded protocol](https://github.com/getcortexlabs/rove/blob/main/benchmarks/coupled/PROTOCOL.md).
+
+```sh
+rove coupled matrix.nex --output coupled-run --model reference \
+  --seed 710000 --steps 1000000 --sample-every 1000 \
+  --likelihood-powers 1,0.9,0.8,0.7 --swap-every 1000
+```
+
+The first power must be 1; later powers must be positive and strictly decreasing.
+Each slot targets `prior × likelihood^power`: the prior is unchanged. Every
+exchange boundary attempts one uniformly selected neighbouring pair. The
+example is a configuration, not a recommended temperature ladder for all data.
+
+`trace.log` and `trees.nexus` contain only the cold slot, with ordinary posterior,
+likelihood and prior values. `run.json` records all powers, each neighbour's swap
+counts, per-slot proposal statistics and complete cold–hottest–cold round trips.
+High swap acceptance without round trips can hide poor communication across
+the ladder; even many round trips do not prove posterior convergence.
+
+Run independent ensembles with different, non-overlapping slot seeds and compare
+their cold outputs with `rove compare`. Slot seeds are base seed plus slot index;
+for four slots, leave at least four between base seeds. One four-slot ensemble
+produces **one** cold sample stream and uses four workers. It cannot replace
+independent convergence checks. `--chains` and automatic stopping are unavailable
+for this command; the ordinary `rove sample` workflow is unchanged.
+
+Use `rove coupled --resume /path/to/coupled-run` to restart. Keep `coupling.json`,
+its referenced `ensemble-<step>.bin`, the original input, executable and outputs.
+The checkpoint preserves every slot, swap RNG, state labels and round trips.
+Pause, cancellation and fingerprint checks follow the rules above. Completed
+runs cannot be extended through resume.

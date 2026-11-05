@@ -156,6 +156,12 @@ R-hat, per-chain ESS and clade-frequency comparisons. Each chain keeps its own
 trace and tree files. Optional scalar diagnostic stopping is off by default;
 it does not certify topology convergence. See the [sampler guide](https://rove.getcortexlabs.com/guide/sampler).
 
+`rove coupled` adds experimental likelihood-tempered chains, adjacent state
+exchanges, round-trip counters and restartable ensemble checkpoints. Only the
+cold chain writes posterior samples. The [measurement protocol](benchmarks/coupled/PROTOCOL.md)
+compares posterior agreement and inference per wall second before exposing
+this option in the app. Independent runs remain necessary.
+
 
 ## Roadmap
 

@@ -110,7 +110,7 @@ impl Write for Output {
     }
 }
 
-fn verify_prefix(path: &Path, record: &Value) -> Result<sha256::Digest, Box<dyn Error>> {
+pub(super) fn verify_prefix(path: &Path, record: &Value) -> Result<sha256::Digest, Box<dyn Error>> {
     let length = number(record, "bytes")?;
     let file = File::open(path)?;
     if file.metadata()?.len() < length {

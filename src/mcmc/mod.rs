@@ -15,6 +15,7 @@ mod moves;
 mod relative;
 pub use relative::RelativeRate;
 pub mod output;
+pub mod tempering;
 
 use std::fmt;
 
