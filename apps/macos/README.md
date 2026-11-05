@@ -90,6 +90,9 @@ UserDefaults, independently of onboarding and release notes. The letter appears
 once per Mac user profile; signing out or updating does not reset it. Existing
 users see it once without repeating their completed tour. Closing before Continue
 leaves it unread, and an active analysis keeps its controls.
+**Help → A thank-you to Thiago** reopens the letter in its own window, including
+while an analysis runs. **Close**, Escape or the window close control dismisses
+only that window; rereading does not reset the tour or acknowledge unseen updates.
 
 A skippable first-run tour introduces the app and can open the example or file
 picker without starting an analysis. Help reopens the tour and versioned release

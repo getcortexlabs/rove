@@ -3,6 +3,7 @@ import SwiftUI
 struct DedicationView: View {
   @Bindable var preferences: AppPreferences
   var onContinue: () -> Void
+  var isReopened = false
   @Environment(\.visualComfort) private var comfort
   @State private var appeared = false
   private var strings: AppStrings { preferences.strings }
@@ -14,7 +15,8 @@ struct DedicationView: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      ArrivalHeader(preferences: preferences, caption: "BEFORE WE BEGIN")
+      ArrivalHeader(
+        preferences: preferences, caption: isReopened ? "A NOTE OF THANKS" : "BEFORE WE BEGIN")
       VStack(spacing: 0) {
         ScrollView {
           VStack(alignment: .leading, spacing: 20) {
@@ -58,7 +60,9 @@ struct DedicationView: View {
             .accessibilityHidden(true)
           Spacer()
           Button(action: onContinue) {
-            Label(strings("Continue"), systemImage: "arrow.right")
+            Label(
+              strings(isReopened ? "Close" : "Continue"),
+              systemImage: isReopened ? "xmark" : "arrow.right")
           }
           .buttonStyle(LabButtonStyle(prominent: true, compact: true))
           .keyboardShortcut(.defaultAction)
@@ -88,5 +92,29 @@ struct DedicationView: View {
     }
     .frame(width: 64, height: 64)
     .rotationEffect(.degrees(-9)).accessibilityHidden(true)
+  }
+}
+
+struct DedicationWindow: View {
+  @Bindable var preferences: AppPreferences
+  @Environment(\.dismissWindow) private var dismissWindow
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  var body: some View {
+    DedicationView(
+      preferences: preferences, onContinue: { dismissWindow(id: "dedication") }, isReopened: true
+    )
+    .frame(minWidth: 1080, minHeight: 700)
+    .background { WorkspaceBackdrop() }.foregroundStyle(Lab.ink)
+    .preferredColorScheme(.dark).tint(Lab.accent)
+    .environment(\.locale, preferences.strings.locale)
+    .environment(
+      \.visualComfort,
+      VisualComfort(
+        reduceMotion: reduceMotion || preferences.reduceMotion,
+        reduceTransparency: reduceTransparency || preferences.reduceTransparency)
+    )
+    .onExitCommand { dismissWindow(id: "dedication") }
   }
 }

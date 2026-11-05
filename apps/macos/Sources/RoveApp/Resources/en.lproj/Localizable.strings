@@ -1,5 +1,8 @@
 /* Rove interface strings. Keep keys and format arguments aligned across languages. */
 
+"A thank-you to Thiago" = "A thank-you to Thiago";
+"A NOTE OF THANKS" = "A NOTE OF THANKS";
+
 "Settings" = "Settings";
 "Settings…" = "Settings…";
 "Make yourself at home." = "Make yourself at home.";
